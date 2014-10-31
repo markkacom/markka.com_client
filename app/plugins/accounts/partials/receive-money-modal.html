@@ -1,0 +1,90 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Receive {{symbol}}</h3>
+  </div>
+  <div class="panel-body">
+
+    <!-- Loading public key data from the blockchain -->
+    <div ng-if="loading">
+      <h3>{{message}}</h3>
+      <h3><small><i class="{{icon}}"></i>&nbsp;&nbsp;{{status}}</small></h3>
+    </div>
+
+    <div ng-if="!loading">
+
+      <!-- This account has a public key -->
+      <div ng-show="isPublished">
+        <div class="well well-sm">To receive {{symbol}} you must provide your address. The text box below shows the address for this account</div>
+        <textarea rows="2" class="form-control" readonly>{{address}}</textarea>
+      </div>
+
+      <!-- This account does not have a public key -->
+      <div ng-show="!isPublished">
+
+        <div class="well well-sm">Public key has not been published.&nbsp;<a href ng-init="showUnclaimed=false" ng-show="!showUnclaimed" ng-click="showUnclaimed=true">What does that mean?<a/>
+        <span ng-show="showUnclaimed"><small><br><br><p>An unclaimed account is an account that has not published it's public key. Publishing the public key is the second step in fully securing your {{symbol}} account.<br><br>Funds on accounts without a published public key are considered to be at risk of being stolen.<br><br>This is why we require every new account holder to automatically publish their account to the blockchain with the first incoming transaction.<br><br><a href ng-click="showUnclaimed=false">Ok, I understand.<a/></p></small></span>
+        </div>        
+
+        <div ng-init="state=0" ng-show="state==0"><center>
+          <h3><a href ng-click="state=1">Help me out, I am new to this.</a></h3>
+          <h3><a href ng-click="state=2">I know what I am doing.</a></h3></center>
+        </div>
+
+        <div ng-show="state==1" ng-init="showAbout=false">
+          <div class="well well-sm">The easiest way to get started and receive some free {{symbol}} is through our sponsor. Your email address is required to prevent misuse of this service.
+
+          <div ng-show="engine=='TYPE_FIM'">
+            <br>Faucet is
+            <span><strong ng-if="online" style="color:green">online</strong><strong ng-if="!online" style="color:red">offline</strong></span>&nbsp;
+            <a href ng-show="!showAbout" ng-click="showAbout=!showAbout">tell me more</a>
+            <small ng-show="showAbout"><br><br>FIMK faucet is sponsored by FIMKrypto.org. The email address you give is recorded in the database of FIMKrypto and may be rarely used for organizational or commercial communication by FIMKrypto. You may opt out of the mailing list at any time.&nbsp;<a href ng-click="showAbout=!showAbout">Ok, I understand</a></small>
+          </div>
+
+          <div ng-show="engine=='TYPE_NXT'">
+            <br>Faucet is
+            <span><strong ng-if="online" style="color:green">online</strong><strong ng-if="!online" style="color:red">offline</strong></span>&nbsp;
+            <a href ng-show="!showAbout" ng-click="showAbout=!showAbout">tell me more</a>
+            <small ng-show="showAbout"><br><br>NXT faucet is sponsored by DGEX.com. The email address you give is recorded in the database of DGEX and may be rarely used for organizational or commercial communication by DGEX. You may opt out of the mailing list at any time.&nbsp;<a href ng-click="showAbout=!showAbout">Ok, I understand</a></small>
+          </div>
+
+          <br>
+          <div class="alert alert-warning" role="alert" 
+            ng-show="faucet_warning">{{faucet_warning}}</div>
+          <form role="form" class="form-horizontal" name="receiveForm">
+            <div class="form-group">
+              <div class="col-xs-12">
+                <div class="input-group">
+                  <input class="form-control" id="receive-1" type="text" ng-model="items.email" required name="email"
+                    placeholder="Email" ng-disabled="!online">
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" ng-disabled="!receiveForm.$valid || !online" ng-click="send()"><span ng-if="online">Get free {{symbol}}</span><span ng-if="!online">Faucet is offline</span></button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </form>
+          </div>
+          <a href ng-click="state=2">No thanks I prefer not to use this service.<a/>
+        </div>
+
+        <div ng-show="state==2">
+          <!-- <div class="alert alert-info" role="alert">Not all third parties support sending {{symbol}} to a publish address.</div> -->
+          <div class="well well-sm">This is your publish address. <a href ng-init="showAboutPub=false" ng-show="!showAboutPub" ng-click="showAboutPub=!showAboutPub">What is that?</a><small ng-show="showAboutPub"><br><br>A publish address is different from your final address (after you receive your first transaction), your final address will be shorter. The publish address format allows sending {{symbol}} to accounts without a published public key.<br><br><strong>The publish address format is new and is not supported by all third parties or {{symbol}} clients.</strong><br><br>Mofo Wallet however has full support for this new address format. <a href ng-click="showAboutPub=!showAboutPub">Ok, I understand.</a></small></div>
+          <textarea rows="2" class="form-control monospace" style="word-break: break-all;" readonly>{{address}}</textarea>
+        </div>
+
+<!--           <a href ng-init="showPublishInfo=false" ng-click="showPublishInfo=!showPublishInfo">What does unclaimed mean?<a/><span ng-show="showPublishInfo"><small><br><br><p>An unclaimed account is an account that has not published it's public key. Publishing the public key is the second step in fully securing your account and is therefor required.</p><p>To publish the public key send any transaction to the address shown below.</p>
+        <p><div class="alert alert-info" role="alert">Not all third parties support sending {{symbol}} to accounts without a public key.<br><strong>As an alternative use the link below to get free {{symbol}} and claim your account.</strong></div></p></small></span></div>
+        <textarea rows="2" class="form-control monospace" readonly style="word-break: break-all;">{{address}}</textarea> -->
+
+      </div>
+    </div>
+  </div>
+  <div class="panel-footer">
+    <div class="form-group">
+      <div class="col-xs-6 col-xs-offset-3">
+        <button ng-click="dismiss()" type="button" class="btn btn-block btn-default">OK</button>
+      </div>
+    </div>
+  </div>  
+</div>    

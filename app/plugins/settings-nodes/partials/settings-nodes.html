@@ -1,0 +1,53 @@
+<div class="row" ng-controller="SettingsPluginNodesController">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-6">
+        <br>
+        <form accept-charset="UTF-8" role="form" name="settingsNodesForm" class="form-horizontal">
+          <div class="form-group" >
+            <label for="table-engine-select" class="control-label col-xs-2">Engine</label>
+            <div class="col-xs-6">
+              <select id="table-engine-select"
+                      class="form-control"
+                      ng-model="selectedEngine" 
+                      ng-options="e as e.label for e in engines"
+                      ng-change="selectedEngineChanged()"></select>
+            </div>
+            <div class="col-xs-4">
+              <button class="form-control btn btn-primary" ng-click="clearSelectedEngine()">Clear Nodes</button>
+            </div>
+          </div>
+        </form>
+        <br>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <a href ng-init="batchAdd = false" ng-click="batchAdd = true" ng-show="!batchAdd">Add more nodes</a>
+        <div ng-show="batchAdd">
+          <textarea rows="5" class="form-control monospace col-md-12" ng-model="batchAddContents"></textarea>
+          <button class="btn btn-primary btn-sm" ng-disabled="!batchAddContents" ng-click="saveNodes()">Add nodes</button>
+<!--           <button class="btn btn-primary btn-sm" ng-click="selectedEngine.more.fn()" ng-show="selectedEngine.more">{{selectedEngine.more.label}}</button>
+ -->          <a class="pull-right" href ng-click="batchAdd = false">Hide</a>
+        </div>
+        <div>
+          <br>          
+          <table ng-table="tableParams" class="table table-striped table-condensed table-hover">
+            <tr ng-repeat="t in $data">
+              <td data-title="'URL'" header-class="text-left">{{t.url}}</td>
+              <td data-title="'Port'" header-class="text-left">{{t.port}}</td>
+              <td data-title="'CORS'" header-class="text-left"><input type="checkbox" ng-model="t.supports_cors" ng-change="t.update({supports_cors: t.supports_cors})"></td>
+              <!-- <td data-title="'Downloaded'" header-class="text-left">{{formatSize(t.downloaded)}}</td> -->
+              <td data-title="'Start'" header-class="text-left">{{formatStartTime(t.start_timestamp, t.success_timestamp, t.failed_timestamp)}}</td>
+              <td data-title="'Success'" header-class="text-left">{{formatTimestamp(t.success_timestamp)}}</td>
+              <td data-title="'Failed'" header-class="text-left">{{formatTimestamp(t.failed_timestamp)}}</td>
+              <!-- <td data-title="'Busy'" header-class="text-left">{{(pt.failed_timestamp < t.start_timestamp) && (pt.success_timestamp < t.start_timestamp)}}</td> -->
+              <td><a href ng-click="deleteNode(t)">delete</a></td>
+              <td><a href ng-click="unblackList(t)">un-blacklist</a></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

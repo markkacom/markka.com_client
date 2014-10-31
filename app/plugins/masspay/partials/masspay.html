@@ -1,0 +1,82 @@
+<div class="row" ng-controller="MasspayPluginController">
+  <div class="col-md-12">
+    <br>
+    <div class="well well-sm"><p>This plugin allows to perform multiple payments in batch from a CSV file.</p>
+    <p>The syntax for the CSV file is: <code>RECIPIENT,AMOUNT_NXT,PUBLIC_MESSAGE</code></p>
+    <p>Recipient can be either a normal address (for accounts with published public key) or in the Mofo Wallet publish address format.</p></div>
+    <div class="row">
+      <div class="col-md-12">
+        <h3><strong>1</strong>&nbsp;&nbsp;<small>Select Account</small></h3>
+        <div class="form-group">
+          <div class="col-xs-4">
+            <div class="input-group">
+              <input class="form-control" id="masspay-account" placeholder="FIM or NXT address" name="account" 
+                type="text" ng-model="selectedAccount.id_rs" required ng-change="accountChanged()" readonly>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-primary" ng-click="selectAccount()">Select</button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <h3><strong>2</strong>&nbsp;&nbsp;<small>Open CSV file or edit by hand</small></h3>
+        <div class="col-md-12 clearfix">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <span class="btn btn-primary btn-file" ng-disabled="!selectedAccount">
+                <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Open CSV File<input type="file" 
+                  onchange="window.onMassPayFileSelected(event)">
+              </span>
+              <button class="btn btn-default" ng-click="saveAs()" ng-disabled="!items.csv">Save CSV As</button>
+            </span>
+            &nbsp;&nbsp;<label><small>{{items.file}}</small></label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group" ng-init="showCSV = false">
+            <br>
+            <textarea ng-disabled="!selectedAccount" class="form-control monospace" rows="3" id="masspay-csv" ng-model="items.csv"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <h3><strong>3</strong>&nbsp;&nbsp;<small>Load CSV into staging area and inspect for correctness</small></h3>
+        <div class="col-md-12 clearfix">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-default" ng-disabled="!selectedAccount || !items.csv" ng-click="load()">Load CSV into Staging Area <small>(required only when CSV was edited manually)</small></button>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <h4>Staging Area</h4>
+          <table ng-table="tableParams" class="table table-striped table-condensed table-hover">
+            <tr ng-repeat="t in $data" ng-class="{success: t.status=='success', failed: t.status == 'failed'}">
+              <td data-title="'Recipient'" header-class="text-left"><a href ng-click="showAccount(t.recipientRS)">{{t.recipientRS}}</a></td>
+              <td data-title="'Amount'" header-class="text-left">{{t.amountNXT}}</td>
+              <td data-title="'ID'" header-class="text-left">{{t.unique_id}}</td>
+              <td data-title="'Status'" header-class="text-left">{{t.status}}</td>
+              <td data-title="'Total'" header-class="text-left">{{t.cumulativeNXT}}</td>        
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <h3><strong>4</strong>&nbsp;&nbsp;<small>Execute Payments in Staging Area</small></h3>
+        <div class="col-md-12 clearfix">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-danger" ng-disabled="!selectedAccount || !items.csv || payments.length == 0" ng-click="execute()">Execute Payments in Staging Area</button> 
+            </span>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <h4>Status</h4>
+          <textarea class="form-control monospace" rows="3" id="masspay-status" readonly></textarea>
+          <br><br>
+        </div>
+      </div>
+    </div>    
+  </div>
+</div>

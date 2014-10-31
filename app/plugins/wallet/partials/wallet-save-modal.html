@@ -1,0 +1,37 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Save wallet</h3>
+  </div>
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="walletSaveForm" class="form-horizontal">
+      <div class="well well-sm">Choose and remember the password for your wallet and click `Save` to save your wallet. You must remember where you save it since you will be asked to find it later.</div>
+      <div class="form-group">
+        <label for="wallet-password-1" class="control-label col-xs-2">Password</label>
+        <div class="col-xs-10">
+          <input class="form-control" id="wallet-password-1" placeholder="Password"
+            type="password" ng-model="items.password" required name="password">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="wallet-confirm-1" class="control-label col-xs-2">Confirm</label>
+        <div class="col-xs-10">
+          <input class="form-control" id="wallet-confirm-1" placeholder="Confirm Password"
+            type="password" ng-model="items.confirm" required name="confirm" ui-validate="{equals : '$value == items.password' }" 
+              ui-validate-watch=" 'items.password' ">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="panel-footer">
+    <div class="form-group">
+      <div class="col-xs-6">
+        <button ng-click="close()" class="btn btn-block btn-success" type="button" ng-disabled="!walletSaveForm.$valid">
+          <span class="glyphicon glyphicon-floppy-save"></span>&nbsp;&nbsp;&nbsp;Save
+        </button>
+      </div>
+      <div class="col-xs-6">
+        <button class="btn btn-block btn-default" ng-click="dismiss()" type="button">Cancel</button>
+      </div>
+    </div> 
+  </div>
+</div>

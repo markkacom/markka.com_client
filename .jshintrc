@@ -1,0 +1,32 @@
+{
+  "passfail"      : false,  // Stop on first error.
+  
+  "maxerr"        : 200,    // Maximum error before stopping.
+
+  "node": true,
+  "browser": true,
+  "esnext": true,
+  "bitwise": true,
+  "camelcase": false,
+  "curly": false,
+  "eqeqeq": false,
+  "immed": true,
+  "indent": 2,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "quotmark": "true",
+  "regexp": true,
+  "undef": true,
+  "unused": true,
+  "strict": false,  // Require `use strict` pragma  in every file.
+  "trailing": true,
+  "smarttabs": true,
+  "globals": {
+    "angular": true,
+    "UTILS": true,
+    "BigInteger": true,
+    "NRS": true,
+    "$": true
+  }
+}

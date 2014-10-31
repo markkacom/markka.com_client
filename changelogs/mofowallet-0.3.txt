@@ -1,0 +1,44 @@
+Initial public Mofowallet release.
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3
+ 2. NXT   1.3.1
+
+Not all functionality has been enabled, the following features are enabled
+for all supported coins:
+
+ 1. Block explorer
+ 2. Multi account support 
+ 3. Create new accounts
+ 4. Add existing accounts
+ 5. Encrypted wallet.dat (compatible with the hosted version at http://mofowallet.com)
+ 6. Send and receive messages (stored in blockchain)
+ 7. Send and receive payments
+ 8. Built-in faucet for new accounts (through plugin)
+ 9. Mass payment functionality (through plugin)
+10. Run local server(s) (start/stop coin server(s))
+11. Forging (requires a running coin server)
+12. Theme switcher (19 themes available)
+13. Public key announcement support
+14. Contacts database (integrated with payments and messages)
+
+The following features are geared towards plugin authors and are considered 
+development/technical tools:
+
+ 1. Reload application (under settings menu)
+ 2. Database inspector (live view of the database)
+ 3. Public node manager (live view of all network API activity with public nodes)
+ 4. DOM Inspector/Console/Debugger (standard webkit dev tools)
+
+FIMK specific features:
+
+ 1. Namespaced alias support 
+
+    FIMK Namespaced Aliases are scoped per account. 
+    This means you can use any alias you wish, even the same ones that someone else is using.
+    Namespaced Alias makes the blockchain more suitable for storing small pieces of data in 
+    decentralized storage.
+    The aliases you register are stored either in plain text or encrypted and can thus be read 
+    by anyone or only be read through access to your account, or access details that you grant 
+    to a third party (setting a Namespaced Alias costs 0.1 FIM)

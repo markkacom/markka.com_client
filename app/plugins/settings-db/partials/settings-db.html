@@ -1,0 +1,48 @@
+<div class="row" ng-controller="SettingsPluginDBController">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-8">
+        <br>
+        <form accept-charset="UTF-8" role="form" name="settingsDebugForm" class="form-horizontal">
+          <div class="form-group" >
+            <label for="table-delete-select" class="control-label col-xs-2">Table</label>
+            <div class="col-xs-4">
+              <select id="table-delete-select"
+                      class="form-control"
+                      ng-model="selectedTable" 
+                      ng-options="t as t.name for t in tables"
+                      ng-change="selectedTableChanged()"></select>
+            </div>
+            <div class="col-xs-3">
+              <button class="form-control btn btn-primary" ng-click="clearSelectedTable()">Clear Table</button>
+            </div>
+            <div class="col-xs-3">
+              <button class="form-control btn btn-danger" ng-click="deleteDatabase()">Delete Database</button>
+            </div>               
+          </div>
+        </form>
+        <br>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <tabset>
+          <tab>
+            <tab-heading><i class="glyphicon glyphicon-list-alt"></i>&nbsp;&nbsp;Table</tab-heading>
+            <div id="settings-db-table-container"></div>
+          </tab>
+          <tab>
+            <tab-heading><i class="glyphicon glyphicon-cog"></i>&nbsp;&nbsp;Schema</tab-heading>
+            <!-- 
+              Use JSON pretty print. Several options available..
+              - https://github.com/pc035860/angular-highlightjs
+              - http://stackoverflow.com/questions/22776476/use-json-pretty-print-in-angularjs
+              - http://stackoverflow.com/a/7220510
+            -->
+            <div><pre>{{selectedTable.schema | json}}</pre></div>
+          </tab>
+        </tabset>    
+      </div>
+    </div>
+  </div>
+</div>

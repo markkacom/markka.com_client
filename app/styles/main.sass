@@ -1,0 +1,214 @@
+$panel-height: 360px
+
+// http://angular-ui.github.io/bootstrap/  - Angular UI CSS fix
+.nav, .pagination, .carousel, .panel-title a
+  cursor: pointer
+
+// -------------------------------------------------------------------------
+// Sticky footer                                                       START
+// -------------------------------------------------------------------------
+
+html,body
+  height: 100%
+
+body
+  padding-bottom: 90px
+  padding-top: 70px
+
+.status-popup
+  min-height: 300px
+  min-width: 350px
+
+// -------------------------------------------------------------------------
+// Sticky footer                                                         END
+// -------------------------------------------------------------------------
+
+
+// div[ui-view]
+//   height: 100%
+//   @media (max-width:767px)
+//     height: auto
+
+// .row
+//   height: 100%
+//   @media (max-width:767px)
+//     height: auto
+//   .col-100
+//     height: 97%
+//     @media (max-width:767px)
+//       height: auto
+
+// .row-half-height
+//   @extend .row
+//   height: 49%
+//   @media (max-width:767px)
+//     height: auto
+
+// .row-no-height
+//   height: auto
+
+// .panel
+//   height: 100%
+//   @media (max-width:767px)
+//     height: auto
+//   .panel-body
+//     height: 98%
+//     @media (max-width:767px)
+//       height: auto
+
+// .navbar-brand
+//   max-width: 50%
+
+// ////////////////////////////////////////////////////////////////////////////////////
+
+// .txn-ACCOUNT, .txn-ALIAS_NAME, .txn-ALIAS_URI, .txn-ASSET_NAME, .txn-ASSET_ID, 
+//   .txn-ACCOUNT, .txn-ACCOUNT_NAME, .txn-ASK_ORDER, .txn-BID_ORDER, .txn-GOODS, 
+//   .txn-GOODS_NAME, .txn-PURCHASE, .txn-NS_ALIAS_NAME, .txn-POLL_NAME, .txn-POLL_ID
+//   cursor: pointer
+//   color: red
+
+
+
+// ////////////////////////////////////////////////////////////////////////////////////
+
+.jumbotron
+  background: url('images/bmf.jpg') no-repeat center center
+  img.main_logo
+    width: 300px
+    @media only screen and (min-width : 768px)
+      width: 500px
+
+.btn-file
+  position: relative
+  overflow: hidden
+
+.btn-file input[type=file] 
+  position: absolute
+  top: 0
+  right: 0
+  min-width: 100%
+  min-height: 100%
+  font-size: 100px
+  text-align: right
+  filter: alpha(opacity=0)
+  opacity: 0
+  outline: none
+  background: white
+  cursor: inherit
+  display: block
+
+
+// Spinning busy indicator 
+// .glyphicon-refresh-animate
+//   -webkit-animation: spin2 .7s infinite linear
+//   -animation: spin .7s infinite linear
+
+// @-webkit-keyframes spin2
+//   from:
+//     -webkit-transform: rotate(0deg)
+//   to:
+//     -webkit-transform: rotate(360deg)
+
+// @keyframes spin
+//   from:
+//     transform: scale(1) rotate(0deg)
+//   to:
+//     transform: scale(1) rotate(360deg)
+
+.btn-rendered-transaction
+  width: 100px
+  cursor: auto
+  text-align: left
+
+table.accounts-transactions
+  thead
+    display: none
+
+.messeger-folders 
+  .list-group-item
+    padding: 16px 10px
+    small
+      font-size: 70%
+
+.back-next-group
+  .col-xs-3
+    padding-left: 2px
+    padding-right: 2px
+
+.modal .panel
+  margin-bottom: 0px
+
+.modal .panel 
+  .panel-heading, .panel-footer
+    overflow: hidden
+
+.form-group
+  margin-bottom: 2px
+
+.form-group.extra-margin
+  margin-bottom: 15px
+
+.form-horizontal .control-label
+  text-align: left
+
+//.ng-table
+//  border: 1px solid #e0e0e0
+
+.ng-table th.text-right
+  text-align: right
+
+.ng-table th.text-left
+  text-align: left
+
+input.monospace, select.monospace, textarea.monospace
+  font: 14px monospace
+
+//@media(max-width:767px){}
+//@media(min-width:768px){}
+//@media(min-width:992px){}
+//@media(min-width:1200px){}
+
+.malformed_address
+  font-weight: bold
+  cursor: pointer
+  b
+    text-decoration: underline
+    color: black
+
+.gridStyle
+  border: 1px solid rgb(212,212,212)
+  height: 100%
+  width: 100% 
+  //color: black
+
+.no-padding
+  padding: 0px
+
+.rightAlignCell
+  text-align: right
+
+.fake-link
+  color: #000
+  cursor: hand
+
+.navbar
+  height: 40px
+  img
+    max-height: 60px
+    min-height: 60px
+
+fieldset
+  padding-top: 15px
+  padding-bottom: 15px
+  padding-left: 10px
+
+// collapsable panels
+
+.panel-heading a:after
+  font-family: 'Glyphicons Halflings'
+  content: "\e114"
+  float: right
+  color: grey
+
+.panel-heading a.collapsed:after
+  content: "\e080"

@@ -1,0 +1,38 @@
+<div ng-controller="ContactsPlugin">
+  <div class="row">
+    <div class="col-md-12">
+      <br>
+      <ul class="nav nav-pills">
+        <li>
+          <button class="btn btn-success btn-navbar" ng-click="addContact()">
+            <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Add Contact
+          </button>
+        </li>
+      </ul>
+      <br>      
+    </div>
+  </div>
+  <div class="row">  
+    <div class="col-md-12">
+      <table ng-table="tableParams" class="table table-striped table-condensed table-hover">
+        <tr ng-repeat="c in $data">
+          <td data-title="'Name'" sortable="name" header-class="text-left">{{c.name}}</td>
+          <td data-title="'Account'" header-class="text-left"><a href ng-click="showAccount(c.id_rs)">{{c.id_rs}}</a></td>
+          <td data-title="'Email'" sortable="email" header-class="text-left">{{c.email}}</td>
+          <td data-title="'Website'" sortable="website" header-class="text-left">{{c.website}}</td>
+          <td data-title="'Actions'" header-class="text-left">
+            <ul class="nav nav-pills">
+              <li><button class="btn btn-xs btn-navbar btn-default" disabled="true" ng-click="sendMoney(c)">Payment</button></li>
+              <li><button class="btn btn-xs btn-navbar btn-default" disabled="true" ng-click="sendMessage(c)">Message</button></li>
+
+              <!-- Since the contacts array consists of both elements from the contacts table AND the accounts table,
+                   we cannot allow accounts to be removed through the contacts section -->
+              <li><button class="btn btn-xs btn-info btn-navbar" ng-click="editContact(c)" ng-if="!c.engine">Edit</button></li>
+              <li><button class="btn btn-xs btn-warning btn-navbar" ng-click="removeContact(c)" ng-if="!c.engine">Remove</button></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>  
+</div>

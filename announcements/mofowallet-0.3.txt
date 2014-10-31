@@ -1,0 +1,122 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.3          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2014-10-31          
+| $$        | $$  | $$$$  /$$$$                  
+| $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
+| $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
+| $$        | $$  | $$\  $ | $$          http://forum.fimk.fi          
+| $$       /$$$$$$| $$ \/  | $$          https://github.com/fimkrypto/mofowallet                 
+|__/      |______/|__/     |__/                 
+                     /$$                                       /$$              
+                    | $$                                      | $$              
+                    | $$   /$$  /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$    /$$$$$$ 
+                    | $$  /$$/ /$$__  $$| $$  | $$ /$$__  $$|_  $$_/   /$$__  $$
+                    | $$$$$$/ | $$  \__/| $$  | $$| $$  \ $$  | $$    | $$  \ $$
+                    | $$_  $$ | $$      | $$  | $$| $$  | $$  | $$ /$$| $$  | $$
+                    | $$ \  $$| $$      |  $$$$$$$| $$$$$$$/  |  $$$$/|  $$$$$$/
+                    |__/  \__/|__/       \____  $$| $$____/    \___/   \______/ 
+                                         /$$  | $$| $$                          
+                                        |  $$$$$$/| $$                          
+                                         \______/ |__/            
+
+
+                                presents:
+
+
+             /$$      /$$            /$$$$$$                               
+            | $$$    /$$$           /$$__  $$                              
+            | $$$$  /$$$$  /$$$$$$ | $$  \__//$$$$$$                       
+            | $$ $$/$$ $$ /$$__  $$| $$$$   /$$__  $$                      
+            | $$  $$$| $$| $$  \ $$| $$_/  | $$  \ $$                      
+            | $$\  $ | $$| $$  | $$| $$    | $$  | $$                      
+            | $$ \/  | $$|  $$$$$$/| $$    |  $$$$$$/                      
+            |__/     |__/ \______/ |__/     \______/                       
+                                                                           
+                                                                           
+                                                                           
+                         /$$      /$$           /$$ /$$             /$$    
+                        | $$  /$ | $$          | $$| $$            | $$    
+                        | $$ /$$$| $$  /$$$$$$ | $$| $$  /$$$$$$  /$$$$$$  
+                        | $$/$$ $$ $$ |____  $$| $$| $$ /$$__  $$|_  $$_/  
+                        | $$$$_  $$$$  /$$$$$$$| $$| $$| $$$$$$$$  | $$    
+                        | $$$/ \  $$$ /$$__  $$| $$| $$| $$_____/  | $$ /$$
+                        | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
+                        |__/     \__/ \_______/|__/|__/ \_______/   \___/  
+
+Initial public Mofowallet release.
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3
+ 2. NXT   1.3.1
+
+Not all functionality has been enabled, the following features are enabled
+for all supported coins:
+
+ 1. Block explorer
+ 2. Multi account support 
+ 3. Create new accounts
+ 4. Add existing accounts
+ 5. Encrypted wallet.dat (compatible with the hosted version at http://mofowallet.com)
+ 6. Send and receive messages (stored in blockchain)
+ 7. Send and receive payments
+ 8. Built-in faucet for new accounts (through plugin)
+ 9. Mass payment functionality (through plugin)
+10. Run local server(s) (start/stop coin server(s))
+11. Forging (requires a running coin server)
+12. Theme switcher (19 themes available)
+13. Public key announcement support
+14. Contacts database (integrated with payments and messages)
+
+The following features are geared towards plugin authors and are considered 
+development/technical tools:
+
+ 1. Reload application (under settings menu)
+ 2. Database inspector (live view of the database)
+ 3. Public node manager (live view of all network API activity with public nodes)
+ 4. DOM Inspector/Console/Debugger (standard webkit dev tools)
+
+FIMK specific features:
+
+ 1. Namespaced alias support 
+
+    FIMK Namespaced Aliases are scoped per account. 
+    This means you can use any alias you wish, even the same ones that someone else is using.
+    Namespaced Alias makes the blockchain more suitable for storing small pieces of data in 
+    decentralized storage.
+    The aliases you register are stored either in plain text or encrypted and can thus be read 
+    by anyone or only be read through access to your account, or access details that you grant 
+    to a third party (setting a Namespaced Alias costs 0.1 FIM)
+
+
+
+                             ~~~ DOWNLOAD ~~~
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3/mofowallet.windows-0.3.zip
+ 
+SHA256 7ba7bffada54fe5bf9f2e1f0a83ff2fdd8ab60ccd2e53ce76714c45ebd385a30 
+MD5    85b66955f952c77826374159f8b2db3c 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3/mofowallet.linux-0.3.zip
+ 
+SHA256 ef7453542e3c7bca121f7bcaa24c1ac012f41c206a0136c71daec47469f56bf5 
+MD5    095bb7fae503eea80b8a8e6eb5713da2 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3/mofowallet.osx-0.3.zip
+ 
+SHA256 ef7453542e3c7bca121f7bcaa24c1ac012f41c206a0136c71daec47469f56bf5
+MD5    095bb7fae503eea80b8a8e6eb5713da2
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJUU13sAAoJEP9gzPcARnvnYMkIALk+aL/lCekih2HEOP4POMkS
+VEwFGYd2+62k7gcZXbaI7AsymJFtIMHEqBVE8JiDuP3wqb+4OBichHONyKUzilT5
+hoEAYhT1FO/2SVKa6yoVFwvmLI5l+mWzOTEyyocKmMZFWhcuNYy4F17yqa/E8jp4
+qjQj+qGQ/iWwyfMeoXxi2xIwkV0OroZ0WU59NhAfCKqD0aszZ+0btcP5eqOn2bLW
+3/XOaWqdgFzfUF6qoMiz+z/lGE6FVRHb3wvNM/JBro+MVAlgfOOdmagZ05i6nyZf
+bIHrkjLXaS/T81yTBZDBa+HedVPemfhiDAdpdeYk0dE9C8o2kBkzKDk85vkLxpk=
+=eC/M
+-----END PGP SIGNATURE-----

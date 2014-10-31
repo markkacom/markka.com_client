@@ -1,0 +1,28 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Open wallet</h3>
+  </div>
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="walletOpenForm" class="form-horizontal">
+      <div>
+        <div class="well well-sm">To open your wallet click 'Open wallet' and select a wallet file. After selecting your wallet you will be asked for the password to that wallet.</div>
+        <div class="alert alert-danger" role="alert" ng-show="items.invalidPassword">Invalid password</div>
+      </div>
+    </form>
+  </div>
+  <div class="panel-footer">
+    <div class="form-group">
+      <div class="col-xs-6">
+        <span class="input-group-btn">
+          <span class="btn btn-primary btn-block btn-file">
+            <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Open wallet <input type="file" 
+              onchange="window.onWalletFileSelected(event)">
+          </span>
+        </span>
+      </div>
+      <div class="col-xs-6">
+        <button ng-click="dismiss()" type="button" class="btn btn-block btn-warn">Cancel</button>
+      </div>
+    </div> 
+  </div>
+</div>

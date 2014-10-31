@@ -1,0 +1,63 @@
+<br>
+<div class="row" ng-controller="StatusPlugin">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-target="#collapseStatusFIM" href>FIMK - connection status</a>
+        </h4>
+      </div>
+      <div id="collapseStatusFIM" class="panel-body collapse in">
+        <div>Connected to <strong>{{fim.test_net?'test':'main'}}-net</strong> on port <strong>{{fim.port}}</strong></div>
+        <div ng-if="!fim.server_running">Local server <strong>not running</strong></div>
+        <div ng-if="fim.server_running">Local server <strong>running</strong> version {{fim.version}}</div>
+        <div ng-if="fim.server_running">
+          <p>Blockchain download in progress <strong>{{fim.numberOfBlocks}}/{{fim.lastBlockchainFeederHeight}}</strong></p>
+          <p><progressbar class="progress-striped active" type="default" max="100" value="(fim.numberOfBlocks * 100) / fim.lastBlockchainFeederHeight" >&nbsp;</progressbar></p>
+        </div>
+        <p>Recent activity<a class="pull-right" href ui-sref="settings({id:'nodes'})">manage nodes</a></p>
+        <div ng-repeat="r in fim.requests">
+          <span>
+            <span ng-if="r.glyph_icon" class="{{r.glyph_icon}}"></span>
+            <i ng-if="r.font_awsome" class="{{r.font_awsome}}"></i>
+          </span>&nbsp;
+          <span>{{r.url}}</span>&nbsp;
+          <span ng-if="r.use_cors">
+            <span ng-if="r.glyph_icon" class="glyphicon glyphicon-copyright-mark"></span>
+          </span>
+          <span class="pull-right">{{r.methodName}} <span ng-if="r.tries_left">(retry {{10-r.tries_left}}/10)</span></span>            
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-target="#collapseStatusNXT" href>NXT - connection status</a>
+        </h4>
+      </div>
+      <div id="collapseStatusNXT" class="panel-body collapse in">
+        <div>Connected to <strong>{{nxt.test_net?'test':'main'}}-net</strong> on port <strong>{{nxt.port}}</strong></div>
+        <div ng-if="!nxt.server_running">Local server <strong>not running</strong></div>
+        <div ng-if="nxt.server_running">Local server <strong>running</strong> version {{nxt.version}}</div>
+        <div ng-if="nxt.server_running">
+          <p>Blockchain download in progress <strong>{{nxt.numberOfBlocks}}/{{nxt.lastBlockchainFeederHeight}}</strong></p>
+          <p><progressbar class="progress-striped active" type="default" max="100" value="(nxt.numberOfBlocks * 100) / nxt.lastBlockchainFeederHeight" >&nbsp;</progressbar></p>
+        </div>
+        <p>Recent activity<a class="pull-right" href ui-sref="settings({id:'nodes'})">manage nodes</a></p>
+        <div ng-repeat="r in nxt.requests">
+          <span>
+            <span ng-if="r.glyph_icon" class="{{r.glyph_icon}}"></span>
+            <i ng-if="r.font_awsome" class="{{r.font_awsome}}"></i>
+          </span>&nbsp;
+          <span>{{r.url}}</span>&nbsp;
+          <span ng-if="!r.supports_cors">
+            <span ng-if="r.glyph_icon" class="glyphicon glyphicon-copyright-mark"></span>
+          </span>
+          <span class="pull-right">{{r.methodName}} <span ng-if="r.tries_left">(retry {{10-r.tries_left}}/10)</span></span>            
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="row" ng-controller="SettingsPluginWalletController">
+  
+  <!-- No opened wallet -->
+  <div class="col-md-12" ng-show="!wallet">
+    <br>
+    <div class="well well-sm col-md-12"><p><center><strong>Click `Open wallet` to start</strong> ... if you have a wallet</center></p></div>
+    <div class="col-md-2 col-md-offset-5">
+      <span class="input-group-btn">
+        <span class="btn btn-primary btn-block btn-file">
+          <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Open wallet <input type="file" 
+            onchange="window.onWalletFileSelected(event)">
+        </span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Wallet is open and available -->
+  <div class="col-md-12" ng-show="wallet">
+        <br>
+    <div class="well well-sm col-md-12"><p><center><strong>{{label}}</strong></center></p>
+      <p><center>Below are the contents of this wallet. To backup your wallet or save it with another password please enter a desired wallet file name and click `Backup`.</center></p></div>
+    <div class="col-md-4 col-md-offset-4">
+      <div class="input-group">
+        <input class="form-control" id="wallet-file-3" placeholder="Filename" name="file" type="text" ng-model="fileName">
+        <span class="input-group-btn">
+          <button ng-click="backupWallet()" class="btn btn-default" type="button" ng-disabled="!fileName">
+            <span class="glyphicon glyphicon-floppy-save"></span>&nbsp;&nbsp;&nbsp;Backup
+          </button>
+        </span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <br>
+        <table class="table table-striped table-hover" ng-show="wallet">
+          <thead>
+            <tr><th>Name</th><th>Account</th><th></th><!-- <th>Delete</th> --></tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="e in entries">
+              <td><strong>{{e.name}}</strong></td>
+              <td><a ui-sref="accounts({id_rs:'{{e.id_rs}}'})">{{e.id_rs}}</a></td>
+              <td><a href ng-click="showSecretPhrase(e.id_rs)">Show password</a></td>
+              <td><a href ng-click="removeSecretPhrase(e.id_rs)">Remove</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

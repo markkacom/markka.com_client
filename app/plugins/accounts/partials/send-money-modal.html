@@ -1,0 +1,153 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title" ng-bind="dialogTitle"></h3>
+  </div>
+
+  <!-- Perform payment -->
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="paymentCreateForm" class="form-horizontal" novalidate>
+      <div class="well" ng-show="items.message && !sendSuccess">{{items.message}}</div>
+      <div class="alert alert-success" role="alert" ng-show="sendSuccess">Payment sent successfully. Transaction ID is {{items.transaction}}</div>
+      <div class="alert alert-{{recipientAlertLevel}}" role="alert" 
+          ng-show="recipientDescriptionHTML && !sendSuccess" ng-bind-html="recipientDescriptionHTML"></div>      
+      
+      <!-- Show sender selector control -->
+      <div class="form-group" ng-show="!items.senderRS">
+        <label for="payment-account-select1" class="control-label col-xs-2">Sender</label>
+        <div class="col-xs-10">
+          <div class="input-group">
+            <select id="payment-account-select1"
+                    class="form-control"
+                    ng-model="$parent.selectedAccount" 
+                    ng-options="a as formatAccount(a) for a in accounts" 
+                    ng-disabled="sendSuccess"
+                    ng-mouseenter="setTitle('Select sender account from list')" ng-mouseleave="setTitle(null)"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Show static sender control -->
+      <div class="form-group" ng-show="items.senderRS">
+        <label for="payment-account-calcsender" class="control-label col-xs-2">Sender</label>
+        <span class="form-control-static col-xs-10">{{formatAccount(selectedAccount)}}</span>
+      </div>
+
+      <!-- Recipient control text box --> 
+      <div class="form-group" ng-class="{ 'has-error' : paymentCreateForm.recipient.$invalid && !paymentCreateForm.recipient.$pristine }">
+        <label for="payment-recipient-1" class="control-label col-xs-2">Recipient</label>
+        <div class="col-xs-10">
+          <div class="input-group">
+
+            <!-- Recipient text box -->
+            <input class="form-control" id="payment-recipient-1" placeholder="Recipient" name="recipient" 
+              type="text" ng-model="items.recipientRS" ng-change="recipientChanged(this)" ng-disabled="sendSuccess || items.recipientReadonly"
+              ng-mouseenter="setTitle('Enter recipient account number')" ng-mouseleave="setTitle(null)" required>
+
+            <!-- Recipient select from contacts button -->
+            <span class="input-group-btn">
+              <button ng-click="selectContact()" class="btn btn-default" type="button" ng-disabled="sendSuccess || items.recipientReadonly"
+                ng-mouseenter="setTitle('Select recipient from contacts list')" ng-mouseleave="setTitle(null)">
+                <span class="glyphicon glyphicon-user"></span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipient public key -->
+      <div class="form-group" ng-show="items.showPublicKey"
+        ng-class="{ 'has-error' : paymentCreateForm.publickey.$invalid && !paymentCreateForm.publickey.$pristine }">
+        <label for="payment-publickey-1" class="control-label col-xs-2"></label>
+        <div class="col-xs-10">
+          <input class="form-control monospace" id="payment-publickey-1" placeholder="Recipient Publickey" name="publickey" 
+            type="text" ng-model="items.recipientPublicKey" ng-disabled="sendSuccess" ng-mouseenter="setTitle('This is the recipients publickey')" ng-mouseleave="setTitle(null)" required readonly>
+        </div>
+      </div>
+
+      <!-- Amount input control -->
+      <div class="form-group" ng-class="{ 'has-error' : paymentCreateForm.amount.$invalid && !paymentCreateForm.amount.$pristine }">
+        <label for="payment-amount-1" class="control-label col-xs-2">Amount</label>
+        <div class="col-xs-10">
+          <input money precision="8" class="form-control" id="payment-amount-1" placeholder="Amount" name="amount" type="text" 
+            ng-model="items.amountNXT" ng-disabled="sendSuccess" 
+            ng-mouseenter="setTitle('Enter the amount you wish to send')" ng-mouseleave="setTitle(null)" required>
+        </div>
+      </div>
+
+      <!-- Fee and deadline input control -->
+      <div class="form-group" ng-show="show.advanced"
+          ng-class="{ 'has-error' : (paymentCreateForm.fee.$invalid && !paymentCreateForm.fee.$pristine) || (paymentCreateForm.deadline.$invalid && !paymentCreateForm.deadline.$pristine) }">
+        <label for="payment-fee-1" class="control-label col-xs-2">Fee</label>
+        <div class="col-xs-4">
+          <input money precision="8" class="form-control" id="payment-fee-1" placeholder="Fee" name="fee" type="text" 
+              ng-model="items.feeNXT" ng-disabled="sendSuccess" 
+              ng-mouseenter="setTitle('Enter a fee')" ng-mouseleave="setTitle(null)" required>
+        </div>
+        <label for="payment-deadline-1" class="control-label col-xs-2">Deadline</label>
+        <div class="col-xs-4">
+          <input class="form-control" id="payment-deadline-1" placeholder="Deadline" name="deadline" 
+                type="text" ng-model="items.deadline" ng-disabled="sendSuccess"
+                ng-mouseenter="setTitle('Set the deadline minimum 1 maximum 1440')" ng-mouseleave="setTitle(null)" required>
+        </div>
+      </div>
+
+      <!-- Payment message -->
+      <div class="form-group">
+        <div class="col-xs-10 col-xs-offset-2">
+          <div class="checkbox">
+            <label>
+              <input id="payment-message-1" type="checkbox" ng-model="show.message" name="show_message"> Include message
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" ng-show="show.message">
+        <div class="col-xs-10 col-xs-offset-2">
+          <textarea rows="3" class="form-control" ng-model="items.txnMessage"></textarea>
+        </div>
+        <div class="col-xs-10 col-xs-offset-2">
+          <div class="radio">
+            <label>
+              <input type="radio" name="type" ng-model="items.txnMessageType" value="to_recipient">Message to recipient&nbsp;
+            </label>
+            <label>
+              <input type="radio" name="type" ng-model="items.txnMessageType" value="to_self">Message to self&nbsp;
+            </label>
+            <label>
+              <input type="radio" name="type" ng-model="items.txnMessageType" value="public">Public message
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Show Fee + Dealine and show public key buttons-->
+      <div class="form-group" ng-show="!show.advanced || !items.showPublicKey">
+        <span class="form-control-static col-xs-12">
+          <div class="pull-right">
+            <a href ng-click="show.advanced = !show.advanced" ng-show="!show.advanced" ng-mouseenter="setTitle('Click to adjust fee and deadline')" ng-mouseleave="setTitle(null)"><strong>Fee:</strong> {{items.feeNXT}} <strong>Deadline:</strong> {{items.deadline}}</a>&nbsp;/&nbsp;<a href ng-click="items.showPublicKey = !items.showPublicKey" ng-show="!items.showPublicKey && !items.hidePublicKey" ng-mouseenter="setTitle('Click to show recipient publickey')" ng-mouseleave="setTitle(null)"><strong>Publickey</strong></a>
+          </div>
+        </span>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-xs-12"></label>
+      </div>
+    </form>
+  </div>
+
+  <!-- Send Cancel buttons -->
+  <div class="panel-footer">
+    <div class="form-group">
+      <div class="col-xs-6">
+        <button ng-show="!sendSuccess && !isSending" class="btn btn-block btn-primary" ng-click="close()"
+          ng-disabled="!paymentCreateForm.$valid">Send Payment</button>
+        <button ng-show="isSending" class="btn btn-block btn-success" disabled>
+          <i class="fa fa-circle-o-notch fa-spin pull-left"></i>&nbsp;&nbsp;Sending
+        </button>
+        <button ng-show="sendSuccess && !isSending" class="btn btn-block btn-primary" ng-click="close()">Close</button>
+      </div>
+      <div class="col-xs-6">
+        <button ng-click="dismiss()" type="button" class="btn btn-block btn-default" ng-disabled="sendSuccess">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,183 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{dialogTitle}}</h2>
+  </div>  
+  
+  <!-- Start screen -->
+  <div ng-if="state == 0 || state === undefined">
+    <div class="panel-body">
+      <form role="form" class="form-horizontal" >
+        <div class="well well-sm">You can create a new account or add an existing account.<br>To add an existing account all you need is an account number.</div>
+        <div class="form-group">
+          <div class="col-xs-6">
+            <button class="btn btn-block btn-primary" ng-click="setState(1, TYPE_FIM)" type="button">New <strong>FIM</strong> Account</button>
+          </div>
+          <div class="col-xs-6">
+            <button class="btn btn-block btn-primary" ng-click="setState(6, TYPE_FIM)" type="button">Existing <strong>FIM</strong> Account</button>        
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-6">
+            <button class="btn btn-block btn-success" ng-click="setState(1, TYPE_NXT)" type="button">New <strong>NXT</strong> Account</button>
+          </div>
+          <div class="col-xs-6">
+            <button class="btn btn-block btn-success" ng-click="setState(6, TYPE_NXT)" type="button">Existing <strong>NXT</strong> Account</button>
+          </div>
+        </div>
+      </form>    
+    </div>
+    <div class="panel-footer">
+      <div class="form-group">
+        <div class="col-xs-6 col-xs-offset-3">
+          <button class="btn btn-block btn-default" ng-click="dismiss()" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate secret phrase -->
+  <div ng-if="state == 1">
+    <div class="panel-body">
+      <form accept-charset="UTF-8" role="form" name="accountGenerateSecretphraseForm" class="form-horizontal" novalidate>
+        <div ng-show="mouseRandom && !mouseRandomDone">
+          <div class="well well-sm">In order to create the secretphrase to access your {{symbol}} account we need to gather some random data.<br>Please keep moving your mouse until the progressbar is full.</div>
+          <div class="progress">
+            <progressbar max="100" value="mouseRandomPercent">{{mouseRandomPercent}}%</progressbar>
+          </div>
+        </div>
+        <div ng-show="!mouseRandom || mouseRandomDone">
+          <div class="well well-sm">Please write down or memorize these 12 words (their order matters).<br>This secretphrase is needed in order to access your {{symbol}} account.<br>Your address is calculated from your secretphrase and is displayed at the bottom.</div>
+          <div>
+            <textarea rows="2" class="form-control monospace col-xs-12" readonly id="accounts-plugin-secretPhrase">{{items.secretPhrase}}</textarea>
+            <span class="pull-left"><small>{{items.id_rs}}</small></span><a href class="pull-right" ng-click="generateSecretPhrase()">Generate a different secretphrase</a>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="panel-footer">
+      <div class="form-group back-next-group">
+        <div class="col-xs-3">
+          <button class="btn btn-block btn-primary" ng-click="setState(0)" type="button">Back</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn btn-block btn-primary" ng-click="setState(2)" type="button" ng-disabled="mouseRandom && !mouseRandomDone"><strong>Next</strong></button>
+        </div>
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-default" ng-click="dismiss()" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>  
+  </div>
+
+  <!-- Confirm secretPhrase -->
+  <div ng-if="state == 2">
+    <div class="panel-body">
+      <form accept-charset="UTF-8" role="form" name="accountConfirmSecretphraseForm" class="form-horizontal" novalidate>
+        <div class="well well-sm">Your secret phrase is very important! In order to be sure that you have saved it, please write your secret phrase below.</div>
+        <div>
+          <textarea rows="2" class="form-control monospace" required ui-validate=" '$value==items.secretPhrase' " 
+            ng-model="confirm_password" ui-validate-watch=" 'items.secretPhrase' " name="confirm_password"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="panel-footer">
+      <div class="form-group back-next-group">
+        <div class="col-xs-3">
+          <button class="btn btn-block btn-primary" type="button" ng-click="setState(1, engine)">Back</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn btn-block btn-primary" ng-click="setState(3)" type="button" ng-disabled="!accountConfirmSecretphraseForm.$valid">
+            <strong>Next</strong>
+          </button>
+        </div>
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-default" ng-click="dismiss()" type="button">Cancel</button>
+        </div>
+      </div>      
+    </div>
+  </div>
+
+  <!-- Save address to DB -->
+  <div ng-if="state == 3">
+    <div class="panel-body">    
+      <form accept-charset="UTF-8" role="form" name="accountSaveForm" class="form-horizontal" novalidate>
+        <div class="well well-sm">Please choose a name for this account. The name is used in your local copy of Mofo Wallet only and optionally later in your wallet if you choose so.</div>
+        <div class="alert alert-warning" role="alert"  ng-show="!!accountSaveForm.name.$error.duplicate">That name already exists</div>
+        <div class="form-group">
+          <label for="account-name-3" class="control-label col-xs-2">Name</label>
+          <div class="col-xs-10">
+            <input class="form-control" id="account-name-3" type="text" ng-model="items.name" required 
+              ui-validate="{duplicate : 'nameIsUnique($value)' }" ui-validate-watch=" 'items.name' " name="name">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="panel-footer">
+      <div class="form-group back-next-group">
+        <div class="col-xs-3">
+          <button class="btn btn-block btn-primary" ng-click="setState(2)" type="button">
+            <strong>Back</strong>
+          </button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn btn-block btn-success" ng-click="close()" type="button" 
+            ng-disabled="!accountSaveForm.$valid">Save</button>
+        </div>
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-default" ng-click="dismiss()" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add existing account -->  
+  <div ng-if="state == 6">
+    <div class="panel-body">    
+      <form accept-charset="UTF-8" role="form" name="accountAddExistingForm" class="form-horizontal" novalidate>
+        <div class="well well-sm">Please enter an existing {{symbol}} account address and optionally it's secret phrase. The name for the account is used in your local copy of Mofo Wallet only.</div>
+        <div class="alert alert-warning" role="alert"  ng-show="!!accountAddExistingForm.id_rs.$error.duplicate">That account already exists</div>
+        <div class="alert alert-warning" role="alert"  ng-show="!!accountAddExistingForm.id_rs.$error.invalid">That is not a valid {{symbol}} address</div>
+        <div class="alert alert-warning" role="alert"  ng-show="!!accountAddExistingForm.name.$error.duplicate">That name already exists</div>
+        <div class="form-group">
+          <label for="account-name-4" class="control-label col-xs-2">Name</label>
+          <div class="col-xs-10">
+            <input class="form-control" id="account-name-4" type="text" ng-model="items.name" required 
+              ui-validate="{duplicate : 'nameIsUnique($value)' }" ui-validate-watch=" 'items.name' " name="name"
+               placeholder="Name">
+          </div>
+        </div>        
+        <div class="form-group">
+          <label for="account-account-1" class="control-label col-xs-2">Account</label>
+          <div class="col-xs-10">
+            <input class="form-control" id="account-account-1" type="text" ng-model="items.id_rs" required 
+              ui-validate="{duplicate : 'idIsUnique($value)', invalid : 'isValidID($value)' }" ui-validate-watch=" 'items.id_rs' " 
+              name="id_rs" ng-change="fetchPublicKey()" placeholder="Account">
+          </div>
+        </div>
+        <div class="form-group" ng-show="items.id_rs">
+          <label for="account-pubkey-2" class="control-label col-xs-2">Publickey</label>
+          <div class="col-xs-10">
+            <input class="form-control" id="account-pubkey-2" type="text" ng-model="items.publicKey" name="publicKey" placeholder="Publickey">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="account-secr-2" class="control-label col-xs-2">Secretphrase</label>
+          <div class="col-xs-10">
+            <input class="form-control" id="account-secr-2" type="password" ng-model="items.secretPhrase" name="secretphrase" 
+              ng-change="secretPhraseChanged()" placeholder="Secretphrase">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="panel-footer">
+      <div class="form-group back-next-group">
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-primary" ng-click="close()" type="button" ng-disabled="!accountAddExistingForm.$valid">Save</button>
+        </div>
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-default" ng-click="dismiss()" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

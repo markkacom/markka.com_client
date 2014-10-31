@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en" ng-app="fim.base" ng-controller="appController">
+  <head>
+    <meta charset="utf-8">
+    <title>Mofo Wallet 0.3.0</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>.ng-cloak { display:none; }</style>
+    <!--<script>
+    var hosts = ["fimkrypto.github.io", "mofowallet.com"];
+    if (hosts.indexOf(window.location.host) != -1 && (window.location.protocol != "https:")) {
+      window.location.protocol = "https";    
+    }
+    </script>-->
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="shortcut icon" href="/favicon.ico?v=6" />
+
+    <!-- Bootswatch theme switcher -->
+    <link type="text/css" rel="stylesheet" href="plugins/themes/css/spacelab.bootstrap.min.css" id="bootswatch.style" />
+
+    <!-- build:css({.tmp,app}) styles/main.css -->
+    <link type="text/css" rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css" />
+    <link type="text/css" rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.min.css" />
+    <link type="text/css" rel="stylesheet" href="bower_components/ng-grid/ng-grid.min.css" />
+    <link type="text/css" rel="stylesheet" href="bower_components/ng-table/ng-table.css" />
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap-social.css"> 
+    <link type="text/css" rel="stylesheet" href="styles/main.css"> 
+    <!-- endbuild -->
+
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+
+     <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="scripts/lib/nw-edit-menu.js"></script>
+    <script src="scripts/lib/highstock.js"></script>
+    <script src="scripts/lib/IndexedDBShim.min.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/ng-table/ng-table.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-translate/angular-translate.min.js"></script>
+    <script src="bower_components/pako/dist/pako.min.js"></script>
+    
+    <script src="scripts/lib/iterator.js"></script>
+    <script src="scripts/lib/sprintf.js"></script>
+    <script src="scripts/lib/jsbn.js"></script>
+    <script src="scripts/lib/jsbn2.js"></script>
+    <script src="scripts/lib/nrs.util.js"></script>    
+    <script src="scripts/lib/Dexie.js"></script>
+    <script src="scripts/lib/Dexie.Observable.js"></script>
+    <script src="scripts/lib/Dexie.TableObserver.js"></script>
+    <script src="scripts/lib/nxt/utils/extensions.js"></script>
+    <script src="scripts/lib/nxt/utils/nxtaddress.js"></script>
+    <script src="scripts/lib/nxt/utils/converters.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/jssha256.js"></script>
+    <script src="scripts/lib/nxt/crypto/curve25519.js"></script>
+    <script src="scripts/lib/nxt/crypto/curve25519_.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/cryptojs/aes.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/cryptojs/sha256.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/seedrandom.js"></script>
+    <script src="scripts/lib/validate.js"></script>
+    <script src="scripts/lib/jquery.timeago.js"></script>
+    <script src="scripts/lib/Blob.js"></script>
+    <script src="scripts/lib/FileSaver.js"></script>
+
+    <script src="scripts/utils.js"></script>
+    
+    <script src="scripts/app.js"></script>
+    <script src="scripts/static.js"></script>
+    <script src="scripts/config/i18n.js"></script>
+
+    <script src="scripts/models/setting.js"></script>
+    <script src="scripts/models/account.js"></script>
+    <script src="scripts/models/contact.js"></script>
+    <script src="scripts/models/node.js"></script>
+
+    <script src="scripts/directives/money.js"></script>
+    <script src="scripts/services/server-service.js"></script>
+    <script src="scripts/services/nxt.js"></script>
+    <script src="scripts/services/nxt.util.js"></script>
+    <script src="scripts/services/modals.js"></script>
+    <script src="scripts/services/alerts.js"></script>
+    <script src="scripts/services/db.js"></script>
+    <script src="scripts/services/plugin-service.js"></script>
+    <script src="scripts/services/i18n.js"></script>
+    <script src="scripts/services/setting-service.js"></script>
+    <script src="scripts/services/corsproxy.js"></script>
+
+    <script src="scripts/config/routes.js"></script>
+    
+    <script src="scripts/controllers/app.js"></script>
+    <script src="scripts/controllers/home.js"></script>
+    <script src="scripts/controllers/secretphrase-modal.js"></script>
+
+    <!-- Accounts plugin (extends app) -->
+    <script src="plugins/accounts/config.js"></script>
+    <script src="plugins/accounts/controllers/accounts.js"></script>
+    <script src="plugins/accounts/controllers/accounts-transactions.js"></script>
+    <script src="plugins/accounts/controllers/accounts-messages.js"></script>
+    <script src="plugins/accounts/controllers/accounts-namespaced-aliases.js"></script>
+    <script src="plugins/accounts/controllers/accounts-add-modal.js"></script>
+    <script src="plugins/accounts/controllers/accounts-edit-modal.js"></script>
+    <script src="plugins/accounts/services/selectionService.js"></script>
+    <script src="plugins/accounts/controllers/receive-money-modal.js"></script>
+    <script src="plugins/accounts/controllers/send-money-modal.js"></script>
+    <script src="plugins/accounts/controllers/send-money-no-publickey-modal.js"></script>
+    <script src="plugins/accounts/controllers/send-progress.js"></script>
+
+    <!-- Inspector plugin -->
+    <script src="plugins/inspector/config.js"></script>
+    <script src="plugins/inspector/controllers/inspect.js"></script>
+
+    <!-- Forging plugin (extends accounts) -->
+    <script src="plugins/forging/config.js"></script>
+    <script src="plugins/forging/controllers/forging-start-modal.js"></script>
+
+    <!-- Namespaced Alias plugin (extends accounts) -->
+    <script src="plugins/namespaced-alias/config.js"></script>
+    <script src="plugins/namespaced-alias/controllers/namespaced-alias-create-modal.js"></script>    
+
+    <!-- Underconstruction plugin -->
+    <script src="plugins/underconstruction/config.js"></script>
+    <script src="plugins/underconstruction/controllers/main.js"></script>
+
+    <!-- Blocks plugin (extends app) -->
+    <script src="plugins/blocks/config.js"></script>
+    <script src="plugins/blocks/controllers/blocks.js"></script>
+
+    <!-- Plugins plugin (extends app) -->
+    <script src="plugins/plugins/config.js"></script>
+    <script src="plugins/plugins/controllers/plugins.js"></script>
+
+    <!-- Faucet plugin (extends plugins) -->
+    <script src="plugins/faucet/config.js"></script>
+    <script src="plugins/faucet/controllers/faucet.js"></script>
+
+    <!-- Mass pay plugin (extends plugins) -->
+    <script src="plugins/masspay/config.js"></script>
+    <script src="plugins/masspay/controllers/masspay.js"></script>  
+
+    <!-- Theme switcher (extends settings) -->
+    <script src="plugins/themes/config.js"></script>
+    <script src="plugins/themes/controllers/themes.js"></script>
+
+    <!-- Full Node plugin (extends settings) -->
+    <script src="plugins/full-node/config.js"></script>
+    <script src="plugins/full-node/controllers/full-node.js"></script>
+
+    <!-- Wallet plugin (extends settings) -->
+    <script src="plugins/wallet/config.js"></script>
+    <script src="plugins/wallet/controllers/wallet-manager.js"></script>
+    <script src="plugins/wallet/controllers/wallet-open-modal.js"></script>
+    <script src="plugins/wallet/controllers/wallet-password-modal.js"></script>
+    <script src="plugins/wallet/controllers/wallet-save-modal.js"></script>    
+
+    <!-- Contacts plugin (extends settings) -->
+    <script src="plugins/contacts/config.js"></script>
+    <script src="plugins/contacts/controllers/contacts.js"></script>
+    <script src="plugins/contacts/controllers/contacts-select-modal.js"></script>
+    <script src="plugins/contacts/controllers/contacts-add-modal.js"></script>
+
+    <!-- Database Settings plugin (extends settings) -->
+    <script src="plugins/settings-db/config.js"></script>
+    <script src="plugins/settings-db/controllers/settings-db.js"></script>
+
+    <!-- Nodes plugin (extends settings) -->
+    <script src="plugins/settings-nodes/config.js"></script>
+    <script src="plugins/settings-nodes/controllers/settings-nodes.js"></script>
+
+    <!-- Settings plugin (extends app) -->
+    <script src="plugins/settings/config.js"></script>
+    <script src="plugins/settings/controllers/settings.js"></script>
+
+    <!-- Alert plugin -->
+    <script src="plugins/alerts/config.js"></script>
+    <script src="plugins/alerts/controllers/alert-modal.js"></script>    
+    <script src="plugins/alerts/controllers/alert-confirm-modal.js"></script>
+    <script src="plugins/alerts/controllers/alert-prompt-modal.js"></script>
+    <script src="plugins/alerts/controllers/alert-wait-modal.js"></script>
+
+    <!-- Fim engine (extends system) -->
+    <script src="plugins/fim-engine/config.js"></script>
+    <script src="plugins/fim-engine/controllers/status.js"></script>
+
+    <!-- Nxt engine (extends system) -->
+    <script src="plugins/nxt-engine/config.js"></script>
+    <script src="plugins/nxt-engine/controllers/status.js"></script>
+
+    <!-- endbuild -->
+
+  </head>
+  <body>
+
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container ng-cloak" ng-cloak>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" ui-sref="home"><strong>Mofo</strong>Wallet</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li ng-repeat="p in plugins" ng-class="{active: stateIncludes(p.sref||p.extends)}">
+
+              <!-- No submenu support -->
+              <a href ng-if="!p.sub_menu && !p.sub_menu_html" ui-sref="{{p.sref}}"><span class="{{p.icon_class}}"></span>&nbsp;&nbsp;{{p.label}}</a>
+
+              <!-- This header is shared between simple submenu and html submenu states -->
+              <a href ng-if="p.sub_menu || p.sub_menu_html" class="dropdown-toggle" data-toggle="dropdown" ng-click="p.sub_menu_activate && p.sub_menu_activate()">
+                <span class="{{p.icon_class}}"></span>&nbsp;&nbsp;{{p.label}}&nbsp;<span class="caret"></span>
+              </a>
+
+              <!-- Simple key value based submenu -->
+              <ul ng-if="p.sub_menu" class="dropdown-menu" role="menu">
+                <li ng-repeat="sub in p.sub_menu()" ui-sref="{{sub.sref}}">
+                  <a ng-if="sub.label" href>{{sub.label}}</a>
+                  <a ng-if="sub.label_pair" href>
+                    <p><h4>{{sub.label_pair[0]}}<small class="pull-right">{{sub.label_pair[2]}}</small>
+                      <br><br><small class="pull-right">{{sub.label_pair[1]}}</small><br></h4><p>
+                  </a>
+                </li>
+              </ul>
+
+              <!-- Submenu based on HTML -->
+              <ul ng-if="p.sub_menu_html" class="dropdown-menu" role="menu">
+                <li ng-repeat="sub in p.sub_menu_html()">
+                  <a ng-if="sub.sref" href ui-sref="{{sub.sref}}" ng-bind-html="sub.html"></a>
+                  <a ng-if="sub.click" href ng-click="sub.click()" ng-bind-html="sub.html"></a>
+                  <a ng-if="p.sub_menu" href class="dropdown-toggle" data-toggle="dropdown" ng-click="p.sub_menu_activate && p.sub_menu_activate()">
+                    <span class="{{p.icon_class}}"></span>&nbsp;&nbsp;{{p.label}}&nbsp;<span class="caret"></span>
+                  </a>
+                  <ul ng-if="p.sub_menu" class="dropdown-menu" role="menu">
+                    <li ng-repeat="sub2 in sub.sub_menu()" ng-click="sub2.click()">{{sub2.label}}</li>
+                  </ul>
+                </li>
+              </ul>
+
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Shown on xs (mobiles) only -->
+<!--     <div class="visible-xs-block ng-cloak">
+      <div class="collapse navbar-collapse" collapsed="navCollapsed">
+        <ul class="nav navbar-nav">
+          <li ng-repeat="p in plugins" ng-class="{active: stateIncludes(p.sref||p.extends)}">
+            <a href ng-if="!p.sub_menu && !p.sub_menu_html" ui-sref="{{p.sref}}"><span class="{{p.icon_class}}"></span>&nbsp;&nbsp;{{p.label}}</a>
+            <a href ng-if="p.sub_menu || p.sub_menu_html" class="dropdown-toggle" data-toggle="dropdown" ng-click="p.sub_menu_activate && p.sub_menu_activate()">
+              <span class="{{p.icon_class}}"></span>&nbsp;&nbsp;{{p.label}}&nbsp;<span class="caret"></span>
+            </a>
+            <ul ng-if="p.sub_menu" class="dropdown-menu" role="menu">
+              <li ng-repeat="sub in p.sub_menu()" ui-sref="{{sub.sref}}">
+                <a ng-if="sub.label" href>{{sub.label}}</a>
+                <a ng-if="sub.label_pair" href>
+                  <p><h4>{{sub.label_pair[0]}}<small class="pull-right">{{sub.label_pair[2]}}</small>
+                    <br><br><small class="pull-right">{{sub.label_pair[1]}}</small><br></h4><p>
+                </a>
+              </li>
+            </ul>
+            <ul ng-if="p.sub_menu_html" class="dropdown-menu" role="menu">
+              <li ng-repeat="sub in p.sub_menu_html()">
+                <a ng-if="sub.sref" href ui-sref="{{sub.sref}}" ng-bind-html="sub.html"></a>
+                <a ng-if="sub.click" href ng-click="sub.click()" ng-bind-html="sub.html"></a>
+                <a ng-if="p.sub_menu" href class="dropdown-toggle" data-toggle="dropdown" ng-click="p.sub_menu_activate && p.sub_menu_activate()">
+                  <span class="{{p.icon_class}}"></span>&nbsp;&nbsp;{{p.label}}&nbsp;<span class="caret"></span>
+                </a>
+                <ul ng-if="p.sub_menu" class="dropdown-menu" role="menu">
+                  <li ng-repeat="sub2 in sub.sub_menu()" ng-click="sub2.click()">{{sub2.label}}</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+ -->
+    <!-- MAIN CONTENT -->
+    <div class="container ng-cloak scrollable-content" ng-cloak>
+      <div ui-view></div>
+      <div style="position: absolute; z-index: 10; top: 80px; right: 10px; background-color: transparent; " 
+        ng-show="alerts.length">
+        <alert ng-repeat="a in alerts" type="{{a.type}}" style="max-width: 500px; min-width: 500px;">
+          <strong ng-bind="a.msg.split('|')[0]"></strong>
+        </alert>
+      </div>
+    </div>
+
+    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+      <div class="container">
+        <div ng-repeat="p in systemPlugins">
+          <ng-include src="p.templateURL"></ng-include>
+        </div>
+      </div>
+    </nav>
+
+  </body> 
+</html>

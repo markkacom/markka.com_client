@@ -1,0 +1,8 @@
+<table ng-table="tableParams" class="table table-striped table-condensed table-hover">
+  <tr ng-repeat="t in $data">
+    <td data-title="'Sender'" header-class="text-left">{{t.senderRS}}</td>
+    <td data-title="'Recipient'" header-class="text-left">{{t.recipientRS}}</td>
+    <td data-title="'Content'" header-class="text-left">{{t.content}}</td>
+    <td data-title="'Date'" header-class="text-left">{{t.date}}</td>
+  </tr>
+</table>

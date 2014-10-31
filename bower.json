@@ -1,0 +1,29 @@
+{
+  "name": "dgexbase",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular": "1.2.23",
+    "json3": "~3.3.1",
+    "es5-shim": "~3.1.0",
+    "bootstrap": "~3.1.1",
+    "angular-resource": "1.2.23",
+    "angular-cookies": "1.2.23",
+    "angular-sanitize": "1.2.23",
+    "angular-animate": "1.2.23",
+    "angular-touch": "1.2.23",
+    "angular-ui-router": "0.2.10",
+    "angular-bootstrap": "0.11.0",
+    "angular-loading-bar": "0.5.1",
+    "ng-grid": "2.0.11",
+    "angular-translate": "2.2.0",
+    "ng-table": "0.3.2",
+    "angular-ui-select": "0.7.0",
+    "font-awesome": "4.2.0",
+    "pako": "0.2.5"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.2.23",
+    "angular-scenario": "1.2.23"
+  },
+  "appPath": "app"
+}

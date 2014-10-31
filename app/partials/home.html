@@ -1,0 +1,183 @@
+<!-- partial-home.html -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body">     
+        <center>
+          <!-- <img src="images/mofo_logo.png" style="width:200px"> -->
+          <h1>Mofo Wallet</h1>
+          <h4><small>Multicurrency Operating Financial Offspring</small></h4>
+          <br>
+          <div class="clearfix">
+            <span class="btn btn-primary btn-lg btn-file" style="margin-right: 5px">
+              <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Open wallet <input type="file" 
+                onchange="window.onWalletFileSelected(event)">
+            </span>
+            <span class="btn btn-primary btn-lg" ng-click="createAccount()" style="margin-left: 5px">
+              <span class="glyphicon glyphicon-credit-card"></span>&nbsp;&nbsp;&nbsp;Create account
+            </span>
+            <span ng-if="isNodeJS" class="btn btn-primary btn-lg" ui-sref="settings({id:'full-node'})" style="margin-left: 10px">
+              <span class="glyphicon glyphicon-play"></span>&nbsp;&nbsp;&nbsp;Start server
+            </span>
+          </div>
+          <div>
+            <br>Current theme: <strong>{{selectedThemeName}}</strong>&nbsp;&nbsp;<a href ui-sref="settings({id:'themes'})">I'm in a different mood</a>
+          </div>
+        </center>
+        <br><br><br><br>
+        <div class="col-xs-3">
+          <center>
+            <figure class="pull-left well" style="width:240px; height:200px">
+              <figcaption><label>Powered by FIMKrypto</label></figcaption>              
+              <br><img src="images/fimk.png" class="main_logo" style="width:200px"><br>
+            </figure>
+          </center>
+        </div>
+        <div  class="col-xs-3">
+          <center>
+            <figure class="well" style="width:240px; height:200px">
+              <figcaption><label>Compatible with FIMK</label></figcaption>              
+              <br><img src="images/fimk_coin.png" class="main_logo" style="width:70px"><br>
+            </figure>
+          </center>
+        </div>        
+        <div  class="col-xs-3">
+          <center>
+            <figure class="well" style="width:240px; height:200px">
+              <figcaption><label>Compatible with NXT</label></figcaption>
+              <br><img src="images/nxt.png" class="main_logo" style="width:130px"><br>
+            </figure>
+          </center>
+        </div>
+        <div  class="col-xs-3">
+          <center>
+            <figure class="pull-right well" style="width:240px; height:200px">
+              <figcaption><label>Sponsored by DGEX</label></figcaption>              
+              <br><img src="images/dgex.gif" class="main_logo" style="width:150px"><br>
+            </figure>
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--
+<div class="panel panel-default" ng-if="!isNodeJS">
+  <div class="panel-body">  
+    <div class="row">  
+      <div class="col-md-2 col-md-offset-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c1=true" ng-mouseover="c1 = false" ng-mouseleave="c1 = true">
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-money fa-3x fa-fw"></i>
+            </span>
+            <h4>Multi Currency</h4>
+            <div collapse="c1"><h4>We support NXT and FIMK, other currencies are planned.</h4></div>
+          </center>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c2=true" ng-mouseover="c2 = false" ng-mouseleave="c2 = true">
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-plug fa-3x fa-fw"></i>
+            </span>
+            <h4>Plugin Based</h4>
+            <div collapse="c2"><h4>The plugin based architecture allows anyone to write plugins for mofowallet</h4></div>
+          </center>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c3=true" ng-mouseover="c3 = false" ng-mouseleave="c3 = true">
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-space-shuttle fa-3x fa-fw"></i>
+            </span>
+            <h4>Thin/Fat</h4>
+            <div collapse="c3"><h4>Supports running as thin (remote) or fat (downloads blockchain) client</h4></div>
+          </center>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c4=true" ng-mouseover="c4 = false" ng-mouseleave="c4 = true">
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-line-chart fa-3x fa-fw"></i>
+            </span>
+            <h4>Asset Exchange</h4>
+            <div collapse="c4"><h4>This feature is under development</h4></div>
+          </center>
+        </div>
+      </div>    
+    </div>
+    <div class="row">  
+      <div class="col-md-2 col-md-offset-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c5=true" ng-mouseover="c5 = false" ng-mouseleave="c5 = true">
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-briefcase fa-3x fa-fw"></i>
+            </span>
+            <h4>wallet.dat</h4>
+            <div collapse="c5"><h4>Supports encrypted wallet.dat to backup and restore your secret keys on local workstation</h4></div>
+          </center>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c6=true" ng-mouseover="c6 = false" ng-mouseleave="c6 = true">
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-lock fa-3x fa-fw"></i>
+            </span>
+            <h4>Encryption</h4>
+            <div collapse="c6"><h4>Browser side encryption, your secret keys are never transmitted to the internet</h4></div>
+          </center>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c7=true" ng-mouseover="c7 = false" ng-mouseleave="c7 = true" >
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-users fa-3x fa-fw"></i>
+            </span>
+            <h4>Multi Account</h4>
+            <div collapse="c7"><h4>Supports controlling multiple <strong>FIMK and NXT</strong> accounts</h4></div>
+          </center>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="thumbnail" style="border: 0px" ng-init="c8=true" ng-mouseover="c8 = false" ng-mouseleave="c8 = true">
+          <center>
+            <span class="btn btn-default btn-lg">
+              <i class="fa fa-cubes fa-3x fa-fw"></i>
+            </span>
+            <h4>Block Explorer</h4>
+            <div collapse="c8"><h4>Built in block explorer for all supported currencies</h4></div>
+          </center>
+        </div>        
+      </div>    
+    </div>  
+  </div>
+  <div class="row">      
+    <div class="col-md-12">  
+      <center>
+        <br>
+        Mofowallet is powered by
+        <br>
+        <p><a rel="external" href="http://fimk.fi" target="_blank"><img src="images/fimk.png" class="main_logo" style="width:200px"></a></p>
+        <br>
+        <p>Are you a bad mofo? Come join us <a rel="external" target="_blank" href="http://mofowallet.com">http://mofowallet.com</a></p>
+        <p>
+          <div class="clearfix">
+            <a rel="external" href="https://twitter.com/fimkrypto" target="_blank" class="btn btn-social-icon btn-twitter"><span class="fa fa-twitter"></span></a>
+            <a rel="external" href="https://www.facebook.com/FIMKrypto" target="_blank" 
+            class="btn btn-social-icon btn-facebook"><span class="fa fa-facebook"></span></a>
+            <a rel="external" href="http://www.reddit.com/r/FIMK/" target="_blank" class="btn btn-social-icon btn-reddit"><span class="fa fa-reddit"></span></a>
+            <a rel="external" href="https://github.com/fimkrypto" target="_blank" class="btn btn-social-icon btn-github"><span class="fa fa-github"></span></a>
+          </div>
+        </p>
+        <br>        
+      </center>
+    </div>
+  </div>
+</div>
+-->

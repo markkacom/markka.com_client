@@ -1,0 +1,57 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{items.update?'Edit':'Add'}} Contact</h3>
+  </div>
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="contactAddForm" class="form-horizontal">
+      <div class="well well-sm"><p><center><strong>{{items.message}}</strong></center></p></div>
+      <div class="alert alert-warning" role="alert"  ng-show="!!contactAddForm.id_rs.$error.duplicate || !!contactAddForm.name.$error.duplicate">That contact already exists</div>
+      <div class="alert alert-warning" role="alert"  ng-show="!!contactAddForm.id_rs.$error.invalid">That is not a valid FIM or NXT address</div>
+      <div class="form-group">
+        <label for="contact-add-id-1" class="control-label col-xs-2">Account</label>
+        <div class="col-xs-10">
+          <input class="form-control" id="contact-add-id-1" placeholder="Account" name="id_rs" type="text" 
+            ng-model="items.id_rs" ng-disabled="id_rs_readonly" required
+            ui-validate="{duplicate : 'items.update || idIsUnique($value)', invalid : 'items.update || idIsValid($value)' }" 
+            ui-validate-watch=" 'items.id_rs' ">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="contact-add-name-1" class="control-label col-xs-2">Name</label>
+        <div class="col-xs-10">
+          <input class="form-control" id="contact-add-name-1" placeholder="Name" name="name" type="text" 
+            ng-model="items.name" ng-change="nameChanged()" required ng-disabled="name_readonly"
+            ui-validate="{duplicate : 'items.update || nameIsUnique($value)' }" ui-validate-watch=" 'items.name' ">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="contact-add-email-1" class="control-label col-xs-2">Email *</label>
+        <div class="col-xs-10">
+          <input class="form-control" id="contact-add-email-1" placeholder="Email" name="email" type="text" 
+            ng-model="items.email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="contact-add-website-1" class="control-label col-xs-2">Website *</label>
+        <div class="col-xs-10">
+          <input class="form-control" id="contact-add-website-1" placeholder="Website" name="website" type="text" 
+            ng-model="items.website">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="alert alert-danger form-control" role="alert" ng-show="items.errorMessage">{{errorMessage}}</div>
+      </div>      
+      <div class="form-group">
+        <label class="control-label col-xs-12"></label>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-primary" ng-click="close()" ng-disabled="!contactAddForm.$valid">Save Contact</button>
+        </div>
+        <div class="col-xs-6">
+          <button ng-click="dismiss()" type="button" class="btn btn-block btn-default">Cancel</button>
+        </div>
+      </div>  
+    </form>
+  </div>
+</div>

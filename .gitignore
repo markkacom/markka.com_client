@@ -1,0 +1,13 @@
+node_modules
+dist
+.tmp
+.sass-cache
+.zip
+deploy.rb
+app/bower_components
+cache
+.log
+npm-debug.log
+package.sh
+mofowallet.sh
+corsproxy.php

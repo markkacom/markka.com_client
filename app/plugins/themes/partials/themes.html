@@ -1,0 +1,25 @@
+<div class="row" ng-controller="SettingsThemesController">
+  <div class="col-md-12">
+    <div class="well well-sm">Select a theme from the list. MofoWallet will remember your choice and use it the next time you start up mofowallet.</div>
+    <div class="col-md-10 col-md-offset-1">
+    <div class="col-xs-3" ng-repeat="t in themes">
+      <button ng-click="changeTheme(t)" type="button" class="btn btn-default btn-block" style="text-align:left;" ng-class="{'btn-primary':(t==selectedTheme)}">
+        <span class="glyphicon glyphicon-fire"></span>&nbsp;&nbsp;<strong>{{t.label}}</strong>
+      </button>
+      <br>
+    </div>
+    <div class="col-md-1"></div>
+
+<!-- 
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="glyphicon glyphicon-fire"></span>&nbsp;&nbsp;Current Theme: <strong>{{selectedTheme.label}}</strong>&nbsp;<span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="t in themes" ng-class="{active:(t==selectedTheme)}">
+          <a href ng-click="changeTheme(t)">{{t.label}}</a>
+        </li>
+      </ul>
+    </div> -->
+  </div>
+</div>
