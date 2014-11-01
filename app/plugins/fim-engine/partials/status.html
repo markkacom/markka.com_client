@@ -28,7 +28,7 @@
         </button>
         <div class="panel panel-default dropdown-menu">
           <div class="panel-body status-popup">
-            <div>Connected to <strong>{{net_name}}-net</strong> on port <strong>{{port}}</strong></div>
+            <div>Connected to <strong>{{net_name}}</strong> on port <strong>{{port}}</strong></div>
             <div ng-if="!server_running">Local server <strong><a href ui-sref="settings({id: 'full-node'})">not running</a></strong></div>
             <div ng-if="server_running">Local server <strong><a href ui-sref="settings({id: 'full-node'})">running</a></strong> version {{version}} <span class="pull-right">{{blockheight}}</span></div>
             <div ng-if="server_running && downloading">

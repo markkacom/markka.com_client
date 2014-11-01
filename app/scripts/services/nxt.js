@@ -868,7 +868,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         console.log(node.url+' START.'+requestType, args);        
         this.http(node, {
                     method: 'POST',
-                    dataType: 'json',
+                    /*dataType: 'json',*/
                     /* Proxify the url if needed */
                     url: force_cors ? corsproxy.proxify(node, this.create_url(node, requestType)) : this.create_url(node, requestType),
                     data: qs,
@@ -906,6 +906,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                     /* Proxify the url if needed */
                     url: force_cors ? corsproxy.proxify(node, url) : url,
                     timeout: this.createTimeout(requestType, _canceller ? _canceller.promise : canceller.promise)
+
                   }).then(deferred.resolve, deferred.reject);
       }
       else {

@@ -27,4 +27,9 @@ module.run(function ($log, $rootScope, serverService) {
   $log.log('fim.base application started');
 });
 
+module.config(function($httpProvider) {
+  delete $httpProvider.defaults.headers.common['X-Requested-With'];
+});
+
+
 })();

@@ -1,0 +1,4 @@
+Mofowallet update
+
+* replace public nodes with SSL versions
+* only select nodes with good CORS support

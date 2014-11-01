@@ -1,6 +1,12 @@
 (function () {
 'use strict';
 
+try {
+  var isNodeJS = typeof require == 'function' && require('child_process');
+} catch (e) {
+  var isNodeJS = false;
+}
+
 function update(src, config) {
   var store = angular.copy(src);
   if (config.update) {
@@ -81,6 +87,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout) {
   db.on('error', alerts.catch("Database error - see error console for details"));
   db.on('populate', function () {
     var nodes = {
+
       /* FIM test net */
       6886: [
         'http://178.62.176.45|CORS',
@@ -89,37 +96,49 @@ module.factory('db', function ($log, $injector, alerts, $timeout) {
 
       /* FIM main net */
       7886: [
-        'http://5.101.102.197|CORS',
-        'http://5.101.102.199|CORS',
-        'http://5.101.102.200|CORS',
-        'http://5.101.102.201|CORS',
-        'http://5.101.102.202|CORS',
-        'http://5.101.102.203|CORS'
+        'https://wallet.fimk.fi|CORS',
+        'https://forum.fimk.fi|CORS',
+        'https://fim1.mofowallet.org|CORS',
+        'https://fim2.mofowallet.org|CORS',
+        'https://fim3.mofowallet.org|CORS',
+        'https://fim4.mofowallet.org|CORS',
+        'https://fim5.mofowallet.org|CORS',
+        'https://fim6.mofowallet.org|CORS',
+        'https://fim7.mofowallet.org|CORS',
+        'https://fim8.mofowallet.org|CORS',
+        'https://fim9.mofowallet.org|CORS',
+        'https://fim10.mofowallet.org|CORS',
+        'https://fim11.mofowallet.org|CORS',
+        'https://fim12.mofowallet.org|CORS',
       ],
 
       /* NXT main net */
       7876: [
-        /* FIMKrypto nodes */
-        'http://178.62.215.224|CORS',
-        'http://178.62.217.230|CORS',
-        'http://107.170.64.174|CORS',
+        'https://wallet.fimk.fi|CORS',
+        'https://forum.fimk.fi|CORS',
+        'https://nxt1.mofowallet.org|CORS',
+        'https://nxt2.mofowallet.org|CORS',
+        'https://nxt3.mofowallet.org|CORS',
+        'https://nxt4.mofowallet.org|CORS',
+      ]
+    };
 
+    if (isNodeJS) {
+      nodes[7876] = nodes[7876].concat([
         'http://allbits.vps.nxtcrypto.org|CORS',
         'http://jefdiesel.vps.nxtcrypto.org',
         'http://vps3.nxtcrypto.org',
-        'http://rdanneskjoldr.vps.nxtcrypto.org|CORS',
         'http://xeqtorcreed.vps.nxtcrypto.org',
         'http://abctc.vps.nxtcrypto.org',
         'http://bitsy08.vps.nxtcrypto.org|CORS',
         'http://bitsy09.vps.nxtcrypto.org|CORS',
         'http://bitsy02.vps.nxtcrypto.org|CORS',
         'http://bitsy10.vps.nxtcrypto.org|CORS',
-        'http://xeqtorcreed2.vps.nxtcrypto.org',
         'http://lyynx.vps.nxtcrypto.org|CORS',
-        'http://samson.vps.nxtcrypto.org',
-        'http://bitsy06.vps.nxtcrypto.org|CORS'
-      ]
-    };
+        'http://samson.vps.nxtcrypto.org'
+      ]);
+    }
+
     angular.forEach(nodes, function (list, port) {
       angular.forEach(list, function (url) {
         var t = url.split('|');

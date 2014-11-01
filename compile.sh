@@ -26,7 +26,7 @@
 #
 # ##############################################################################
 
-VERSION=0.3
+VERSION=0.3.1
 BASE=mofowallet
 
 grunt nodewebkit
@@ -119,3 +119,135 @@ zip -qr -9 ../../dist/releases/$BASE.osx-$VERSION.zip .
 cd ../..
 
 echo "$BASE.osx-$VERSION generated successfully"
+
+# ==============================================================================
+# Package it all up
+# ==============================================================================
+
+DATE=`date +%Y-%m-%d`
+
+TARGET_WIN="$BASE.windows-$VERSION.zip"
+TARGET_LIN="$BASE.linux-$VERSION.zip"
+TARGET_MAC="$BASE.osx-$VERSION.zip"
+
+# The version number is used to pick up the changelog which describes the release
+CHANGELOG="changelogs/mofowallet-$VERSION.txt"
+ANNOUNCEMENT="announcements/mofowallet-$VERSION.txt"
+
+rm -f $ANNOUNCEMENT
+
+SHA_SUM_1=`sha256sum "dist/releases/$TARGET_WIN"`
+MD5_SUM_1=`md5sum "dist/releases/$TARGET_WIN"`
+SHA_SUM_1=${SHA_SUM_1%\ *}
+MD5_SUM_1=${MD5_SUM_1%\ *}
+
+SHA_SUM_2=`sha256sum "dist/releases/$TARGET_LIN"`
+MD5_SUM_2=`md5sum "dist/releases/$TARGET_LIN"`
+SHA_SUM_2=${SHA_SUM_2%\ *}
+MD5_SUM_2=${MD5_SUM_2%\ *}
+
+SHA_SUM_3=`sha256sum "dist/releases/$TARGET_MAC"`
+MD5_SUM_3=`md5sum "dist/releases/$TARGET_MAC"`
+SHA_SUM_3=${SHA_SUM_2%\ *}
+MD5_SUM_3=${MD5_SUM_2%\ *}
+
+BANNER=$(cat <<'END_HEREDOC'
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : #VERSION#          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : #DATE#          
+| $$        | $$  | $$$$  /$$$$                  
+| $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
+| $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
+| $$        | $$  | $$\  $ | $$          http://forum.fimk.fi          
+| $$       /$$$$$$| $$ \/  | $$          https://github.com/fimkrypto/mofowallet
+|__/      |______/|__/     |__/                 
+                     /$$                                       /$$              
+                    | $$                                      | $$              
+                    | $$   /$$  /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$    /$$$$$$ 
+                    | $$  /$$/ /$$__  $$| $$  | $$ /$$__  $$|_  $$_/   /$$__  $$
+                    | $$$$$$/ | $$  \__/| $$  | $$| $$  \ $$  | $$    | $$  \ $$
+                    | $$_  $$ | $$      | $$  | $$| $$  | $$  | $$ /$$| $$  | $$
+                    | $$ \  $$| $$      |  $$$$$$$| $$$$$$$/  |  $$$$/|  $$$$$$/
+                    |__/  \__/|__/       \____  $$| $$____/    \___/   \______/ 
+                                         /$$  | $$| $$                          
+                                        |  $$$$$$/| $$                          
+                                         \______/ |__/            
+
+
+                                presents:
+
+
+             /$$      /$$            /$$$$$$                               
+            | $$$    /$$$           /$$__  $$                              
+            | $$$$  /$$$$  /$$$$$$ | $$  \__//$$$$$$                       
+            | $$ $$/$$ $$ /$$__  $$| $$$$   /$$__  $$                      
+            | $$  $$$| $$| $$  \ $$| $$_/  | $$  \ $$                      
+            | $$\  $ | $$| $$  | $$| $$    | $$  | $$                      
+            | $$ \/  | $$|  $$$$$$/| $$    |  $$$$$$/                      
+            |__/     |__/ \______/ |__/     \______/                       
+                                                                           
+                                                                           
+                                                                           
+                         /$$      /$$           /$$ /$$             /$$    
+                        | $$  /$ | $$          | $$| $$            | $$    
+                        | $$ /$$$| $$  /$$$$$$ | $$| $$  /$$$$$$  /$$$$$$  
+                        | $$/$$ $$ $$ |____  $$| $$| $$ /$$__  $$|_  $$_/  
+                        | $$$$_  $$$$  /$$$$$$$| $$| $$| $$$$$$$$  | $$    
+                        | $$$/ \  $$$ /$$__  $$| $$| $$| $$_____/  | $$ /$$
+                        | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
+                        |__/     \__/ \_______/|__/|__/ \_______/   \___/  
+
+END_HEREDOC
+)
+
+cat > $ANNOUNCEMENT <<EOF
+$BANNER
+
+`cat $CHANGELOG`
+
+
+
+                             ~~~ DOWNLOAD ~~~
+
+https://github.com/fimkrypto/mofowallet/releases/download/v$VERSION/$TARGET_WIN
+ 
+SHA256 $SHA_SUM_1
+MD5    $MD5_SUM_1
+
+https://github.com/fimkrypto/mofowallet/releases/download/v$VERSION/$TARGET_LIN
+ 
+SHA256 $SHA_SUM_2
+MD5    $MD5_SUM_2
+
+https://github.com/fimkrypto/mofowallet/releases/download/v$VERSION/$TARGET_MAC
+ 
+SHA256 $SHA_SUM_3
+MD5    $MD5_SUM_3
+
+EOF
+
+orig=#VERSION#
+sed -i "s/${orig}/${VERSION}/g" $ANNOUNCEMENT
+
+orig=#DATE#
+sed -i "s/${orig}/${DATE}/g" $ANNOUNCEMENT
+
+gpg --clearsign --batch $ANNOUNCEMENT
+mv $ANNOUNCEMENT.asc $ANNOUNCEMENT
+
+echo "========================================================================="
+echo "== Successfully generated new version"
+echo "=="
+echo "=="
+echo "== Checklist.."
+echo "=="
+echo "== 1. Did you update the version number in README.txt ?"
+echo "=="
+echo "=="
+echo "== Final actions.."  
+echo "=="
+echo "== 1. Github release: https://github.com/fimkrypto/fimk/releases/tag/v$VERSION"
+echo "== 2. Update version aliases"
+echo "==    nrsversion=$VERSION $SHA_SUM"
+echo "=="
+echo "=="
+echo "========================================================================="
