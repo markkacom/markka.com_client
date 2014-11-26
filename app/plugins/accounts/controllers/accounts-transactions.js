@@ -3,19 +3,17 @@
 var module = angular.module('fim.base');
 
 module.controller('AccountsPluginTransactionsController', 
-  function($scope, alerts, $timeout, ngTableParams, nxt, modals, plugins, db, $filter) {
+  function($scope, alerts, $timeout, ngTableParams, nxt, modals, plugins, db, $filter, requests, transactionService) {
 
-  /* Show detail modal for account */
-  $scope.showAccount = function (id_rs) {
-    plugins.get('accounts').detail(id_rs);
-  }; 
+  var podium = requests.theater.createPodium('accounts.transactions', $scope);
 
-  $scope.showTransaction = function (id) {
-    plugins.get('blocks').showTransaction($scope.selectedAccount.engine, id);
-  }
+  $scope.$on('transaction-length-changed', function(event, mass) { 
+    $scope.$evalAsync(function () {
+      $scope.tableParams.total($scope.transactions.length);
+      $scope.tableParams.reload(); 
+    });
+  });
 
-  /* ng-table config XXX - TODO look into https://datatables.net/ instead */ 
-  // $scope.transactions = [];
   $scope.tableParams = new ngTableParams({
       page: 1,   // show first page
       count: 10  // count per page
@@ -23,8 +21,13 @@ module.controller('AccountsPluginTransactionsController',
     {
       total: 0,   // length of data
       getData: function($defer, params) {
+
         if ($scope.selectedAccount) {
           var list = $scope.transactions.slice((params.page() - 1) * params.count(), params.page() * params.count());
+
+          /* See if there are more transactions to download */
+          var api = nxt.get($scope.selectedAccount.id_rs);
+          transactionService.getTransactionsAfter($scope.selectedAccount.id_rs, api, podium, (params.page() - 1) * params.count(), params.count()+1);
         }
         else {
           var list = [];
@@ -60,82 +63,5 @@ module.controller('AccountsPluginTransactionsController',
       }
     }
   );
-
-  $scope.$on('transaction-length-changed', function(event, mass) { 
-    $scope.$evalAsync(function () {
-      $scope.tableParams.total($scope.transactions.length);
-      $scope.tableParams.reload(); 
-    });
-  });
-
-  // function find(array, id, value) {
-  //   for(var i=0,l=array.length; i<l; i++) { if (array[i][id] == value) { return i; } }
-  //   return -1;
-  // }
-
-  // function sorter(a,b) {
-  //   return b.timestamp - a.timestamp;
-  // }
-
-  // function filter(array) {
-  //   if ($scope.selectedAccount) {
-  //     var id_rs = $scope.selectedAccount.id_rs
-  //     return array.filter(function (t) { return t.senderRS == id_rs || t.recipientRS == id_rs });
-  //   }
-  //   return [];
-  // }
-
-  // var observer = null;
-  // $scope.$watch('selectedAccount', function (selectedAccount) {    
-  //   $scope.transactions = [];
-  //   if (!selectedAccount) return;
-
-  //   /* Load transactions from database */
-  //   var engine = nxt.get($scope.selectedAccount.id_rs).engine;
-  //   engine.db.transactions.where('senderRS').equals($scope.selectedAccount.id_rs).
-  //                        or('recipientRS').equals($scope.selectedAccount.id_rs).toArray().then(
-  //     function (transactions) {
-  //       $timeout(function () {
-  //         transactions.sort(sorter);
-  //         $scope.transactions = transactions;
-  //         $scope.tableParams.total(transactions.length);
-  //         $scope.tableParams.reload(); 
-  //       });
-  //     }
-  //   ).catch(alerts.catch("Could not load transactions from database"));
-
-  //   /* Must use same observer */
-  //   observer = observer || {
-  //     create: function (transactions) {
-  //       $scope.transactions = $scope.transactions.concat(filter(transactions));
-  //       $scope.transactions.sort(sorter);
-  //     },
-  //     update: function (transactions) {
-  //       angular.forEach(filter(transactions), function (t) {
-  //         var index = find($scope.transactions, 'transaction', t.transaction);
-  //         if (index != -1) {
-  //           angular.extend($scope.transactions[index], t);
-  //         }
-  //       });
-  //     },
-  //     remove: function (transactions) {
-  //       angular.forEach(filter(transactions), function (t) {
-  //         var index = find($scope.transactions, 'transaction', t.transaction);
-  //         if (index != -1) {
-  //           $scope.transactions.splice(index, 1);
-  //         }
-  //       });
-  //     },
-  //     finally: function () { /* called from $timeout */
-  //       $scope.tableParams.total($scope.transactions.length);
-  //       $scope.tableParams.reload(); 
-  //     }
-  //   };
-
-  //   /* Register transactions CRUD observer */
-  //   engine.db.transactions.addObserver($scope, observer);
-  // });
-
 });
-
 })();

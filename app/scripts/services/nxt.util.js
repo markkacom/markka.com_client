@@ -128,6 +128,11 @@ module.run(function (nxt) {
     return (neg?'-':'')+format.join(',')+(amount.length==2?('.'+amount[1]):'');
   }
 
+  function timestampToDate(timestamp) {
+    var date = new Date(Date.UTC(2013, 10, 24, 12, 0, 0, 0) + timestamp * 1000);
+    return date;
+  }
+
   /**
    * Formats a timestamp in NXT epoch format to a Date string
    * @param timestamp Number
@@ -162,6 +167,15 @@ module.run(function (nxt) {
       }
     }
     return '';
+  }
+
+  /**
+   * Converts an UTC timestamp to a NXT epoch timestamp.
+   * @param timestamp Number
+   * @returns String
+   */
+  function convertToEpochTimestamp(timestamp) {
+    return Math.floor((timestamp - Date.UTC(2013, 10, 24, 12, 0, 0, 0)) / 1000);
   }
 
   /**
@@ -234,10 +248,12 @@ module.run(function (nxt) {
     commaFormat: commaFormat,
     formatOrderPricePerWholeQNT: formatOrderPricePerWholeQNT,
     calculateOrderTotalNQT: calculateOrderTotalNQT,
+    timestampToDate: timestampToDate,
     formatTimestamp: formatTimestamp,
     calculateOrderPricePerWholeQNT: calculateOrderPricePerWholeQNT,
     convertFromHex16:convertFromHex16,
     convertFromHex8:convertFromHex8,
+    convertToEpochTimestamp: convertToEpochTimestamp,
 
     /**
      * @param nxtA String

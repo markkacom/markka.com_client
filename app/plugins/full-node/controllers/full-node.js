@@ -12,6 +12,24 @@ module.controller('SettingsPluginFullNodeController', function($scope, serverSer
     this.messages       = [];
     this.selector       = '#'+id+'-server-status';
     this.dir            = serverService.getDir(id);
+    this.always_key     = 'mofowallet.always.start.'+(this.id == 'TYPE_NXT'?'nxt':'fimk');
+    this.never_key      = 'mofowallet.never.start.'+(this.id == 'TYPE_NXT'?'nxt':'fimk');
+
+    this.alwaysStart    = settings.get(this.always_key);
+    this.neverStart     = settings.get(this.never_key);
+
+    var self = this;
+    settings.resolve(this.always_key, function (value) {
+      $scope.$evalAsync(function () {
+        self.alwaysStart = value;
+      });
+    }, $scope);
+
+    settings.resolve(this.never_key, function (value) {
+      $scope.$evalAsync(function () {
+        self.neverStart = value;
+      });
+    }, $scope);
 
     var command         = serverService.getStartCommand(id);
     this.command        = command.command + ' ' + command.args.join(' ');
@@ -84,6 +102,12 @@ module.controller('SettingsPluginFullNodeController', function($scope, serverSer
         textarea.val(text);
         textarea.scrollTop(textarea[0].scrollHeight);
       }
+    },
+    alwaysStartChanged: function () {
+      settings.update(this.always_key, this.alwaysStart);
+    },
+    neverStartChanged: function () {
+      settings.update(this.never_key, this.neverStart);    
     }
   };
 

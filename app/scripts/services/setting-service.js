@@ -43,6 +43,8 @@ module.factory('settings', function($log, db, alerts, $timeout) {
   var registry  = {};
   var resolvers = {};
   return {
+    // DEBUG
+    __registry: registry,
 
     /**
      * Returns a setting directly from memory.
@@ -88,7 +90,10 @@ module.factory('settings', function($log, db, alerts, $timeout) {
               if (stored_setting==undefined) {
                 db.settings.add({ id: setting.id, value: setting.value, label: setting.label });
               }
-              if (setting.resolve) {
+              else {
+                registry[setting.id].value = stored_setting.value;
+              }
+              if (setting.resolve || resolvers[setting.id]) {
                 $timeout(function () {
                   resolve(setting.id, stored_setting==undefined ? setting.value : stored_setting.value);
                   // setting.resolve(stored_setting==undefined ? setting.value : stored_setting.value);
@@ -154,11 +159,20 @@ module.factory('settings', function($log, db, alerts, $timeout) {
      * @param key String (partial) key
      * @param resolve Function
      * */
-    resolve: function (key, resolve) {
+    resolve: function (key, resolve, $scope) {
       if (!resolvers[key]) {
         resolvers[key] = [];
       }
       resolvers[key].push(resolve);
+      if ($scope) {
+        $scope.$on('destroy', function () {
+          for (var i=0; i<resolvers[key].length; i++) {
+            if (resolvers[key][i] == resolve) {
+              resolvers[key].splice(i, 1);
+            }
+          }
+        });
+      }
     }
   }
 });

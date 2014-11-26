@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $interval, ngTableParams, $q, $timeout, alerts, plugins) {
+module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $interval, ngTableParams, $q, $timeout, alerts, plugins, requests) {
 
   $scope.engines = [{
     id: 'fimk',
@@ -74,6 +74,7 @@ module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $i
 
   var api = nxt.get($scope.selectedEngine.type);
   var db  = api.engine.db;
+  var podium = requests.theater.createPodium('blocks', $scope);
 
   $scope.blocksTableParams = new ngTableParams({ page: 1, count: 10 }, 
     { total: 0,
@@ -122,7 +123,7 @@ module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $i
     numberOfBlocks: getLocal('numberOfBlocks')||1,
     lastBlockchainFeederHeight: getLocal('lastBlockchainFeederHeight')||1,
     cancellers:     {},
-    interval:       10 * 1000,  
+    interval:       30 * 1000,  
 
     start: function () {
       
@@ -167,7 +168,7 @@ module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $i
     },
 
     setIsDownloading: function (downloading) {
-      manager.interval = downloading ? 5 * 1000 : 10 * 1000;
+      manager.interval = downloading ? 10 * 1000 : 30 * 1000;
       manager.downloading = downloading;
     },  
 
@@ -371,7 +372,12 @@ module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $i
     /* Find the block id on the network */
     getBlockId: function (height) {
       var deferred = $q.defer();
-      api.getBlockId({height: height}, null, manager.getBlockCanceller(height)).then(
+      api.getBlockId({
+        height: height
+      }, {
+        podium: podium,
+        priority: 2
+      }).then(
         function (data) {
           api.engine.db.blocks.put({height: height, id: data.block}).then(
             function () {
@@ -386,7 +392,12 @@ module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $i
     },
 
     getBlock: function (id, height) {
-      api.getBlock({block: id}, null, manager.getBlockCanceller(height)).then(
+      api.getBlock({
+        block: id
+      }, {
+        podium: podium,
+        priority: 1
+      }).then(
         function (block) {
           if ($scope.selectedBlock && block && block.height == $scope.selectedBlock.height) {
             $timeout(function () {
@@ -398,8 +409,22 @@ module.controller('BlocksPlugin', function($scope, $state, $stateParams, nxt, $i
       );
     },
 
+    currentTransactionHeight: 0,
+
     getTransaction: function (id, height) {
-      api.getTransaction({transaction: id}, null, manager.getTransactionCanceller(height)).then(
+
+      /* The transaction podium lives as long as the height remains the same */
+      if (height !== this.currentTransactionHeight) {
+        this.currentTransactionHeight = height;
+        this.transactionPodium = requests.theater.createPodium('transactions', $scope);
+      }
+
+      api.getTransaction({
+        transaction: id
+      }, {
+        podium: this.transactionPodium,
+        priority: 3
+      }).then(
         function (transaction) {
           api.engine.db.transactions.put(transaction);
         }

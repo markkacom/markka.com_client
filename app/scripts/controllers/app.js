@@ -22,7 +22,7 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
   });
 
   $scope.alerts   = [];
-  $scope.isNodeJS = serverService.isNodeJS();
+  $scope.isNodeJS = isNodeJS;
 
   $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error){
     $log.warn('STATE CHANGE ERROR');
@@ -78,7 +78,7 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
     else if (type == 'ACCOUNT') {
       var api  = nxt.get(value);
     }
-    console.log('onTransactionIdentifierClick', {type:type,value:value});
+    // console.log('onTransactionIdentifierClick', {type:type,value:value});
     switch (type) {
       case api.renderer.TYPE.ACCOUNT: {
         var deferred  = plugins.get('alerts').wait({ message: 'Downloading Account Data' });
@@ -151,6 +151,7 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
       }
     );
   }
+
 });
 
 })();

@@ -17,6 +17,17 @@ body {
   min-width: 350px;
 }
 
+.assets-table {
+  height: 350px;
+  overflow-y: auto;
+}
+.assets-table tfoot {
+  display: none;
+}
+.assets-table thead {
+  display: none;
+}
+
 .jumbotron {
   background: url("images/bmf.jpg") no-repeat center center;
 }

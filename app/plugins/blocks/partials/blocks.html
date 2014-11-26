@@ -38,13 +38,15 @@
     <h3 style="margin-top: 5px;"><small>Recent blocks</small></h3>
     <table ng-table="blocksTableParams" class="table table-striped table-condensed table-hover">
       <tr ng-repeat="b in $data" ng-class="{success: (b.height == selectedBlock.height)}">
-        <td data-title="'Height'" header-class="text-left"><a href ui-sref="blocks({engine:selectedEngine.id, height:b.height})">{{b.height}}</a></td>
+        <td data-title="'Height'" header-class="text-left"><a href ui-sref="blocks({engine:selectedEngine.id, height:b.height})"
+          ui-sref-opts="{reload: true}">{{b.height}}</a></td>
         <td data-title="'Date'" header-class="text-left">{{formatTimestamp(b.timestamp)}}</td>
-        <td data-title="'Count'" header-class="text-left">
+        <td data-title="'Tx count'" header-class="text-left">
           <a ng-if="b.generator" href ng-click="showTransactions(b.id)" ng-disabled="!b.numberOfTransactions.length">{{b.numberOfTransactions}}</a>
           <i ng-if="!b.generator" class="fa fa-circle-o-notch fa-spin"></i>
         </td>
-        <td data-title="'Block'" header-class="text-left"><a href ui-sref="blocks({engine:selectedEngine.id, height:b.height})">{{b.id}}</a></td>
+        <td data-title="'Block'" header-class="text-left"><a href ui-sref="blocks({engine:selectedEngine.id, height:b.height})"
+          ui-sref-opts="{reload: true}">{{b.id}}</a></td>
         <td data-title="'Generator'" header-class="text-left"><a href ui-sref="accounts({id_rs: b.generatorRS, action:'show'})">{{b.generatorRS}}</a></td>
       </tr>
     </table>

@@ -1,8 +1,8 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('AccountsPluginSendMoneyModalController', function(items, $modalInstance, 
-  $scope, nxt, $timeout, $filter, i18n, alerts, $sce, db, plugins, modals) {
+module.controller('AccountsPluginSendMoneyModalController', 
+  function(items, $modalInstance, $scope, nxt, $timeout, $filter, i18n, alerts, $sce, db, plugins, modals, transactionService, requests) {
 
   $scope.dialogName  = 'Send Money';
   $scope.dialogTitle = $scope.dialogName;
@@ -54,6 +54,7 @@ module.controller('AccountsPluginSendMoneyModalController', function(items, $mod
     $scope.$evalAsync(function () {
       $scope.recipientChanged();      
       $scope.items.feeNXT = engine == nxt.TYPE_FIM ? '0.1' : '1';
+      $scope.symbol = api.engine.symbol;
     });
 
     /* Loads accounts from database */
@@ -175,11 +176,10 @@ module.controller('AccountsPluginSendMoneyModalController', function(items, $mod
           }
         },
         close: function (items) {
-
-          /* Schedule a check for unconfirmed transactions */
-          var downloader = api.downloadTransactions($scope.selectedAccount);
-          downloader.getUnconfirmedTransactions();
-
+          $timeout(function () {
+            var api = nxt.get($scope.selectedAccount.id_rs);
+            transactionService.getUnconfirmedTransactions($scope.selectedAccount.id_rs, api, requests.mainStage, 10);
+          }, 6000, false);
           $modalInstance.close($scope.items);
         },
         cancel: function () {
@@ -226,12 +226,12 @@ module.controller('AccountsPluginSendMoneyModalController', function(items, $mod
           console.log('account', account);
           if (!account.publicKey) {
             $scope.items.showPublicKey = true;
-            setDescription('warning', i18n.format('recipient_no_public_key', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT) }));
+            setDescription('warning', i18n.format('recipient_no_public_key', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT), __symbol__: $scope.symbol }));
           }
           else {
             $scope.items.recipientPublicKey = account.publicKey;
             $scope.items.recipient = account.account;
-            setDescription('info', i18n.format('recipient_info', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT) })); 
+            setDescription('info', i18n.format('recipient_info', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT), __symbol__: $scope.symbol })); 
           }
         },
         function (error) {

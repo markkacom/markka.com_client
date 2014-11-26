@@ -7,7 +7,13 @@ module.controller('AccountsPluginNamespacedAliasesController', function($scope, 
   $scope.tableParams  = new ngTableParams({ page: 1, count: 10 }, 
     { total: 0,
       getData: function($defer, params) {
-        var page = $scope.transactions.slice((params.page() - 1) * params.count(), params.page() * params.count());
+        var t, page = $scope.transactions.slice((params.page() - 1) * params.count(), params.page() * params.count());
+        for (var i=0; i<page.length; i++) {
+          t = page[i]
+          if (!t.date) {
+            t.date = nxt.util.formatTimestamp(page[i].timestamp);
+          }
+        }
         $defer.resolve(page);
       }
     }

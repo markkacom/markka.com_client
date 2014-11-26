@@ -44,6 +44,9 @@ module.run(function (modals, plugins, nxt, alerts, $q, db, $timeout) {
 
   function AssetTranslator(api, asset) {
     angular.extend(this, baseTranslator);
+    this.asset = function (value) {
+      return ['Asset', value+'&nbsp;<a href="#" onclick="angular.element(this).scope().goToAsset(\''+value+'\',\''+asset.accountRS+'\')">(open)</a>']
+    }    
   }
 
   function AccountTranslator(api, account) {

@@ -36,7 +36,7 @@
 var DEBUG = false;
 
 var module = angular.module('fim.base');
-module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, settings, $timeout, $sce, serverService, corsproxy, plugins) {
+module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, settings, $timeout, $sce, serverService, corsproxy, plugins, requests) {
 
   var BLACKLIST_MILLISECONDS = Number.MAX_VALUE;
   var BLOCKCHAIN_STATUS_MILLISECONDS = Number.MAX_VALUE;
@@ -154,9 +154,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       },
       returns: {
         property: 'transactions'
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getAccountTransactionIds: {
       args: {
@@ -169,9 +167,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       },
       returns: {
         property: 'transactionIds'
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getUnconfirmedTransactions: {
       args: {
@@ -179,44 +175,35 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       },
       returns: {
         property: 'unconfirmedTransactions'
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getBalance: {
       args: {
         account:      {type: String, required: true}
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getAccount: {
       args: {
         account:      {type: String, required: true} 
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     startForging: {
       args: {
         secretPhrase: {type: String, required: true},
         sender:       {type: String, argument: false}
-      },
-      timeout: TIMEOUT_LONG
+      }
     },
     stopForging: {
       args: {
         secretPhrase: {type: String, required: true},
         sender:       {type: String, argument: false}
-      },
-      timeout: TIMEOUT_LONG
+      }
     },
     getForging: {
       args: {
         secretPhrase: {type: String, required: true},
         sender:       {type: String, argument: false}
-      },
-      timeout: TIMEOUT_LONG
+      }
     }, 
     sendMoney: {
       args: {
@@ -244,8 +231,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         note_to_self:                 {type: Boolean, argument: false},
         encrypt_message:              {type: Boolean, argument: false},
         public_message:               {type: Boolean, argument: false}
-      },
-      timeout: TIMEOUT_LONG
+      }
     },
     sendMessage: {
       args: {
@@ -272,49 +258,39 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         note_to_self:                 {type: Boolean, argument: false},
         encrypt_message:              {type: Boolean, argument: false},
         public_message:               {type: Boolean, argument: false}
-      },
-      timeout: TIMEOUT_LONG
+      }
     },    
     getAccountPublicKey: {
       args: {
         account: {type: String, required: true}
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     broadcastTransaction: {
       args: {
         transactionBytes: {type: String, required: true}
       },
-      requirePost: true,
-      timeout: TIMEOUT_LONG
+      requirePost: true
     },
     getState: {
-      args: {},
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      args: {
+        caller:                      {type: String, argument: false}
+      }
     },
     getBlock: {
       args: {
         block: {type: String, required: true}
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getBlockId: {
       args: {
         height: {type: Number, required: true}
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getAlias: {
       args: {
         alias:      {type: String},
         aliasName:  {type: String}
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     setAlias: {
       args: {
@@ -325,8 +301,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         secretPhrase:   {type: String},
         aliasName:      {type: String},
         aliasURI:       {type: String}
-      },
-      timeout: TIMEOUT_LONG
+      }
     },
     getAliases: {
       args: {
@@ -335,18 +310,14 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       },
       returns: {
         property: 'aliases'
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getNamespacedAlias: {
       args: {
         account:        {type: String},
         alias:          {type: String},
         aliasName:      {type: String}
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     setNamespacedAlias: {
       args: {
@@ -357,8 +328,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         secretPhrase:   {type: String},
         aliasName:      {type: String},
         aliasURI:       {type: String}
-      },
-      timeout: TIMEOUT_LONG
+      }
     },
     getNamespacedAliases: {
       args: {
@@ -370,25 +340,66 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       },
       returns: {
         property: 'aliases'
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getTransaction: {
       args: {
         transaction:  {type: String},
         fullHash:     {type: String}
-      },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      }
     },
     getAllAssets: {
-      args: {},
+      args: {
+        firstIndex: {type: Number},
+        lastIndex:  {type: Number}
+      },
       returns: {
         property: 'assets'
+      }
+    },
+    getTrades: {
+      args: {
+        asset:      {type: String},
+        firstIndex: {type: Number},
+        lastIndex:  {type: Number}
       },
-      supports_batch: true,
-      timeout: TIMEOUT_SHORT
+      returns: {
+        property: 'trades'
+      }
+    },
+    getAskOrders: {
+      args: {
+        asset:      {type: String},
+        limit:      {type: Number}
+      },
+      returns: {
+        property: 'askOrders'
+      }
+    },
+    getBidOrders: {
+      args: {
+        asset:      {type: String},
+        limit:      {type: Number}
+      },
+      returns: {
+        property: 'bidOrders'
+      }
+    },
+    getAsset: {
+      args: {
+        asset:      {type: String}
+      }
+    },
+    getAllTrades: {
+      args: {
+        timestamp:        {type: Number},
+        firstIndex:       {type: Number}, /* NXT 1.3.1 + */
+        lastIndex:        {type: Number}, /* NXT 1.3.1 + */
+        includeAssetInfo: {type: Boolean} /* NXT 1.3.1 + */
+      },
+      returns: {
+        property: 'trades'
+      }      
     }
   };
 
@@ -473,7 +484,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     this.localHostNode = null;
 
     /* Currently set from the fim-engine and nxt-engine plugins from an iterval that tests
-       constantly tests for an available localhost API, this combined with a test if the
+       constantly for an available localhost API, this combined with a test if the
        blockchain was actually downloaded in full. */
     this.can_use_localhost = false;
 
@@ -487,7 +498,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     var prefix = this.type == TYPE_NXT ? 'nxt' : 'fim';
     var self   = this;
     this.db    = {};
-    angular.forEach(['transactions', 'blocks', 'assets'], function (kind) {
+    angular.forEach(['transactions', 'blocks', 'assets', 'trades', 'asks', 'bids'], function (kind) {
       var table = prefix+kind+(_test?'_test':'');
       self.db[kind] = db[table];
     });
@@ -521,7 +532,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     /* Returns a long-lived promise that is used to cache invocations before the 
        nodes are read from the database. Once the nodes are read from the database
        invoking this method is resolved instantly. */
-    init: function () {
+    init: function (callback) {
       if (!this.promise) {
         var deferred = $q.defer();
         this.promise = deferred.promise;        
@@ -529,6 +540,9 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         db.nodes.where('port').equals(this.port).toArray().then(
           function (nodes) {
             self.nodes = nodes;
+            angular.forEach(nodes, function (node) {
+              console.log(node.url, node.scan_height);
+            });
             deferred.resolve();
           }
         );
@@ -569,7 +583,6 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     },
 
     getLocalHostNode: function () {
-      var self = this;
       var deferred = $q.defer();
       if (this.localHostNode === null) {
         for (var i=0; i<this.nodes.length; i++) {
@@ -581,6 +594,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
 
         /* Not in the database have to add it first */
         if (this.localHostNode === null) {
+          var self = this;
           db.nodes.add({
             port: this.port,
             url: this.localhost,
@@ -591,13 +605,14 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
             start_timestamp: 0
           }).then(
             function () {
-              db.nodes.where('port').equals(this.port).first().then(
+              db.nodes.where('port').equals(self.port).first().then(
                 function (node) {
-                  this.localHostNode = node;
+                  self.localHostNode = node;
                   deferred.resolve(node);
                 }
               );
-            }
+            },
+            deferred.reject
           );
         }
         else {
@@ -610,11 +625,20 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       return deferred.promise;
     },
 
-    /* @param node_ref Object optional { force: node, force_once: node }
-     * @returns Node */
-    getNode: function (node_ref) {
+    constants: function () {
+      return this._constants[this.type][this.net];
+    },
+
+    /* Part of NodeProvider interface */
+    getAllNodes: function () {
+      return this.nodes;
+    },
+
+    /* Part of NodeProvider interface */
+    getNode2: function (options) {
       var deferred = $q.defer();
       var self = this;
+      options = options || {};
       this.init().then(
         function () {
           /* When a localhost API is available it will override all other rules
@@ -627,38 +651,36 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                 node.update({ start_timestamp: Date.now()}).then(
                   function () {
                     deferred.resolve(node);
-                  }
+                  },
+                  deferred.reject
                 );
-              }
+              },
+              deferred.reject
             );
           }
-          /* force_once means we must force a node but only once */
-          else if (node_ref && node_ref.force_once) {
-            var node = node_ref.force_once;
-            delete node_ref.force_once;
+          /* We can only use the forced node */
+          else if (options && options.node) {
+            var node = options.node;
             node.update({ start_timestamp: Date.now()}).then(
               function () {
                 deferred.resolve(node);
-              }
+              },
+              deferred.reject
             );
           }
-          /* force means we can only use the forced node */
-          else if (node_ref && node_ref.force) {
-            var node = node_ref.force;
-            node.update({ start_timestamp: Date.now()}).then(
-              function () {
-                deferred.resolve(node);
-              }
-            );
-          }
-          /* in all other cases select a node from the pool */
+          /* In all other cases select a node from the pool */
           else {
+            /* We know the height so that MUST match */
             var nodes = self.nodes.filter(function (node) { 
-                      /* Filter blacklisted nodes */
-              return ((Date.now() - node.failed_timestamp) > BLACKLIST_MILLISECONDS) &&
-                      /* Filter localhost */
-                      node.url != self.localhost;
+              if (/* Filter blacklisted nodes */ node.blacklisted == true ||
+                  /* Filter localhost */         node.url == self.localhost ||
+                  /* Filter forks */             node.onfork == true || /* value is a Boolean object !! */
+                  /* Filter options.not */       (options.not ? options.not.indexOf(node)!=-1 : false)) {
+                return false;
+              }
+              return true;
             });
+
             if (self.nodes.length == 0) {
               alerts.failed('There are no registered public nodes');
               deferred.reject();
@@ -682,7 +704,8 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
               node.update({ start_timestamp: Date.now()}).then(
                 function () {
                   deferred.resolve(node);
-                }
+                },
+                deferred.reject
               );
             }
           }
@@ -690,40 +713,87 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       );
       return deferred.promise;
     },
-
-    constants: function () {
-      return this._constants[this.type][this.net];
-    }
+    blockchainDownload: function () {
+      var deferred = $q.defer();
+      var self = this;
+      this.getLocalHostNode().then(
+        function (node) {
+          INSTANCE.get(self.type).getState({},{priority:5, node:node}).then(
+            function (data) {
+              deferred.resolve((data.lastBlockchainFeederHeight - data.numberOfBlocks) <= 25);
+            },
+            deferred.reject
+          )
+        },
+        deferred.reject
+      );
+      return deferred.promise;
+    }    
   };
+
+  function ActorObserver(requestHandler, methodName, deferred) {
+    this.requestHandler = requestHandler;
+    this.methodName = methodName;
+    this.deferred = deferred;
+    this.complete = false;
+  }
+  ActorObserver.prototype = {
+
+    /* HTTP request started */
+    start: function (node) {
+      this.requestHandler.notify('start', [this.methodName, node]);
+    },
+
+    /* HTTP request started (request is a retry on a different node) */
+    retry: function (node, tries_left) {
+      this.requestHandler.notify('start', [this.methodName, node, tries_left]);
+    },
+
+    /* HTTP request completed */
+    success: function (node, data, tries_left) {
+      this.complete = true;
+      this.requestHandler.notify('success', [this.methodName, node, data, tries_left]);
+      if (data.errorCode && !data.errorDescription) {
+        data.errorDescription = (data.errorMessage ? data.errorMessage : "Unknown error occured.");
+      }
+      if (data.errorDescription) {
+        this.deferred.reject(data);
+      }
+      else {
+        this.deferred.resolve(data);
+      }
+    },
+
+    /* HTTP request returned non success code */
+    failed: function (node, data, tries_left) {
+      this.requestHandler.notify('failed', [this.methodName, node, data, tries_left]);
+    },
+
+    /* Actor was destroyed */
+    destroy: function (reason) {
+      if (!this.complete) {
+        this.deferred.reject(reason);
+      }
+      this.deferred = null;
+      this.requestHandler = null;
+      this.methodName = null;
+    }
+  };  
 
   function RequestHandler(engine) {
     this.engine = engine;
-    this.pending = {};
     this.observers = [];
-
-    /**
-     * By enabling request batching we'll allow certain request types to be
-     * reused by multiple calls. A request batch occurs when a request is 
-     * started while another caller is still waiting for his same request
-     * to finish. In this case the new caller is scheduled to run after 
-     * the first caller received his data.
-     *
-     * Windows bug: On linux all seems to work fine. But on windows it is 
-     * causing calls to getState to never return.
-     *
-     * DISABLED FOR NOW..
-     */
-    this.enableRequestBatch = false;
   };
   RequestHandler.prototype = {
+
     /**
      * Adds an observer thats called for the various events in the lifecycle 
      * of a request.
      *
      * @param observer Object { 
-     *    start:    fn(methodName, node),
-     *    success:  fn(methodName, node, data, tries_left), 
-     *    failed:   fn(methodName, node, data, tries_left) 
+     *   start:     fn(methodName, node),
+     *   success:   fn(methodName, node, data, tries_left), 
+     *   failed:    fn(methodName, node, data, tries_left),
      * }
      */
     addObserver: function (observer) {
@@ -742,234 +812,29 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         this.observers[i][method].apply(this.observers[i], args);
       }
     },
+    
+    createObserver: function (methodName, deferred) {
+      return new ActorObserver(this, methodName, deferred);
+    },
+
     /**
-     * @param methodName String
-     * @param methodConfig Object
-     * @param args Object
-     * @param node_ref Object [optional] force which node to use with node_ref.force
-     *                                   access the used node through node_ref.value
-     * @param canceller $q.defer() that cancels the request when resolved
+     * @param methodName    String
+     * @param methodConfig  Object
+     * @param args          Object
+     * @param options       Object contains the podium property and others
+     * @returns Promise
      **/
-    sendRequest: function (methodName, methodConfig, args, node_ref, canceller) {
-      if (node_ref.force && methodConfig.batch) { throw new Error('Cannot use batch requests and force node at the same time'); }
+    sendRequest: function (methodName, methodConfig, args, options) {
       var deferred = $q.defer();
-      if (methodConfig.supports_batch && this.enableRequestBatch) {
-        var fingerprint = this.getFingerPrint(methodName, args);
-        if (!this.pending[fingerprint]) {
-          this.pending[fingerprint] = this.retry(FAILED_RETRIES, methodName, methodConfig, args, null, canceller);
-        }
-        this.pending[fingerprint].then(deferred.resolve, deferred.reject);
-      }
-      else {
-        this.retry(FAILED_RETRIES, methodName, methodConfig, args, node_ref, canceller).then(deferred.resolve, deferred.reject);
-      }
-      return deferred.promise;
-    },
-    retry: function (tries_left, methodName, methodConfig, args, node_ref, canceller) {
-      var self = this;
-      var deferred = $q.defer();
-      var fingerprint = methodConfig.supports_batch && this.enableRequestBatch ? 
-                          this.getFingerPrint(methodName, args) : null;
-      node_ref = node_ref || {};
-      this.doInternalRequest(methodName, methodConfig, args, node_ref, canceller).then(
-        function (data) {
-          self.notify('success', [methodName, node_ref.value, data, tries_left]);
-          if (methodConfig.supports_batch && self.enableRequestBatch) {
-            delete self.pending[fingerprint];
-          }
-          deferred.resolve(data);
-        },
-        function (error) {
-          self.notify('failed', [methodName, node_ref.value, error, tries_left]);
-          if (methodConfig.supports_batch && self.enableRequestBatch) {
-            delete self.pending[fingerprint];
-          }
-          if (tries_left > 0 && (error && error.retryable)) {
-            console.log('RequestHandler.retry.'+methodName+' tries_left='+tries_left, args);
-            self.retry(tries_left-1, methodName, methodConfig, args, node_ref, canceller).then(deferred.resolve, deferred.reject);
-          } 
-          else {
-            deferred.reject(error);
-          }
-        }
-      )
-      return deferred.promise;
-    },
-    doInternalRequest: function (methodName, methodConfig, args, node_ref, canceller) {
-      var self = this;
-      var deferred = $q.defer();
-      this.getNode(node_ref).then(
-        function (node) {
-          if (node_ref && typeof node_ref == 'object') {
-            node_ref.value = node;
-          }
-
-          var force_cors = corsproxy.requiresProxy(node);
-          var promise = (methodConfig.args.secretPhrase || methodConfig.requirePost) ? 
-                          self.do_post(methodName, args, node, canceller, force_cors) : 
-                          self.do_get(methodName, args, node, canceller, force_cors);
-
-          self.notify('start', [methodName, node]);
-          promise.then(
-            function (data) {
-              
-              /* This host does not allow public API access | must remove from db */
-              if (data && data.errorCode == 7 /* && data.errorDescription == 'Not allowed' */) {
-                node.delete().then(
-                  function () {
-                    deferred.reject(data);
-                  }
-                );
-                return;
-              }
-
-              if (data.errorCode && !data.errorDescription) {
-                data.errorDescription = (data.errorMessage ? data.errorMessage : "Unknown error occured.");
-              }
-
-              if (data.errorDescription) {
-                deferred.reject(data);
-              }
-              else {
-                deferred.resolve(data);
-              }
-            },
-            /* Retries are only performed for HTTP level errors, not for valid API error messages */
-            function (data) {
-              data = data||{};
-              data.retryable = true;
-              deferred.reject(data)
-            }
-          );
-        },
-        deferred.reject
-      );
-      return deferred.promise;      
-    },
-    /* POST does not have support for proxifying urls to use cors server */
-    do_post: function (requestType, args, node, _canceller, force_cors) {
-      var self = this;
-      var deferred = $q.defer();
-      if (node) {
-        var qs = "";
-        if (Array.isArray(args)) {
-          angular.forEach(args, function (tuple) {
-            for (var name in tuple) {
-              qs += '&' + name + '=' + encodeURIComponent(tuple[name]);
-            }    
-          });
-        }
-        else {
-          for (var name in args) {
-            qs += '&' + name + '=' + encodeURIComponent(args[name]);
-          }
-        }
-
-        console.log(node.url+' START.'+requestType, args);        
-        this.http(node, {
-                    method: 'POST',
-                    /*dataType: 'json',*/
-                    /* Proxify the url if needed */
-                    url: force_cors ? corsproxy.proxify(node, this.create_url(node, requestType)) : this.create_url(node, requestType),
-                    data: qs,
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    timeout: this.createTimeout(requestType, _canceller ? _canceller.promise : canceller.promise)
-                  }).then(deferred.resolve, deferred.reject);
+      var builder = requests.createRequestBuilder(methodName, methodConfig, args);
+      var actor = options.podium.createActor(builder, this.engine, options);
+      if (actor) {
+        actor.addObserver(this.createObserver(methodName, deferred));  
       }
       else {
         deferred.reject();
       }
       return deferred.promise;
-    },
-    do_get: function (requestType, args, node, _canceller, force_cors) {
-      var self = this;
-      var deferred = $q.defer();
-      if (node) {
-        var url = this.create_url(node, requestType);
-        if (Array.isArray(args)) {
-          angular.forEach(args, function (tuple) {
-            for (var name in tuple) {
-              url += '&' + name + '=' + encodeURIComponent(tuple[name]);
-            }    
-          });
-        }
-        else {
-          for (var name in args) {
-            url += '&' + name + '=' + encodeURIComponent(args[name]);
-          }    
-        }
-
-        console.log(node.url+' START.'+requestType, args);
-        this.http(node, { 
-                    method: 'GET', 
-                    dataType: 'json',
-                    /* Proxify the url if needed */
-                    url: force_cors ? corsproxy.proxify(node, url) : url,
-                    timeout: this.createTimeout(requestType, _canceller ? _canceller.promise : canceller.promise)
-
-                  }).then(deferred.resolve, deferred.reject);
-      }
-      else {
-        deferred.reject();
-      }
-      return deferred.promise;
-    },
-    /* Creates a timeout that cancels the request after a preset amount of milliseconds (see the
-       timeout properties on NXT_API members) and/or when the provided promise is resolved */
-    createTimeout: function (requestType, promise) {
-      var deferred = $q.defer();
-      var ms = NXT_API[requestType].timeout();
-      var timeout  = $timeout(
-        function () { 
-          deferred.resolve({errorDescription: 'Timeout'});
-        }, ms);
-      if (promise) {
-        promise.then(
-          function () {
-            $timeout.cancel(timeout);
-            deferred.resolve();
-          }
-        );
-      }
-      return deferred.promise;
-    },
-    http: function (node, args) {
-      var self = this;
-      var deferred = $q.defer();
-      $http(args).success(
-        function (data, status, headers, config) {
-          console.log(node.url+' SUCCESS', DEBUG?{data:data,status:status,headers:headers,config:config}:status);
-          node.update({success_timestamp: Date.now(), success_status: status});
-          deferred.resolve(data);
-        }
-      ).error(
-        function (data, status, headers, config) {
-          console.log(node.url+' FAILURE', DEBUG?{data:data,status:status,headers:headers,config:config}:status);
-          node.update({failed_timestamp: Date.now(), failed_status: status});
-          deferred.reject(data);
-        }
-      );
-      return deferred.promise;
-    },
-    /* creates a fingerprint made up of methodname and all arguments (names and values)
-     * @returns a pending promise for this method with the same args OR undefined */
-    getFingerPrint: function(methodName, args) {
-      var keys = Object.keys(args||{});
-      keys.sort();
-      var hash = [];
-      keys.forEach(function (key) { hash.push(key, args[key]); });
-      return methodName + hash.join('');
-    },
-    getNode: function (node_ref) {
-      if (node_ref && node_ref.force) {
-        var deferred = $q.defer();
-        deferred.resolve(node_ref.force);
-        return deferred.promise;
-      }
-      return this.engine.getNode(node_ref);
-    },
-    create_url: function (node, requestType) {
-      return [node.url,':',node.port,'/nxt?requestType=',requestType,'&random=',Math.random()].join('');
     }
   };
 
@@ -981,11 +846,9 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
    *
    * Usage:
    *   
-   *   state.time().then(
-   *     function (time) {
-   *       console.log('The time is ' + time);
-   *     }
-   *   )
+   *   state.time().then(function (time) {
+   *     console.log('The time is ' + time);
+   *   })
    *
    */
   function BlockchainStatus(api) {
@@ -1184,309 +1047,48 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     }
   };
 
-  function TransactionDownloader(account, api) {
-    var self        = this;
-    this.account    = account;
-    this.api        = api;
-    this.busy          = false;
-    this.isBackFilling = false;
-    this.canceller  = null;
-
-    /* Always start backfilling */
-    this.startBackfilling();
-  }
-  TransactionDownloader.prototype = {
-
-    /**
-     * Downloads transactions until it finds all downloaded transactions in a pack
-     * are already in the database.
-     **/
-    downloadTransactions: function (pack_size) {
-      this.canceller = $q.defer();
-      this.stopBackfill = false;
-      this.download(pack_size||10, false);
-    },
-
-    /**
-     * Forcefully download all transactions. This increases the pack size for the number
-     * of transactions to start with. For the rest it works the same downloadTransactions.
-     **/
-    downloadAllTransactions: function (pack_size) {
-      this.canceller = $q.defer();
-      this.stopBackfill = false;
-      this.download(pack_size||250, true);
-    },
-
-    download: function (pack_size, all) {
-      var self = this;
-      this.api.getAccountTransactions({
-        account:    self.account.id_rs,
-        firstIndex: 0,
-        lastIndex:  20
-      }).then(
-        function (transactions) {
-          db.transaction("rw", self.api.engine.db.transactions, function () {
-            angular.forEach(transactions, function (transaction) {
-              self.api.engine.db.transactions.put(transaction);
-            });
-          });
-
-          /* Go get the rest */
-          self.getTransactions(20, pack_size, true);
-        }
-      );
-    },
-
-    startBackfilling: function () {
-      if (!this.isBackFilling) {
-        this.backfillTransactions();
-      }
-    },
-
-    stopBackfilling: function () {
-      if (this.canceller) {
-        this.canceller.resolve();
-        this.canceller = null;
-        this.stopBackfill = true;
-      }
-    },
-
-    /**
-     * Backfill all pending transactions for this account.
-     **/
-    backfillTransactions: function () {
-      this.isBackFilling = true;
-      var self = this;
-      this.api.engine.db.transactions.where('related_rs_a').equals(this.account.id_rs).
-                                      or('related_rs_b').equals(this.account.id_rs).
-                                      sortBy('related_index').then(
-        function success(pending_transactions) {
-          if (pending_transactions.length > 0 && !this.stopBackfill) {
-
-            /* Download the pending transaction from the network */
-            var pending = pending_transactions[0];
-            self.api.getTransaction({transaction: pending.transaction}).then(
-              function success(transaction) {
-
-                /* Replace the object in the database | this removes the related_rs_a and related_rs_b fields */
-                self.api.engine.db.transactions.put(transaction, transaction.transaction).then(
-                  function success() {
-
-                    /* Backfill the next one */
-                    $timeout(function () {
-                      self.backfillTransactions();  
-                    }, 0, false /* NO! digest+apply */);                    
-                  }
-                );
-              }
-            );
-          }
-          else {
-            self.isBackFilling = false;
-          }
-        }
-      );
-    },
-
-    getTransactions: function (start, count, download_all) {
-      var self = this;
-      var firstIndex = start;
-      var lastIndex = start + count - 1;
-
-      function process(iterator, _index, done) {
-        var id = iterator.next();
-        self.api.engine.db.transactions.where('transaction').equals(id).first().then(
-          function (transaction) {
-            /* It's not in our database */
-            if (transaction === undefined) {
-
-              /* In order for sorting to work we need to store a sort key that indicates the order */
-              self.api.engine.db.transactions.put({
-                transaction: id,
-                related_rs_a: self.account.id_rs,
-                related_index: firstIndex+_index
-              }).then(
-                function () {
-                  if (iterator.hasMore()) { 
-                    process(iterator, _index+1, done); 
-                  }
-                  else {
-                    done.call();
-                  }
-                }
-              );
-            }
-            /* Transaction is in the database but could still be pending for another account */
-            else if (transaction && transaction.related_rs_a && transaction.related_rs_a != self.account.id_rs) {
-
-              /* Add current account as related_rs_b */
-              self.api.engine.db.transactions.update(id, {
-                related_rs_b: self.account.id_rs,
-                related_index: firstIndex+_index /* XXX will this put us at the start of the queue ? */
-              }).then(
-                function () {
-                  if (iterator.hasMore()) { 
-                    process(iterator, _index+1, done); 
-                  }
-                  else {
-                    done.call();
-                  }
-                }
-              );
-            }
-            else {
-              if (iterator.hasMore()) { 
-                process(iterator, _index+1, done); 
-              }
-              else {
-                done.call();
-              }
-            }
-          }
-        );
-      }
-
-      this.api.getAccountTransactionIds({
-        account:    this.account.id_rs,
-        firstIndex: firstIndex,
-        lastIndex:  lastIndex        
-      }).then(
-        function (transaction_ids) {
-          if (!transaction_ids) return;
-          var iterator = new Iterator(transaction_ids);
-          if (iterator.hasMore()) { 
-            db.transaction("rw", self.api.engine.db.transactions, function () {
-              process(iterator, 0, function done() {
-
-                /* Call from timeout to break out transaction block */
-                $timeout(function () {
-
-                  /* Start the backfilling process */
-                  self.startBackfilling();
-
-                  /* In case we are downloading the whole set of transactions we can continue
-                     with the next batch where the previous retrieval has left off.
-                     To determine where to continue we count the total number of transactions
-                     in the db and simply ask the network for the first batch of transactions
-                     following that number. */
-                  if (download_all) {
-                    self.countTransactionsInDB().then(
-                      function (_count) {
-                        if (_count > 0) {
-                          self.getTransactions(_count-1, count, download_all);
-                        }
-                      }
-                    );
-                  }
-                }, 0, false);
-              });
-            });
-          } 
-        }
-      );
-    },
-
-    countTransactionsInDB: function () {
-      var deferred = $q.defer();
-      this.api.engine.db.transactions.where('senderRS').equals(this.account.id_rs).
-                                      or('recipientRS').equals(this.account.id_rs).
-                                      or('related_rs_a').equals(this.account.id_rs).
-                                      or('related_rs_b').equals(this.account.id_rs).count(
-        function (count) {
-          deferred.resolve(count);
-        }
-      );
-      return deferred.promise;
-    },
-
-    /**
-     * Called on controller activation for selected account and on interval afterwards.
-     * Asks the server for unconfirmed transactions
-     */
-    getUnconfirmedTransactions: function () {
-      var self = this;
-
-      /* XXX TODO Require that all account objects in the database have a numeric id */
-      if (!this.account.id || this.account.id.length < 10) {
-        var address = this.api.createAddress();
-        if (address.set(this.account.id_rs)) {
-          this.account.id = address.account_id();
-        }        
-      }
-
-      this.api.getUnconfirmedTransactions(
-        {account: this.account.id}, 
-        null, this.canceller
-      ).then(
-        function (transactions) { 
-          db.transaction('rw', self.api.engine.db.transactions, function () {
-            angular.forEach(transactions, function (transaction) {
-              self.api.engine.db.transactions.put(transaction);
-            });
-          });
-        },
-        function (error) {
-          if (error && error.errorCode != 5) {
-            console.log("Could not get transactions");
-          }
-        }
-      );
-    },
-
-    // processTransaction: function (transaction, next) {
-    //   var self = this;
-    //   this.api.engine.db.transactions.where('transaction').equals(transaction.transaction).count(
-    //     function (count) {
-    //       if (count == 0) {
-    //         self.inserted++;
-    //         self.api.engine.db.transactions.put(transaction).then(function () { next(true) });
-    //       }
-    //       else {
-    //         next(false);
-    //       }
-    //     }
-    //   );
-    // }
-  };
-
   function AssetsManager(api) {
     this.api = api;
     this.assets = {};
-    this.init();      /* Load from database */
+    var self = this;
+    this.readAssets = $q.defer();
+    api.engine.db.assets.toArray().then(
+      function (assets) {
+        for (var i=0; i<assets.length; i++) {
+          var a = assets[i];
+          self.assets[a.asset] = a;
+          self.count++;
+        }
+        self.readAssets.resolve(assets.length);
+      }
+    );
   }
   AssetsManager.prototype = {
     init: function () {
+      var deferred = $q.defer();
       var self = this;
-      this.api.engine.db.assets.toArray().then(
-        function (assets) {
-          angular.forEach(assets, function (asset) {
-            self.assets[assets.asset] = asset;
-          });
-          self.download();  /* Update from network */          
-        }
-      );
-    },
-    download: function () {
-      var self = this;
-      this.api.getAllAssets().then(
-        function (assets) {
-          db.transaction('rw', self.api.engine.db.assets, function () {
-            angular.forEach(assets, function (asset) {
-              self.api.engine.db.assets.where('asset').equals(asset.asset).first().then(
-                function (existing_asset) {
-                  if (existing_asset) {
-                    self.api.engine.db.assets.update(asset.asset, asset);
-                  }
-                  else {
-                    self.api.engine.db.assets.add(asset); 
+      this.readAssets.promise.then(
+        function (count) {
+          self.api.getAllAssets({
+            firstIndex: count-1, 
+            lastIndex: 9999
+          },{ 
+            priority:5 
+          }).then(
+            function success(_assets) {
+              db.transaction('rw', self.api.engine.db.assets, 
+                function () {              
+                  for (var i=0,l=_assets.length; i<l; i++) {
+                    self.api.engine.db.assets.put(_assets[i]);
                   }
                 }
-              );
-              self.assets[asset.asset] = asset;
-            });
-          });
+              ).then(deferred.resolve).catch(deferred.reject);
+            },
+            deferred.reject
+          );
         }
       );
+      return deferred.promise;
     },
     get: function (asset_id) {
       return this.assets[asset_id];
@@ -1508,6 +1110,13 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     },
     getAccountRS: function (asset_id) {
       return this.assets[asset_id] ? this.assets[asset_id].accountRS : '';
+    },
+    getAll: function () {
+      var result = [];
+      for (var name in this.assets) {
+        result.push(this.assets[name]);
+      }
+      return result
     }
   };
 
@@ -1732,6 +1341,15 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       var TYPE = this.TYPE;
       var util = INSTANCE.util;
 
+      var maxLength = 100;
+      function crop(value) {
+        value = String(value);
+        if (value.length > maxLength) {
+          return String(value).substr(0, maxLength) + ' ..'
+        }
+        return value;
+      }
+
       /* @param type see TYPE
          @param label String 
          @param value String optional if not provided label is used
@@ -1742,7 +1360,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
           value = label;
           try { label = translator(label); } catch (e) {}
         }
-        return template.replace(/__LABEL__/g, label).replace(/__VALUE__/g, encodeURIComponent(value||label));
+        return template.replace(/__LABEL__/g, crop(label)).replace(/__VALUE__/g, encodeURIComponent(value||label));
       }
 
       function translate(id_rs) {
@@ -2062,12 +1680,22 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     } 
   };
 
+  function stackTrace() {
+    var e = new Error();
+    var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
+      .replace(/^\s+at\s+/gm, '')
+      .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+      .split('\n')
+    return stack[2];
+  }  
+
   /**
    * @param _type Engine type 
    * @param _test Boolean for test network
    */
   function ServerAPI(_type, _test) {
     verifyEngineType(_type);
+    
     this.installMethods(this);
 
     this.type                 = _type;
@@ -2082,6 +1710,9 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     this.renderer             = new Renderer(this);
     this.decoder              = new MessageDecoder(this);    
 
+    /* Registers AbstractEngine as NodeProvider with the requests service */
+    requests.registerNodeProvider(this.engine);
+
     (function (blockchain) {
       setInterval(function () { blockchain.getNewBlocks() }, 10 * 1000);
       setTimeout( function () { blockchain.getNewBlocks() }, 100);
@@ -2089,36 +1720,27 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
   };
   ServerAPI.prototype = {
 
-    /* Non intrusive transaction downloader - 
-        works only when it's needed - 
-          this method can be called repeatedly */
-    downloadTransactions: function (account, get_all) {
-      if (!(account.id_rs in this.downloaders)) {
-        var d = this.downloaders[account.id_rs] = new TransactionDownloader(account, this);
-      } else {
-        var d = this.downloaders[account.id_rs];
-      }
-      if (get_all) {
-        d.downloadTransactions(50, true);
-      }
-      else {
-        d.downloadTransactions(10);
-      }
-      return d;
-    },
-
-    /* Called when we navigate away from the accounts section.
-       XXX This could use better separation from the accounts plugin */
-    stopDownloadingTransactions: function (account) {
-      var d = this.downloaders[account.id_rs];
-      if (d) {
-        d.stopBackfilling();
-      }
-    },
-
     /* Creates the NxtAddress for this coin */
     createAddress: function () {
       return new NxtAddress(this.type == TYPE_NXT ? 'NXT' : 'FIM');
+    },
+
+    /* Encrypts message with public and private key
+     *
+     * @param message String
+     * @param recipient String
+     * @param recipientPublicKey String
+     * @param secretPhrase String
+     *
+     * @returns {
+     *   message: String,
+     *   nonce: String
+     * }
+     * */
+    encryptMessage: function (message, recipient, recipientPublicKey, secretPhrase) {
+      var options = { account: recipient };
+      if (recipientPublicKey) { options.publicKey = recipientPublicKey};
+      return this.crypto.encryptNote(message, options, secretPhrase);
     },
 
     /* Encrypts message data and adds that to data arg */
@@ -2141,7 +1763,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
           }
 
           var encrypted = this.crypto.encryptNote(data.message, options, data.secretPhrase);
-
+          
           data.encryptedMessageData = encrypted.message;
           data.encryptedMessageNonce = encrypted.nonce;
           data.messageToEncryptIsText = "true";
@@ -2191,7 +1813,45 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
          */
         self[methodName] = function (args, node, canceller, observer) {
 
+        /* Add method for API function.
+           
+           @param args Object
+           @param options Node (optional)
+           @param observer Object (optional) {
+              start:    fn(methodName),
+              success:  fn(methodName),
+              failed:   fn(methodName)
+           }
+           @returns Promise
+         */
+        // //////////////////////////////////////////////////////////////
+        //
+        // THIS IS THE NEW API
+        //
+        // //////////////////////////////////////////////////////////////
+
+        // self[methodName] = function (args, options, observer) {
+
           args = angular.copy(args) || {};
+
+          // //////////////////////////////////////////////////////////////
+          // Hack - compatibility with new API
+          if (node && typeof node == 'object' && (typeof node.priority == 'number' || node.podium || node.node)) {
+            var options = node;
+          }
+          else {
+            var options = options || {};
+            if (node) {
+              options.node = node;
+            }
+          }
+          if (canceller && typeof canceller == 'object' && (canceller.start || canceller.success || canceller.failed)) {
+            var observer = canceller;
+          }
+          // //////////////////////////////////////////////////////////////
+
+          // options.trace = stackTrace();
+
           var deferred = $q.defer();
           self.secretPhraseProvider.provideSecretPhrase(methodName, methodConfig, args).then(
             function () {
@@ -2242,20 +1902,15 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                 }
               }
 
-              /* With sendRequest you can forcefully set the node to use through passing an object like:
-                 {force: Node} if you provide an object as the node_ref argument the Node that was used will
-                 be in the out property. {value: Node} */
-              var node_ref = { force: node, value: null };
-
               /* Sanity check - make absolutely sure secretPhrase is only send to whitelisted servers */
               if (['startForging', 'stopForging', 'getForging'].indexOf(methodName) != -1) {
-                if (!node_ref.force) {
+                if (!options.node) {
                   deferred.reject('Unexpected error. You must provide a forced node for this operation');
                   return;
                 }
                 // console.log('allowed.hosts', settings.get('forging.allowed.hosts'));
                 // console.log('node_ref.force.url', node_ref.force.url);
-                if ((settings.get('forging.allowed.hosts') || []).indexOf(node_ref.force.url) == -1) {
+                if ((settings.get('forging.allowed.hosts') || []).indexOf(options.node.url) == -1) {
                   deferred.reject('Unexpected error. Blocked sending of secrethrase to unknown host.');
                   return;
                 }
@@ -2264,9 +1919,29 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
               /* @optional observer supported */
               if (observer) { observer.start(methodName, args); }
 
+              /* Prepare the podium */
+              if (!options.podium) {
+                if (!requests.theater.podiums['main']) {
+                  requests.theater.createPodium('main', null);
+                }
+                options.podium = requests.theater.podiums['main'];
+              }
+
               /* Make the call to the server */
-              self.requestHandler.sendRequest(methodName, methodConfig, args, node_ref, canceller).then(
+              self.requestHandler.sendRequest(methodName, methodConfig, args, options).then(
+              //self.requestHandler.sendRequest(methodName, methodConfig, args, node_ref, canceller).then(
                 function (data) {
+
+                  /* Store the height on the Node */
+                  if (methodName == 'getState') {
+                    if (options.node_out) {
+                      options.node_out.update({
+                        lastBlock: data.lastBlock,
+                        lastBlockchainFeeder: data.lastBlockchainFeeder,
+                        numberOfBlocks: data.numberOfBlocks
+                      });
+                    }
+                  }
 
                   /* @optional observer supported */
                   if (observer) { observer.success(methodName); }
@@ -2303,18 +1978,30 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                            XXX..  You must broadcast the signed transaction on the same node that created
                                   it or it's rejected with a message of 'Double spending'.
 
+                                  This seems to no be the case anymore.
+
                                   */
 
                         /* @optional observer supported */
                         if (observer) { observer.start('broadcastTransaction'); }
 
-                        self.broadcastTransaction({transactionBytes: payload}, node_ref.value, canceller).then(
+                        self.broadcastTransaction({transactionBytes: payload}, { podium: options.podium, node: options.node_out }).then(
                           function (data) {
 
-                             /* @optional observer supported */
+                            /* @optional observer supported */
                             if (observer) { observer.success('broadcastTransaction'); }
 
                             deferred.resolve(data);
+
+                            /* Update unconfirmed transactions 
+                               TODO this is avery brute approach, a solution with an observer that detects the new
+                                    transaction would be much better. */
+                            for (var i=3; i<7; i++) {
+                              $timeout(function () {
+                                var id_rs = self.crypto.getAccountId(secretPhrase, true);
+                                INSTANCE.transactions.getUnconfirmedTransactions(id_rs, self, requests.mainStage, 20, options.node_out);
+                              }, i*1000);
+                            }
                           }
                         ).catch(
                           function (error) {
@@ -2356,7 +2043,9 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
           return deferred.promise;
         };
       });
-    }
+    },    
+
+
   };
 
   // /////////////////////////////////////////////////////////////////////////////////////////////

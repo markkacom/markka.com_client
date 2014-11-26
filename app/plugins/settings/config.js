@@ -9,10 +9,10 @@ module.config(function($stateProvider) {
   });
 });
 
-module.run(function (plugins, $sce, serverService) {  
+module.run(function (plugins, $sce, serverService, $timeout, alerts) {  
 
   var base_menu = []; 
-  if (serverService.isNodeJS()) {
+  if (isNodeJS) {
     var dev_tools = {
       clazz: 'info',
       html: $sce.trustAsHtml('<p><span class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;Dev Tools</p>'),
@@ -31,8 +31,21 @@ module.run(function (plugins, $sce, serverService) {
     html: $sce.trustAsHtml('<p><span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;Reload Application</p>'),
     click: function () {
       try { 
-        if (serverService.isNodeJS()) {
-          require('nw.gui').Window.get().window.location.reload();
+        if (isNodeJS) {
+          var wait = 0;
+          if (serverService.isRunning('TYPE_FIM')) {
+            alerts.failed('Stopping FIM server. Please wait.');
+            serverService.stopServer('TYPE_FIM');
+            wait = 5000;
+          }
+          if (serverService.isRunning('TYPE_NXT')) {
+            alerts.failed('Stopping NXT server. Please wait.');
+            serverService.stopServer('TYPE_NXT');
+            wait = 5000;
+          }
+          $timeout(function () {
+            require('nw.gui').Window.get().window.location.reload();
+          }, wait, false);
         }
         else {
           window.location.reload();

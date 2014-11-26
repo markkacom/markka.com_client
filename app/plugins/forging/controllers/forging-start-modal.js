@@ -12,7 +12,11 @@ module.run(function (settings) {
   }]);
 });
 
-module.controller('ForgingPluginCreateModalController', function(items, $modalInstance, $scope, $timeout, nxt, settings, $q, plugins, db) {
+module.controller('ForgingPluginCreateModalController', function(items, $modalInstance, $scope, $timeout, nxt, settings, $q, plugins, db, requests) {
+
+  /* Requests podium */
+  var podium         = requests.theater.createPodium('forging', $scope);
+  var PLUGIN         = plugins.get('forging');
 
   $scope.dialogName  = 'Forging';
   $scope.dialogTitle = $scope.dialogName;
@@ -43,48 +47,44 @@ module.controller('ForgingPluginCreateModalController', function(items, $modalIn
     }
   );
 
-  function status(msg) {
-    $timeout(function () {
-      $scope.items.status = msg;
-    });    
-  }
-
   function do_op(method) {
     var deferred = $q.defer();
-    $scope.engine.getNode($scope.items.host).then(
-      function (node) {
-        api[method]({sender: $scope.items.senderRS}, node).then(
-          function (_items) {
-            console.log('success', _items);
-            deferred.resolve(_items);
+    api[method]({
+      sender: $scope.items.senderRS
+    }, {
+      node:$scope.localhost, 
+      priority:5, 
+      podium:podium
+    }).then(
+      function (_items) {
+        console.log('success', _items);
+        deferred.resolve(_items);
 
-            /* Offer to store secretPhrase in wallet */
-            if (plugins.get('wallet') && !plugins.get('wallet').hasKey($scope.items.senderRS)) {
-              plugins.get('alerts').confirm({ message: 'Do you want to save this secretphrase to your wallet?'}).then(
-                function (value) {
-                  if (value) {
-                    plugins.get('wallet').addEntry({
-                      secretPhrase: _items.secretPhrase,
-                      id_rs:        $scope.items.senderRS,
-                      name:         $scope.items.name
-                    }).then(
-                      function () {
-                        plugins.get('alerts').success({ message: 'You successfully saved the secretphrase to your wallet'});
-                      },
-                      function () {
-                        plugins.get('alerts').error({ message: 'Could not save secretphrase to wallet'});
-                      }
-                    );
+        /* Offer to store secretPhrase in wallet */
+        if (plugins.get('wallet') && !plugins.get('wallet').hasKey($scope.items.senderRS)) {
+          plugins.get('alerts').confirm({ message: 'Do you want to save this secretphrase to your wallet?'}).then(
+            function (value) {
+              if (value) {
+                plugins.get('wallet').addEntry({
+                  secretPhrase: _items.secretPhrase,
+                  id_rs:        $scope.items.senderRS,
+                  name:         $scope.items.name
+                }).then(
+                  function () {
+                    plugins.get('alerts').success({ message: 'You successfully saved the secretphrase to your wallet'});
+                  },
+                  function () {
+                    plugins.get('alerts').error({ message: 'Could not save secretphrase to wallet'});
                   }
-                }
-              );
+                );
+              }
             }
-          },
-          function (error) {
-            console.log('failed', error);
-            deferred.reject(error);
-          }
-        );
+          );
+        }
+      },
+      function (error) {
+        console.log('failed', error);
+        deferred.reject(error);
       }
     );
     return deferred.promise;
@@ -93,34 +93,86 @@ module.controller('ForgingPluginCreateModalController', function(items, $modalIn
   $scope.startForging = function () {
     do_op('startForging').then(
       function (items) {
-        status('Started forging | deadline=' + items.deadline + ' seconds');
+        $scope.$evalAsync(function () {
+          PLUGIN.setIsForging($scope.items.senderRS, true);
+          $scope.items.status = 'Account is forging. Next block in ' + items.remaining +'/'+ items.deadline + ' seconds';
+        });
       },
       function (error) {
-        status(JSON.stringify(error));
+        $scope.$evalAsync(function () {
+          PLUGIN.setIsForging($scope.items.senderRS, false);
+          $scope.items.status = error.errorDescription || JSON.stringify(error);
+        });
       }
     );
-  };
+  }; 
 
   $scope.stopForging = function () {
     do_op('stopForging').then(
       function (items) {
-        status('Stopped forging');
+        $scope.$evalAsync(function () {
+          PLUGIN.setIsForging($scope.items.senderRS, false);
+          $scope.items.status = 'Stopped forging';
+        });
       },
       function (error) {
-        status(JSON.stringify(error));
+        $scope.$evalAsync(function () {
+          PLUGIN.setIsForging($scope.items.senderRS, false);
+          $scope.items.status = error.errorDescription || JSON.stringify(error);
+        });
       }
     );
   };
 
-  // $scope.getForging = function () {
-  //   do_op('getForging').then(
-  //     function (items) {
+  function getForging() {
+    do_op('getForging').then(
+      function (items) {
+        $scope.$evalAsync(function () {
+          if (items.remaining && items.deadline) {
+            PLUGIN.setIsForging($scope.items.senderRS, true);
+            $scope.items.status = 'Account is forging. Next block in ' + items.remaining +'/'+ items.deadline + ' seconds';
+          }
+          else {
+            PLUGIN.setIsForging($scope.items.senderRS, false);
+            $scope.items.status = 'Stopped forging';
+          }
+        });
+      },
+      function (error) {
+        $scope.$evalAsync(function () {
+          PLUGIN.setIsForging($scope.items.senderRS, false);
+          $scope.items.status = error.errorDescription || JSON.stringify(error);
+        });
+      }
+    );
+  };
 
-  //     },
-  //     function (error) {
-  //       status(JSON.stringify(error));
-  //     }
-  //   );
-  // };
+  api.engine.blockchainDownload().then(
+    function (is_complete) { 
+      if (is_complete) {
+        api.engine.getLocalHostNode().then(
+          function (node) {
+            $scope.$evalAsync(function () {
+              $scope.localhost = node;
+              if (plugins.get('wallet') && plugins.get('wallet').hasKey($scope.items.senderRS)) {
+                getForging();
+              }
+            });
+          }
+        );
+      }
+      else {
+        plugins.get('alerts').info({
+          title: 'Forging not allowed',
+          message: 'You have to wait for the blockchain to fully download'
+        }).then(
+          function () {
+            $modalInstance.dismiss();
+          }
+        );
+      }
+    }
+  );
+
 });
 })();

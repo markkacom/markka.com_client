@@ -4,10 +4,10 @@
     <table ng-table="tableParams" class="table table-striped table-condensed table-hover accounts-transactions">
       <tbody>
         <tr ng-repeat="t in $data">
-          <td>
+          <td nowrap>
             <span ng-show="t.timeago">{{t.timeago}}</span>
             <span ng-show="!t.timeago"><i class="fa fa-circle-o-notch fa-spin"></i> Downloading ..</span>
-          <td>
+          </td>
           <td ng-bind-html="t.renderedHTML"></td>
         </tr>
       </tbody>

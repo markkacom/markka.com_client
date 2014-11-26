@@ -20,7 +20,7 @@ module.controller('AccountsPluginSendProgressMoneyModalController', function(ite
 
   var observer = {
     start: function (methodName) {
-      if (methodName == 'sendMoney') {
+      if (methodName == $scope.method) {
         setMessage('Creating transaction')
       }
       else if (methodName == 'broadcastTransaction') {
@@ -30,7 +30,7 @@ module.controller('AccountsPluginSendProgressMoneyModalController', function(ite
       }
     },
     success: function (methodName) {
-      if (methodName == 'sendMoney') {
+      if (methodName == $scope.method) {
         setMessage('Signing transaction');
       }
       else if (methodName == 'broadcastTransaction') {
@@ -41,7 +41,7 @@ module.controller('AccountsPluginSendProgressMoneyModalController', function(ite
       }
     },
     failed: function (methodName) {
-      if (methodName == 'sendMoney') {
+      if (methodName == $scope.method) {
         setMessage('Could not create transaction');
         $timeout(function () {
           $modalInstance.dismiss();

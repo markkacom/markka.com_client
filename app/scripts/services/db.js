@@ -1,12 +1,6 @@
 (function () {
 'use strict';
 
-try {
-  var isNodeJS = typeof require == 'function' && require('child_process');
-} catch (e) {
-  var isNodeJS = false;
-}
-
 function update(src, config) {
   var store = angular.copy(src);
   if (config.update) {
@@ -34,14 +28,19 @@ function versions(updates, db) {
 }
 
 var module = angular.module('fim.base');
-module.factory('db', function ($log, $injector, alerts, $timeout) {
+module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
   var db = new Dexie('fimkrypto-db');
 
   var blockstore          = "height,&id,timestamp,numberOfTransactions,generator,totalAmountNQT,totalFeeNQT";
   var fim_blockstore      = blockstore+',totalPOSRewardNQT';
   var transactionstore    = "transaction,type,subtype,timestamp,recipientRS,senderRS,height,block,isLast";
   var assetsstore         = "asset,name,accountRS,description,decimals,quantityQNT,numberOfTrades";
+  var assetsstore2        = assetsstore+",latestPriceNQT,diff24h";
   var nodes               = "++id,url,port,downloaded,success_timestamp,failed_timestamp,start_timestamp,require_cors_proxy,first_cors,last_cors,last_non_cors";
+  var nodes2              = nodes+",scan_height,onfork";
+  var trades              = "++id,timestamp,quantityQNT,priceNQT,asset,askOrder,bidOrder,block";
+  var orders              = "order,asset,accountRS,quantityQNT,priceNQT,height,type";
+  var orders2             = "order,asset,accountRS,quantityQNT,priceNQT,height";
 
   /* related_rs_a and related_rs_b are used to keep track to what account a 'partially' downloaded transaction belongs. */
   var transactionstore2   = transactionstore+',related_rs_a,related_rs_b,related_index';
@@ -76,6 +75,43 @@ module.factory('db', function ($log, $injector, alerts, $timeout) {
       nxttransactions_test: transactionstore2,
       nxttransactions:      transactionstore2,   
     }
+  }, {
+    update: {
+      nodes:                nodes2
+    }
+  }, {
+    update: {
+      fimtrades:            trades,
+      fimtrades_test:       trades,
+      fimorders:            orders,
+      fimorders_test:       orders,
+      nxttrades:            trades,
+      nxttrades_test:       trades,
+      nxtorders:            orders,
+      nxtorders_test:       orders,
+
+      fimassets_test:       assetsstore2,
+      fimassets:            assetsstore2,
+      nxtassets_test:       assetsstore2,
+      nxtassets:            assetsstore2
+    }
+  }, {
+    remove: {
+      fimorders:            1,
+      fimorders_test:       1,
+      nxtorders:            1,
+      nxtorders_test:       1,      
+    },
+    update: {
+      fimasks:              orders2,
+      fimasks_test:         orders2,
+      fimbids:              orders2,
+      fimbids_test:         orders2,
+      nxtasks:              orders2,
+      nxtasks_test:         orders2,
+      nxtbids:              orders2,
+      nxtbids_test:         orders2
+    }
   }], db);
 
   /* Load models here to prevent cicrular dependency errors */
@@ -108,8 +144,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout) {
         'https://fim8.mofowallet.org|CORS',
         'https://fim9.mofowallet.org|CORS',
         'https://fim10.mofowallet.org|CORS',
-        'https://fim11.mofowallet.org|CORS',
-        'https://fim12.mofowallet.org|CORS',
+        'https://fim11.mofowallet.org|CORS'
       ],
 
       /* NXT main net */
@@ -123,21 +158,21 @@ module.factory('db', function ($log, $injector, alerts, $timeout) {
       ]
     };
 
-    if (isNodeJS) {
-      nodes[7876] = nodes[7876].concat([
-        'http://allbits.vps.nxtcrypto.org|CORS',
-        'http://jefdiesel.vps.nxtcrypto.org',
-        'http://vps3.nxtcrypto.org',
-        'http://xeqtorcreed.vps.nxtcrypto.org',
-        'http://abctc.vps.nxtcrypto.org',
-        'http://bitsy08.vps.nxtcrypto.org|CORS',
-        'http://bitsy09.vps.nxtcrypto.org|CORS',
-        'http://bitsy02.vps.nxtcrypto.org|CORS',
-        'http://bitsy10.vps.nxtcrypto.org|CORS',
-        'http://lyynx.vps.nxtcrypto.org|CORS',
-        'http://samson.vps.nxtcrypto.org'
-      ]);
-    }
+    // if (isNodeJS) {
+    //   nodes[7876] = nodes[7876].concat([
+    //     'http://allbits.vps.nxtcrypto.org|CORS',
+    //     'http://jefdiesel.vps.nxtcrypto.org',
+    //     'http://vps3.nxtcrypto.org',
+    //     'http://xeqtorcreed.vps.nxtcrypto.org',
+    //     'http://abctc.vps.nxtcrypto.org',
+    //     'http://bitsy08.vps.nxtcrypto.org|CORS',
+    //     'http://bitsy09.vps.nxtcrypto.org|CORS',
+    //     'http://bitsy02.vps.nxtcrypto.org|CORS',
+    //     'http://bitsy10.vps.nxtcrypto.org|CORS',
+    //     'http://lyynx.vps.nxtcrypto.org|CORS',
+    //     'http://samson.vps.nxtcrypto.org'
+    //   ]);
+    // }
 
     angular.forEach(nodes, function (list, port) {
       angular.forEach(list, function (url) {
@@ -175,7 +210,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout) {
         }
       };
     });
-    $timeout(function () {
+    $rootScope.$evalAsync(function () {
       angular.forEach(tables, function (table, key) {
         db[key].notifyObservers(function (observer) {
           if (observer.create) {

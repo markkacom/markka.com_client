@@ -8,27 +8,34 @@ function isEmpty(s) {
 var module = angular.module('fim.base');
 module.controller('AccountsPlugin', function($state, $q, $rootScope, 
   $scope, modals, $stateParams, $location, nxt, $timeout, db, 
-  $log, alerts, plugins, selectionService) {
+  $log, alerts, plugins, selectionService, requests, transactionService) {
 
-  /* Install accounts section plugins */
-  $scope.plugins         = { create: [], open: [] };
-  plugins.install('accounts', function (plugin) {
+  function isValid(api, id_rs) {
+    var address = api.createAddress();
+    if (address.set(id_rs)) {
+      return true;
+    }
+    return false;
+  }
 
-    /* Skip if unique to certain engine */
-    if (plugin.supported && !plugin.supported($stateParams.id_rs)) {
-      return;
-    }
+  /* Address must be either a valid nxt or fim address */
+  if (isValid(nxt.nxt(), $stateParams.id_rs)) {
+    var api = nxt.nxt();
+  }
+  else if (isValid(nxt.fim(), $stateParams.id_rs)) {
+    var api = nxt.fim();
+  }
+  else {
+    $state.go('home', {}, {reload:true});
+    return;
+  }
 
-    if (plugin.create) {
-      $scope.plugins.create.push(plugin);
-    }
-    else if (plugin.open) {
-      $scope.plugins.open.push(plugin);
-    }
-  });
+  /* Requests podium */
+  var podium                    = requests.theater.createPodium('accounts', $scope);
 
   $scope.accounts               = [];
   $scope.selectedAccount        = null;
+  $scope.authenticated          = false;
 
   $scope.engine                 = null;
   $scope.symbol                 = '';
@@ -36,152 +43,78 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
   $scope.blockTime              = 0;  
   $scope.publicKeyStatusUnknown = true;
 
-  $scope.transactions           = [];  
+  $scope.transactions           = [];
 
-  /* Poll for new transactions every 10 seconds */
-  var interval = setInterval(function interval() { 
-    $scope.refresh() 
-  }, 10 * 1000);
-
-  /* Cleanup when scope is destroyed */
-  $scope.$on("$destroy", function() { 
-    clearInterval(interval);
-
-    /* Stop the backfill transaction downloader for this account */
-    if ($scope.selectedAccount) {
-      nxt.get($scope.selectedAccount.id_rs).stopDownloadingTransactions($scope.selectedAccount);
-    }
-  });
-
-  /* Load accounts from database */
-  db.accounts.orderBy('name').toArray().then(
-    function (accounts) {
-      $timeout(function () { 
-        $scope.accounts = accounts;
-        fixlocation();
-      });
+  /* See if the account is in the database */
+  db.accounts.where('id_rs').equals($stateParams.id_rs).first().then(
+    function (account) {
+      $scope.$evalAsync(function () { asyncInit(account, $stateParams.id_rs);  });
     }
   ).catch(alerts.catch("Could not load accounts"));  
 
-  /* Register CRUD observer for accounts */
-  db.accounts.addObserver($scope, 
-    db.createObserver($scope, 'accounts', 'id_rs', {
-      finally: function () {
-        fixlocation(); /* if the selectedAccount is removed from the db this triggers a page reload */
-      }
-    })
-  );
-
-  if ($stateParams.action == 'show') {
-    var selected = $scope.selectedAccount = {
-      id_rs: $stateParams.id_rs,
-      update: function (args) {
-        angular.extend(this, args);
-      }
-    };
-    $scope.symbol     = nxt.get(selected.id_rs).engine.symbol;
-    $scope.feeCost    = nxt.get(selected.id_rs).engine.feeCost;
-    $scope.blockTime  = nxt.get(selected.id_rs).engine.blockTime; 
-    $timeout(function () {
-      $scope.refresh();  
-    });
+  function asyncInit(account, id_rs) {
+    if (account) {
+      init(account, true);
+    }
+    else {
+      account = {
+        id_rs: id_rs,
+        update: function (args) {
+          angular.extend(this, args);
+        }
+      };
+      init(account, false);
+    }
   }
 
-  /* Always get as much initial data from db on startup */
-  if ($stateParams.id_rs) {
-    db.accounts.where('id_rs').equals($stateParams.id_rs).first().then(
-      function (account) {
-        if (account) {
-          $timeout(function() {
-            $scope.selectedAccount = account;         
-          });
+  function init(selectedAccount, in_database) {
+    $scope.selectedAccount = selectedAccount;
+
+    /* Only install plugins for accounts that are in the database */
+    if (in_database) {
+      $scope.plugins = { create: [], open: [] };
+      plugins.install('accounts', function (plugin) {
+
+        /* Skip if unique to certain engine */
+        if (plugin.supported && !plugin.supported($stateParams.id_rs)) {
+          return;
         }
-      }
-    )
-  } 
 
-  /* handler for rendered transaction identifier onmouseover events */
-  $scope.onTransactionIdentifierMouseOver = function (element) {
-    var type  = element.getAttribute('data-type');
-    var value = element.getAttribute('data-value');
-    var api   = nxt.get($scope.selectedAccount.id_rs);
-    console.log('onTransactionIdentifierMouseOver', {type:type,value:value});
-    switch (type) {
-      case api.renderer.TYPE.ACCOUNT: {
-        break;
-      }
-    }    
-    return false;
-  }   
+        /* Notify the plugin that it's being installed */
+        if (plugin.oninstall) {
+          plugin.oninstall(selectedAccount.id_rs);
+        }
 
-  /* handler for rendered transaction identifier onmouseover events */
-  $scope.onTransactionIdentifierMouseLeave = function (element) {
-    var type  = element.getAttribute('data-type');
-    var value = element.getAttribute('data-value');
-    var api   = nxt.get($scope.selectedAccount.id_rs);
-    console.log('onTransactionIdentifierMouseLeave', {type:type,value:value});
-    switch (type) {
-      case api.renderer.TYPE.ACCOUNT: {
-        break;
-      }
-    }    
-    return false;
-  } 
-
-
-  /* Called once the database returned the accounts - selects account based on URI or fixes URI */
-  function fixlocation() {
-    if ($stateParams.action != 'show') {
-      /* URL contains account ID - make that account the selected account */
-      var selected = $scope.accounts[UTILS.findFirstPropIndex($scope.accounts, $stateParams, 'id_rs', 'id_rs')];
-      if (selected) {
-        var changed       = (selected !== $scope.selectedAccount);
-        $scope.selectedAccount = selected;
-    
-        var api           = nxt.get(selected.id_rs);
-        $scope.engine     = api.type;
-        $scope.symbol     = api.engine.symbol;
-        $scope.feeCost    = api.engine.feeCost;
-        $scope.blockTime  = api.engine.blockTime; 
-
-        $scope.refresh();
-      }
-      /* URL is empty forward to /#/accounts/ */
-      else if (!$stateParams.id_rs || $stateParams.id_rs.trim().length == 0) {
-        if ($scope.accounts.length > 0) {
-          $state.go('accounts', {id_rs: $scope.accounts[0].id_rs});
-        }      
-      }
-      /* URL is not empty but that account is not in the database - go to first known good account */
-      else if ($scope.accounts.length > 0) {
-        $state.go('accounts', {id_rs: $scope.accounts[0].id_rs});
-      }
-      else {
-        $state.go('accounts');
-      }
+        if (plugin.create) {
+          $scope.plugins.create.push(plugin);
+        }
+        else if (plugin.open) {
+          $scope.plugins.open.push(plugin);
+        }
+      });
     }
-  };  
 
-  /* Used as update interval and when selectedAccount changes - 
-     updates the database with info from the server
+    $scope.symbol     = api.engine.symbol;
+    $scope.feeCost    = api.engine.feeCost;
+    $scope.blockTime  = api.engine.blockTime; 
 
-     All HTTP requests started within this method must be cancelled when the method
-     is called again. 
-   */
+    $scope.refresh();
+  }
+
   $scope.refresh = function () {
     var selected = $scope.selectedAccount;
     if (selected === null) {
       return;
     }
 
-    /* Start the downloader if it's not yet running */
-    var downloader = nxt.get(selected.id_rs).downloadTransactions(selected);
+    /* Fetch unconfirmed transactions */
+    transactionService.getUnconfirmedTransactions(selected.id_rs, api, podium, 10);
 
-    /* Look for unconfirmed transactions */ 
-    downloader.getUnconfirmedTransactions();
+    /* Fetch transactions */
+    transactionService.getNewestTransactions(selected.id_rs, api, podium, 10);
 
     /* Fetch account info */
-    nxt.get(selected.id_rs).getAccount({ account: selected.id_rs }).then(
+    api.getAccount({ account: selected.id_rs }, { podium: podium, priority: 1 }).then(
       function (data) {
         $scope.$evalAsync(function () {
           $scope.publicKeyStatusUnknown = false;
@@ -214,19 +147,56 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
         }
       }
     );
+
+    if (selected.id_rs.indexOf('FIM-') == 0) {
+      api.getNamespacedAlias({
+        account: 'FIM-M3YE-7Q2G-JEZS-HPHK4',
+        aliasName: 'AUTHENTICATED:'+selected.id_rs,
+      }, {
+        podium: podium,
+        priority: 2
+      }).then(
+        function (alias) {
+          $scope.$evalAsync(function () {
+            $scope.authenticated = true;
+          });
+        }
+      ).catch(
+        function (error) {
+          $scope.$evalAsync(function () {
+            $scope.authenticated = false;
+          });
+        }
+      );
+    }
+
   };
 
-  /* account select ng-change */
-  $scope.updateSelection = function () {
-    $state.go('accounts', {id_rs: $scope.selectedAccount.id_rs});
-  }
+  /* handler for rendered transaction identifier onmouseover events */
+  $scope.onTransactionIdentifierMouseOver = function (element) {
+    var type  = element.getAttribute('data-type');
+    var value = element.getAttribute('data-value');
+    // console.log('onTransactionIdentifierMouseOver', {type:type,value:value});
+    switch (type) {
+      case api.renderer.TYPE.ACCOUNT: {
+        break;
+      }
+    }    
+    return false;
+  }   
 
-  /* Find an account by id_rs */
-  $scope.findAccount = function (id_rs) {
-    return UTILS.findFirst($scope.accounts, function (account) {
-      return account.id_rs === id_rs;
-    });
-  };
+  /* handler for rendered transaction identifier onmouseover events */
+  $scope.onTransactionIdentifierMouseLeave = function (element) {
+    var type  = element.getAttribute('data-type');
+    var value = element.getAttribute('data-value');
+    // console.log('onTransactionIdentifierMouseLeave', {type:type,value:value});
+    switch (type) {
+      case api.renderer.TYPE.ACCOUNT: {
+        break;
+      }
+    }    
+    return false;
+  }  
 
   $scope.showEditableID = function (rs_format) {
     if ($scope.selectedAccount) {
@@ -264,6 +234,15 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
         }
       }
     );
+  };
+
+  $scope.showPublicKey = function () {
+    if ($scope.selectedAccount) {
+      plugins.get('alerts').info({
+        title: 'Public Key',
+        message: $scope.selectedAccount.publicKey
+      });
+    }
   };
 
   /* Show the edit account modal dialog */
@@ -316,12 +295,19 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
         items: function () {
           return {
             account: $scope.selectedAccount,
-            api: nxt.get($scope.selectedAccount.id_rs)
+            api: api
           };
         }
       }
-    });    
+    });
   }
+
+  /**
+   * The UI knows of the $scope.transactions only! It could hint at the transactions
+   * downloader that it might need more transactions and the transactions downloader
+   * will take care of that.
+   * Since the UI observes the database it will know about the downloaded transactions
+   */
 
   function find(array, id, value) {
     for(var i=0,l=array.length; i<l; i++) { if (array[i][id] == value) { return i; } }
@@ -368,17 +354,14 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
     /* Load transactions from database */
     var engine = nxt.get($scope.selectedAccount.id_rs).engine;
     engine.db.transactions.where('senderRS').equals($scope.selectedAccount.id_rs).
-                         or('recipientRS').equals($scope.selectedAccount.id_rs).toArray().then(
+                              or('recipientRS').equals($scope.selectedAccount.id_rs).toArray().then(
       function (transactions) {
-        $timeout(function () {
+        $scope.$evalAsync(function () {
           transactions.sort(sorter);
           $scope.transactions = transactions;
 
           /* Tell all children the transactions array changed */
           $scope.$broadcast('transaction-length-changed');
-
-          // $scope.tableParams.total(transactions.length);
-          // $scope.tableParams.reload(); 
         });
       }
     ).catch(alerts.catch("Could not load transactions from database"));
@@ -409,16 +392,12 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
 
         /* Tell all children the transactions array changed */
         $scope.$broadcast('transaction-length-changed');
-
-        // $scope.tableParams.total($scope.transactions.length);
-        // $scope.tableParams.reload(); 
       }
     };
 
     /* Register transactions CRUD observer */
     engine.db.transactions.addObserver($scope, observer);
   });
-
 
 });
 

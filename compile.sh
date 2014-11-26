@@ -25,8 +25,8 @@
 #   a directory. That directory is then zipped. 
 #
 # ##############################################################################
-
-VERSION=0.3.1
+DEBUG=true
+VERSION=0.3.3
 BASE=mofowallet
 
 grunt nodewebkit
@@ -59,6 +59,10 @@ cp -r -p $NW_LINUX/* dist/linux
 
 # Add the nxt installation files which are in dist/nxt (don't forget to remove the src folder !!)
 cp -r -p dist/nxt dist/linux
+
+if [ "$DEBUG" = "true" ]; then
+  exit 0
+fi
 
 # create the release zip
 cd dist/linux

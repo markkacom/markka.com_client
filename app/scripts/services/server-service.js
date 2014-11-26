@@ -64,12 +64,6 @@ var engine = {
   }
 };
 
-try {
-  var isNodeJS = typeof require == 'function' && require('child_process');
-} catch (e) {
-  var isNodeJS = false;
-}
-
 if (isNodeJS) {
   // SIGTERM AND SIGINT will trigger the exit event.
   process.once("SIGTERM", function () {
@@ -145,6 +139,9 @@ return {
   },
   isNodeJS: function () { return isNodeJS; },
   startServer: function (id) {
+    if (this.isRunning(id)) {
+      throw new Error('Server '+id+' already running');
+    }
     var messages  = engine[id].messages;
     var listeners = engine[id].listeners;
     var self      = this;

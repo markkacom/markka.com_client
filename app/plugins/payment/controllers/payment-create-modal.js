@@ -274,12 +274,12 @@ module.controller('PaymentPluginCreateModalController', function(items, $modalIn
           console.log('account', account);
           if (!account.publicKey) {
             $scope.items.showPublicKey = true;
-            setDescription('warning', i18n.format('recipient_no_public_key', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT) }));
+            setDescription('warning', i18n.format('recipient_no_public_key', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT), __symbol__: $scope.symbol }));
           }
           else {
             $scope.items.recipientPublicKey = account.publicKey;
             $scope.items.recipient = account.account;
-            setDescription('info', i18n.format('recipient_info', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT) })); 
+            setDescription('info', i18n.format('recipient_info', {__nxt__: nxt.util.convertToNXT(account.unconfirmedBalanceNQT), __symbol__: $scope.symbol })); 
           }
         },
         function (error) {

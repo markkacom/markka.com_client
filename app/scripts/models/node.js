@@ -14,7 +14,11 @@ module.factory('Node', function() {
         success_status: Number,
         failed_status: Number,
         start_timestamp: Number,
-        supports_cors: Boolean
+        supports_cors: Boolean,
+        scan_height: Number,
+        onfork: Boolean,
+        version: String,
+        lastBlock: String
       });
 
       Node.prototype.update = function (properties) {

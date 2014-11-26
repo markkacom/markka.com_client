@@ -4,10 +4,11 @@
   </div>
   <div class="panel-body">
     <form accept-charset="UTF-8" role="form" name="namespacedAliasCreateForm" class="form-horizontal">
-      <h3>Not Available. Release planned nov 1'st 2014</h3>
       <div class="well well-sm">FIMK Namespaced Aliases are scoped per account. This means you can use any alias you wish, even the same ones that someone else is using.<br><br>Namespaced Alias makes the blockchain more suitable for storing small pieces of data in decentralized storage.<br><br> The aliases you register are stored either in plain text or encrypted and can thus be read by anyone or only be read through access to your account, or access details that you grant to a third party (setting a Namespaced Alias costs 0.1 FIM)</div>
-      <div ng-show="items.errorMessage" class="alert alert-danger"><strong>{{items.errorMessage | json}}</strong></div>
       <div class="form-group">
+        <div class="col-xs-12" ng-show="errorMessage" style="padding-top: 9px">
+          <div class="alert alert-warning" role="alert">{{errorMessage}}</div>
+        </div>
         <label for="nsalias-sender" class="control-label col-xs-2">Sender</label>
         <div class="col-xs-10">
           <input type="text" class="form-control" id="nsalias-sender" readonly ng-model="items.senderRS">
@@ -27,6 +28,50 @@
                     ui-validate="{length : 'validateValueLength($value)'}" 
                     ui-validate-watch=" 'items.value' "></textarea>
         </div>
+        <div class="col-xs-10 col-xs-offset-2">
+          <div class="radio">
+            <label>
+              <input type="radio" name="type" ng-model="items.encryptionType" value="to_recipient">Encrypt to other&nbsp;
+            </label>
+            <label>
+              <input type="radio" name="type" ng-model="items.encryptionType" value="to_self">Encrypt to self&nbsp;
+            </label>
+            <label>
+              <input type="radio" name="type" ng-model="items.encryptionType" value="public">Not encrypted
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" ng-show="items.encryptionType=='to_recipient'">
+        <div class="col-xs-12" ng-show="alertRSText || alertPublickeyText" style="padding-top: 9px">
+          <div class="alert alert-warning" role="alert">
+            <p ng-show="alertRSText">{{alertRSText}}</p>
+            <p ng-show="alertPublickeyText">{{alertPublickeyText}}</p>
+          </div>
+        </div>
+        <label for="nsalias-account" class="control-label col-xs-2">Other</label>
+        <div class="col-xs-10">
+          <div class="input-group">
+
+            <!-- Recipient text box -->
+            <input class="form-control" id="nsalias-account" placeholder="Other account" name="account" 
+              type="text" ng-model="items.recipientRS" ng-change="recipientChanged()"
+              ng-mouseenter="setTitle('Enter the other accounts account number')" ng-mouseleave="setTitle(null)">
+
+            <!-- Recipient select from contacts button -->
+            <span class="input-group-btn">
+              <button ng-click="selectContact()" class="btn btn-default" type="button"
+                ng-mouseenter="setTitle('Select other account from contacts list')" ng-mouseleave="setTitle(null)">
+                <span class="glyphicon glyphicon-user"></span>
+              </button>
+            </span>
+          </div>
+        </div>
+        <label for="nsalias-publickey" class="control-label col-xs-2">Public key</label>
+        <div class="col-xs-10">
+          <input class="form-control" id="nsalias-publickey" placeholder="Public key" name="publickey" 
+              type="text" ng-model="items.recipientPublicKey" ng-change="recipientPublicKeyChanged()">
+        </div>        
       </div>
       <div class="form-group" ng-show="items.advanced">
         <label for="nsalias-fee-1" class="control-label col-xs-2">Fee</label>
@@ -42,6 +87,15 @@
                 ng-mouseenter="setTitle('Set the deadline minimum 1 maximum 1440')" ng-mouseleave="setTitle(null)">
         </div>
       </div>      
+      <div class="form-group" ng-show="!items.advanced">
+        <span class="form-control-static col-xs-12">
+          <div class="pull-right">
+            <a href ng-click="items.advanced = !items.advanced" ng-show="!items.advanced" 
+            ng-mouseenter="setTitle('Click to adjust fee and deadline')" 
+            ng-mouseleave="setTitle(null)"><strong>Fee:</strong> {{items.feeNXT}} <strong>Deadline:</strong> {{items.deadline}}</a>
+          </div>
+        </span>
+      </div>
     </form>
   </div>
   <div class="panel-footer">

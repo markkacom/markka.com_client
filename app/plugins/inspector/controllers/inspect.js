@@ -14,7 +14,15 @@ module.controller('InspectorPluginInspectModalController', function (items, $mod
     $timeout(function () {
       $state.transitionTo('accounts', {id_rs:id_rs, action:'show'}, {reload:true});      
     });
-    $scope.close();    
+    $scope.close();
+  }
+
+  $scope.goToAsset = function (asset_id, issuerRS) {
+    var engine = issuerRS.indexOf('NXT-') == 0 ? 'nxt' : 'fimk';
+    $timeout(function () {
+      $state.transitionTo('assets', {engine:engine, asset:asset_id}, {reload:true});
+    });
+    $scope.close();
   }
 
   function renderTable(object) {

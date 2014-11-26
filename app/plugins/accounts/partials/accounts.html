@@ -23,7 +23,8 @@
           </li>
           <!-- Include plugins here -->
           <li ng-repeat="p in plugins.create">
-            <button class="btn btn-xs btn-primary btn-navbar" ng-click="p.create({senderRS: selectedAccount.id_rs})">{{p.label}}</button>
+            <button class="btn btn-xs btn-{{p.contextual?p.contextual:'primary'}} btn-navbar" ng-click="p.create({senderRS: selectedAccount.id_rs})">
+              <span ng-if="p.icon"><i class="{{p.icon}}"></i>&nbsp;&nbsp;</span>{{p.label}}</button>
           </li>
         </ul>
       </li>
@@ -50,6 +51,8 @@
                 ng-disabled="!selectedAccount">Remove</a></li>
               <li role="presentation"><a href role="menuitem" tabindex="-1" ng-click="refresh(true)" 
                 ng-disabled="!selectedAccount">Refresh</a></li>
+              <li role="presentation"><a href role="menuitem" tabindex="-1" ng-click="showPublicKey()" 
+                ng-disabled="!selectedAccount">Show Publickey</a></li>
             </ul>
           </div>
           <!-- <div class="btn-group">
@@ -66,6 +69,9 @@
         </div>
         <div >
           <ul class="nav nav-pills pull-right" style="margin-top:20px">
+            <li ng-show="authenticated">
+              <span class="btn btn-xs btn-success btn-navbar" style="cursor:auto;"><i class="fa fa-check"></i>&nbsp;&nbsp;Authenticated Account</span>
+            </li>            
             <li>
               <span class="btn btn-xs btn-default btn-navbar" style="cursor:auto;"><small>Unconfirmed</small> {{selectedAccount.unconfirmedBalanceNXT||0}}</span>
             </li>

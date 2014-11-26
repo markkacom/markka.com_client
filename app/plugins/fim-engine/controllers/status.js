@@ -4,10 +4,10 @@ var module = angular.module('fim.base');
 module.controller('FimEngineStatusPlugin', function($scope, serverService, nxt, $interval, $http, db) {
 
   /* */
-  var SERVER_STATE_INTERVAL = 1000 * 2;
+  var SERVER_STATE_INTERVAL = 1000 * 15;
 
   /* How many blocks before the end until we indicate the blockchain has finished downloading */
-  var DOWNLOAD_DONE = 200;
+  var DOWNLOAD_DONE = 100;
   var api = nxt.fim();
   var id = 'TYPE_FIM';
   var blocks_table = 'fimblocks';
@@ -114,12 +114,37 @@ module.controller('FimEngineStatusPlugin', function($scope, serverService, nxt, 
   serverService.addListener(id, 'exit', onExit);
   serverService.addListener(id, 'start', onStart);
 
+  // // Initialize one time
+  // api.engine.getLocalHostNode();  
+
   /* Downloadmonitor is called from an interval. Will do a getState request on the localhost 
    * and update the progressbar and other indicators accordingly. */
   var interval = $interval(function interval() {
 
     /* Update download state for running server */
     if ($scope.server_running) {
+      // api.getState({}, {
+      //   priority: 1,
+      //   podium: requests.mainStage,
+      //   node: api.engine.localHostNode
+      // }).then(
+      //   function (data) {
+      //     $scope.$evalAsync(function () {
+      //       $scope.numberOfBlocks = data.numberOfBlocks;
+      //       $scope.lastBlockchainFeederHeight = data.lastBlockchainFeederHeight;
+      //       $scope.version = data.version;
+      //       $scope.downloading = ($scope.lastBlockchainFeederHeight - $scope.numberOfBlocks) > DOWNLOAD_DONE;
+      //       //api.engine.can_use_localhost = !$scope.downloading;
+      //     });
+      //   },
+      //   function (data) {
+      //     console.log('Could not getState from localhost',data);
+
+      //     /* XXX - not perfect */
+      //     api.engine.can_use_localhost = false;          
+      //   }
+      // );
+
       $http({
         method: 'GET', 
         dataType: 'json',
@@ -132,22 +157,14 @@ module.controller('FimEngineStatusPlugin', function($scope, serverService, nxt, 
             $scope.version = data.version;
             $scope.downloading = ($scope.lastBlockchainFeederHeight - $scope.numberOfBlocks) > DOWNLOAD_DONE;
 
-            /**
-             * XXX - not perfect
-             *
-             * This is not the best place to set this property but since the status bar is always
-             * showing and this interval is always running as a quick fix we'll put this here.
-             * A better solution would be if the api itself performed the check against localhost
-             * and that this plugin would listen to the API.
-             */
-            api.engine.can_use_localhost = !$scope.downloading;
+            //api.engine.can_use_localhost = !$scope.downloading;
           });
         }
       ).error(
         function (data, status, headers, config) {
           console.log('Could not getState from localhost',data);
 
-          /* XXX - not perfect */
+          // XXX - not perfect
           api.engine.can_use_localhost = false;
         }
       );

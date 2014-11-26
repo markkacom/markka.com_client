@@ -14,7 +14,7 @@
         ui-sref="blocks({engine:'fimk'})">
           <span>
             <span ng-if="show_spinner"><i class="fa fa-circle-o-notch fa-spin"></i></span>&nbsp;FIM&nbsp;
-            <span ng-if="server_running && !downloading">server&nbsp;<strong>on</strong></span>
+            <span ng-if="server_running && !downloading">{{numberOfBlocks}}&nbsp;&nbsp;<i class="fa fa-lightbulb-o"></i></span>
             <span ng-if="server_running && downloading">{{numberOfBlocks}}/{{lastBlockchainFeederHeight}}&nbsp;<i class="fa fa-cog fa-spin"></i></span>
             <span ng-if="!server_running">{{blockheight}}</span>
           </span>
