@@ -1,0 +1,37 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Run local server</h3>
+  </div>
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="startupForm" class="form-horizontal">
+      <div class="row">
+        <div class="col-xs-12" style="padding-bottom: 15px">
+          <h3>Start <b>{{items.engine}}</b> server?</h3>
+          <p>The blockchain needs to be fully downloaded before MofoWallet starts using the local server. Running a local server could make your computer run slower but it will make MofoWallet operate faster. Forging with your local server is supported.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-primary" ng-click="startServer()">Start {{items.engine}} Server</button>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" ng-checked="items.alwaysStart" ng-change="alwaysStartChanged()" ng-model="items.alwaysStart" ng-disabled="items.neverStart"> Always start {{items.engine}} server on startup
+            </label>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <button class="btn btn-block btn-success" ng-click="close()">No thanks</button>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" ng-checked="items.neverStart" ng-change="neverStartChanged()" ng-model="items.neverStart" ng-disabled="items.alwaysStart"> Don't ask this again
+            </label>
+          </div>          
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="panel-footer">
+    <div class="form-group"><div class="col-xs-12"></div></div> 
+  </div>  
+</div>

@@ -1,0 +1,31 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Starting, please wait</h3>
+  </div>
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="startupForm" class="form-horizontal">
+      <div class="row">
+        <div class="col-xs-12" style="padding-bottom:20px;">
+          <h3>Initializing please wait</h3>
+          <p>MofoWallet does not rely on a single centralized server. All data and transactions come from a collection of public servers. We need to synchronize those servers on startup by filtering out the ones that are on a fork or are down.<br><br>
+          We also download a small amount of the most recent blockchain data (trades, asset info, ..) this significantly enhances user experience. The data is downloaded selectivly and remembered it will not be downloaded twice even after different browser sessions.<br><br>
+          Refresh your browser if the process seems to be stuck.</p>
+        </div>
+      </div>
+      <div class="row" id="startup-real-html-element">
+        <div class="col-xs-12" ng-repeat="a in activities" style="padding-bottom:15px" ng-show="a.__started">
+          <div><progressbar class="progress-striped active" type="default" max="100" 
+            value="a.clazz.progress" style="margin-bottom: 2px">&nbsp;</progressbar></div>
+          <div style="width: 100%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"><span ng-show="a.clazz.progress==100"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;</span>{{a.clazz.message}}</div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="panel-footer">
+    <div class="form-group">
+      <div class="col-xs-6 col-xs-offset-3">
+        <button ng-click="close()" type="button" class="btn btn-block btn-default">Run in background</button>
+      </div>
+    </div> 
+  </div>
+</div>
