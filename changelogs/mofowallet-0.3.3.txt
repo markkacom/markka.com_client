@@ -1,0 +1,129 @@
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3
+ 2. NXT   1.3.4
+
+This is the first major update after initial mofowallet release. Improvements
+where made on almost all levels.
+
+API Request Manager
+
+  The network request layer has been completely rewritten, it is now aware of all 
+  active and pending (API) requests. Requests are grouped and can be prioritized or 
+  canceled all together, requests are bound to the controllers that started them 
+  and are automatically destroyed when the controller is destroyed.
+
+  Network requests are executed from a central interval (timer) and is no longer
+  event based. The interval acts as an external agent that can takes action and 
+  cancel requests if they either time out or take too long to start (when higher 
+  ranked requests take up all available slots).
+
+  The number of concurrent requests are set at six for now, this seems to work well
+  while running on localhost and when connected public API servers.
+
+Decentralized API
+
+  Improvements are made in the usage of the decentralized API, users can run their
+  own API server and add these to mofowallet. Because of the usage of multiple 
+  public API servers synchronization among those servers has to be performed 
+  on startup. Synchronizing involves a check if the server is up and functioning 
+  and a detailed analysis of the fork that server is on.
+
+  Public API servers that are on a fork are ignored for the current session this 
+  way not wasting any network traffic.
+
+  API servers are required to have SSL enabled and must use a proper certificate.
+
+Embedded Servers
+
+  Users are prompted if they want to start the embedded FIMK and/or NXT server on 
+  startup, options for each server are available to either start automatically 
+  or never start at all.
+
+  Users can run both servers at the same time but this does put a higher load on
+  your system. Running the servers is however not required since mofowallet is
+  fully functional when operating on the public API servers only.
+
+Forging
+
+  Forging/mining is supported for all embedded servers. The blockchain must be
+  downloaded before you can forge blocks. The forging UI has been updated and
+  now requires your secret phrase to be entered only once, either enter your 
+  secret phrase or open your wallet file containing your secret phrase.
+  To see if you forged any blocks for now you will need to look at the amount 
+  forged label in the accounts section. Better feedback of exactly what blocks
+  you forged and other info like charts and averaged are under development.
+
+Namespaced Aliases
+
+  Namespaced aliases now support encryption. This is the same encryption AES 
+  encryption offered for normal messages. Namespaced Aliases can be encrypted
+  so only the owner account can decrypt or where the owner account and one 
+  other account can decrypt that.
+
+Asset Exchange
+
+  Introducing the initial Asset Exchange UI for FIMK and NXT. UI is read only
+  in this release meaning you cannot enter or cancel orders. Asset Exchange 
+  is a work in progress and is suspected to change considerably.
+  Our aim is to offer a professional full featured interface to both
+  the FIMK and NXT decentralized exchanges. We consider a professional UI one
+  that offers traders all tools required to do your daily trading.
+
+  Current AE UI includes:
+
+  1. historical price charts
+  2. listing of all available assets
+  3. display of current price and 24 hour percent change
+
+  Planned AE UI additions:
+
+  4. in client per asset blockchain based commenting
+  5. better charting (moving average, candle stick etc..)
+  6. automatic actions based on blockchain events (this requires the client 
+     to stay on)
+
+Better Messaging
+
+  Better support for sending plain text or encrypted messages. Message 
+  transactions in the transaction history are displayed inline now. If you
+  provided your secret phrase messages are decrypted on the fly and can be
+  seen inline in the account transaction history but also in the blockexplorer.
+
+Startup Service
+
+  New service available to all plugins, plugins register with the startup 
+  service to do intialization upon application startup. Plugins register
+  so called activities that show progress in the startup dialog, activities
+  can be made to run only after certain other activities have finished 
+  running.
+
+  The startup dialog can be hidden by the user and the mofowallet is usable
+  from that moment on. If certain functionality in mofowallet depends on 
+  an activity to complete it will be disabled until the activity has completed.
+
+Highly Contextual Identifiers
+
+  All identifiers for blocks, transactions, accounts, aliases, block heights and
+  more now support mouse events. Plugins can register for mouseover, mouseout and
+  click events. This has enabled everything from the blockexplorer to the account
+  section to be *clickable* and will show you a details dialog in which everything
+  is again clickable.
+
+Bugs fixed
+
+  Fixed a bug where sometimes sending a transaction does not immediately show
+  up in your list of recent transactions. This works correct for all broadcasted 
+  transactions now.
+
+  Fixed numerous performance bottle necks, desktop mofowallet is much faster
+  than the initial 0.3 release.
+
+  Fixed the problem of mofowallet constantly sending requests to obtain state
+  from the public servers. The rewritten network layer fixed this.
+
+  Fixed a bug where sending a transaction gave no meaningful feedback, on 
+  sending transactions the user now sees a dialog that shows transaction 
+  creation, signing and broadcasted feedback.
