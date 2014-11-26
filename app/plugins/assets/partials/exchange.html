@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-md-12">
+    <div ui-view="markets"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div ui-view="info" style="height:350px; overflow-y: auto"></div>
+  </div>  
+  <div class="col-md-6">
+    <div ui-view="chart" style="height:350px;"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <div ui-view="bids"></div>
+  </div>   
+  <div class="col-md-4">
+    <div ui-view="asks"></div>
+  </div>   
+  <div class="col-md-4">
+    <div ui-view="trades"></div>
+  </div>   
+</div>

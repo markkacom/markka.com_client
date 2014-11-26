@@ -1,0 +1,26 @@
+<div class="row" ng-init="showFoldout=false">
+  <div class="col-md-12">
+    <span>Show: <a href ng-click="setAssetFilter(filters.all)">all</a> | <a href ng-click="setAssetFilter(filters.active24h)">active in last 24h</a> | <a href ng-click="setAssetFilter(filters.active7d)">active in last 7d</a></span>
+    <span class="pull-right">Sort by: <a href ng-click="setAssetSorter(sorters.byNumberOfTrades)">number of trades</a> | <a href ng-click="setAssetSorter(sorters.byName)">name</a> | <a href ng-click="setAssetSorter(sorters.byIssuer)">issuer</a></span>
+  </div>
+  <div class="col-md-1" ng-repeat="a in firstAssetRow">
+    <span><strong><a href ui-sref="assets({engine:'{{engine}}', asset:'{{a.asset}}'})">{{a.name}}</a></strong></span><br>
+    <span ng-bind-html="a.price"></span><br>
+    <span ng-bind-html="a.diff"></span>
+  </div>
+  <div class="col-md-1">
+    <a href class="btn btn-danger btn-block" style="margin-top:10px" ng-click="showFoldout=!showFoldout">
+      <i ng-if="!showFoldout" class="fa fa-angle-double-down fa-lg"></i>
+      <i ng-if="showFoldout" class="fa fa-angle-double-up fa-lg"></i>
+    </a>
+  </div>
+</div>
+<div ng-if="showFoldout" collapse="!showFoldout">
+  <div class="row" ng-repeat="row in displayedAssetRows">
+    <div class="col-md-1" ng-repeat="a in row">
+      <span><strong><a href ui-sref="assets({engine:'{{engine}}', asset:'{{a.asset}}'})">{{a.name}}</a></strong></span><br>
+      <span ng-bind-html="a.price"></span><br>
+      <span ng-bind-html="a.diff"></span>
+    </div>
+  </div>
+</div>
