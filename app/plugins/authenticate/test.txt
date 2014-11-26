@@ -1,0 +1,42 @@
+Alice has registered with the FIMKrypto association, she provided her strong 
+authentication details to FIMKrypto that was then encrypted and stored in the 
+blockchain together with her FIMKrypto account (FIM-BA8U-LVXC-WBFT-49C4S).
+
+Bob runs a loan business where customers can apply for small loans online, Bob
+runs a website that offers customers the posibility to authenticate themselves
+before applying for a loan.
+
+Alice wants to apply for a loan so she visits Bobs website. On the website she
+is asked to identify herself during the registration process. Alice chooses to
+identify herself with her strong FIMKrypto authentication.
+
+Alice is asked to enter her FIMK account number (FIM-BA8U-LVXC-WBFT-49C4S) and
+submit that to the website. The website now comes back with a special web address
+that points to the FIMKrypto hosted web wallet.
+
+https://fimkrypto.github.io/mofo/launch.html#/authenticate/FIM-BA8U-LVXC-WBFT- \
+49C4S/Bob/https://bobloans.com/auth.php%3Fu=Alice&a=FIM-BA8U-LVXC-WBFT-49C4S
+
+If we break up the address we'll see that it's made up of several parts.
+
+1. The FIMKrypto web wallet address - https://fimkrypto.github.io/mofo/launch.html
+2. The authenticate plugin          - #/authenticate/
+3. Alice her account number         - FIM-BA8U-LVXC-WBFT-49C4S/
+4. Bobs name to display             - Bob/
+5. The return address               - https://bobloans.com/auth.php%3Fu=Alice&a= \
+                                      FIM-BA8U-LVXC-WBFT-49C4S
+
+Upon visiting that address Alice is taken to the web wallet where she is asked 
+to login by providing her FIMK secret phrase. She is then asked if she agrees 
+with sending her authentication information to Bob. The authentication 
+information is now send to the address that Bob provided.
+
+Upon receiving the authentication information Bob cryptographically verifies that
+the data send by Alice matches the data that FIMKrypto has originally stored 
+for Alice. If this checks out Bob can be assured that Alice is who she says she is.
+
+For testing use this localhost version:
+
+http://localhost:9000/#/authenticate/FIM-BA8U-LVXC-WBFT-49C4S/Bob/https://bobloans \
+.com/auth.php%3Fu=Alice&a=FIM-BA8U-LVXC-WBFT-49C4S
+

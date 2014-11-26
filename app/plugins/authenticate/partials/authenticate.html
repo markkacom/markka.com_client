@@ -1,0 +1,28 @@
+<div class="col-md-12">
+  <h1>Authenticate</h1>
+  <br>
+  <div class="well">
+    Do you wish to confirm decryption and sending of your identification data to <strong>{{lender.name}}</strong>?
+  </div>
+
+  <button class="btn btn-primary btn-lg" ng-click="login()" ng-disabled="confirmed">
+    Step 1. Login
+  </button>
+
+  <button class="btn btn-success btn-lg" ng-click="send()" ng-disabled="!confirmed">
+    Step 2. Send
+  </button>
+
+
+  <br><br>
+
+
+
+  <p>Your identification will be send to this address.</p>
+  <div class="well">
+    {{lender.url}}
+  </div>
+
+</div>
+
+
