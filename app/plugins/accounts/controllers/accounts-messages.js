@@ -26,6 +26,22 @@ module.controller('AccountsPluginMessagesController',
     });
   });
 
+  $scope.onMessageUnlockClick = function (element) {
+    modals.open('selectDecryptionAccount', {
+      resolve: {
+        items: function () {
+          return { 
+            recipientRS: element.getAttribute('data-recipient'),
+            senderRS: element.getAttribute('data-sender')
+          }
+        }
+      },
+      close: function () {
+        $scope.$broadcast('transaction-length-changed');
+      }
+    });
+  }  
+
   $scope.sendMessage = function (recipientRS, recipientPublicKey, message) {
     var api   = nxt.get($scope.selectedAccount.id_rs);
     var args  = {
@@ -61,8 +77,10 @@ module.controller('AccountsPluginMessagesController',
         }
       },
       close: function (items) {
-        var api = nxt.get($scope.selectedAccount.id_rs);
-        transactionService.getUnconfirmedTransactions($scope.selectedAccount.id_rs, api, requests.mainStage, 10);
+        $scope.$evalAsync(function () {
+          $scope.showMessageSendSuccess = true;
+          $scope.composeCollapse = true;
+        });
       }
     });
   }
@@ -81,7 +99,8 @@ module.controller('AccountsPluginMessagesController',
         if (!decoded || (decoded && decoded.encrypted == true && decoded.text == null)) {
           message.html  = $sce.trustAsHtml('<span>encrypted&nbsp;<a href="#" '+
             'onclick="event.preventDefault(); if (angular.element(this).scope().onMessageUnlockClick) { '+
-            'angular.element(this).scope().onMessageUnlockClick(this) }">'+
+            'angular.element(this).scope().onMessageUnlockClick(this) }" data-recipient="'+transaction.recipientRS+
+            '" data-sender="'+transaction.senderRS+'">'+
             'unlock&nbsp;<i class="fa fa-lock"></i></a></span>');
         }
         else {

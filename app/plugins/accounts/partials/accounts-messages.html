@@ -1,9 +1,13 @@
 <div class="row">
   <div class="col-md-12">
     <br>
+    <div ng-init="showMessageSendSuccess=false" class="alert alert-success" role="alert" ng-show="showMessageSendSuccess">
+      <i class="fa fa-check"></i>&nbsp;&nbsp;Message sent successfully
+      <a href class="pull-right" ng-click="showMessageSendSuccess=false"><i class="fa fa-times"></i></a>
+    </div> 
     <div>
-      <a href ng-init="composeCollapse=true" ng-click="composeCollapse=false" ng-show="composeCollapse">Compose</a>
-      <a href class="pull-right" ng-click="composeCollapse=true" ng-show="!composeCollapse">Hide</a>                
+      <a href ng-init="composeCollapse=true" ng-click="composeCollapse=false" ng-show="composeCollapse" class="btn btn-primary">Compose</a>
+      <a href class="pull-right" ng-click="composeCollapse=true" ng-show="!composeCollapse"><i class="fa fa-times"></i></a>
     </div>
     <div collapse="composeCollapse">
       <div class="alert alert-{{recipientAlertLevel}}" role="alert" 

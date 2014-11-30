@@ -10,7 +10,7 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
   $scope.items.valid  = false;
   $scope.items.secretNotFound = false;
   $scope.items.secretPhrase   = $scope.items.secretPhrase || '';
-  $scope.items.messageHTML = $sce.trustAsHtml(items.messageHTML||'This operation requires your secret passphrase.');
+  $scope.items.messageHTML = $sce.trustAsHtml(items.messageHTML||'This operation requires your secret passphrase. Either enter it by hand or click Open Wallet to load a wallet file containing your secret phrase.');
 
   $scope.passphraseChange = function () {
     $timeout(function () {

@@ -144,12 +144,24 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
     return false;
   }
 
+  /* This serves as a catch all. More detailed can be achieved by reimplementing this method
+     on some more local scope (like accounts-messages.js) */
   $scope.onMessageUnlockClick = function (element) {
-    plugins.get('wallet').promptForWallet().then(
-      function () {
+    var recipient_id_rs = element.getAttribute('data-recipient');
+    var sender_id_rs = element.getAttribute('data-sender');
+    modals.open('selectDecryptionAccount', {
+      resolve: {
+        items: function () {
+          return { 
+            recipientRS: recipient_id_rs,
+            senderRS: sender_id_rs
+          }
+        }
+      },
+      close: function () {
         $state.go($state.current, {}, {reload: true});
       }
-    );
+    });
   }
 
 });
