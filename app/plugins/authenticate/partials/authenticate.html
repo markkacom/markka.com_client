@@ -2,7 +2,7 @@
   <h1>Authenticate</h1>
   <br>
   <div class="well">
-    Do you wish to confirm decryption and sending of your identification data to <strong>{{lender.name}}</strong>?
+    Do you wish to confirm decryption and sending of your identification data to <strong>{{challenger_name}}</strong>?
   </div>
 
   <button class="btn btn-primary btn-lg" ng-click="login()" ng-disabled="confirmed">
@@ -13,14 +13,27 @@
     Step 2. Send
   </button>
 
-
   <br><br>
-
-
 
   <p>Your identification will be send to this address.</p>
   <div class="well">
-    {{lender.url}}
+    {{challenger_url}}
+  </div>
+
+  <div class="well">
+    <h3><small>Debug info</small></h3>
+    <table class="table">
+      <tr><td>challenger_id_rs</td><td>{{challenger_id_rs}}</td></tr>
+      <tr><td>challenger_publicKey</td><td>{{challenger_publicKey}}</td></tr>
+      <tr><td>identifier_id_rs</td><td>{{identifier_id_rs}}</td></tr>
+      <tr><td>challenger_name</td><td>{{challenger_name}}</td></tr>
+      <tr><td>challenger_url</td><td>{{challenger_url}}</td></tr>      
+      <tr><td>encryptedJSON</td><td>{{encryptedJSON}}</td></tr>
+      <tr><td>decryptedJSON</td><td>{{decryptedJSON}}</td></tr>
+      <tr><td>challenge_text</td><td>{{challenge_text}}</td></tr>
+      <tr><td>challenge_response</td><td>{{challenge_response}}</td></tr>
+      <tr><td>HTTP</td><td>{{http_args | json}}</td></tr>
+    </table>
   </div>
 
 </div>
