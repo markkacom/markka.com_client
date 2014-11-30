@@ -1,6 +1,9 @@
 <div class="row" ng-controller="SettingsPluginNodesController">
   <div class="col-md-12">
     <div class="row">
+      <div class="col-md-12">
+        <div class="well" ng-init="showMore=false">MofoWallet does not rely on a single centralized server. All data and transactions come from a collection of public servers.<br>Those public API servers are listed here. <a href ng-click="showMore=true" ng-show="!showMore">Tell me more</a><div collapse="!showMore"><br>There is no real direct usage for the average user here. The public node data is used primarily for development of mofowallet and for developing of mofowallet plugins.<br><br>Please also note the difference between public nodes and connected peers. Public nodes are accessed by mofowallet (the client software) and connected peers are the collection of FIMK or NXT servers that together make up the entire p2p network.<br>A display of connected peers is not yet available in mofowallet.<br><br><a href ng-click="showMore=false">Hide this info</a></div></div>
+      </div>
       <div class="col-md-8">
         <br>
         <form accept-charset="UTF-8" role="form" name="settingsNodesForm" class="form-horizontal">
@@ -16,9 +19,6 @@
             <div class="col-xs-3">
               <button class="form-control btn btn-primary" ng-click="clearSelectedEngine()">Clear Nodes</button>
             </div>
-<!--             <div class="col-xs-3">
-              <button class="form-control btn btn-default" ng-click="clearSelectedEngine()">Ping Nodes</button>
-            </div>    -->         
           </div>
         </form>
         <br>
@@ -30,8 +30,7 @@
         <div ng-show="batchAdd">
           <textarea rows="5" class="form-control monospace col-md-12" ng-model="batchAddContents"></textarea>
           <button class="btn btn-primary btn-sm" ng-disabled="!batchAddContents" ng-click="saveNodes()">Add nodes</button>
-<!--           <button class="btn btn-primary btn-sm" ng-click="selectedEngine.more.fn()" ng-show="selectedEngine.more">{{selectedEngine.more.label}}</button>
- -->          <a class="pull-right" href ng-click="batchAdd = false">Hide</a>
+          <a class="pull-right" href ng-click="batchAdd = false">Hide</a>
         </div>
         <div>
           <br>          
@@ -40,14 +39,10 @@
               <td data-title="'URL'" header-class="text-left">{{t.url}}</td>
               <td data-title="'Port'" header-class="text-left">{{t.port}}</td>
               <td data-title="'CORS'" header-class="text-left"><input type="checkbox" ng-model="t.supports_cors" ng-change="t.update({supports_cors: t.supports_cors})"></td>
-              <!-- <td data-title="'Downloaded'" header-class="text-left">{{formatSize(t.downloaded)}}</td> -->
-              <td data-title="'Start'" header-class="text-left">{{formatStartTime(t.start_timestamp, t.success_timestamp, t.failed_timestamp)}}</td>
-              <td data-title="'Success'" header-class="text-left">{{formatTimestamp(t.success_timestamp)}}</td>
-              <td data-title="'Failed'" header-class="text-left">{{formatTimestamp(t.failed_timestamp)}}</td>
+              <td data-title="'Last Active'" header-class="text-left">{{formatTimestamp(t.start_timestamp)}}</td>
               <td data-title="'Height'" header-class="text-left">{{t.numberOfBlocks}}</td>
               <td data-title="'Fork'" header-class="text-left">{{t.onfork}}</td>
               <td data-title="'Version'" header-class="text-left">{{t.version}}</td>
-              <!-- <td data-title="'Busy'" header-class="text-left">{{(pt.failed_timestamp < t.start_timestamp) && (pt.success_timestamp < t.start_timestamp)}}</td> -->
               <td><a href ng-click="deleteNode(t)">delete</a></td>
               <td><a href ng-click="unblackList(t)">un-blacklist</a></td>
             </tr>
