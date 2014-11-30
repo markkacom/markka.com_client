@@ -4,8 +4,8 @@
   </div>
   <div class="panel-body">
     <div class="col-xs-12">
-      <div ng-if="items.message" class="well well-sm">{{items.message}}</div>
-      <div ng-if="items.html" class="well well-sm" ng-bind-html="items.html"></div>       
+      <div ng-if="items.message">{{items.message}}</div>
+      <div ng-if="items.html" ng-bind-html="items.html"></div>       
     </div>
   </div>
   <div class="panel-footer">

@@ -1397,13 +1397,14 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
             html.push('<i class="fa fa-unlock"></i>');
           }
           if (decoded.text) {
-            var css = 'overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 180px; max-width: 180px; display:inline-block; vertical-align: text-bottom;';
-            html.push('&nbsp;<span style="',css,'" data-text="',JSON.stringify(decoded.text),'">',decoded.text,'</span></span>');
+            var css = '';//'overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 180px; max-width: 180px; display:inline-block; vertical-align: text-bottom;';
+            html.push('&nbsp;<span style="',css,'" data-text="',encodeURIComponent(decoded.text),'" data-sender="',transaction.senderRS,'" data-recipient="',transaction.recipientRS,'" ',
+            '>',decoded.text,'</span></span>');
           }
           else {
             html.push('&nbsp;encrypted&nbsp;<a href="#" ',
                       'onclick="event.preventDefault(); if (angular.element(this).scope().onMessageUnlockClick) { ',
-                      'angular.element(this).scope().onMessageUnlockClick(this) }">',
+                      'angular.element(this).scope().onMessageUnlockClick(this) }" data-recipient="',transaction.recipientRS,'" data-sender="',transaction.senderRS,'">',
                       'unlock&nbsp;<i class="fa fa-lock"></i></a></span>');
           }
           return html.join('');
@@ -1440,16 +1441,16 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         case 1: {
           switch (transaction.subtype) {
             case 0: 
-              if (transaction.attachment && transaction.attachment['version.PublicKeyAnnouncement']) {
-                    return sprintf('%s %s <strong>published public key</strong> for %s (%s) %s %s', 
-                              label(transaction),
-                              render(TYPE.ACCOUNT, transaction.senderRS), 
-                              render(TYPE.ACCOUNT, transaction.recipientRS), 
-                              render(TYPE.JSON,'details',JSON.stringify(transaction)),
-                              fee(transaction),
-                              message(transaction));
-              }
-              else {
+              // if (transaction.attachment && transaction.attachment['version.PublicKeyAnnouncement']) {
+              //       return sprintf('%s %s <strong>published public key</strong> for %s (%s) %s %s', 
+              //                 label(transaction),
+              //                 render(TYPE.ACCOUNT, transaction.senderRS), 
+              //                 render(TYPE.ACCOUNT, transaction.recipientRS), 
+              //                 render(TYPE.JSON,'details',JSON.stringify(transaction)),
+              //                 fee(transaction),
+              //                 message(transaction));
+              // }
+              // else {
                     return sprintf('%s %s <strong>sent a message</strong> to %s (%s) %s %s', 
                               label(transaction),
                               render(TYPE.ACCOUNT, transaction.senderRS), 
@@ -1458,7 +1459,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                               fee(transaction),
                               message(transaction));
 
-              }
+              // }
             case 1: return sprintf('%s %s <strong>set alias</strong> %s <strong>to</strong> %s (%s) %s %s', 
                               label(transaction),
                               render(TYPE.ACCOUNT, transaction.senderRS), 
@@ -2776,11 +2777,11 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
      */
     this.getAccountPublicKey = function (account) {
       var deferred = $q.defer();
-      api.getAccountPublicKey({account:account}).then(
+      api.getAccountPublicKey({account:account}, {priority:5, podium: requests.mainStage}).then(
         function (data) {
           deferred.resolve(data.publicKey);
         }
-      ).catch(alerts.catch('Could not get publickey'));
+      ).catch(deferred.reject);
       return deferred.promise; 
     }
 
@@ -3082,9 +3083,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       }
 
       var compressedPlaintext = aesDecrypt(data, options);
-
       var binData = new Uint8Array(compressedPlaintext);
-
       var data = pako.inflate(binData);
 
       return converters.byteArrayToString(data);

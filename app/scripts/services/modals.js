@@ -6,6 +6,7 @@ var instance;
 
 function init() {
   instance.register('secretPhrase', { templateUrl: 'partials/secretphrase-modal.html', controller: 'secretPhraseModalController' });
+  instance.register('selectDecryptionAccount', { templateUrl: 'partials/select-decryption-account.html', controller: 'selectDecryptionAccountController' });
 }
 
 var register = {};

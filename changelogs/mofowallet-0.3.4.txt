@@ -1,0 +1,53 @@
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3
+ 2. NXT   1.3.4
+
+The decentralized public API servers can be observed and controlled from the 
+settings menu (Option "Settings / Public Nodes"). It was unclear to users what 
+this functionality is about and required some explanation. It also was too
+developer centric and required a slight makeover not to confuse non developer
+users.
+
+Several fixes for the Messenger (available under the messages tab for each 
+account) it now updates after entering your secret phrase decrypting your 
+messages immediately. Fixed the problem where you were required to open your
+wallet file to decrypt messages (when clicking inline unlock button) now users
+can have the option to just enter their secret phrase. Changed css and 
+added animations to the inline compose dialog, made several improvements to the 
+composer controller.
+
+Fixed a bug in the central rendering code where message transactions were 
+incorrectly labeled as public key announcements. This affects both the accounts
+section as well as the block explorer since they all use the central 
+rendering code.
+
+Changed the way inline messages are rendered in the accounts section. Long 
+messages used to be cut off at a certain length, making the list of transactions
+for an account more compact. Changed this to render the complete message inline,
+makes the UI less compact but does show you all your transactions and messages
+in one place without having to go to another screen. Will make things easier 
+for the user especially when we'll complete making MofoWallet compatible with
+mobile device screens.
+
+Fixed several bootstrap/css issues in multiple places.
+
+Authentication Plugin
+
+  Several fixes to the Strong Authentication Plugin, the user landing page now 
+  shows debug information for easier implementation. Eventually this debug 
+  information can be turned on/off by merchants during their implementation
+  phase. The authentication plugin offers strong proof of identity for merchants 
+  that require their customers to identify themselves. The authentication plugin 
+  is build ontop of FIMK Namespaced Aliases. The Krypto Fin ry non profit 
+  association offers residents of Finland the option to electronically provide proof
+  of their identify using strong authentication and permanently tag their FIMK account 
+  as authenticated. This proof is cryptographically signed by Krypto Fin ry
+  and stored on the blockchain. Merchants can request that proof from their 
+  customers by redirecting them to the Authentication Plugin in (web) MofoWallet.
+
+  Sample (working) redirect link:
+
+  https://fimkrypto.github.io/mofo/launch.html#/authenticate/FIM-BA8U-LVXC-WBFT-49C4S/FIM-7CZJ-CVTH-F4XY-DMWEY/Bob/https://bobloans.com/auth.php?identifier=FIM-7CZJ-CVTH-F4XY-DMWEY
