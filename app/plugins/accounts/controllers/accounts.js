@@ -149,28 +149,51 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
     );
 
     if (selected.id_rs.indexOf('FIM-') == 0) {
-      api.getNamespacedAlias({
-        account: 'FIM-M3YE-7Q2G-JEZS-HPHK4',
-        aliasName: 'AUTHENTICATED:'+selected.id_rs,
-      }, {
-        podium: podium,
-        priority: 2
-      }).then(
-        function (alias) {
-          $scope.$evalAsync(function () {
-            $scope.authenticated = true;
-          });
-        }
-      ).catch(
-        function (error) {
-          $scope.$evalAsync(function () {
-            $scope.authenticated = false;
-          });
+      getFIMKryptoAuthenticator().then(
+        function (id_rs) {
+          api.getNamespacedAlias({
+            account: id_rs,
+            aliasName: 'AUTHENTICATED:'+selected.id_rs,
+          }, {
+            podium: podium,
+            priority: 2
+          }).then(
+            function (alias) {
+              $scope.$evalAsync(function () {
+                $scope.authenticated = true;
+              });
+            }
+          ).catch(
+            function (error) {
+              $scope.$evalAsync(function () {
+                $scope.authenticated = false;
+              });
+            }
+          );
         }
       );
     }
 
   };
+
+  var FIMKRYPTO_AUTHENTICATOR_RS = null;
+  function getFIMKryptoAuthenticator() {
+    var deferred = $q.defer();
+    if (FIMKRYPTO_AUTHENTICATOR_RS) {
+      deferred.resolve(FIMKRYPTO_AUTHENTICATOR_RS);
+    }
+    else {
+      api.getAlias({ aliasName: "FIMKAUTHACCOUNT"}, {priority: 2, podium:podium}).then(
+        function (data) {
+          FIMKRYPTO_AUTHENTICATOR_RS = (data.aliasURI||'').toUpperCase();
+          deferred.resolve(FIMKRYPTO_AUTHENTICATOR_RS);
+        },
+        deferred.reject
+      )
+    }
+    return deferred.promise;
+  }
+
 
   /* handler for rendered transaction identifier onmouseover events */
   $scope.onTransactionIdentifierMouseOver = function (element) {
