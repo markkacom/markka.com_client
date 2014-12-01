@@ -1,10 +1,11 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('AuthenticatePlugin', function($scope, $stateParams, modals, $q, nxt, plugins) {
+module.controller('AuthenticatePlugin', function($scope, $stateParams, modals, $q, nxt, plugins, requests) {
 
-  var FIMKRYPTO_RS = 'FIM-PDKH-PS4C-TBCV-9ZQHG';
-  var FIMKRYPTO_PUBLICKEY = 'f2b53a29cc4ed80878546500ec7d167cd3686e61b7160a049ee3fdf68a435f44';
+  var FIMKRYPTO_ALIAS     = "FIMKAUTHACCOUNT";
+  var FIMKRYPTO_RS        = null;
+  var FIMKRYPTO_PUBLICKEY = null;
   
   $scope.challenger_id_rs = $stateParams.challenger_id_rs;
   $scope.identifier_id_rs = $stateParams.identifier_id_rs;
@@ -139,16 +140,21 @@ module.controller('AuthenticatePlugin', function($scope, $stateParams, modals, $
    */
   function getAccountPersonalData(secretPhrase, id_rs) {
     var deferred = $q.defer();
-    nxt.fim().getNamespacedAlias({
-      account:    FIMKRYPTO_RS,
-      aliasName:  'AUTHENTICATED:'+id_rs
-    }).then(
-      function (data) {
-        $scope.$evalAsync(function () {
-          $scope.encryptedJSON = data.aliasURI; 
-        });
-        deferred.resolve(decryptAlias(secretPhrase, data.aliasURI));
-      }
+    getAuthenticator().then(
+      function () {
+        api.getNamespacedAlias({
+          account:    FIMKRYPTO_RS,
+          aliasName:  'AUTHENTICATED:'+id_rs
+        }).then(
+          function (data) {
+            $scope.$evalAsync(function () {
+              $scope.encryptedJSON = data.aliasURI; 
+            });
+            deferred.resolve(decryptAlias(secretPhrase, data.aliasURI));
+          }
+        );
+      },
+      deferred.reject
     );
     return deferred.promise;
   }
@@ -225,6 +231,25 @@ module.controller('AuthenticatePlugin', function($scope, $stateParams, modals, $
       data: qs,
       headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }; 
+  }
+
+  function getAuthenticator() {
+    var deferred = $q.defer();
+    api.getAlias({ aliasName: FIMKRYPTO_ALIAS}, { priority: 5, podium: requests.mainStage }).then(
+      function (data) {
+        var account_rs = (data.aliasURI||'').toUpperCase();
+        api.getAccountPublicKey({ account: account_rs }, { priority: 5, podium: requests.mainStage }).then(
+          function (data) {
+            FIMKRYPTO_RS        = account_rs;
+            FIMKRYPTO_PUBLICKEY = data.publicKey;
+            deferred.resolve();
+          },
+          deferred.reject
+        );
+      },
+      deferred.reject
+    );
+    return deferred.promise;
   }
 
 });
