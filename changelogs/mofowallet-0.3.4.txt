@@ -48,6 +48,8 @@ Authentication Plugin
   and stored on the blockchain. Merchants can request that proof from their 
   customers by redirecting them to the Authentication Plugin in (web) MofoWallet.
 
-  Sample (working) redirect link:
+  The online plugin is beta software and is meant for demo purposes only!
+
+  Sample redirect link:
 
   https://fimkrypto.github.io/mofo/launch.html#/authenticate/FIM-BA8U-LVXC-WBFT-49C4S/FIM-7CZJ-CVTH-F4XY-DMWEY/Bob/https://bobloans.com/auth.php?identifier=FIM-7CZJ-CVTH-F4XY-DMWEY
