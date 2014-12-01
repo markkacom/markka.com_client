@@ -25,8 +25,8 @@
 #   a directory. That directory is then zipped. 
 #
 # ##############################################################################
-DEBUG=true
-VERSION=0.3.3
+DEBUG=false
+VERSION=0.3.4
 BASE=mofowallet
 
 grunt nodewebkit
