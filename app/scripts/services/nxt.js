@@ -141,6 +141,29 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     }
   };
 
+  var TRANSACTION_ARGS = {
+    sender:                       {type: String, argument: false},
+    senderRS:                     {type: String, argument: false},
+    engine:                       {type: String, argument: false},
+    publicKey:                    {type: String}, // sender public key
+    secretPhrase:                 {type: String},
+    message:                      {type: String},
+    messageIsText:                {type: String},
+    feeNQT:                       {type: String, required: true},
+    deadline:                     {type: String, required: true},
+    encryptedMessageData:         {type: String},
+    encryptedMessageNonce:        {type: String},
+    messageToEncrypt:             {type: String},
+    messageToEncryptIsText:       {type: String},
+    encryptToSelfMessageData:     {type: String},
+    encryptToSelfMessageNonce:    {type: String},
+    messageToEncryptToSelf:       {type: String},
+    messageToEncryptToSelfIsText: {type: String},
+    note_to_self:                 {type: Boolean, argument: false},
+    encrypt_message:              {type: Boolean, argument: false},
+    public_message:               {type: Boolean, argument: false}
+  }
+
   var canceller = $q.defer();
   var NXT_API = {
     getAccountTransactions: {
@@ -259,7 +282,31 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         encrypt_message:              {type: Boolean, argument: false},
         public_message:               {type: Boolean, argument: false}
       }
-    },    
+    },  
+    placeAskOrder: {
+      args: angular.extend({
+        asset:        {type: String, required: true},
+        quantityQNT:  {type: String, required: true},
+        priceNQT:     {type: String, required: true},
+      }, TRANSACTION_ARGS)
+    },  
+    placeBidOrder: {
+      args: angular.extend({
+        asset:        {type: String, required: true},
+        quantityQNT:  {type: String, required: true},
+        priceNQT:     {type: String, required: true},
+      }, TRANSACTION_ARGS)
+    },
+    cancelAskOrder: {
+      args: angular.extend({
+        order:          {type: String, required: true}
+      }, TRANSACTION_ARGS)
+    },
+    cancelBidOrder: {
+      args: angular.extend({
+        order:          {type: String, required: true}
+      }, TRANSACTION_ARGS)
+    },
     getAccountPublicKey: {
       args: {
         account: {type: String, required: true}
@@ -273,7 +320,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     },
     getState: {
       args: {
-        caller:                      {type: String, argument: false}
+        caller:          {type: String, argument: false}
       }
     },
     getBlock: {
@@ -400,6 +447,34 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       returns: {
         property: 'trades'
       }      
+    },
+    getAccountCurrentAskOrderIds: {
+      args: {
+        account:          {type: String, required: true},
+        asset:            {type: String, required: true},
+      },
+      returns: {
+        property: 'askOrderIds'
+      }
+    },
+    getAccountCurrentBidOrderIds: {
+      args: {
+        account:          {type: String, required: true},
+        asset:            {type: String, required: true},
+      },
+      returns: {
+        property: 'bidOrderIds'
+      }
+    },
+    getAskOrder: {
+      args: {
+        order:          {type: String, required: true}
+      },
+    },
+    getBidOrder: {
+      args: {
+        order:          {type: String, required: true}
+      },
     }
   };
 
@@ -1997,12 +2072,17 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                             /* Update unconfirmed transactions 
                                TODO this is avery brute approach, a solution with an observer that detects the new
                                     transaction would be much better. */
+                            var id_rs = self.crypto.getAccountId(secretPhrase, true);                                    
                             for (var i=3; i<7; i++) {
-                              $timeout(function () {
-                                var id_rs = self.crypto.getAccountId(secretPhrase, true);
+                              $timeout(function () {                                
                                 INSTANCE.transactions.getUnconfirmedTransactions(id_rs, self, requests.mainStage, 20, options.node_out);
                               }, i*1000);
                             }
+
+                            /* It is possible for a transaction to end up in a block before we call getUnconfirmed */
+                            $timeout(function () {  
+                              INSTANCE.transactions.getNewestTransactions(id_rs, self, requests.mainStage, 20, options.node_out);
+                            }, 10*1000);
                           }
                         ).catch(
                           function (error) {

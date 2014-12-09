@@ -32,7 +32,7 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
             $modalInstance.close($scope.items);
           });
         }
-      )
+      );
     }
   }
 
@@ -51,7 +51,34 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
   );
 
   $scope.close = function () {
-    $modalInstance.close($scope.items);
+    if (walletPlugin.hasKey($scope.items.sender)) {
+      $modalInstance.close($scope.items);
+    }
+    else {
+      walletPlugin.confirmSaveToWallet().then(
+        function (confirmed) {
+          if (confirmed) {
+            /* Save the secret in the in-memory wallet - will ask the user to save the wallet */
+            walletPlugin.addEntry({
+              name:         '',
+              id_rs:        $scope.items.sender,
+              secretPhrase: $scope.items.secretPhrase
+            }).then(
+              function () {
+                $modalInstance.close($scope.items);
+              },
+              function () {
+                $modalInstance.dismiss();
+              }
+            );
+          }
+          else {
+            walletPlugin.saveToMemory($scope.items.sender, $scope.items.secretPhrase);
+            $modalInstance.close($scope.items);
+          }
+        }
+      );
+    }
   }
 
   $scope.dismiss = function () {

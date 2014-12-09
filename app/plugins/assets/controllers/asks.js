@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('ExchangePluginAsksController', function($scope, ngTableParams, $timeout, nxt) {
+module.controller('ExchangePluginAsksController', function($scope, ngTableParams, $timeout, nxt, plugins, modals) {
   $scope.tableParams = new ngTableParams({ count: $scope.asks.length }, {
     total: 0,
     getData: function($defer, params) {
@@ -44,6 +44,23 @@ module.controller('ExchangePluginAsksController', function($scope, ngTableParams
 
   function formatOrderTotal(priceNQT, quantityQNT, decimals) {
     return nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(priceNQT, quantityQNT));
+  }
+
+  $scope.placeOrder = function () {
+    var engine = $scope.engine == 'nxt' ? 'TYPE_NXT' : 'TYPE_FIM';
+    modals.open('orderCreate', {
+      resolve: {
+        items: function () {
+          return {
+            selectedAccount: $scope.selectedAccount,
+            engine: engine,
+            asset: $scope.selectedAsset,
+            type: 'ask',
+            feeNXT: (engine == 'TYPE_FIM' ? '0.1' : '1')
+          };
+        }
+      }
+    });
   }   
 });
 })();

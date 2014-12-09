@@ -279,8 +279,190 @@ function downloadBids(podium, api, asset_id, $scope, db) {
   );
 }
 
+function initBalance(podium, api, $scope, nxt) {
+  $scope.$evalAsync(function () {
+    $scope.balance = '0';
+    $scope.unconfirmedBalance = '0';
+  });  
+  api.getAccount({
+    account: $scope.selectedAccount.id_rs
+  }, {
+    priority: 5,
+    podium: podium
+  }).then(
+    function (data) {
+      var balanceQNT='0', unconfirmedBalanceQNT='0', b, asset = $scope.selectedAsset;
+      if (data.assetBalances) {
+        for (var i=0; i<data.assetBalances.length; i++) {
+          b = data.assetBalances[i];
+          if (b.asset == asset.asset) {
+            balanceQNT = b.balanceQNT;
+            break;
+          }
+        }
+      }
+      if (data.unconfirmedAssetBalances) {
+        for (var i=0; i<data.unconfirmedAssetBalances.length; i++) {
+          b = data.unconfirmedAssetBalances[i];
+          if (b.asset == asset.asset) {
+            unconfirmedBalanceQNT = b.unconfirmedBalanceQNT;
+            break;
+          }
+        }
+      }
+      $scope.$evalAsync(function () {
+        $scope.balance = nxt.util.convertToQNT(balanceQNT, asset.decimals);
+        $scope.unconfirmedBalance = nxt.util.convertToQNT(unconfirmedBalanceQNT, asset.decimals);
+      });
+    }
+  );
+}
+
+function existsInArray(array, callback) {
+  for (var i=0; i<array.length; i++) {
+    if (callback.call(null, array[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function createMyAsksObserver($scope, asset_id, id_rs) {
+  return new GenericObserver('myAsks', $scope, 
+    function filter(order) { 
+      return order.asset == asset_id && order.accountRS == id_rs;
+    },
+    sortAsks,
+    function find(asks, order) {
+      for (var i=0,l=asks.length; i<l; i++) {
+        var b = asks[i];
+        if (b.order == order.order) {
+          return i;
+        }
+      }
+      return -1;
+    }
+  );
+}
+
+function initMyAsks(podium, api, $scope, nxt) {
+  api.engine.db.asks.where('asset').equals($scope.selectedAsset.asset).
+      and(function (order) { return order.accountRS == $scope.selectedAccount.id_rs }).toArray().then(
+    function (orders) {
+      $scope.myAsks = [];
+      for (var i=0,l=orders.length; i<l; i++) {
+        $scope.myAsks.push(orders[i]);
+      }
+      $scope.myAsks.sort(sortAsks);
+      $scope.$evalAsync(function () { });
+      api.engine.db.asks.addObserver($scope, createMyAsksObserver($scope, $scope.selectedAsset.asset, $scope.selectedAccount.id_rs));
+      downloadMyAsks(podium, api, $scope, nxt);
+    }
+  );
+}
+
+function downloadMyAsks(podium, api, $scope, nxt) {
+  api.getAccountCurrentAskOrderIds({
+    account: $scope.selectedAccount.id_rs,
+    asset: $scope.selectedAsset.asset
+  }, {
+    priority: 5,
+    podium: podium
+  }).then(
+    function (ids) {
+      for (var i=0; i<ids.length; i++) {
+        if (!existsInArray($scope.myAsks, function (order) { return order.order == ids[i]})) {
+          downloadMyAsk(podium, api, $scope, nxt, ids[i]);
+        }
+      }
+    }
+  );
+}
+
+function downloadMyAsk(podium, api, $scope, nxt, id) {
+  api.getAskOrder({
+    order: id
+  }, {
+    priority: 5,
+    podium: podium
+  }).then(
+    function (order) {
+      api.engine.db.asks.put(order);
+    }
+  );
+}
+
+function createMyBidsObserver($scope, asset_id, id_rs) {
+  return new GenericObserver('myBids', $scope, 
+    function filter(order) { 
+      return order.asset == asset_id && order.accountRS == id_rs;
+    },
+    sortBids,
+    function find(bids, order) {
+      for (var i=0,l=bids.length; i<l; i++) {
+        var a = bids[i];
+        if (a.order == order.order) {
+          return i;
+        }
+      }
+      return -1;
+    }
+  );
+}
+
+function initMyBids(podium, api, $scope, nxt) {
+  api.engine.db.bids.where('asset').equals($scope.selectedAsset.asset).
+      and(function (order) { return order.accountRS == $scope.selectedAccount.id_rs }).toArray().then(
+    function (orders) {
+      $scope.myBids = [];
+      for (var i=0,l=orders.length; i<l; i++) {
+        $scope.myBids.push(orders[i]);
+      }
+      $scope.myBids.sort(sortBids);
+      $scope.$evalAsync(function () { });
+      api.engine.db.bids.addObserver($scope, createMyBidsObserver($scope, $scope.selectedAsset.asset, $scope.selectedAccount.id_rs));
+      downloadMyBids(podium, api, $scope, nxt);
+    }
+  );
+}
+
+function downloadMyBids(podium, api, $scope, nxt) {
+  api.getAccountCurrentBidOrderIds({
+    account: $scope.selectedAccount.id_rs,
+    asset: $scope.selectedAsset.asset
+  }, {
+    priority: 5,
+    podium: podium
+  }).then(
+    function (ids) {
+      for (var i=0; i<ids.length; i++) {
+        if (!existsInArray($scope.myBids, function (order) { return order.order == ids[i]})) {
+          downloadMyBid(podium, api, $scope, nxt, ids[i]);
+        }
+      }
+    }
+  );
+}
+
+function downloadMyBid(podium, api, $scope, nxt, id) {
+  api.getBidOrder({
+    order: id
+  }, {
+    priority: 5,
+    podium: podium
+  }).then(
+    function (order) {
+      api.engine.db.bids.put(order);
+    }
+  );
+}
+
+function initMyTrades(podium, api, $scope, nxt) {
+
+}
+
 var module = angular.module('fim.base');
-module.controller('ExchangePluginController', function($scope, $stateParams, nxt, requests, $state, db, $timeout) {
+module.controller('ExchangePluginController', function($scope, $rootScope, $stateParams, nxt, requests, $state, db, $timeout, alerts, plugins) {
 
   if ($stateParams.engine == 'nxt') {
     var api = nxt.nxt();
@@ -295,11 +477,17 @@ module.controller('ExchangePluginController', function($scope, $stateParams, nxt
 
   var podium    = requests.theater.createPodium('exchange', $scope);
 
-  $scope.engine = $stateParams.engine;
-  $scope.assets = [];
-  $scope.trades = [];
-  $scope.asks   = [];
-  $scope.bids   = [];
+  $scope.engine             = $stateParams.engine;
+  $scope.assets             = [];
+  $scope.trades             = [];
+  $scope.asks               = [];
+  $scope.bids               = [];
+
+  $scope.myAsks             = [];
+  $scope.myBids             = [];
+  $scope.myTrades           = [];
+  $scope.balance            = '';
+  $scope.unconfirmedBalance = '';
 
   $scope.sorters = {};
 
@@ -363,6 +551,9 @@ module.controller('ExchangePluginController', function($scope, $stateParams, nxt
           $scope.$evalAsync(function () {
             $scope.selectedAsset = asset;
             $scope.selectedAsset.engine = api.type == nxt.nxt().type ? 'nxt' : 'fimk';
+            if ($scope.selectedAccount) {
+              refresh();
+            }
           });
         }
         else {
@@ -409,5 +600,65 @@ module.controller('ExchangePluginController', function($scope, $stateParams, nxt
       }
     });
   }
+
+  function refresh() {
+    initBalance(podium, api, $scope, nxt);
+    initMyAsks(podium, api, $scope, nxt, db);
+    initMyBids(podium, api, $scope, nxt, db);
+    initMyTrades(podium, api, $scope, nxt, db);
+  }  
+
+  $scope.selectedAccount = $rootScope.selectedAccount;
+
+  function filter(array) {
+    var prefix = $scope.engine == 'nxt' ? 'NXT-' : 'FIM-';
+    return array.filter(function (obj) {
+      return obj.id_rs.indexOf(prefix) == 0;
+    });
+  }
+
+  if (!$scope.selectedAccount) {
+    db.accounts.orderBy('name').toArray().then(
+      function (accounts) {
+        accounts = filter(accounts);
+        $scope.$evalAsync(function () {
+          $rootScope.selectedAccount = accounts[0];
+          $state.go($state.current, $stateParams, {reload: true}); 
+        });
+      }
+    ).catch(alerts.catch("Could not load accounts"));
+  }
+
+  $scope.selectAccount = function () {
+    var engine = $scope.engine == 'nxt' ? 'TYPE_NXT' : 'TYPE_FIM';
+    plugins.get('contacts').select({include: ['accounts'], engine: engine}).then(function (account) {
+      $rootScope.selectedAccount = account;
+      $state.go($state.current, $stateParams, {reload: true}); 
+    });
+  }
+
+  $scope.downloadHistory = function () {
+    api.engine.db.trades.where('asset').equals($scope.selectedAsset.asset).count().then(
+      function (count) {
+        api.getTrades({
+          asset: $scope.selectedAsset.asset,
+          firstIndex: count-1,
+          lastIndex: count+200
+        }, {
+          podium: podium,
+          priority: 5
+        }).then(
+          function (trades) {
+            db.transaction('rw', api.engine.db.trades, function () {
+              for(var i=0; i<trades.length; i++) {
+                api.engine.db.trades.put(trades[i]);
+              }
+            });
+          }
+        );
+      }
+    );
+  }
+
 });
 })();

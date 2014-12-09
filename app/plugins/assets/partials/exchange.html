@@ -3,7 +3,7 @@
     <div ui-view="markets"></div>
   </div>
 </div>
-<div class="row">
+<div class="row" style="padding-top: 20px;">
   <div class="col-md-6">
     <div ui-view="info" style="height:350px; overflow-y: auto"></div>
   </div>  
@@ -11,7 +11,7 @@
     <div ui-view="chart" style="height:350px;"></div>
   </div>
 </div>
-<div class="row">
+<div class="row"  style="padding-top: 20px;">
   <div class="col-md-4">
     <div ui-view="bids"></div>
   </div>   
@@ -20,5 +20,16 @@
   </div>   
   <div class="col-md-4">
     <div ui-view="trades"></div>
+  </div>   
+</div>
+<div class="row" style="padding-top: 20px;">
+  <div class="col-md-4">
+    <div ui-view="myBids"></div>
+  </div>   
+  <div class="col-md-4">
+    <div ui-view="myAsks"></div>
+  </div>   
+  <div class="col-md-4">
+    <!-- <div ui-view="myTrades"></div> -->
   </div>   
 </div>

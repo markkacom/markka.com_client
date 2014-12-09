@@ -8,7 +8,7 @@ function isEmpty(s) {
 var module = angular.module('fim.base');
 module.controller('AccountsPlugin', function($state, $q, $rootScope, 
   $scope, modals, $stateParams, $location, nxt, $timeout, db, 
-  $log, alerts, plugins, selectionService, requests, transactionService) {
+  $log, alerts, plugins, selectionService, requests, transactionService, $interval) {
 
   function isValid(api, id_rs) {
     var address = api.createAddress();
@@ -32,6 +32,7 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
 
   /* Requests podium */
   var podium                    = requests.theater.createPodium('accounts', $scope);
+  var interval                  = null;
 
   $scope.accounts               = [];
   $scope.selectedAccount        = null;
@@ -99,6 +100,11 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
     $scope.blockTime  = api.engine.blockTime; 
 
     $scope.refresh();
+
+    $interval($scope.refresh, 10*1000);
+    $scope.$on('destroy', function () {
+      $interval.cancel(interval);
+    });
   }
 
   $scope.refresh = function () {
@@ -236,7 +242,7 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
     plugins.get('accounts').add(account).then(
       function (items) {
         console.log('accounts.addAccount', items);
-        $state.go('accounts', {id_rs: items.id_rs});
+        //$state.go('accounts', {id_rs: items.id_rs});
       }
     );
   };  

@@ -1,14 +1,15 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (plugins, modals, $q, $timeout, db, nxt) {  
+module.run(function (plugins, modals, $q, $timeout, db, nxt, $sce) {  
 
   /* Global variables hidden from outside code | rely on the fact that 
      there is one wallet opened each time */
-  var gPassword = '';
-  var gFile     = '';
-  var gWallet   = null;
-  var gDeferred = null;
+  var gPassword     = '';
+  var gFile         = '';
+  var gWallet       = null;
+  var gMemoryWallet = null;
+  var gDeferred     = null;
 
   /* Register as plugin */
   plugins.register({
@@ -35,7 +36,7 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt) {
 
     /* Do we have that key? */
     hasKey: function (key) {
-      return gWallet ? !!gWallet[key] : false;
+      return ((gWallet && gWallet[key]) || (gMemoryWallet && gMemoryWallet[key]));
     },
 
     /* Remove an entry from the wallet */
@@ -45,12 +46,27 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt) {
 
     /* Returns the secretPhrase if any */
     getSecretPhrase: function (key) {
-      return (gWallet && gWallet[key]) ? gWallet[key].secretPhrase : null;
+      if (gWallet && gWallet[key]) {
+        return gWallet[key].secretPhrase;
+      }
+      else if (gMemoryWallet && gMemoryWallet[key]) {
+        return gMemoryWallet[key].secretPhrase;
+      }
+      return null;
     },
 
     /* Prompts the user to open a wallet */
     promptForWallet: function () {
       return promptForWallet();
+    },
+
+    /* Saves a secretPhrase to the memory pool */
+    saveToMemory: function (key, secretPhrase) {
+      gMemoryWallet = gMemoryWallet || {};
+      gMemoryWallet[key] = {
+        id_rs:        key,
+        secretPhrase: secretPhrase
+      };
     },
 
     /**
@@ -63,7 +79,7 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt) {
       var deferred    = $q.defer();
 
       /* Wallet is open and key is available */
-      if (gWallet && _getEntry(id_rs)) {
+      if ((gWallet || gMemoryWallet) && _getEntry(id_rs)) {
         deferred.resolve(_getEntry(id_rs));
       }
       else {
@@ -192,6 +208,22 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt) {
           deferred.resolve();
         }
       });
+      return deferred.promise;
+    },
+
+    confirmSaveToWallet: function () {
+      var deferred = $q.defer();
+      var html = ['<p class="lead">Do you want to save this secret phrase in a wallet?</p>',
+                  '<p>A wallet is a file that you download and store on your computer.<br> ',
+                  'A wallet is <b>not an alternavtive to remembering or writing down your secret phrase</b>.<br><br> ',
+                  'A wallet is meant as a secure and convenient way of saving your secret phrase in a file, thats all, you still need to back it up somewhere save.<br><br>',
+                  'To make life easier MofoWallet can not only store keys in a wallet, it can also read them from a wallet you provide.</p>']
+      html = $sce.trustAsHtml(html.join(''));
+      plugins.get('alerts').confirm({ html: html }).then(
+        function (confirmed) {
+          deferred.resolve(confirmed);
+        }
+      );
       return deferred.promise;
     }
   });
@@ -360,7 +392,13 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt) {
   }
 
   function _getEntry(id_rs) {
-    return gWallet ? gWallet[id_rs] : null;
+    if (gWallet && gWallet[id_rs]) {
+      return gWallet[id_rs];
+    }
+    else if (gMemoryWallet && gMemoryWallet[id_rs]) {
+      return gMemoryWallet[id_rs];
+    }
+    return null;
   }
 
 });

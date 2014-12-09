@@ -100,15 +100,12 @@
   <!-- Save address to DB -->
   <div ng-if="state == 3">
     <div class="panel-body">    
-      <form accept-charset="UTF-8" role="form" name="accountSaveForm" class="form-horizontal" novalidate>
+      <form accept-charset="UTF-8" role="form" name="accountSaveForm" novalidate>
         <div class="well well-sm">Please choose a name for this account. The name is used in your local copy of Mofo Wallet only and optionally later in your wallet if you choose so.</div>
         <div class="alert alert-warning" role="alert"  ng-show="!!accountSaveForm.name.$error.duplicate">That name already exists</div>
         <div class="form-group">
-          <label for="account-name-3" class="control-label col-xs-2">Name</label>
-          <div class="col-xs-10">
-            <input class="form-control" id="account-name-3" type="text" ng-model="items.name" required 
-              ui-validate="{duplicate : 'nameIsUnique($value)' }" ui-validate-watch=" 'items.name' " name="name">
-          </div>
+          <input class="form-control" id="account-name-3" type="text" ng-model="items.name" required 
+            ui-validate="{duplicate : 'nameIsUnique($value)' }" ui-validate-watch=" 'items.name' " name="name" placeholder="Account Name (local)">
         </div>
       </form>
     </div>

@@ -1,0 +1,133 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.3.4          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2014-12-05          
+| $$        | $$  | $$$$  /$$$$                  
+| $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
+| $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
+| $$        | $$  | $$\  $ | $$          http://forum.fimk.fi          
+| $$       /$$$$$$| $$ \/  | $$          https://github.com/fimkrypto/mofowallet
+|__/      |______/|__/     |__/                 
+                     /$$                                       /$$              
+                    | $$                                      | $$              
+                    | $$   /$$  /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$    /$$$$$$ 
+                    | $$  /$$/ /$$__  $$| $$  | $$ /$$__  $$|_  $$_/   /$$__  $$
+                    | $$$$$$/ | $$  \__/| $$  | $$| $$  \ $$  | $$    | $$  \ $$
+                    | $$_  $$ | $$      | $$  | $$| $$  | $$  | $$ /$$| $$  | $$
+                    | $$ \  $$| $$      |  $$$$$$$| $$$$$$$/  |  $$$$/|  $$$$$$/
+                    |__/  \__/|__/       \____  $$| $$____/    \___/   \______/ 
+                                         /$$  | $$| $$                          
+                                        |  $$$$$$/| $$                          
+                                         \______/ |__/            
+
+
+                                presents:
+
+
+             /$$      /$$            /$$$$$$                               
+            | $$$    /$$$           /$$__  $$                              
+            | $$$$  /$$$$  /$$$$$$ | $$  \__//$$$$$$                       
+            | $$ $$/$$ $$ /$$__  $$| $$$$   /$$__  $$                      
+            | $$  $$$| $$| $$  \ $$| $$_/  | $$  \ $$                      
+            | $$\  $ | $$| $$  | $$| $$    | $$  | $$                      
+            | $$ \/  | $$|  $$$$$$/| $$    |  $$$$$$/                      
+            |__/     |__/ \______/ |__/     \______/                       
+                                                                           
+                                                                           
+                                                                           
+                         /$$      /$$           /$$ /$$             /$$    
+                        | $$  /$ | $$          | $$| $$            | $$    
+                        | $$ /$$$| $$  /$$$$$$ | $$| $$  /$$$$$$  /$$$$$$  
+                        | $$/$$ $$ $$ |____  $$| $$| $$ /$$__  $$|_  $$_/  
+                        | $$$$_  $$$$  /$$$$$$$| $$| $$| $$$$$$$$  | $$    
+                        | $$$/ \  $$$ /$$__  $$| $$| $$| $$_____/  | $$ /$$
+                        | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
+                        |__/     \__/ \_______/|__/|__/ \_______/   \___/  
+
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3
+ 2. NXT   1.3.4
+
+The decentralized public API servers can be observed and controlled from the 
+settings menu (Option "Settings / Public Nodes"). It was unclear to users what 
+this functionality is about and required some explanation. It also was too
+developer centric and required a slight makeover not to confuse non developer
+users.
+
+Several fixes for the Messenger (available under the messages tab for each 
+account) it now updates after entering your secret phrase decrypting your 
+messages immediately. Fixed the problem where you were required to open your
+wallet file to decrypt messages (when clicking inline unlock button) now users
+can have the option to just enter their secret phrase. Changed css and 
+added animations to the inline compose dialog, made several improvements to the 
+composer controller.
+
+Fixed a bug in the central rendering code where message transactions were 
+incorrectly labeled as public key announcements. This affects both the accounts
+section as well as the block explorer since they all use the central 
+rendering code.
+
+Changed the way inline messages are rendered in the accounts section. Long 
+messages used to be cut off at a certain length, making the list of transactions
+for an account more compact. Changed this to render the complete message inline,
+makes the UI less compact but does show you all your transactions and messages
+in one place without having to go to another screen. Will make things easier 
+for the user especially when we'll complete making MofoWallet compatible with
+mobile device screens.
+
+Fixed several bootstrap/css issues in multiple places.
+
+Authentication Plugin
+
+  Several fixes to the Strong Authentication Plugin, the user landing page now 
+  shows debug information for easier implementation. Eventually this debug 
+  information can be turned on/off by merchants during their implementation
+  phase. The authentication plugin offers strong proof of identity for merchants 
+  that require their customers to identify themselves. The authentication plugin 
+  is build ontop of FIMK Namespaced Aliases. The Krypto Fin ry non profit 
+  association offers residents of Finland the option to electronically provide proof
+  of their identify using strong authentication and permanently tag their FIMK account 
+  as authenticated. This proof is cryptographically signed by Krypto Fin ry
+  and stored on the blockchain. Merchants can request that proof from their 
+  customers by redirecting them to the Authentication Plugin in (web) MofoWallet.
+
+  The online plugin is beta software and is meant for demo purposes only!
+
+  Sample redirect link:
+
+  https://fimkrypto.github.io/mofo/launch.html#/authenticate/FIM-BA8U-LVXC-WBFT-49C4S/FIM-7CZJ-CVTH-F4XY-DMWEY/Bob/https://bobloans.com/auth.php?identifier=FIM-7CZJ-CVTH-F4XY-DMWEY
+
+
+
+                             ~~~ DOWNLOAD ~~~
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3.4/mofowallet.windows-0.3.4.zip
+ 
+SHA256 4058acb97592567ffc46d0514a6755e3b1c42ff099bce817e237b8e15a60f853 
+MD5    d7a61fce4c90ec16d7d5ba4df5a03ef6 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3.4/mofowallet.linux-0.3.4.zip
+ 
+SHA256 cd1a59a757ecabd7d4b8abecd2e5445f72537b396975229b3fa5775e4ccafb58 
+MD5    0c44a24f22914bbfab1d71cb3ccdefd6 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3.4/mofowallet.osx-0.3.4.zip
+ 
+SHA256 cd1a59a757ecabd7d4b8abecd2e5445f72537b396975229b3fa5775e4ccafb58
+MD5    0c44a24f22914bbfab1d71cb3ccdefd6
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJUgO8TAAoJEP9gzPcARnvndwQH/1e30aeuovFFrpTzDeWG9Ze+
+hTVfnlyi51/3aSkgNIzurUp4lMD4BsDW3Fg4ZG8gozaz969ATNwQmEGCuAAKk3iJ
++sPVbymV6HsgYBis+db31dV2TV0yXgCnmbAF5lDcb1P3YdJD5dPjP9GLsc9ucSjE
+KLZNzDj4cO3ZYQCK5RMVB9hia2N9/cOHWW76ZGrauWr/T/ucbjeIKdt5+6E8aEyY
+HyAlN4+Z+c/GO1XAisCE7WQUDFYDsFPE9f5tO8amun7TpIFG2eBs1kTpF0FHO8R+
+Z4VsfJ058SOuvRbvnUySoKN/Avc7CaJoW2IPfuHrSWcEOi2uNgnjjOtNzlba7Tg=
+=8aiD
+-----END PGP SIGNATURE-----

@@ -29,11 +29,17 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
     $log.error(event);
   });
 
-  $scope.createAccount = function () {
+  /* Optionally you can provide a callback that receives the param { id_rs: 'XX', publicKey: 'YY' } */
+  $scope.createAccount = function (callback) {
     var account = {};
     plugins.get('accounts').add(account).then(
       function (items) {
-        $state.go('accounts', {id_rs: items.id_rs});
+        if (callback) {
+          callback.call(null, items);
+        }
+        else {
+          $state.go('accounts', {id_rs: items.id_rs}, {reload:true});
+        }
       }
     );
   }

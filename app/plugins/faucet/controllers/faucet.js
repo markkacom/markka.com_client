@@ -26,6 +26,17 @@ module.controller('FaucetPluginController', function($scope, $rootScope, $timeou
     );
   }
 
+  $scope.localCreateAccount = function () {
+    plugins.get('accounts').add({
+      callback: function (items) {
+        if (items) {
+          $('form[name=faucetForm] input[name=account]').val(items.id_rs).change();
+          $('form[name=faucetForm] input[name=publickey]').val(items.publicKey).change();
+        }
+      }
+    });
+  }
+
   $scope.accountChanged = function () {
     var id_rs         = $scope.items.account || '';
     var api           = nxt.get(id_rs);
@@ -111,14 +122,16 @@ module.controller('FaucetPluginController', function($scope, $rootScope, $timeou
     var key = $scope.items.type == nxt.TYPE_NXT ? 'dgex' : 'fimk';
     http(post[key]()).success(
       function () {
-        $timeout(function () {
+        $scope.$evalAsync(function () {
+          $scope.sendSuccess = true;
           $scope.items.error = '';
           $scope.items.success = 'You have been emailed the confirmation link you must complete to activate the faucet transfer';
         });
       }
     ).error(
       function () {
-        $timeout(function () {
+        $scope.$evalAsync(function () {
+          $scope.sendSuccess = false;
           $scope.items.error = 'Failed';
           $scope.items.success = '';
         });

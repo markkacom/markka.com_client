@@ -32,7 +32,19 @@ module.config(function($stateProvider) {
       'info@assets': {
         templateUrl: 'plugins/assets/partials/info.html',
         controller: 'ExchangePluginInfoController'
-      }
+      },
+      'myBids@assets': {
+        templateUrl: 'plugins/assets/partials/myBids.html',
+        controller: 'ExchangePluginMyBidsController'
+      },
+      'myAsks@assets': {
+        templateUrl: 'plugins/assets/partials/myAsks.html',
+        controller: 'ExchangePluginMyAsksController'
+      },   
+      'myTrades@assets': {
+        templateUrl: 'plugins/assets/partials/myTrades.html',
+        controller: 'ExchangePluginMyTradesController'
+      },      
     }
   });
 });
@@ -56,6 +68,16 @@ module.run(function (modals, plugins, $sce) {
     label: 'Assets',
     icon_class: 'glyphicon glyphicon-transfer'
   });  
+
+  modals.register('orderCreate', { 
+    templateUrl: 'plugins/assets/partials/order.html', 
+    controller: 'ExchangePluginOrderController' 
+  });  
+
+  modals.register('orderCancel', { 
+    templateUrl: 'plugins/assets/partials/cancel.html', 
+    controller: 'ExchangePluginCancelController' 
+  });    
 });
 
 })();

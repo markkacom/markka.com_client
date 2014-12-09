@@ -22,7 +22,7 @@ var generator = {
 };
 var module = angular.module('fim.base');
 module.controller('AccountsPluginAddModalController', 
-  function (items, $modalInstance, $scope, $timeout, nxt, alerts, db, plugins, modals) {
+  function (items, $modalInstance, $scope, $timeout, nxt, alerts, db, plugins, modals, $state) {
 
   $scope.dialogName  = 'Add Account';
   $scope.dialogTitle = $scope.dialogName;
@@ -152,8 +152,9 @@ module.controller('AccountsPluginAddModalController',
     }).then(
       function () {
         if ($scope.items.secretPhrase) {
+          plugins.get('wallet').saveToMemory($scope.items.id_rs, $scope.items.secretPhrase);
           $timeout(function () {
-            plugins.get('alerts').confirm({ message: 'Do you want to save this secretphrase to your wallet?'}).then(
+            plugins.get('wallet').confirmSaveToWallet().then(
               function (value) {
                 if (value) {
                   plugins.get('wallet').addEntry({
@@ -162,16 +163,42 @@ module.controller('AccountsPluginAddModalController',
                     name:         $scope.items.name
                   }).then(
                     function () {
-                      plugins.get('alerts').success({ message: 'You successfully saved the secretphrase to your wallet'});
+                      plugins.get('alerts').success({ message: 'You successfully saved the secretphrase to your wallet'}).then(
+                        function () {
+                          if ($scope.items.callback) {
+                            $scope.items.callback.call(null, $scope.items);
+                          }
+                          else {
+                            $state.go('accounts', {id_rs: $scope.items.id_rs}, {reload: true});
+                          }
+                        }
+                      );
                     },
                     function () {
-                      plugins.get('alerts').error({ message: 'Could not save secretphrase to wallet'});
+                      plugins.get('alerts').error({ message: 'Could not save secretphrase to wallet'}).then(
+                        function () {
+                          if ($scope.items.callback) {
+                            $scope.items.callback.call(null, $scope.items);
+                          }
+                          else {
+                            $state.go('accounts', {id_rs: $scope.items.id_rs}, {reload: true});
+                          }
+                        }
+                      );
                     }
                   );
                 }
+                else {
+                  if ($scope.items.callback) {
+                    $scope.items.callback.call(null, $scope.items);
+                  }
+                  else {
+                    $state.go('accounts', {id_rs: $scope.items.id_rs}, {reload: true});
+                  }
+                }
               }
             );
-          });
+          }, 500, false);
         }
         $modalInstance.close($scope.items);
       }

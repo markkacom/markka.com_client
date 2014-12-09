@@ -1,0 +1,26 @@
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3
+ 2. NXT   1.3.4
+
+Beta release for demo purposes use with extreme care. 
+
+Unless you know what you are doing you are advized to download the latest non-beta release
+which is 0.3.4.
+
+This release includes first draft UI for:
+
+  1. create ask order
+  2. create bid order
+  3. cancel ask order
+  4. cancel bid order
+  5. list my ask orders
+  6. list my bid orders
+  7. account selector in AE
+  8. displays account confirmed asset balance
+  9. displays account unconfirmed asset balance
+
+I'd like to stress once more this is a beta release that probably has bugs, don't use it 
+for sending any serious  Several bugs remain

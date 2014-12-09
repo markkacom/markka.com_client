@@ -1,4 +1,8 @@
 <h3>{{selectedAsset.name}}<span class="pull-right"><small>Issuer&nbsp;<a ui-sref="accounts({id_rs: selectedAsset.accountRS, action:'show'})">{{selectedAsset.accountRS}}</a></small></span></h3>
+
+<h3><small>Balance</small>&nbsp;{{balance}}</h3>
+<h4><small>Unconfirmed</small>&nbsp;{{unconfirmedBalance}}</h4>
+
 <span dd-text-collapse dd-text-collapse-max-length="110" dd-text-collapse-text="{{selectedAsset.description}}"></span>
 <div ng-if="comments">
   <h4>What others are saying<button class="pull-right btn btn-sm btn-success"><i class="fa fa-comments-o"></i>&nbsp;Add Comment</button></h4>

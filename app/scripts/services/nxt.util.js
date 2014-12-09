@@ -217,6 +217,23 @@ module.run(function (nxt) {
     return nxt.util.convertToNXT(price.multiply(new BigInteger("" + Math.pow(10, decimals))));
   }  
 
+  function calculatePricePerWholeQNT(price, decimals) {
+    price = String(price);
+    if (decimals) {
+      var toRemove = price.slice(-decimals);
+
+      if (!/^[0]+$/.test(toRemove)) {
+        //return new Big(price).div(new Big(Math.pow(10, decimals))).round(8, 0);
+        throw $.t("error_invalid_input");
+      } 
+      else {
+        return price.slice(0, -decimals);
+      }
+    } else {
+      return price;
+    }
+  }  
+
   function convertFromHex16(hex) {
     var j;
     var hexes = hex.match(/.{1,4}/g) || [];
@@ -242,6 +259,7 @@ module.run(function (nxt) {
       return commaFormat(convertNQT(amountNQT, 8));
     },
     
+    convertNQT: convertNQT,
     convertToNQT: convertToNQT,
     convertToQNTf: convertToQNTf,
     convertToQNT: convertToQNT,
@@ -250,6 +268,7 @@ module.run(function (nxt) {
     calculateOrderTotalNQT: calculateOrderTotalNQT,
     timestampToDate: timestampToDate,
     formatTimestamp: formatTimestamp,
+    calculatePricePerWholeQNT: calculatePricePerWholeQNT,
     calculateOrderPricePerWholeQNT: calculateOrderPricePerWholeQNT,
     convertFromHex16:convertFromHex16,
     convertFromHex8:convertFromHex8,
