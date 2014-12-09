@@ -1,0 +1,33 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Select File</h3>
+  </div>
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="masspayFileForm" class="form-horizontal" novalidate>
+      <div class="form-group">
+        <div class="col-xs-12">Select the file that contains the payments</div>
+      </div>
+      <br>
+      <div class="form-group">
+        <div class="col-xs-12">
+          <div class="input-group">
+            <input class="form-control" placeholder="Payments File" name="masspay-file" type="text" ng-model="items.file.name" required readonly>
+            <span class="input-group-btn">
+              <span class="btn btn-primary btn-block btn-file">
+                <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Open file<input type="file" onchange="window.onMasspayFileSelected(event)">
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="panel-footer">
+    <div class="col-xs-6">
+      <button ng-click="close()" type="button" class="btn btn-block btn-primary" ng-disabled="!masspayFileForm.$valid">Continue</button>
+    </div>
+    <div class="col-xs-6">
+      <button ng-click="dismiss()" type="button" class="btn btn-block btn-default">Cancel</button>
+    </div>
+  </div>  
+</div>
