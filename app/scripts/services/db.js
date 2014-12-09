@@ -45,6 +45,8 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
   /* related_rs_a and related_rs_b are used to keep track to what account a 'partially' downloaded transaction belongs. */
   var transactionstore2   = transactionstore+',related_rs_a,related_rs_b,related_index';
 
+  var masspay_payments    = "++id,index,recipientRS,amountNQT,transactionSuccess,broadcastSuccess";
+
   versions([{
     update: {
       settings:             "id,label,value",
@@ -112,6 +114,10 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
       nxtbids:              orders2,
       nxtbids_test:         orders2
     }
+  },{
+    update: {
+      masspay_payments:     masspay_payments
+    }
   }], db);
 
   /* Load models here to prevent cicrular dependency errors */
@@ -119,6 +125,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
   $injector.get('Account').initialize(db);
   $injector.get('Contact').initialize(db);
   $injector.get('Node').initialize(db);
+  $injector.get('MasspayPluginPayment').initialize(db);
 
   db.on('error', alerts.catch("Database error - see error console for details"));
   db.on('populate', function () {
