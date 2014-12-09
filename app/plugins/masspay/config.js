@@ -20,7 +20,22 @@ module.run(function (plugins, modals, $q, $timeout) {
     save: function (content) {
       var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
       saveAs(blob, gSelectedFile?gSelectedFile.name:'mass-pay.csv');
-    },    
+    },
+    start: function () {
+      modals.open('massPaySelectAccount', {
+        resolve: {
+          items: function () {
+            return {};
+          }
+        },
+        close: function (items) {
+
+          console.log('account', items.accountRS);
+          console.log('secret', items.secretPhrase);
+
+        }
+      });
+    }
   });
 
   /** 
@@ -47,5 +62,10 @@ module.run(function (plugins, modals, $q, $timeout) {
     };
     reader.readAsText(gSelectedFile);    
   };
+
+  modals.register('massPaySelectAccount', { 
+    templateUrl: 'plugins/masspay/partials/select-account.html', 
+    controller: 'MassPayPluginAccountModalController' 
+  });  
 });
 })();
