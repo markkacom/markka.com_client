@@ -1,6 +1,11 @@
 {
   "payments": [
     {
+      "recipient": "NXT-PRET-YINV-ALID-NO??",
+      "amount": "100",
+      "message": "Pretty invalid no?"
+    },
+    {
       "recipient": "NXT-NE59-EPQC-XSJ4-BZ7X3",
       "amount": "2",
       "message": "Public NXT-NE59-EPQC-XSJ4-BZ7X3",
