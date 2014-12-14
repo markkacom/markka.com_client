@@ -2,7 +2,7 @@
 Hash: SHA1
 
  /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.3.5          
-| $$_____/|_  $$_/| $$$    /$$$          Date    : 2014-12-05          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2014-12-14          
 | $$        | $$  | $$$$  /$$$$                  
 | $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
 | $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
@@ -51,27 +51,27 @@ Hash: SHA1
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.3.5/mofowallet.windows-0.3.5.zip
  
-SHA256 75a5ce7a56bcd469e35533b6d26c1a60a72a44e4458fa4a33b135ade9082132e 
-MD5    8fc83b5eafdcc743bb7917b594679fb6 
+SHA256 8b25324ff848a2aa2ead46caa1af5d480d016c9cb620ec8f06d931eec17225cd 
+MD5    e431b2ab617d099e3221be3e739517b3 
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.3.5/mofowallet.linux-0.3.5.zip
  
-SHA256 26e7368d6ea19f08823fa310909707fd5a4ce2ec279dec88b240e1f6db24ad9b 
-MD5    98fb0ac789f0b457c28adf0db76b254c 
+SHA256 4d51f63d12ccf4f4c95c972c69b442deaadf3df5903af0a506d9c8c9f40fdccd 
+MD5    e0c2f05c835ecb5586688d20a373dd59 
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.3.5/mofowallet.osx-0.3.5.zip
  
-SHA256 26e7368d6ea19f08823fa310909707fd5a4ce2ec279dec88b240e1f6db24ad9b
-MD5    98fb0ac789f0b457c28adf0db76b254c
+SHA256 4d51f63d12ccf4f4c95c972c69b442deaadf3df5903af0a506d9c8c9f40fdccd
+MD5    e0c2f05c835ecb5586688d20a373dd59
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJUgPANAAoJEP9gzPcARnvnp+QIAK7Tdw2CPVoKuo/FWn/XqXvm
-PAsnOtEJ00K89d4fs3LQ1OvCN1Wrs9c1Mi4HRt+pcCBAouApZ5pGt8hKz/CWj4qa
-KaOqOtCqYRi/iCj6ru2U0XVInlUYw4ZtTao6cfbzFWYVKMji9Rx2h9uc60a10qWw
-OelB7HPiRxwoSHapcpdrkUvx+fimOuIL4O8rs8qa3SO6dWJ0f+8XNMoAUd9kA2KY
-026YnftueXGHWAWzYgKqEH7zYhBqDfMiYhd4kaeUa/FERcdoxHjRM3FLAkBUbpOl
-KMjxMBxs1tGeVeeDqtATnTGL9tDfYn/VgXAQTBC93WKl0PK3u/2qkUXU7TKNon4=
-=+WpC
+iQEcBAEBAgAGBQJUjaZrAAoJEP9gzPcARnvnmskH/3zzqDKXHTiEBhAJo2BBF1TW
+fCYh2Euj0U1jXjg7AGgOlxQdQK+z9h0RzZVz5cY4rS4m41E45dQEA0MuNLaQ5ksB
+2L93k6atEoimJWNxQYezVC85wbMgii+wsubCuT+TFktqoz8hgl/1RLCci8MrvtVx
+KkLnaJUGtCgg5kycQlM1000CNlSiza7Q4I9hQ14Bgucr7HXsqpnrlY8Bo01YP9kb
+qp6pWQCneWUZjeEY+U+5D0wdVSL9n2DGUNADVZYQUHC0bcT7ku7Y5DF3fPw3Dd77
+NF3YxJ8niKnSV1kaAz7dJ5yTtWYKSZqDrFUlUjC7wHYHHXooiqk1RMA4JeiYy+8=
+=cJri
 -----END PGP SIGNATURE-----

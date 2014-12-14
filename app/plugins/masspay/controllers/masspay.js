@@ -448,25 +448,46 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
 
     if (payment.message && payment.message.length > 0) {
       if (payment.messageIsPublic === true) {
-        args.encrypt_message = true;
+        args.public_message = true;         
       }
       else {
-        args.public_message = true; 
+        args.encrypt_message = true;
       }
       args.message = payment.message;
     }
-    var options = {priority: 3, podium: podium};
-    api.sendMoney(args, options).then(
-      function (data) {
-        deferred.resolve({data:data, options:options});
-      },
-      function (data) {
-        if (typeof data == 'string') {
-          data = { error: data };
+
+    function send() {
+      var options = {priority: 3, podium: podium};
+      api.sendMoney(args, options).then(
+        function (data) {
+          deferred.resolve({data:data, options:options});
+        },
+        function (data) {
+          if (typeof data == 'string') {
+            data = { error: data };
+          }
+          deferred.reject({data:data, options:options});
         }
-        deferred.reject({data:data, options:options});
-      }
-    );
+      );
+    }
+
+    if (args.encrypt_message && !args.recipientPublicKey) {
+      api.getAccountPublicKey({account:recipientRS}, {priority:5, podium: podium}).then(
+        function (data) {
+          args.recipientPublicKey = data.publicKey;
+          send();
+        },
+        function (data) {
+          if (typeof data == 'string') {
+            data = { error: data };
+          }
+          deferred.reject({data:data, options:options});
+        }
+      );
+    }
+    else {
+      send();
+    }
     return deferred.promise;
   }
 
@@ -562,14 +583,14 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     if (Array.isArray(obj)) {
       db.transaction('rw', db.masspay_payments, function () {
         angular.forEach(obj, function (payment, index) {
-          storeInDB(index, payment[0],payment[1],payment[2],payment[3]);
+          storeInDB(index, payment[0],payment[1],payment[2],!!payment[3]);
         });
       }).then(deferred.resolve).catch(deferred.reject);
     }
     else {
       db.transaction('rw', db.masspay_payments, function () {
         angular.forEach(obj.payments, function (payment, index) {
-          storeInDB(index, payment.recipient,payment.amount,payment.message,payment.messageIsPublic);
+          storeInDB(index, payment.recipient,payment.amount,payment.message,!!payment.messageIsPublic);
         });
       }).then(deferred.resolve).catch(deferred.reject);
     }
