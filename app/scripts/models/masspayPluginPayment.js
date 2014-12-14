@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('MasspayPluginPayment', function() {
+module.factory('MasspayPluginPayment', function () {
   var MasspayPluginPayment = null;
   return {
     initialize: function (db) {
@@ -18,7 +18,10 @@ module.factory('MasspayPluginPayment', function() {
         transactionResult: String,
         transactionSuccess: Boolean,
         broadcastResult: String,
-        broadcastSuccess: Boolean
+        broadcastSuccess: Boolean,
+        created: Boolean,
+        broadcasted: Boolean,
+        blockchainStatus: String
       });
 
       MasspayPluginPayment.prototype.update = function (properties) {

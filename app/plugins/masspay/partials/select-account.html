@@ -1,26 +1,23 @@
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <h3 class="panel-title">Select Account</h3>
+    <h3 class="panel-title">Enter secret phrase</h3>
   </div>
   <div class="panel-body">
     <form accept-charset="UTF-8" role="form" name="masspayAccountForm" class="form-horizontal" novalidate>
       <div class="form-group">
-        <div class="col-xs-12">Select the account with which you want to send payments</div>
+        <div class="col-xs-12">Please enter sender account and secret phrase</div>
       </div>
       <br>
-      <!-- Sender -->
       <div class="form-group">
         <div class="col-xs-12">
           <input class="form-control monospace" placeholder="Account" name="account" 
             type="text" ng-model="items.accountRS" required>
         </div>
       </div>
-
-      <!-- Secret phrase -->
       <div class="form-group">
         <div class="col-xs-12">
           <input class="form-control monospace" placeholder="Secret Passphrase" name="passphrase" 
-            type="text" ng-model="items.secretPhrase" required>
+            type="password" ng-model="items.secretPhrase" required ng-change="secretPhraseChanged()">
           </div>
       </div>
     </form>

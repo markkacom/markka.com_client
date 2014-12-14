@@ -364,6 +364,21 @@ module.factory('requests', function ($timeout, $q, $http) {
           function (data, status, headers, config) {
             if (self.state !== self.DESTROYED) { 
               self.canceller = null;
+              
+              // /* special case .. must retry broadcastTransaction on multiple nodes */
+              // if (self.builder.methodName == 'broadcastTransaction') {
+              //   if (data.error) {
+              //     if (!self.options.node) {
+
+              //       console.log('broadcastTransaction REQUEST', self.http_args);
+              //       console.log('broadcastTransaction RESPONSE', data);
+
+              //       self.retry(node);
+              //       return;
+              //     }
+              //   }
+              // }
+
               // console.log('SUCCESS ' + self.builder.methodName + ' ' + self.options.priority, self.options.caller);              
               self.duration = Date.now() - self.started;
               self.notify('success', [node, data, (self.options.retry_count - self.retries)-1]);
@@ -445,7 +460,7 @@ module.factory('requests', function ($timeout, $q, $http) {
       }
       else {
         this.duration = Date.now() - this.started;
-        this.notify('failed', [failed_node, data, (this.options.retry_count - this.retries)-1]);
+        this.notify('failed', [failed_node, '', (this.options.retry_count - this.retries)-1]);
         this.destroy('no retries');
         return false;        
       }
@@ -517,13 +532,13 @@ module.factory('requests', function ($timeout, $q, $http) {
         if (Array.isArray(this.args)) {
           angular.forEach(this.args, function (tuple) {
             for (var name in tuple) {
-              qs += '&' + name + '=' + encodeURIComponent(tuple[name]);
+              qs += (qs==''?'':'&') + name + '=' + encodeURIComponent(tuple[name]);
             }    
           });
         }
         else {
           for (var name in this.args) {
-            qs += '&' + name + '=' + encodeURIComponent(this.args[name]);
+            qs += (qs==''?'':'&') + name + '=' + encodeURIComponent(this.args[name]);
           }
         }
         return {
@@ -538,13 +553,13 @@ module.factory('requests', function ($timeout, $q, $http) {
         if (Array.isArray(this.args)) {
           angular.forEach(this.args, function (tuple) {
             for (var name in tuple) {
-              url += '&' + name + '=' + encodeURIComponent(tuple[name]);
+              url += (qs==''?'':'&') + name + '=' + encodeURIComponent(tuple[name]);
             }    
           });
         }
         else {
           for (var name in this.args) {
-            url += '&' + name + '=' + encodeURIComponent(this.args[name]);
+            url += (qs==''?'':'&') + name + '=' + encodeURIComponent(this.args[name]);
           }    
         }
         return { 

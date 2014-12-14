@@ -4,13 +4,49 @@ var module = angular.module('fim.base');
 
 var _secretPhraseCache = {};
 
-module.controller('secretPhraseModalController', function (items, $modalInstance, $scope, $timeout, nxt, modals, plugins, $sce) {
-  var walletPlugin    = plugins.get('wallet');
-  $scope.items        = items;
-  $scope.items.valid  = false;
-  $scope.items.secretNotFound = false;
-  $scope.items.secretPhrase   = $scope.items.secretPhrase || '';
-  $scope.items.messageHTML = $sce.trustAsHtml(items.messageHTML||'This operation requires your secret passphrase. Either enter it by hand or click Open Wallet to load a wallet file containing your secret phrase.');
+module.controller('secretPhraseModalController', function (items, $modalInstance, $scope, $timeout, nxt, modals, plugins, $sce, db) {
+  var walletPlugin              = plugins.get('wallet');
+
+  $scope.SIMPLE                 = 'simple';
+  $scope.COMPLEX                = 'complex';
+  $scope.state                  = items.sender ? $scope.SIMPLE : $scope.COMPLEX;
+
+  $scope.items                  = items;
+
+  // simple
+  $scope.items.valid            = false;
+  $scope.items.secretNotFound   = false;
+
+  // complex
+  $scope.items.selectedAccount  = null;
+  $scope.items.accounts         = [];
+  $scope.items.engineType       = items.engineType || 'TYPE_FIM';
+
+  // simple + complex
+  $scope.items.secretPhrase     = $scope.items.secretPhrase || '';
+  $scope.items.sender           = items.sender || '';
+  
+  // DEBUG
+  //$scope.state = $scope.COMPLEX;
+
+  function accountFilter(account) {
+    var prefix = ($scope.items.engineType == 'TYPE_FIM') ? 'FIM-' : 'NXT-';
+    return account.id_rs.indexOf(prefix) == 0;
+  }
+
+  if ($scope.state == $scope.SIMPLE) {
+    $scope.items.messageHTML    = $sce.trustAsHtml(items.messageHTML||'This operation requires your secret passphrase. Either enter it by hand or click Open Wallet to load a wallet file containing your secret phrase.');    
+  }
+  else {
+    $scope.items.messageHTML    = $sce.trustAsHtml(items.messageHTML||'This operation requires a sender and secret passphrase.');
+    db.accounts.where('id_rs').anyOf(walletPlugin.getKeys()).toArray().then(
+      function (accounts) {
+        $scope.$evalAsync(function () {
+          $scope.items.accounts = accounts.filter(accountFilter);
+        })
+      }
+    );
+  }
 
   $scope.passphraseChange = function () {
     $timeout(function () {
@@ -19,6 +55,28 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
       var valid           = accountID == $scope.items.sender;
       $scope.items.valid  = valid;
     });
+  }
+
+  $scope.passphraseChangeComplex = function () {
+    $timeout(function () {
+      $scope.items.sender = nxt.crypto($scope.items.engineType).getAccountId($scope.items.secretPhrase, true);
+    });
+  }
+
+  $scope.format = function (account) {
+    return account.id_rs + ' # ' + account.name;
+  }  
+
+  $scope.selectedAccountChange = function () {
+    walletPlugin.getEntry($scope.items.selectedAccount.id_rs).then(
+      function (entry) {
+        $scope.$evalAsync(function () {
+          $scope.items.secretPhrase = entry.secretPhrase;
+          $scope.items.sender = entry.id_rs;
+          $scope.passphraseChangeComplex();
+        });
+      }
+    );
   }
 
   function getKeyFromWallet() {
@@ -40,13 +98,24 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
     getKeyFromWallet();
   }
 
-  walletPlugin.createOnWalletFileSelectedPromise().then(
-    function () {
-      getKeyFromWallet();
-    },
-    function () {
+  walletPlugin.createOnWalletFileSelectedPromise($scope).then(
+    function handleOnWalletFileSelectedPromiseSuccess() {
+      if ($scope.state == $scope.SIMPLE) {
+        getKeyFromWallet();
+      }
+      else {
+        db.accounts.where('id_rs').anyOf(walletPlugin.getKeys()).toArray().then(
+          function (accounts) {
+            $scope.$evalAsync(function () {
+              $scope.items.accounts = accounts.filter(accountFilter);
+            })
+          }
+        );
+      }
+    }, 
+    function handleOnWalletFileSelectedPromiseFailed() {
       // $scope.items.invalidPassword = true;
-      // Must provide feedback here
+      // Must provide feedback here    
     }
   );
 
@@ -84,7 +153,6 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
   $scope.dismiss = function () {
     $modalInstance.dismiss();
   }
-
 });
 
 })();

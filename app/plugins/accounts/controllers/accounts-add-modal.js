@@ -204,6 +204,7 @@ module.controller('AccountsPluginAddModalController',
       }
     ).catch(
       function (error) {
+        console.log('account add error', error);
         $timeout(function () {
           $scope.saveAccountError = error;
         });

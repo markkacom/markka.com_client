@@ -1,0 +1,20 @@
+{
+  "payments": [
+    {
+      "recipient": "FIM-2XSA-Q4ZN-XKX7-9B7EK:b9f5526cec224c66e3d4ea7b9d7aa14ead529157fe31beba66dce89bc2596e49",
+      "amount": "1.001",
+      "message": "Public FIM-2XSA-Q4ZN-XKX7-9B7EK",
+      "messageIsPublic": false
+    }, {
+      "recipient": "FIM-ZGC9-EXLZ-424M-DRBZV:5afa255d3d2aa45d58a8868373f75c71865ff416ba48d5fc96357f84de1a1b2e",
+      "amount": "1.002",
+      "message": "Private FIM-ZGC9-EXLZ-424M-DRBZV",
+      "messageIsPublic": true
+    }, {
+      "recipient": "FIM-Z4WL-E7BF-7JJP-EDC34:a6d66d86d5f0a8eaed9bf3172ca7f9497a0ad0dcd91a25504359b278f1f7271f",
+      "amount": "1.003",
+      "message": "Private FIM-Z4WL-E7BF-7JJP-EDC34",
+      "messageIsPublic": true
+    }
+  ]
+}

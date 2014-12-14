@@ -5,7 +5,7 @@ module.controller('WalletOpenModalController', function (items, $modalInstance, 
   $scope.items = items;
   $scope.items.invalidPassword = false;
 
-  plugins.get('wallet').createOnWalletFileSelectedPromise().then(
+  plugins.get('wallet').createOnWalletFileSelectedPromise($scope).then(
     function () {
       $modalInstance.close();
     },

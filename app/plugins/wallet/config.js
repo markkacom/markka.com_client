@@ -159,7 +159,15 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt, $sce) {
      * variable. When the wallet is opened and decrypted in window.onWalletFileSelected
      * if the gDeferred variable is set it is called with resolve or reject result.
      */
-    createOnWalletFileSelectedPromise: function () {
+    createOnWalletFileSelectedPromise: function ($scope) {
+      if ($scope) {
+        $scope.$on('destroy', function () {
+          if (gDeferred) {
+            gDeferred.reject();
+            gDeferred = null;
+          }
+        });
+      }
       gDeferred = $q.defer();
       return gDeferred.promise;
     },

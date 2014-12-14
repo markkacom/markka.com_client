@@ -45,7 +45,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
   /* related_rs_a and related_rs_b are used to keep track to what account a 'partially' downloaded transaction belongs. */
   var transactionstore2   = transactionstore+',related_rs_a,related_rs_b,related_index';
 
-  var masspay_payments    = "++id,index,recipientRS,amountNQT,transactionSuccess,broadcastSuccess";
+  var masspay_payments    = "++id,index,recipientRS,amountNQT,transactionSuccess,broadcastSuccess,blockchainStatus,created,broadcasted";
 
   versions([{
     update: {

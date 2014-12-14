@@ -23,7 +23,7 @@ var module = angular.module('fim.base', [
   'ui.validate'
 ]);
 
-module.run(function ($log, $rootScope, serverService) {
+module.run(function ($log, $rootScope, serverService, transactionService) {
   $log.log('fim.base application started');
 });
 

@@ -1,83 +1,182 @@
 <div class="row" ng-controller="MasspayPluginController">
-  <div class="col-md-12">
-    <br>
-    <div class="alert alert-danger"><h3>Experimental. Use with care.</h3></div>
-    <div class="well well-sm"><p>This plugin allows to perform multiple payments in batch from a CSV file.</p>
-    <p>The syntax for the CSV file is: <code>RECIPIENT,AMOUNT_NXT,PUBLIC_MESSAGE</code></p>
-    <p>Recipient can be either a normal address (for accounts with published public key) or in the Mofo Wallet publish address format.</p></div>
+  <div ng-show="!initialized && !incomplete">
+    <div class="col-md-12">With this plugin you can create, sign, broadcast and verify multiple payments in one single operation. If your computer crashes or this application was shutdown during a payments operation upon startup you'll be able to pick up where you left off. After all payments were broadcasted you'll be able to confirm that each transaction is actually in the blockchain. Once all payments succeeded and all are in the blockchain you'll be notified of it's success.<br><br>In order to determine if transactions are in the blockchain we calculate the transaction fullHash client side. Since the broadcastTransaction API call cannot always return reliable transaction status we are forced to rely on transaction fullHash instead of simply using the transaction id.<br><br>Payments are entered through a JSON file, two syntaxes are supported the dense and verbose syntax. If you are sending payments to accounts without publickey please use the publish format (account and public key separated by a : symbol).
+    </div>
+    <div class="col-md-8">
+      <tabset style="padding-top: 20px">
+        <tab heading="Verbose syntax"><code><pre>
+{
+  "payments": [{
+    "recipient": "FIM-XXXXX-YYYY-XXXX-ZZZZ",
+    "amount": "200.3001",
+    "message": "Hello I'm a message",
+    "messageIsPublic": true
+  }, {
+    "recipient": "FIM-OOOOI-YYYY-XXXX-ZZZZ",
+    "amount": "300.3001",
+    "message": "Hello I'm also another message",
+    "messageIsPublic": false
+  }]
+}
+</pre></code></tab>
+        <tab heading="Dense syntax"><code><pre>
+[
+  ["FIM-XXXXX-YYYY-XXXX-ZZZZ","200.3001","Public message", true],
+  ["FIM-OOOOI-YYYY-XXXX-ZZZZ","300.3001","Encrypted message"]
+]
+</pre></code></tab>
+        <tab heading="Dense minimal sample"><code><pre>
+[
+  ["FIM-XXXXX-YYYY-XXXX-ZZZZ","200.3001"],
+  ["FIM-OOOOI-YYYY-XXXX-ZZZZ","300.3001"],
+  ["FIM-XXXXX-YYYY-XXXX-ZZZZ","400.3001"],
+  ["FIM-OOOOI-YYYY-XXXX-ZZZZ","500.3001"],
+  ["FIM-XXXXX-YYYY-XXXX-ZZZZ","600.3001"],
+  ["FIM-OOOOI-YYYY-XXXX-ZZZZ","700.3001"],
+  ["FIM-XXXXX-YYYY-XXXX-ZZZZ","800.3001"],
+  ["FIM-OOOOI-YYYY-XXXX-ZZZZ","900.3001"],
+]
+</pre></code></tab>
+      </tabset>
+    </div>
+    <div class="col-md-4">
+      <center>
+        <h3>Click button to Start</h3>
+        <br>
+        <button class="btn btn-lg btn-primary" ng-click="start()">Start new Session</button>
+      </center>
+    </div>
+  </div>
+  <div ng-show="incomplete">
     <div class="row">
       <div class="col-md-12">
-        <h3><strong>1</strong>&nbsp;&nbsp;<small>Select Account</small></h3>
-        <div class="form-group">
-          <div class="col-xs-4">
-            <div class="input-group">
-              <input class="form-control" id="masspay-account" placeholder="FIM or NXT address" name="account" 
-                type="text" ng-model="selectedAccount.id_rs" required ng-change="accountChanged()" readonly>
-              <span class="input-group-btn">
-                <button type="button" class="btn btn-primary" ng-click="selectAccount()">Select</button>
-              </span>
-            </div>
-          </div>
+        <div class="well">It seems your previous session was not session to completion. Please select if you wish to continue with your previous session or if you would like start a new one.</div>
+        <button class="btn btn-primary" ng-click="continuePreviousRun()">Continue Previous Session</button>
+        <button class="btn btn-default" ng-click="startNewRun()">Start New Session</button>
+      </div>
+    </div>  
+  </div>
+  <div ng-show="initialized && !incomplete">  
+    <div class="row">
+      <div class="col-md-12">
+        <h4><small>Account</small>&nbsp;{{accountRS}}&nbsp;<span><small>File</small>&nbsp;{{fileName}}</span></h4>
+      </div>
+    </div>
+    <br>
+    <div ng-show="phase==CREATING">
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Step <b>1</b>/4</h4>
+          <div>You have successfully loaded your payments from a file called <b>{{fileName}}</b>, the table below lists your payments, please carefully inspect if what you see in the table is what you intended. In case of inconsistencies make sure to correct your input file before continueing.<br>This step will create all transactions, transactions are created on one of the API servers and then signed with your passphrase locally, your passphrase will never leave your computer. This step only prepares the transactions <b>transactions are not broadcasted</b>, broadcasting of the transactions happens in the next step.</div>
         </div>
       </div>
-      <div class="col-md-12">
-        <h3><strong>2</strong>&nbsp;&nbsp;<small>Open CSV file or edit by hand</small></h3>
-        <div class="col-md-12 clearfix">
-          <div class="input-group">
-            <span class="input-group-btn">
-              <span class="btn btn-primary btn-file" ng-disabled="!selectedAccount">
-                <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Open CSV File<input type="file" 
-                  onchange="window.onMassPayFileSelected(event)">
-              </span>
-              <button class="btn btn-default" ng-click="saveAs()" ng-disabled="!items.csv">Save CSV As</button>
-            </span>
-            &nbsp;&nbsp;<label><small>{{items.file}}</small></label>
-          </div>
-        </div>
+      <br>
+      <div class="row">
         <div class="col-md-12">
-          <div class="form-group" ng-init="showCSV = false">
-            <br>
-            <textarea ng-disabled="!selectedAccount" class="form-control monospace" rows="3" id="masspay-csv" ng-model="items.csv"></textarea>
-          </div>
+          <button class="btn btn-primary" ng-click="startCreatingTransactions()" ng-disabled="isCreating">Create Transactions</button>
+          <button class="btn btn-default" ng-click="stopCreatingTransactions()" ng-disabled="!isCreating">Stop</button>
+          <button class="btn btn-default pull-right" ng-click="start()">Start New Session</button>
         </div>
       </div>
-      <div class="col-md-12">
-        <h3><strong>3</strong>&nbsp;&nbsp;<small>Load CSV into staging area and inspect for correctness</small></h3>
-        <div class="col-md-12 clearfix">
-          <div class="input-group">
-            <span class="input-group-btn">
-              <button class="btn btn-default" ng-disabled="!selectedAccount || !items.csv" ng-click="load()">Load CSV into Staging Area <small>(required only when CSV was edited manually)</small></button>
-            </span>
-          </div>
-        </div>
+    </div>
+    <div ng-show="phase==PRUNING">
+      <div class="row">
         <div class="col-md-12">
-          <h4>Staging Area</h4>
-          <table ng-table="tableParams" class="table table-striped table-condensed table-hover">
-            <tr ng-repeat="t in $data" ng-class="{success: t.status=='success', failed: t.status == 'failed'}">
-              <td data-title="'Recipient'" header-class="text-left"><a href ng-click="showAccount(t.recipientRS)">{{t.recipientRS}}</a></td>
-              <td data-title="'Amount'" header-class="text-left">{{t.amountNXT}}</td>
-              <td data-title="'ID'" header-class="text-left">{{t.unique_id}}</td>
-              <td data-title="'Status'" header-class="text-left">{{t.status}}</td>
-              <td data-title="'Total'" header-class="text-left">{{t.cumulativeNXT}}</td>        
+          <h4>Step <b>2</b>/4</h4>
+          <div class="alert alert-danger">It seems not all transactions could be created successfully. In case the balance of the sender account was insufficient you can fund it now and come back later to try and create the remaining transactions. Before you can begin broadcasting the transactions you must filter out the ones that were not created successfully, for this you can use the delete link on each row in the table below. Only when all the rows in the table indicate 'success' in the created column the Broadcast button will appear.</div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary" ng-click="startCreatingTransactions()" ng-disabled="isCreating">Retry to Create Transactions</button>
+          <button class="btn btn-default" ng-click="stopCreatingTransactions()" ng-disabled="!isCreating">Stop</button>
+          <button class="btn btn-default pull-right" ng-click="start()">Start New Session</button>
+        </div>
+      </div>
+    </div>
+    <div ng-show="phase==BROADCASTING">
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Step <b>3</b>/4</h4>
+          <div>All transactions in the table were successfully created and are ready to be broadcasted to the network. If you want to go over your payments one more time you should do that now, after broadcasting the transactions there is no way to undo that. To remove payments from the list click delete, deleted payments will not be broadcasted. Click the button to start broadcasting the payments, click Stop to stop the process.</div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary" ng-click="startBroadcastingTransactions()" ng-disabled="isBroadcasting">Broadcast Transactions</button>
+          <button class="btn btn-default" ng-click="stopBroadcastingTransactions()" ng-disabled="!isBroadcasting">Stop</button>
+          <button class="btn btn-default pull-right" ng-click="start()">Start New Session</button>
+        </div>
+      </div>
+    </div>
+    <div ng-show="phase==COMPLETE">
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Step <b>4</b>/4</h4>
+          <div>Mass Payment process completed. To view the blockchain status for each transaction click the Check Blockchain Status button. After checking the blockchain status a timer will be set to auto check every 15 seconds.<br>To determine if a transaction has been accepted in a block we calculate the transaction fullHash client side and query the network if that transaction is available, if it is the payment can be considered to have gone through successfully.<br><br>Auto blockchain status check in {{statusCheckRemaining}} seconds.</div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary" ng-click="checkBlockchainStatus()">Force Check Confirmed Status</button>
+          <button class="btn btn-default pull-right" ng-click="start()">Start New Session</button>
+        </div>
+      </div>
+    </div>
+    <div ng-show="phase==ALL_CONFIRMED">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Congratulations all payments succeeded</h1>
+          <div>We have calculated the transaction fullHash for each of your payments and the API servers have confirmed that a transaction with that same fullHash is in fact in the blockchain. Mofowallet already is connected to multiple public nodes at the same time, mofowallet also scans these public nodes for forks. However before you can be absolutely sure your payments are still in the blockchain even after a waiting period you'll have to wait for at least some blocks. Luckily the mass pay plugin helps you with this, simply don't load another payments file and when you come back to this page you'll see the mass pay plugin remembered all payments in this session. Now click the Force Check button and mofowallet will tell you if your payments are still in the blockchain.</div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary" ng-click="checkBlockchainStatus(true)">Force Check Confirmed Status</button>          
+          <button class="btn btn-default pull-right" ng-click="start()">Start New Session</button>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <table ng-table="tableParams" class="table table-striped table-condensed table-hover">
+          <tbody>
+            <tr ng-repeat="t in $data">
+              <td data-title="'Recipient'" header-class="text-left">
+                <div>
+                   <a href data-engine="{{t.engine_type}}" data-type="ACCOUNT" data-value="{{t.id_rs}}" class="txn txn-ACCOUNT" onclick="event.preventDefault(); if (angular.element(this).scope().onTransactionIdentifierClick) { angular.element(this).scope().onTransactionIdentifierClick(this) }">{{t.id_rs}}</a>&nbsp;<a href ng-click="inspect(t)"><i class="fa fa-question-circle"></i></a></div>
+                <div ng-if="t.publicKey"><small>{{t.publicKey}}</small></div>
+              <td>
+              <td data-title="'Amount'" header-class="text-left"><strong>{{t.amountNXT}}</strong><td>
+              <td data-title="'Message'" header-class="text-left">
+                <i ng-show="t.message.length && !t.messageIsPublic" class="fa fa-lock"></i>
+                <i ng-show="t.message.length && t.messageIsPublic" class="fa fa-unlock"></i>
+                <span dd-text-collapse dd-text-collapse-max-length="30" dd-text-collapse-text="{{t.message}}"></span>
+              <td>
+              <td data-title="'Created'" header-class="text-left">
+                <div>
+                  <a href ng-click="inspect(t.transactionResult)"><i class="fa fa-question-circle"></i></a>&nbsp;{{t.createdLabel}}
+                </div>
+                <div ng-if="t.timestamp">{{t.timestamp}}</div>
+              <td>
+              <td data-title="'Broadcasted'" header-class="text-left">
+                <div>
+                  <a href ng-click="inspect(t.broadcastResult)"><i class="fa fa-question-circle"></i></a>&nbsp;{{t.broadcastedLabel}}
+                </div>
+              <td>
+              <td data-title="'Confirmed'" header-class="text-left" nowrap>
+                <i class="{{t.blockchainIcon}}"></i>&nbsp;{{t.blockchainLabel}}
+              <td>
+              <td data-title="'Delete'" header-class="text-left"><a href ng-click="deletePayment(t)">delete</a><td>
             </tr>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
-      <div class="col-md-12">
-        <h3><strong>4</strong>&nbsp;&nbsp;<small>Execute Payments in Staging Area</small></h3>
-        <div class="col-md-12 clearfix">
-          <div class="input-group">
-            <span class="input-group-btn">
-              <button class="btn btn-danger" ng-disabled="!selectedAccount || !items.csv || payments.length == 0" ng-click="execute()">Execute Payments in Staging Area</button> 
-            </span>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <h4>Status</h4>
-          <textarea class="form-control monospace" rows="3" id="masspay-status" readonly></textarea>
-          <br><br>
-        </div>
-      </div>
-    </div>    
+    </div>
   </div>
 </div>

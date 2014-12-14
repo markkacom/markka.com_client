@@ -149,7 +149,7 @@ module.controller('AccountsPlugin', function($state, $q, $rootScope,
           });
         }
         else {
-          alerts.failed((error && error.errorDescription)||error);
+          console.log((error && error.errorDescription)||error);
         }
       }
     );

@@ -142,6 +142,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
   };
 
   var TRANSACTION_ARGS = {
+    dontBroadcast:                {type: Boolean, argument: false},
     sender:                       {type: String, argument: false},
     senderRS:                     {type: String, argument: false},
     engine:                       {type: String, argument: false},
@@ -233,6 +234,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         sender:                       {type: String, argument: false},
         senderRS:                     {type: String, argument: false},
         engine:                       {type: String, argument: false},
+        dontBroadcast:                {type: Boolean, argument: false},
         publicKey:                    {type: String}, // sender public key
         secretPhrase:                 {type: String},
         recipient:                    {type: String},
@@ -261,6 +263,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         sender:                       {type: String, argument: false},
         senderRS:                     {type: String, argument: false},
         engine:                       {type: String, argument: false},
+        dontBroadcast:                {type: Boolean, argument: false},
         publicKey:                    {type: String}, // sender public key
         secretPhrase:                 {type: String},
         recipient:                    {type: String},
@@ -828,6 +831,9 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     success: function (node, data, tries_left) {
       this.complete = true;
       this.requestHandler.notify('success', [this.methodName, node, data, tries_left]);
+      if (data.error && !data.errorDescription) {
+        data.errorDescription = data.error;
+      }
       if (data.errorCode && !data.errorDescription) {
         data.errorDescription = (data.errorMessage ? data.errorMessage : "Unknown error occured.");
       }
@@ -1950,6 +1956,9 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                 }
               }
 
+              /* Remember this before it's filtered out */
+              var dontBroadcast = args.dontBroadcast;
+
               /* Test argument type and unknown arguments */
               for (var argName in args) {
                 var argValue = args[argName];
@@ -2041,6 +2050,12 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                         deferred.reject(i18n.format('error_signature_verification_server'));
                         return;
                       } 
+                      else if (dontBroadcast) {
+                        deferred.resolve(angular.extend({ 
+                          transactionBytes: payload,
+                          fullHash: self.crypto.calculateFullHash(data.unsignedTransactionBytes, signature)
+                        }, data));
+                      }
                       else {
 
                         /* TODO.. Built in an option not to broadcast a transaction 
@@ -2075,13 +2090,13 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                             var id_rs = self.crypto.getAccountId(secretPhrase, true);                                    
                             for (var i=3; i<7; i++) {
                               $timeout(function () {                                
-                                INSTANCE.transactions.getUnconfirmedTransactions(id_rs, self, requests.mainStage, 20, options.node_out);
+                                INSTANCE.transactions.getUnconfirmedTransactions(id_rs, self, requests.mainStage, 20 /*, options.node_out */);
                               }, i*1000);
                             }
 
                             /* It is possible for a transaction to end up in a block before we call getUnconfirmed */
                             $timeout(function () {  
-                              INSTANCE.transactions.getNewestTransactions(id_rs, self, requests.mainStage, 20, options.node_out);
+                              INSTANCE.transactions.getNewestTransactions(id_rs, self, requests.mainStage, 20);
                             }, 10*1000);
                           }
                         ).catch(
@@ -2838,6 +2853,24 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       update: SHA256_write,
       getBytes: SHA256_finalize
     };
+
+    /**
+     * @param unsignedTransaction hex-string
+     * @param signature hex-string
+     * @returns hex-string 
+     */
+    this.calculateFullHash = function (unsignedTransaction, signature) {
+      var unsignedTransactionBytes = converters.hexStringToByteArray(unsignedTransaction);
+      var signatureBytes = converters.hexStringToByteArray(signature);
+      var signatureHash = simpleHash(signatureBytes);
+
+      _hash.init();
+      _hash.update(unsignedTransactionBytes);
+      _hash.update(signatureHash);      
+      var fullHash = _hash.getBytes();
+      
+      return converters.byteArrayToHexString(fullHash);
+    }
 
     /**
      * @param secretPhrase Ascii String

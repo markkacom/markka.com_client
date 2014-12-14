@@ -24,7 +24,7 @@ module.controller('SettingsPluginWalletController', function($scope, $timeout, p
 
   load();
 
-  plugins.get('wallet').createOnWalletFileSelectedPromise().then(
+  plugins.get('wallet').createOnWalletFileSelectedPromise($scope).then(
     function () { 
       $timeout(function () { 
         load();
