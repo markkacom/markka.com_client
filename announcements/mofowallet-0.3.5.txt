@@ -109,27 +109,27 @@ Bug fixes
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.3.5/mofowallet.windows-0.3.5.zip
  
-SHA256 0e98a04af48f6aca46f5cf973fac49c8c6dd0436c6c5901ab906c6346b4c5fbf 
-MD5    c9c83ce69fdcff343b657f49f7f6beac 
+SHA256 1fef7757855e37f6c1f27237206360bb645acf7f51646df7a960755318a7789d 
+MD5    629c9d2be7886f94c1efa23537d6b123 
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.3.5/mofowallet.linux-0.3.5.zip
  
-SHA256 eb65515ad25c39618db093c8c3f765bdc4cb373a2631bccc90d8bc6f543fe5f8 
-MD5    ca4733fb3f8fb140439e7c4bb5d9bca0 
+SHA256 b56c42dadb2dbb7884e98e618d6a9b09ff14de231419e28e80407b9f7ca6525f 
+MD5    86fe843122fb5118a5761e6b47e4c63d 
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.3.5/mofowallet.osx-0.3.5.zip
  
-SHA256 eb65515ad25c39618db093c8c3f765bdc4cb373a2631bccc90d8bc6f543fe5f8
-MD5    ca4733fb3f8fb140439e7c4bb5d9bca0
+SHA256 b56c42dadb2dbb7884e98e618d6a9b09ff14de231419e28e80407b9f7ca6525f
+MD5    86fe843122fb5118a5761e6b47e4c63d
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJUjesNAAoJEP9gzPcARnvnxRAH/03wAARqsc+UeWWJt4xNBf1i
-30IDH+D9LdABfZtc6uKfNAmMErTcmaj7QdbuZmlbAZMShIRo/hmykcg9xfulfx4c
-UUP/NLCPz8phyLoMpdOh1QgZc0qmp2pnyAJi6rSTyndWrn5aE/tGzunMeRR6zid+
-Cd5sW+zCXaobdmXwpjMBTb2UAPMqrMc+++AnLpNHyCVph6REy91x4BwTySTgAy6F
-d3e0+3vW3VL6M/VFhhB0AQfLf7OEe4E8mY5QdenLWam38E35SO9jD1LItQZAk6nD
-0PNzq29gs1DnL26uvgasenGXOD+T3G8hrs0vb+sY72XWJ+x9iWpDJCmyX2HSlVY=
-=EORo
+iQEcBAEBAgAGBQJUje5tAAoJEP9gzPcARnvn6OgH/3pTwTmB9NR6Jr9TRq4Mx3Pi
+j9/drw0PIqkpT0gmNUlKc/DEO3hLmOZKHBHIzFGiC90vfgkRQHFJKHJL+hXuLI7A
+V3tDPReFeLmS8pxhqcMNmw7Rr3cOoS+eagz2BKq4HfZ6PtuxA2RC9+mp9gq/mMb5
+t8wcIYJpa94IoPk0MH9dLN/9FkecHh52d6qbGjJTSG7+quC176jtx4aMs+r2rcm6
+VToWTM9oyPSvmlfS+/JLdMf+lx2Dk6IcqV3Agnd3UgK/6v6Iwr8x+FokwaLf2CLX
+yCqHtCVgTMwGWBzNNYPx6iMbgjjXd6xHvYaUjWFlsH5FbIb8ZAveYP1Z9ExfXKQ=
+=QsZo
 -----END PGP SIGNATURE-----

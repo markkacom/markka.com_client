@@ -1,0 +1,57 @@
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3
+ 2. NXT   1.3.4
+
+Major rewrite of the masspay plugin.
+
+  Screenshots and tutorial: http://imgur.com/a/S91zS#0
+
+  The mass pay plugin (tool to send multiple payments from a file) has had a major facelift.
+
+  With this plugin you can create, sign, broadcast and verify multiple payments in one single 
+  operation. If your computer crashes or this application was shutdown during a payments 
+  operation upon startup you'll be able to pick up where you left off. After all payments 
+  were broadcasted you'll be able to confirm that each transaction is actually in the blockchain. 
+  Once all payments succeeded and all are in the blockchain you'll be notified of it's success.
+
+  In order to determine if transactions are in the blockchain we calculate the transaction 
+  fullHash client side. Since the broadcastTransaction API call cannot always return reliable 
+  transaction status we are forced to rely on transaction fullHash instead of simply using 
+  the transaction id.
+
+  Payments are entered through a JSON file, two syntaxes are supported the dense and verbose 
+  syntax. If you are sending payments to accounts without publickey please use the publish 
+  format (account and public key separated by a : symbol).
+
+Experimental AE order entry + cancellation
+
+  This release includes an early draft UI for:
+
+    1. create ask order
+    2. create bid order
+    3. cancel ask order
+    4. cancel bid order
+    5. list my ask orders
+    6. list my bid orders
+    7. account selector in AE
+    8. displays account confirmed asset balance
+    9. displays account unconfirmed asset balance
+
+  It's a first draft and could have bugs still please don't use it for sending any serious
+  amounts.
+
+  We are working on a redesign of the AE in mofowallet, the redesign will consist of a new
+  UI combined with native extensions to the FIM and NXT servers. The current standard NXT 
+  API seems too limited to make a truly responsive exchange UI ontop of that API.
+  To still keep MofoWallet compatible with FIMK and NXT our only way forward is to add 
+  these new API calls to both FIMK server and NXT server.
+
+  For this to work we are forced to start shipping a custom build embedded NXT server for
+  future releases of MofoWallet.
+
+Bug fixes
+
+  Numerous smaller bug fixes have gone in this release.

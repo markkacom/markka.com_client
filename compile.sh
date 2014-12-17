@@ -26,7 +26,7 @@
 #
 # ##############################################################################
 DEBUG=false
-VERSION=0.3.5
+VERSION=0.3.6
 BASE=mofowallet
 
 grunt nodewebkit
@@ -245,13 +245,11 @@ echo "=="
 echo "== Checklist.."
 echo "=="
 echo "== 1. Did you update the version number in README.txt ?"
-echo "=="
+echo "== 2. Did you update the version number in index.html ?"
 echo "=="
 echo "== Final actions.."  
 echo "=="
-echo "== 1. Github release: https://github.com/fimkrypto/fimk/releases/tag/v$VERSION"
-echo "== 2. Update version aliases"
-echo "==    nrsversion=$VERSION $SHA_SUM"
+echo "== 1. Github release: https://github.com/fimkrypto/mofowallet/releases/tag/v$VERSION"
 echo "=="
 echo "=="
 echo "========================================================================="
