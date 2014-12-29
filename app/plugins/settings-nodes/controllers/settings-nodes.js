@@ -1,13 +1,14 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('SettingsPluginNodesController', function($scope, db, ngTableParams, $timeout, nxt, alerts, $http) {
+module.controller('SettingsPluginNodesController', function($scope, db, ngTableParams, $timeout, nxt, alerts, $http, settings) {
 
   $scope.TYPE_FIM = nxt.TYPE_FIM;  
   $scope.TYPE_NXT = nxt.TYPE_NXT;
 
   $scope.batchAddContents = '';
-  $scope.nodes        = [];
+  $scope.nodes            = [];
+
   $scope.tableParams  = new ngTableParams({page: 1, count: 10}, {
     total: 0,
     getData: function($defer, params) {
@@ -19,7 +20,8 @@ module.controller('SettingsPluginNodesController', function($scope, db, ngTableP
     { 
       label: 'NXT', 
       type: nxt.TYPE_NXT, 
-      port: 7876, 
+      port: 7876,
+      key: 'nxt.localhost.force',
       more: {
         label: 'Find more nodes through peerexplorer.com',
         fn: function () {
@@ -37,20 +39,24 @@ module.controller('SettingsPluginNodesController', function($scope, db, ngTableP
     { 
       label: 'FIM (test)', 
       type: nxt.TYPE_FIM, 
-      port: 6886 
+      port: 6886,
+      key: 'fim.localhost.force'
     },
     { 
       label: 'FIM', 
       type: nxt.TYPE_FIM, 
-      port: 7886 
+      port: 7886,
+      key: 'fim.localhost.force'
     },
     { 
       label: 'NXT (test)', 
       type: nxt.TYPE_NXT, 
-      port: 6876 
+      port: 6876,
+      key: 'nxt.localhost.force' 
     }
   ];
   $scope.selectedEngine   = $scope.engines[0];
+  $scope.localhostForce   = settings.get($scope.selectedEngine.key);
 
   function find(array, id, value) {
     for(var i=0,l=array.length; i<l; i++) { if (array[i][id] == value) { return i; } }
@@ -73,7 +79,8 @@ module.controller('SettingsPluginNodesController', function($scope, db, ngTableP
     var engine = $scope.selectedEngine;
     if (observer) {
       db.nodes.removeObserver(observer); 
-    }    
+    }
+    $scope.localhostForce = settings.get($scope.selectedEngine.key);
 
     /* Load nodes from database */
     db.nodes.where('port').equals(engine.port).toArray().then(
@@ -122,6 +129,26 @@ module.controller('SettingsPluginNodesController', function($scope, db, ngTableP
     );
   };
   $scope.selectedEngineChanged();
+
+  $scope.localhostForceChanged = function () {
+    settings.update($scope.selectedEngine.key, $scope.localhostForce);
+  };
+
+  settings.resolve('fim.localhost.force', function (value) {
+    if ($scope.selectedEngine.key == 'fim.localhost.force') {
+      $scope.$evalAsync(function () {
+        $scope.localhostForce = value;
+      });
+    }
+  });
+
+  settings.resolve('nxt.localhost.force', function (value) {
+    if ($scope.selectedEngine.key == 'fim.localhost.force') {
+      $scope.$evalAsync(function () {
+        $scope.localhostForce = value;
+      });
+    }
+  });
 
   $scope.clearSelectedEngine = function () {
     db.nodes.where('port').equals($scope.selectedEngine.port).delete().then(

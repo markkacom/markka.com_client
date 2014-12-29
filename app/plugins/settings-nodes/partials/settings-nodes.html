@@ -20,6 +20,16 @@
               <button class="form-control btn btn-primary" ng-click="clearSelectedEngine()">Clear Nodes</button>
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-xs-10 col-xs-offset-2">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" name="localonly" ng-model="localhostForce" 
+                    ng-change="localhostForceChanged()"> Use localhost only (no public nodes)
+                </label>
+              </div>
+            </div>
+          </div>
         </form>
         <br>
       </div>

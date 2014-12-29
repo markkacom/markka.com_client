@@ -2,7 +2,8 @@
 'use strict';
 var module = angular.module('fim.base');
 module.controller('MasspayPluginController', function($scope, $rootScope, $timeout, $interval, plugins, nxt, $http, ngTableParams, $sce, modals, $q, db, $state, requests) {
-  var PLUGIN = plugins.get('masspay');
+  var PLUGIN            = plugins.get('masspay');
+  var GIVEUP            = 999*1000;
 
   $scope.CREATING       = 'creating';
   $scope.PRUNING        = 'pruning';
@@ -14,6 +15,7 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
   $scope.UNCONFIRMED    = 'unconfirmed';
   $scope.CONFIRMED      = 'confirmed';
 
+  $scope.zero_payments  = true;
   $scope.initialized    = false;
   $scope.incomplete     = false;
   $scope.accountRS      = null;
@@ -24,12 +26,8 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
   $scope.isBroadcasting = false;
   $scope.isCreating     = false;
   $scope.phase          = $scope.CREATING;
-  $scope.statusCheckRemaining = 0;
   var api               = null;
   var engineType        = null;
-
-  // podium used for everything but status
-  var podium            = null;
 
   var statusTimeout     = null;
   $scope.$on('destroy', function () {
@@ -55,29 +53,41 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
 
             if (payment.transactionResult.length > 0) {
               payment.createdLabel = payment.transactionSuccess===true ? 'success' : 'failed';
+              payment.createdClass = payment.transactionSuccess===true ? 'text-success' : 'text-danger';
             }
             else {
               payment.createdLabel = payment.created === 1;
+              payment.createdClass = 'text-muted';
             }
 
             if (payment.broadcastResult.length > 0) {
-              payment.broadcastedLabel = payment.broadcastSuccess===true ? 'success' : 'undetermined';
+              payment.broadcastedLabel = payment.broadcastSuccess===true ? 'success' : 'not sure';
+              payment.broadcastedClass = payment.broadcastSuccess===true ? 'text-success' : 'text-warning';
             }
             else {
               payment.broadcastedLabel = payment.broadcasted === 1;
+              payment.broadcastedClass = 'text-muted';
             }
 
             if (payment.blockchainStatus == $scope.CONFIRMED) {
               payment.blockchainLabel = 'confirmed';
-              payment.blockchainIcon = 'fa fa-check';
+              payment.blockchainIcon = 'fa fa-check text-success';
             }
             else if (payment.blockchainStatus == $scope.UNCONFIRMED) {
               payment.blockchainLabel = 'unconfirmed';
-              payment.blockchainIcon = 'fa fa-cog fa-spin';
+              payment.blockchainIcon = 'fa fa-circle-o-notch fa-spin text-success';
             }
             else {
-              payment.blockchainLabel = 'undetermined';
-              payment.blockchainIcon = 'fa fa-exclamation-triangle';
+              if ($scope.phase == $scope.COMPLETE) {
+                payment.blockchainLabel = 'waiting';
+                payment.blockchainIcon = 'fa fa-circle-o-notch fa-spin';
+              }
+              else {
+                if (payment.transactionSuccess===true) {
+                  payment.blockchainLabel = 'unknown';
+                  payment.blockchainIcon = '';
+                }
+              }
             }
           });
           $defer.resolve(payments);
@@ -131,7 +141,7 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
       close: function (items) {
         $scope.$evalAsync(function () {
           $scope.initialized = true;
-          $scope.fileName    = items.file.name;
+          $scope.fileName    = items.file ? items.file.name : '';
           $scope.fileContent = items.fileContent;
 
           db.transaction('rw', db.masspay_payments, function () { db.masspay_payments.clear(); }).then(function () {
@@ -146,6 +156,35 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     });
   }
 
+  $scope.retryRemaining = function () {
+    destroyPodiums();
+    db.masspay_payments.toArray().then(
+      function (payments) {
+        db.transaction('rw', db.masspay_payments, function () {
+          angular.forEach(payments, function (payment, index) {
+            if (payment.blockchainStatus == $scope.CONFIRMED) {
+              payment.delete();
+            }
+            else {
+              payment.update({
+                index: index,
+                transactionBytes: '',
+                transactionResult: '',
+                broadcastResult: '',
+                created: 0,
+                broadcasted: 0
+              });
+            }
+          });
+        }).then(
+          function () {
+            determinePhase();
+          }
+        );
+      }
+    );    
+  }
+
   $scope.deletePayment = function (payment) {
     db.masspay_payments.delete(payment.id).then(
       function () {
@@ -154,28 +193,14 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     );
   }
 
-  $scope.retryBroadcastTransaction = function (payment) {
-    broadcastTransaction(payment).then(
-      function (data) {
-        payment.update({
-          blockchainStatus: $scope.BROADCASTED,
-          transaction: data.transaction,
-          broadcastResult: JSON.stringify(data),
-          broadcastSuccess: true,
-        });
-      },
-      function (data) {
-        payment.update({
-          broadcastResult: JSON.stringify(data),
-          broadcastSuccess: false,
-        });
-      }
-    );
-  }
-
   $scope.inspect = function (object) {
     if (typeof object == 'string') {
-      object = JSON.parse(object);
+      try {
+        object = JSON.parse(object);
+      } catch (e) {
+        console.log('masspay::inspect::exceptions',e);
+        return;
+      }
     }
     plugins.get('inspector').inspect({
       title: 'Payment Details',
@@ -198,78 +223,107 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     });
   }
 
+  function destroyPodiums() {
+    if ($scope.create_podium) { 
+      $scope.create_podium.destroy() 
+    }
+    if ($scope.status_podium) { 
+      $scope.status_podium.destroy() 
+    }
+    if ($scope.broadcast_podium) { 
+      $scope.broadcast_podium.destroy() 
+    }
+  } 
+
   $scope.startCreatingTransactions = function () {
-    if (podium) { podium.destroy() }
-    podium = requests.theater.createPodium('masspay', $scope);
+    destroyPodiums();
+    $scope.create_podium = requests.theater.createPodium('masspay:create', $scope);    
     $scope.$evalAsync(function () {
       $scope.isCreating = true;
-      createAllTransactions();
+      createAllTransactions($scope.create_podium);
     });
   }
 
   $scope.stopCreatingTransactions = function () {
-    podium.destroy();
+    destroyPodiums();
     $scope.$evalAsync(function () {
       $scope.isCreating = false;
     });
   }
 
   $scope.startBroadcastingTransactions = function () {
-    if (podium) { podium.destroy() }
-    podium = requests.theater.createPodium('masspay', $scope);
+    destroyPodiums();
+    $scope.broadcast_podium = requests.theater.createPodium('masspay:broadcast', $scope);
     $scope.$evalAsync(function () {
       $scope.isBroadcasting = true;
-      broadcastAllTransactions();
+      broadcastAllTransactions($scope.broadcast_podium);
     });
   }
 
   $scope.stopBroadcastingTransactions = function () {
-    podium.destroy();
+    destroyPodiums();  
     $scope.$evalAsync(function () {
       $scope.isBroadcasting = false;
     });
   }
 
-  var countdownInterval = null;
-  function scheduleBlockchainStatusCheck() {
-    var delay = 15 * 1000;
-    statusTimeout = $timeout($scope.checkBlockchainStatus, delay, false);
-    
-    var remaining = delay/1000;
-    $interval.cancel(countdownInterval);
-    countdownInterval = $interval(function () {
-      $scope.$evalAsync(function () {
-        $scope.statusCheckRemaining = remaining--;    
-      })
-    }, 1000, remaining, false);  
+  $scope.status = function (payment) {
+    payment.update({ blockchainStatus: $scope.UNCONFIRMED }).then(
+      function () {
+        destroyPodiums();
+        $scope.status_podium = requests.theater.createPodium('masspay:status', $scope);
+        api.getTransaction({ fullHash: payment.fullHash }, { priority: 8, podium: $scope.status_podium }).then(
+          function (data) {
+            payment.update({
+              blockchainStatus: data.block ? $scope.CONFIRMED : $scope.UNCONFIRMED
+            }).then(
+              function () {
+                determinePhase();
+              }
+            );
+          },
+          function () {
+            determinePhase();
+          }
+        );
+      }
+    );
   }
 
-  $scope.checkBlockchainStatus = function (force) {
-    $interval.cancel(countdownInterval);
-    $scope.$evalAsync(function () { 
-      $scope.statusCheckRemaining = 0; 
-      scheduleBlockchainStatusCheck();
-    });
+  var status_timeout = null;
+  $scope.$on('destroy', function () {
+    $timeout.cancel(status_timeout);
+  })
 
-    var statusPodium = requests.theater.createPodium('masspay:status', $scope);
+  $scope.checkBlockchainStatus = function () {
+    if (status_timeout) {
+      $timeout.cancel(status_timeout);
+    }
+    status_timeout = $timeout($scope.checkBlockchainStatus, 30*1000, false);
+
+    destroyPodiums();
+    $scope.status_podium = requests.theater.createPodium('masspay:status', $scope);
     db.masspay_payments.where('broadcasted').
                         equals(1).
-                        and(function (p) { return p.blockchainStatus != $scope.CONFIRMED || force } ).
+                        and(function (p) { return p.blockchainStatus != $scope.CONFIRMED } ).
                         toArray().then(
       function (payments) {
         var promises = [];
         angular.forEach(payments, function (payment) {
-          if (force) {
-            payment.update({blockchainStatus: $scope.UNCONFIRMED });
-          }
-          promises.push(
-            api.getTransaction({ fullHash: payment.fullHash }, { priority: 1, podium: statusPodium }).then(
-              function (data) {
-                payment.update({
-                  blockchainStatus: data.block ? $scope.CONFIRMED : $scope.UNCONFIRMED
-                });
-              }
-            )
+          var deferred = $q.defer();
+          promises.push(deferred.promise);
+          api.getTransaction({ fullHash: payment.fullHash }, { priority: 5, podium: $scope.status_podium }).then(
+            function (data) {
+              payment.update({
+                blockchainStatus: data.block ? $scope.CONFIRMED : $scope.UNCONFIRMED
+              }).then(
+                function () {
+                  deferred.resolve();
+                },
+                deferred.resolve
+              )
+            },
+            deferred.resolve
           );
         });
         $q.all(promises).then(
@@ -281,7 +335,31 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     );
   }
 
-  function broadcastAllTransactions() {
+  $scope.forceCheckBlockchainStatus = function () {
+    db.masspay_payments.where('broadcasted').
+                        equals(1).
+                        toArray().then(
+      function (payments) {
+        db.transaction('rw', db.masspay_payments, 
+          function () {
+            angular.forEach(payments, function (payment) {
+              payment.update({ blockchainStatus: '' });
+            });
+          }
+        ).then(
+          function () {
+            $scope.checkBlockchainStatus();
+          }
+        );
+      }
+    )
+  }
+
+  $scope.broadcast = function (payment) {
+    broadcastTransaction(payment, $scope.broadcast_podium);
+  }  
+
+  function broadcastAllTransactions(podium) {
     db.masspay_payments.where('broadcasted').
                         equals(0).
                         toArray().then(
@@ -292,24 +370,9 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
           promises.push(deferred.promise);
           payment.update({broadcasted: 1}).then(
             function () {
-              broadcastTransaction(payment).then(
-                function (data) {
-                  payment.update({
-                    blockchainStatus: $scope.BROADCASTED,
-                    transaction: data.transaction,
-                    broadcastResult: JSON.stringify(data),
-                    broadcastSuccess: true,
-                  }).then(deferred.resolve, deferred.reject);
-                },
-                function (data) {
-                  payment.update({
-                    broadcastResult: JSON.stringify(data),
-                    broadcastSuccess: false,
-                  }).then(deferred.resolve, deferred.reject);
-                }
-              );
+              broadcastTransaction(payment, podium).then(deferred.resolve, deferred.resolve);
             },
-            deferred.reject
+            deferred.resolve
           );
         });
         $q.all(promises).then(
@@ -324,42 +387,137 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     );
   }
 
+  function shuffle(o) {
+    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+  };
+
+  function broadcastTransaction(payment, podium) {
+    var deferred = $q.defer();
+    api.broadcastTransaction({ 
+      transactionBytes: payment.transactionBytes 
+    }, { 
+      priority: 9, 
+      podium: podium,
+      giveup: GIVEUP
+    }).then(
+      function (data) {
+        payment.update({
+          blockchainStatus: $scope.BROADCASTED,
+          transaction: data.transaction,
+          broadcastResult: JSON.stringify(data),
+          broadcastSuccess: true,
+        }).then(
+          deferred.resolve,
+          deferred.reject
+        );
+      },
+      function (data) {
+        payment.update({
+          broadcastResult: JSON.stringify(data),
+          broadcastSuccess: false,
+        }).then(
+          deferred.resolve,
+          deferred.reject
+        );
+      }
+    );
+    return deferred.promise;
+  }  
+
+  /*
+  Turn off send to multi nodes for now..
+
+  function broadcastTransaction(payment, podium) {
+    var deferred = $q.defer();
+
+    function broadcast(iterator) {
+      if (iterator.hasMore()) {
+        var node = iterator.next();
+        api.broadcastTransaction({ 
+          transactionBytes: payment.transactionBytes
+        }, { 
+          priority: 4, 
+          podium: podium,
+          node: node,
+          giveup: GIVEUP
+        }).then(
+          function (data) {
+            payment.update({
+              blockchainStatus: $scope.BROADCASTED,
+              transaction: data.transaction,
+              broadcastResult: JSON.stringify(data),
+              broadcastSuccess: true,
+            }).then(
+              deferred.resolve,
+              deferred.reject
+            );
+          },
+          function (data) {
+            payment.update({
+              broadcastResult: JSON.stringify(data),
+              broadcastSuccess: false,
+            }).then(
+              function () { broadcast(iterator); },
+              deferred.reject
+            );            
+          }
+        );
+      }
+      else {
+        deferred.reject();
+      }
+    }
+
+    db.nodes.toArray().then(
+      function (nodes) {
+        broadcast(new Iterator(shuffle(nodes)));
+      },
+      deferred.reject
+    );
+    return deferred.promise;
+  }*/
+
   function promptForSender() {
     var deferred = $q.defer();
-    modals.open('secretPhrase', {
-      resolve: {
-        items: function () {
-          return {
-            engineType: engineType
+    if ($scope.secretPhrase) {
+      deferred.resolve();
+    }
+    else {
+      modals.open('secretPhrase', {
+        resolve: {
+          items: function () {
+            return {
+              engineType: engineType
+            }
           }
-        }
-      },
-      close: function (items) {
-        $scope.$evalAsync(function () {
-          $scope.accountRS    = items.sender;
-          $scope.secretPhrase = items.secretPhrase;
-          $scope.feeNQT       = nxt.util.convertToNQT($scope.accountRS.indexOf('FIM-') == 0 ? 0.1 : 1);
+        },
+        close: function (items) {
+          $scope.$evalAsync(function () {
+            $scope.accountRS    = items.sender;
+            $scope.secretPhrase = items.secretPhrase;
+            $scope.feeNQT       = nxt.util.convertToNQT($scope.accountRS.indexOf('FIM-') == 0 ? 0.1 : 1);
 
-          deferred.resolve();
-        });        
-      }
-    });
+            deferred.resolve();
+          });
+        }
+      });
+    }
     return deferred.promise;
   }
 
-  function createAllTransactions() {    
+  function createAllTransactions(podium) {    
     promptForSender().then(function () {
       db.masspay_payments.where('created').
                           equals(0).
                           toArray().then(
         function (payments) {
-          var promises = [];
-          angular.forEach(payments, function (payment) {
-            var deferred = $q.defer();
-            promises.push(deferred.promise);
+          var iterator = new Iterator(payments);
+
+          function next(payment) {
             payment.update({created: 1}).then(
               function () {
-                createTransaction(payment).then(
+                createTransaction(payment, podium).then(
                   function (d) {
                     payment.update({
                       node_url: d.options.node_out.url,
@@ -369,49 +527,49 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
                       fullHash: d.data.fullHash,
                       transactionResult: JSON.stringify(d.data),
                       transactionSuccess: true
-                    }).then(deferred.resolve, deferred.reject);
+                    }).then(
+                      function () {
+                        if (iterator.hasMore()) { 
+                          next(iterator.next()) 
+                        }
+                        else {
+                          $scope.$evalAsync(function () {
+                            $scope.isCreating = false;
+                            determinePhase();
+                          });
+                        }
+                      }
+                    );
                   },
                   function (d) {
                     payment.update({
                       transactionResult: JSON.stringify(d.data),
                       transactionSuccess: false
-                    }).then(deferred.resolve, deferred.reject);
+                    }).then(
+                      function () {
+                        if (iterator.hasMore()) { 
+                          next(iterator.next()) 
+                        }
+                        else {
+                          $scope.$evalAsync(function () {
+                            $scope.isCreating = false;
+                            determinePhase();
+                          });
+                        }
+                      }
+                    );
                   }
                 );
-              },
-              deferred.reject
+              }
             );
-          });
-          $q.all(promises).then(
-            function () {
-              $scope.$evalAsync(function () {
-                $scope.isCreating = false;
-              });
-              determinePhase();
-            }
-          );
+          }
+          if (iterator.hasMore()) { next(iterator.next()) }
         }
       );
     });
   }
 
-  function broadcastTransaction(payment) {
-    var deferred = $q.defer();
-    db.nodes.where('id').equals(payment.node_id).first().then(
-      function (node) {
-        api.broadcastTransaction({ 
-          transactionBytes: payment.transactionBytes 
-        }, { 
-          priority: 2, 
-          podium: podium,
-          node: node
-        }).then(deferred.resolve, deferred.reject);
-      }
-    );
-    return deferred.promise;
-  }
-
-  function createTransaction(payment) {
+  function createTransaction(payment, podium) {
     var deferred = $q.defer();
     var args = {
       secretPhrase: $scope.secretPhrase,
@@ -457,7 +615,7 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     }
 
     function send() {
-      var options = {priority: 3, podium: podium};
+      var options = {priority: 9, podium: podium, giveup: GIVEUP};
       api.sendMoney(args, options).then(
         function (data) {
           deferred.resolve({data:data, options:options});
@@ -472,7 +630,7 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
     }
 
     if (args.encrypt_message && !args.recipientPublicKey) {
-      api.getAccountPublicKey({account:recipientRS}, {priority:5, podium: podium}).then(
+      api.getAccountPublicKey({account:recipientRS}, {priority:9, podium: podium, giveup: GIVEUP}).then(
         function (data) {
           args.recipientPublicKey = data.publicKey;
           send();
@@ -508,6 +666,7 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
                         count().then(
       function (count) {
         if (count > 0) {
+          $scope.zero_payments = false;
           $scope.$evalAsync(function () { $scope.phase = $scope.CREATING });
         }
         else /* if (count == 0) */ {
@@ -542,8 +701,18 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
                             $scope.$evalAsync(function () { $scope.phase = $scope.ALL_CONFIRMED });
                           }
                           else {
-                            scheduleBlockchainStatusCheck();
-                            $scope.$evalAsync(function () { $scope.phase = $scope.COMPLETE });
+                            if ($scope.status_timeout == null) {
+                              $scope.status_timeout = $timeout(function () {
+                                $scope.status_timeout = null;
+                                $scope.checkBlockchainStatus();
+                              }, 5*1000, false);
+                            }
+                            $scope.$evalAsync(function () { 
+                              if ($scope.phase != $scope.COMPLETE) {
+                                $scope.phase = $scope.COMPLETE;   
+                                $scope.tableParams.reload();  
+                              }                           
+                            });
                           }
                         }
                       );
@@ -575,22 +744,51 @@ module.controller('MasspayPluginController', function($scope, $rootScope, $timeo
    * [
    *   ["FIM-XXXXX-YYYY-XXXX-ZZZZ","200.3001","Hello I'm a message", true],
    *   ["FIM-OOOOI-YYYY-XXXX-ZZZZ","300.3001","Hello I'm also another message", false]
-   * ]   
+   * ]
+   *
+   * CSV syntax
+   *
+   * FIM-XXXXX-YYYY-XXXX-ZZZZ,200.3001
+   * FIM-XXXXX-YYYY-XXXX-ZZZZ,400.3001,false,plain message
+   * FIM-OOOOI-YYYY-XXXX-ZZZZ,500.3001,true,message can contain commas (,)
+   *
    */
   function loadFileContent(content) {
+    $scope.zero_payments = true;
     var deferred = $q.defer();
-    var obj = JSON.parse(content);
-    if (Array.isArray(obj)) {
-      db.transaction('rw', db.masspay_payments, function () {
-        angular.forEach(obj, function (payment, index) {
-          storeInDB(index, payment[0],payment[1],payment[2],!!payment[3]);
-        });
-      }).then(deferred.resolve).catch(deferred.reject);
+    try {
+      var obj = JSON.parse(content);
+      if (Array.isArray(obj)) {
+        db.transaction('rw', db.masspay_payments, function () {
+          angular.forEach(obj, function (payment, index) {
+            storeInDB(index, payment[0],payment[1],payment[2],!!payment[3]);
+            $scope.zero_payments = false;
+          });
+        }).then(deferred.resolve).catch(deferred.reject);
+      }
+      else {
+        db.transaction('rw', db.masspay_payments, function () {
+          angular.forEach(obj.payments, function (payment, index) {
+            storeInDB(index, payment.recipient,payment.amount,payment.message,!!payment.messageIsPublic);
+            $scope.zero_payments = false;
+          });
+        }).then(deferred.resolve).catch(deferred.reject);
+      }
     }
-    else {
+    catch (e) {
       db.transaction('rw', db.masspay_payments, function () {
-        angular.forEach(obj.payments, function (payment, index) {
-          storeInDB(index, payment.recipient,payment.amount,payment.message,!!payment.messageIsPublic);
+        var lines = content.match(/[^\r\n]+/g);
+        angular.forEach(lines, function (line, index) {
+          var cols      = line.split(',');
+          var recipient = cols[0];
+          var amountNXT = cols[1];
+          var ispublic  = cols[2] ? cols[2] == 'true' : false;
+          var message   = cols[3] ? cols.slice(3).join(',') : null;
+
+          if (recipient && amountNXT) {
+            storeInDB(index, recipient, amountNXT, message, ispublic);
+            $scope.zero_payments = false;
+          }
         });
       }).then(deferred.resolve).catch(deferred.reject);
     }

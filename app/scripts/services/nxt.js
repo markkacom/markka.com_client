@@ -105,6 +105,22 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     resolve: function (value) {
       INSTANCE.fim().engine.localhost = value;
     }
+  }, {
+    id: 'fim.localhost.force',
+    value: false,
+    type: Boolean,
+    label: 'fim force localhost',
+    resolve: function (value) {
+      INSTANCE.fim().engine.must_use_localhost = value;
+    }
+  }, , {
+    id: 'nxt.localhost.force',
+    value: false,
+    type: Boolean,
+    label: 'nxt force localhost',
+    resolve: function (value) {
+      INSTANCE.nxt().engine.must_use_localhost = value;
+    }
   }]);
 
   var TYPE_FIM  = 'TYPE_FIM';
@@ -558,13 +574,18 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     this.nodes     = [];
     
     /* Set through settings service */
-    this.localhost     = 'http://127.0.0.1';
-    this.localHostNode = null;
+    this.localhost      = 'http://127.0.0.1';
+    this.localHostNode  = null;
 
     /* Currently set from the fim-engine and nxt-engine plugins from an iterval that tests
        constantly for an available localhost API, this combined with a test if the
        blockchain was actually downloaded in full. */
     this.can_use_localhost = false;
+
+    /* Setting available from the public nodes section. If set to true no attempt will be 
+       made to use any public node. This is enforced in the getNode2 method where it will
+       always return localhost node if set to true. */
+    this.must_use_localhost = false;
 
     /**
      * Provide scoped db access | note that db.transactions points to something 
@@ -664,7 +685,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       var deferred = $q.defer();
       if (this.localHostNode === null) {
         for (var i=0; i<this.nodes.length; i++) {
-          if (this.nodes[i].url == this.localhost) {
+          if (this.nodes[i].url && this.nodes[i].url == this.localhost) {
             this.localHostNode = this.nodes[i];
             break;
           }
@@ -721,7 +742,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
         function () {
           /* When a localhost API is available it will override all other rules
              This basically means a server is running and the blockchain has fully downloaded */
-          if (self.can_use_localhost) {
+          if (self.can_use_localhost || self.must_use_localhost) {
             self.getLocalHostNode().then(
               function (node) {
 
@@ -2029,10 +2050,14 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                   }
 
                   /* @optional observer supported */
-                  if (observer) { observer.success(methodName); }
+                  if (observer) { observer.success(methodName, data); }
 
                   /* The server prepared an unsigned transaction that we must sign and broadcast */
                   if (secretPhrase && data.unsignedTransactionBytes) {
+
+                    /* @optional observer supported */
+                    if (observer) { observer.start('sign'); }
+
                     var publicKey   = self.crypto.secretPhraseToPublicKey(secretPhrase);
                     var signature   = self.crypto.signBytes(data.unsignedTransactionBytes, converters.stringToHexString(secretPhrase));
 
@@ -2040,21 +2065,34 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                     args.publicKey  = publicKey;
 
                     if (!self.crypto.verifyBytes(signature, data.unsignedTransactionBytes, publicKey)) {
-                      deferred.reject(i18n.format('error_signature_verification_client'));
+                      var msg = i18n.format('error_signature_verification_client');
+
+                      /* @optional observer supported */
+                      if (observer) { observer.failed('sign', msg); }
+
+                      deferred.reject(msg);
                       return;
                     } 
                     else {
                       var payload = verifyAndSignTransactionBytes(data.unsignedTransactionBytes, signature, methodName, 
                                         args, self.type, self.engine.constants());
                       if (!payload) {
-                        deferred.reject(i18n.format('error_signature_verification_server'));
+                        var msg = i18n.format('error_signature_verification_server');
+
+                        /* @optional observer supported */
+                        if (observer) { observer.failed('sign', msg); }
+
+                        deferred.reject(msg);
                         return;
                       } 
-                      else if (dontBroadcast) {
-                        deferred.resolve(angular.extend({ 
-                          transactionBytes: payload,
-                          fullHash: self.crypto.calculateFullHash(data.unsignedTransactionBytes, signature)
-                        }, data));
+
+                      /* @optional observer supported */
+                      if (observer) { observer.success('sign', msg); }
+
+                      var fullHash = self.crypto.calculateFullHash(data.unsignedTransactionBytes, signature);
+
+                      if (dontBroadcast) {
+                        deferred.resolve(angular.extend({ transactionBytes: payload, fullHash: fullHash }, data));
                       }
                       else {
 
@@ -2078,9 +2116,10 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
 
                         self.broadcastTransaction({transactionBytes: payload}, { podium: options.podium, node: options.node_out }).then(
                           function (data) {
+                            data = angular.extend({ fullHash: fullHash }, data);
 
                             /* @optional observer supported */
-                            if (observer) { observer.success('broadcastTransaction'); }
+                            if (observer) { observer.success('broadcastTransaction', data); }
 
                             deferred.resolve(data);
 
@@ -2101,9 +2140,10 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                           }
                         ).catch(
                           function (error) {
+                            error = angular.extend({ fullHash: fullHash }, error);
 
                              /* @optional observer supported */
-                            if (observer) { observer.failed('broadcastTransaction'); }
+                            if (observer) { observer.failed('broadcastTransaction', error); }
 
                             deferred.reject(error);
                           }
@@ -2129,7 +2169,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
                 function (error) {
 
                    /* @optional observer supported */
-                  if (observer) { observer.failed(methodName); }
+                  if (observer) { observer.failed(methodName, error); }
 
                   deferred.reject(error);
                 }

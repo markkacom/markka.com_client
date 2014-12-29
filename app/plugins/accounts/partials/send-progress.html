@@ -1,14 +1,65 @@
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <h3 class="panel-title">Sending</h3>
+    <h3 class="panel-title" ng-bind="title"></h3>
   </div>
   <div class="panel-body">
-    <h2><small><i class="fa fa-cog fa-spin"></i></small>&nbsp;&nbsp;&nbsp;<strong><small>{{message}}</small></strong></h2>
+    <div ng-show="showCreateTxn">
+      <div ng-show="create_state==CREATE">
+        <h3><i class="fa fa-cog fa-spin"></i>&nbsp;&nbsp;<strong>Creating transaction</strong></h3>
+      </div>
+      <div ng-show="create_state==CREATE_FAILED">
+        <h3><i class="fa fa-close text-danger"></i>&nbsp;&nbsp;<strong>Could not create transaction</strong><br>
+        <i class="fa fa-close text-danger" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Could not create transation. Reason:</small><br>
+        <i class="fa fa-close text-danger" style="visibility: hidden"></i>&nbsp;&nbsp;<small><b>{{errorMessage}}</b></small></h3>
+      </div>
+      <div ng-show="create_state==CREATE_SUCCESS">
+        <h3 ng-class="{'text-muted': showSignTxn}"><i class="fa fa-check text-success"></i>&nbsp;&nbsp;<strong>Creating transaction</strong></h3>
+      </div>
+    </div>
+    <div ng-show="showSignTxn">
+      <div ng-show="sign_state==SIGN">
+        <h3><i class="fa fa-cog fa-spin"></i>&nbsp;&nbsp;<strong>Signing transaction</strong></h3>
+      </div>
+      <div ng-show="sign_state==SIGN_FAILED">
+        <h3><i class="fa fa-close text-danger"></i>&nbsp;&nbsp;<strong>Could not sign transaction</strong><br>
+        <i class="fa fa-close text-danger" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Could not sign transation. Reason:</small><br>
+        <i class="fa fa-close text-danger" style="visibility: hidden"></i>&nbsp;&nbsp;<small><b>{{errorMessage}}</b></small></h3>
+      </div>
+      <div ng-show="sign_state==SIGN_SUCCESS">
+        <h3 ng-class="{'text-muted': showBroadcastTxn}"><i class="fa fa-check text-success"></i>&nbsp;&nbsp;<strong>Signing transaction</strong></h3>
+      </div>
+    </div>
+    <div ng-show="showBroadcastTxn">
+      <div ng-show="broadcast_state==BROADCAST">
+        <h3><i class="fa fa-cog fa-spin"></i>&nbsp;&nbsp;<strong>Broadcasting transaction</strong></h3>
+      </div>
+      <div ng-show="broadcast_state==BROADCAST_DETERMINE">
+        <h3>
+        <i class="fa fa-cog fa-spin"></i>&nbsp;&nbsp;<strong>Determining broadcast status</strong><br>
+        <i class="fa fa-cog fa-spin" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Transaction was broadcasted.</small><br>
+        <i class="fa fa-cog fa-spin" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Click OK or wait for futher confirmation.</small>
+        </h3>
+      </div>
+      <div ng-show="broadcast_state==BROADCAST_UNCONFIRMED">
+        <h3>
+        <i class="fa fa-check text-success"></i>&nbsp;&nbsp;<strong>Broadcasted successfully</strong><br>
+        <i class="fa fa-check text-success" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Transaction was found on the network.</small><br>
+        <i class="fa fa-cog fa-spin" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Click OK or wait for further confirmation.&nbsp;<i class="fa fa-spinner fa-spin"></i></small>
+        </h3>
+      </div>
+      <div ng-show="broadcast_state==BROADCAST_CONFIRMED">
+        <h3><i class="fa fa-check text-success"></i>&nbsp;&nbsp;<strong>Transaction confirmed!</strong><br>
+        <i class="fa fa-check text-success" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Transaction was successfully included in the blockchain.</small><br>
+        <i class="fa fa-check text-success" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Date <b>{{blockTimestamp}}</b> confirmations <b ng-class="{'text-danger': (numberOfConfirmations<10),'text-success': (numberOfConfirmations>=10)}">{{numberOfConfirmations}}</b>&nbsp;<i class="fa fa-spinner fa-spin"></i></small><br>
+        <i class="fa fa-check text-success" style="visibility: hidden"></i>&nbsp;&nbsp;<small>Transactions are deemed reliable after 10 confirmations.</small>
+        </h3>
+      </div>
+    </div>
   </div>
   <div class="panel-footer">
     <div class="form-group">
       <div class="col-xs-6 col-xs-offset-3">
-        <button ng-click="dismiss()" type="button" class="btn btn-block btn-default" ng-disabled="sendSuccess">Cancel</button>
+        <button ng-click="buttonAction()" type="button" class="btn btn-block btn-default" ng-disabled="buttonDisabled" ng-bind="buttonLabel"></button>
       </div>
     </div>
   </div>  

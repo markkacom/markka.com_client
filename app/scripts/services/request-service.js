@@ -101,13 +101,13 @@ module.factory('requests', function ($timeout, $q, $http) {
         /* Destroy stale Actors */
         if (actor.state !== actor.DESTROYED) {
           if (actor.started && ((now - actor.started) > actor.options.timeout)) {
-            // console.log('DESTROY Actor TIMEOUT', actor);
+            console.log('DESTROY Actor TIMEOUT', actor);
             if (actor.retry(actor.options.node_out)) {
               active++;
             }
           }
           else if ((now - actor.created) > actor.options.giveup) {
-            // console.log('DESTROY Actor GIVEUP', actor);
+            console.log('DESTROY Actor GIVEUP', actor);
             actor.destroy('giveup');
           }
           else if (actor.state === actor.ACTIVE) {
@@ -154,6 +154,7 @@ module.factory('requests', function ($timeout, $q, $http) {
       start_actors(new Iterator(pending));
     }
     else {
+      console.log('NO ROOM for Actor active='+active+' max='+SERVICE.concurrent);
       $timeout(pulse, PULSE_MS, false);
     }
   }

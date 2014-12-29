@@ -208,14 +208,14 @@ module.run(function (startupService, nxt, $timeout, requests, db, $rootScope, $q
     }
   }
 
-  startupService.registerActivity('download-nxt-assets', new DownloadAssets(nxt.nxt()), 'scan-fork-nxt');
-  startupService.registerActivity('download-fim-assets', new DownloadAssets(nxt.fim()), 'scan-fork-fim');  
+  // startupService.registerActivity('download-nxt-assets', new DownloadAssets(nxt.nxt()), 'scan-fork-nxt');
+  // startupService.registerActivity('download-fim-assets', new DownloadAssets(nxt.fim()), 'scan-fork-fim');  
 
-  startupService.registerActivity('download-nxt-trades', new DownloadTrades(nxt.nxt()), 'download-nxt-assets');
-  startupService.registerActivity('download-fim-trades', new DownloadTrades(nxt.fim()), 'download-fim-assets');
+  // startupService.registerActivity('download-nxt-trades', new DownloadTrades(nxt.nxt()), 'download-nxt-assets');
+  // startupService.registerActivity('download-fim-trades', new DownloadTrades(nxt.fim()), 'download-fim-assets');
 
-  startupService.registerActivity('process-nxt-trades', new ProcessTrades(nxt.nxt()), 'download-nxt-trades');
-  startupService.registerActivity('process-fim-trades', new ProcessTrades(nxt.fim()), 'download-fim-trades');
+  // startupService.registerActivity('process-nxt-trades', new ProcessTrades(nxt.nxt()), 'download-nxt-trades');
+  // startupService.registerActivity('process-fim-trades', new ProcessTrades(nxt.fim()), 'download-fim-trades');
 
 });
 })();

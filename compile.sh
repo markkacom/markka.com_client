@@ -26,7 +26,7 @@
 #
 # ##############################################################################
 DEBUG=false
-VERSION=0.3.6
+VERSION=0.3.9
 BASE=mofowallet
 
 grunt nodewebkit
@@ -152,8 +152,8 @@ MD5_SUM_2=${MD5_SUM_2%\ *}
 
 SHA_SUM_3=`sha256sum "dist/releases/$TARGET_MAC"`
 MD5_SUM_3=`md5sum "dist/releases/$TARGET_MAC"`
-SHA_SUM_3=${SHA_SUM_2%\ *}
-MD5_SUM_3=${MD5_SUM_2%\ *}
+SHA_SUM_3=${SHA_SUM_3%\ *}
+MD5_SUM_3=${MD5_SUM_3%\ *}
 
 BANNER=$(cat <<'END_HEREDOC'
  /$$$$$$$$ /$$$$$$ /$$      /$$          Release : #VERSION#          
