@@ -1,0 +1,25 @@
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3.2
+ 2. NXT   1.3.5
+
+Upgraded embedded NXT and FIMK servers. 
+
+FIMK 0.3.2
+
+  Temporarily blocked all transactions from acccounts with confirmed stolen funds 
+  after a major theft of 57M FIMK
+
+MofoWallet
+
+  Changed the way mofowallet handles the sending and verification of transactions,
+  all transactions are now controlled from a dialog that displays the status, 
+  success, failure and progress of the various stages in sending transactions:
+
+  1. Creating transactions
+  2. Signing transactions
+  3. Broadcasting transactions
+  4. Detecting transactions are in unconfirmed pool
+  5. Detecting transactions are in a block

@@ -1,0 +1,16 @@
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3.3
+ 2. NXT   1.3.5
+
+Upgraded embedded NXT and FIMK servers. 
+
+If you are using MofoWallet as a *full node* (if you start the embedded 
+FIMK server) then update is mandatory since the previous embedded 
+FIMK 0.3.2 and earlier versions are no longer supported.
+
+The updated FIMK server and a description can be found here:
+
+https://github.com/fimkrypto/fimk/releases/tag/v0.3.3

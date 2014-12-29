@@ -1,0 +1,94 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.3.8          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2014-12-20          
+| $$        | $$  | $$$$  /$$$$                  
+| $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
+| $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
+| $$        | $$  | $$\  $ | $$          http://forum.fimk.fi          
+| $$       /$$$$$$| $$ \/  | $$          https://github.com/fimkrypto/mofowallet
+|__/      |______/|__/     |__/                 
+                     /$$                                       /$$              
+                    | $$                                      | $$              
+                    | $$   /$$  /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$    /$$$$$$ 
+                    | $$  /$$/ /$$__  $$| $$  | $$ /$$__  $$|_  $$_/   /$$__  $$
+                    | $$$$$$/ | $$  \__/| $$  | $$| $$  \ $$  | $$    | $$  \ $$
+                    | $$_  $$ | $$      | $$  | $$| $$  | $$  | $$ /$$| $$  | $$
+                    | $$ \  $$| $$      |  $$$$$$$| $$$$$$$/  |  $$$$/|  $$$$$$/
+                    |__/  \__/|__/       \____  $$| $$____/    \___/   \______/ 
+                                         /$$  | $$| $$                          
+                                        |  $$$$$$/| $$                          
+                                         \______/ |__/            
+
+
+                                presents:
+
+
+             /$$      /$$            /$$$$$$                               
+            | $$$    /$$$           /$$__  $$                              
+            | $$$$  /$$$$  /$$$$$$ | $$  \__//$$$$$$                       
+            | $$ $$/$$ $$ /$$__  $$| $$$$   /$$__  $$                      
+            | $$  $$$| $$| $$  \ $$| $$_/  | $$  \ $$                      
+            | $$\  $ | $$| $$  | $$| $$    | $$  | $$                      
+            | $$ \/  | $$|  $$$$$$/| $$    |  $$$$$$/                      
+            |__/     |__/ \______/ |__/     \______/                       
+                                                                           
+                                                                           
+                                                                           
+                         /$$      /$$           /$$ /$$             /$$    
+                        | $$  /$ | $$          | $$| $$            | $$    
+                        | $$ /$$$| $$  /$$$$$$ | $$| $$  /$$$$$$  /$$$$$$  
+                        | $$/$$ $$ $$ |____  $$| $$| $$ /$$__  $$|_  $$_/  
+                        | $$$$_  $$$$  /$$$$$$$| $$| $$| $$$$$$$$  | $$    
+                        | $$$/ \  $$$ /$$__  $$| $$| $$| $$_____/  | $$ /$$
+                        | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
+                        |__/     \__/ \_______/|__/|__/ \_______/   \___/  
+
+Mofowallet update
+
+Supported coins and their embedded server versions:
+
+ 1. FIMK  0.3.3
+ 2. NXT   1.3.5
+
+Upgraded embedded NXT and FIMK servers. 
+
+If you are using MofoWallet as a *full node* (if you start the embedded 
+FIMK server) then update is mandatory since the previous embedded 
+FIMK 0.3.2 and earlier versions are no longer supported.
+
+The updated FIMK server and a description can be found here:
+
+https://github.com/fimkrypto/fimk/releases/tag/v0.3.3
+
+
+
+                             ~~~ DOWNLOAD ~~~
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3.8/mofowallet.windows-0.3.8.zip
+ 
+SHA256 fb84eb01c9cc03d4aec2d7a4c09fb8b424ac87b81f9cabbf16e77d1aa35121fc 
+MD5    b57d29086880ff9dc0c5ffcde34ecba3 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3.8/mofowallet.linux-0.3.8.zip
+ 
+SHA256 f194c6aae415a55629ee0aae592920c7c363dfa794be396ee006c798be82af95 
+MD5    71819461546bda9fb068a21ae0b8d122 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.3.8/mofowallet.osx-0.3.8.zip
+ 
+SHA256 9e3e46b9ad1fa2d968ec16566994a2a13033f03dfd5e70b97b069762c7e667e5 
+MD5    79215bf27874816626dbbc0b78edce68 
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJUldFcAAoJEP9gzPcARnvnTaQH/jAED98GammqmWjzx72M2UMC
+Gwwlua12FW0rnyMsTREyY0Bt5R0Ves6goLjA14BGSWxiwPgE0BzKge70zANObFoz
+qk0Z5nNQanyixh26SXJ+dmjWmndOqtVwEPV+1IQaMWGxzxOHewUfzAQ3L4Fm/TV7
+FWRsCuvvT8rzPIVYrFdIMINMKi+vqxhWNz8QigG8CGIZHOvQnJhJPghvKw8+SfkB
+L3otIWvf6411Av+CYYUiEFclb41E8J/YxTNGj2n8scCHrhl7xOKWMfqnvAJHA3PN
+kAxFl9c8Exkr+I2PzCOT6GYXL3sPsqXxG3X/Q/SVDuQ5kWGmzvCGe+J6TupbL0E=
+=o15B
+-----END PGP SIGNATURE-----
