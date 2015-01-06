@@ -113,7 +113,7 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
     resolve: function (value) {
       INSTANCE.fim().engine.must_use_localhost = value;
     }
-  }, , {
+  }, {
     id: 'nxt.localhost.force',
     value: false,
     type: Boolean,
@@ -494,6 +494,26 @@ module.factory('nxt', function ($modal, $http, $q, modals, i18n, alerts, db, set
       args: {
         order:          {type: String, required: true}
       },
+    },
+    // returns { blocks: [], transactions: [], trades: [] }
+    mofoGetActivity: {
+      args: {
+        timestamp:          {type: Number},
+        account:            {type: String},
+        includeAssetInfo:   {type: Boolean},
+        includeBlocks:      {type: Boolean},
+        includeTrades:      {type: Boolean},
+        transactionFilter:  {type: String}
+      }
+    },
+    mofoCombine: {
+      args: {
+        combinedRequest:    {type: String, required: true},
+      },
+      returns: {
+        property: 'responses'
+      },
+      requirePost: true
     }
   };
 
