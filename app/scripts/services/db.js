@@ -41,6 +41,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
   var trades              = "++id,timestamp,quantityQNT,priceNQT,asset,askOrder,bidOrder,block";
   var orders              = "order,asset,accountRS,quantityQNT,priceNQT,height,type";
   var orders2             = "order,asset,accountRS,quantityQNT,priceNQT,height";
+  var trades2             = "++id,timestamp,asset,sellerRS,buyerRS,tradeType,name";
 
   /* related_rs_a and related_rs_b are used to keep track to what account a 'partially' downloaded transaction belongs. */
   var transactionstore2   = transactionstore+',related_rs_a,related_rs_b,related_index';
@@ -118,16 +119,23 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
     update: {
       masspay_payments:     masspay_payments
     }
+  }, {
+    update: {
+      fimtrades:            trades2,
+      nxttrades:            trades2
+    }
   }], db);
 
   /* Load models here to prevent cicrular dependency errors */
   $injector.get('Setting').initialize(db);
   $injector.get('Account').initialize(db);
   $injector.get('Contact').initialize(db);
+  $injector.get('TradeFactory').mapToTable(db, 'fimtrades');
+  $injector.get('TradeFactory').mapToTable(db, 'nxttrades');
   $injector.get('Node').initialize(db);
   $injector.get('MasspayPluginPayment').initialize(db);
 
-  db.on('error', alerts.catch("Database error - see error console for details"));
+  db.on('error', function (e) { console.error(e) });
   db.on('populate', function () {
     var nodes = {
 
