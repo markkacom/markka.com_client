@@ -25,6 +25,14 @@ body {
   display: none;
 }
 
+.activity-plugin .btn-rendered-transaction {
+  display: none;
+}
+
+.activity-table tr td:nth-child(2) {
+  padding-left: 8px;
+}
+
 .jumbotron {
   background: url("images/bmf.jpg") no-repeat center center;
 }
