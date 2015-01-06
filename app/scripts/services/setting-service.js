@@ -40,8 +40,53 @@ module.factory('settings', function($log, db, alerts, $timeout) {
     }
   });
 
-  var registry  = {};
-  var resolvers = {};
+  var stored_settings = null;
+  var registry        = {};
+  var resolvers       = {};
+  var initializers    = [];  
+
+  db.settings.toArray().then(
+    function (settings) {
+      stored_settings  = {};
+      angular.forEach(settings, function (stored_setting) {
+        stored_settings[stored_setting.id] = stored_setting.value;
+      });
+      db.transaction('rw', db.settings, function () {
+        angular.forEach(initializers, function (initializer, index) {
+          initialize(initializer);
+        });
+        initializers = null;
+      }).catch(function (e) { console.error(e); });
+    }
+  ).catch(function (e) { console.error(e); });
+
+  function initialize(setting) {
+    if (setting.id in registry) {
+      throw new Error('Duplicate initialization of setting '+setting.id);
+    }
+
+    /* Validate that the type and value are a match */
+    if (setting.type && !(new Object(setting.value) instanceof setting.type)) {
+      throw new Error("Setting for "+setting.id+" of wrong type");
+    }
+
+    /* Store default settings in local registry */
+    registry[setting.id] = setting;
+
+    var stored_setting = stored_settings[setting.id];
+    if (stored_setting==undefined) {
+      db.settings.add({ id: setting.id, value: setting.value, label: setting.label }).catch(function (e) { console.error(e); });
+    }
+    else {
+      registry[setting.id].value = stored_setting;
+    }
+    if (setting.resolve || resolvers[setting.id]) {
+      $timeout(function () {
+        resolve(setting.id, stored_setting==undefined ? setting.value : stored_setting);
+      });
+    }
+  }
+
   return {
     // DEBUG
     __registry: registry,
@@ -69,40 +114,56 @@ module.factory('settings', function($log, db, alerts, $timeout) {
      * @param settings Array of { id: String, value: Object, label: String, type: Object, resolve: Function }
      */
     initialize: function (settings) {
-      db.transaction('rw', db.settings, function () {
-        angular.forEach(settings, function (setting) {
-          /* Don't allow duplicate registrations of settings */
-          if (setting.id in registry) {
-            throw new Error('Duplicate initialization of setting '+setting.id);
-          }
+      if (stored_settings == null) {
+        initializers = initializers.concat(settings);
+      }
+      else {
+        db.transaction('rw', db.settings, function () {
+          angular.forEach(settings, function (setting) {
+            initialize(setting);
+          });
+        }).catch(function (e) { console.error(e); });
+      }
 
-          /* Validate that the type and value are a match */
-          if (setting.type && !(new Object(setting.value) instanceof setting.type)) {
-            throw new Error("Setting for "+setting.id+" of wrong type");
-          }
+      // db.transaction('rw', db.settings, function () {
+      //   angular.forEach(settings, function (setting) {
+      //     /* Don't allow duplicate registrations of settings */
+      //     if (setting.id in registry) {
+      //       throw new Error('Duplicate initialization of setting '+setting.id);
+      //     }
 
-          /* Store default settings in local registry */
-          registry[setting.id] = setting;
+      //     /* Validate that the type and value are a match */
+      //     if (setting.type && !(new Object(setting.value) instanceof setting.type)) {
+      //       throw new Error("Setting for "+setting.id+" of wrong type");
+      //     }
 
-          /* Initialization only happens the first time - so optimize for all other times */
-          db.settings.where('id').equals(setting.id).first().then(
-            function (stored_setting) {
-              if (stored_setting==undefined) {
-                db.settings.add({ id: setting.id, value: setting.value, label: setting.label });
-              }
-              else {
-                registry[setting.id].value = stored_setting.value;
-              }
-              if (setting.resolve || resolvers[setting.id]) {
-                $timeout(function () {
-                  resolve(setting.id, stored_setting==undefined ? setting.value : stored_setting.value);
-                  // setting.resolve(stored_setting==undefined ? setting.value : stored_setting.value);
-                });
-              }
-            }
-          ).catch(alerts.catch('Init settings'));
-        });
-      });
+      //     /* Store default settings in local registry */
+      //     registry[setting.id] = setting;
+
+      //     /* Initialization only happens the first time - so optimize for all other times */
+      //     db.settings.where('id').equals(setting.id).first().then(
+      //       function (stored_setting) {
+      //         try {
+      //           if (stored_setting==undefined) {
+      //             db.settings.add({ id: setting.id, value: setting.value, label: setting.label });
+      //           }
+      //           else {
+      //             registry[setting.id].value = stored_setting.value;
+      //           }
+      //           if (setting.resolve || resolvers[setting.id]) {
+      //             $timeout(function () {
+      //               resolve(setting.id, stored_setting==undefined ? setting.value : stored_setting.value);
+      //               // setting.resolve(stored_setting==undefined ? setting.value : stored_setting.value);
+      //             });
+      //           }
+      //         }
+      //         catch (e) {
+      //           console.log('settings-exception', e);
+      //         }
+      //       }
+      //     ).catch(alerts.catch('Init settings'));
+      //   });
+      // });
     },
 
     /**
@@ -130,7 +191,7 @@ module.factory('settings', function($log, db, alerts, $timeout) {
           id:    setting.id,
           value: setting.value,
           label: setting.label
-        }).catch(alerts.catch('Update setting'));
+        }).catch(function (e) { console.error(e); });
       }
     },
 
