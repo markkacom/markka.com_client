@@ -1,0 +1,117 @@
+<div class="row">
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Latest Block</h3>
+      </div>
+      <div class="panel-body">
+        <table class="activity-table">
+          <tr><td><label>Height</label></td><td><b>{{statistic.lastBlockHeight}}</b></td></tr>
+          <tr><td><label>Date</label></td><td>{{statistic.lastBlockDate}}</td></tr>
+          <tr><td><label>ID</label></td><td>{{statistic.lastBlockID}}</td></tr>
+          <tr><td><label>Generator</label></td><td ng-bind-html="statistic.lastBlockGeneratorHTML"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Statistics</h3>
+      </div>
+      <div class="panel-body">
+        <table class="activity-table">
+          <tr><td><label>Average block (24H)</label></td><td>{{statistic.average}} seconds</td></tr>
+          <tr><td><label>Transactions (today)</label></td><td>{{statistic.transactionCountToday}}</td></tr>
+          <tr><td><label>Transactions (week)</label></td><td>{{statistic.transactionCountWeek}}</td></tr>
+          <tr><td><label>Transactions (month)</label></td><td>{{statistic.transactionCountMonth}}</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Block Rewards</h3>
+      </div>
+      <div class="panel-body">
+        <table class="activity-table">
+          <tr><td><label>Rewards Paid (today)</label></td><td>{{statistic.rewardsToday}}</td></tr>
+          <tr><td><label>Rewards Paid (week)</label></td><td>{{statistic.rewardsWeek}}</td></tr>
+          <tr><td><label>Rewards Paid (month)</label></td><td>{{statistic.rewardsMonth}}</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row activity-plugin">
+  <div class="col-md-2">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Filters</h3>
+      </div>
+      <div class="panel-body">
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.all" ng-change="filterAllChanged()"> All</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.payments" ng-change="filterChanged()"> Payments</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.messages" ng-change="filterChanged()"> Messages</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.aliases" ng-change="filterChanged()"> Aliases</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.namespacedAliases" ng-change="filterChanged()"> Namespaced Aliases</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.accountInfo" ng-change="filterChanged()"> Account Info</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.announceHub" ng-change="filterChanged()"> Announce Hub</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.polls" ng-change="filterChanged()"> Polls</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.goodsStore" ng-change="filterChanged()"> Goods Store</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.balanceLeasing" ng-change="filterChanged()"> Balance Leasing</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.trades" ng-change="filterChanged()"> Trades</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.assetIssued" ng-change="filterChanged()"> Asset Issued</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.assetTransfer" ng-change="filterChanged()"> Asset Transfer</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" ng-model="filter.assetOrder" ng-change="filterChanged()"> Asset Order</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-10">
+    <div style="padding-bottom: 200px">
+      <table class="table table-striped">
+        <tbody>
+          <tr ng-repeat="a in activities">
+            <td nowrap style="padding-left: 0px">{{a.date}}</td>
+            <td ng-bind-html="a.renderedHTML"></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <td colspan="2" nowrap class="text-center">
+            <button ng-if="isLoading" class="btn btn-lg btn-default" href="#" ng-disabled="true">Loading&nbsp;&nbsp;<i class="fa fa-refresh fa-spin"></i></button>
+            <button ng-if="!isLoading" class="btn btn-lg btn-primary" href="#" ng-click="loadMore()">Load More</button>
+          </td>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
