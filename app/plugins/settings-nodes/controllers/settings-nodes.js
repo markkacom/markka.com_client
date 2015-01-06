@@ -56,7 +56,6 @@ module.controller('SettingsPluginNodesController', function($scope, db, ngTableP
     }
   ];
   $scope.selectedEngine   = $scope.engines[0];
-  $scope.localhostForce   = settings.get($scope.selectedEngine.key);
 
   function find(array, id, value) {
     for(var i=0,l=array.length; i<l; i++) { if (array[i][id] == value) { return i; } }
@@ -80,7 +79,9 @@ module.controller('SettingsPluginNodesController', function($scope, db, ngTableP
     if (observer) {
       db.nodes.removeObserver(observer); 
     }
-    $scope.localhostForce = settings.get($scope.selectedEngine.key);
+    $scope.$evalAsync(function () {
+      $scope.localhostForce = settings.get($scope.selectedEngine.key);
+    });
 
     /* Load nodes from database */
     db.nodes.where('port').equals(engine.port).toArray().then(
