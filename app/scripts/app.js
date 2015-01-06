@@ -16,7 +16,7 @@ var module = angular.module('fim.base', [
   'ui.bootstrap',
   'ngSanitize',
   'ngTouch',
-  'angular-loading-bar',  
+  // 'angular-loading-bar',  
   // 'ngGrid',
   'pascalprecht.translate',
   'ngTable',
