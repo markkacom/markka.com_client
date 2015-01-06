@@ -22,17 +22,6 @@ module.run(function (modals, plugins, settings) {
     }
   });
 
-  /* Set default setting / load setting theme from db */
-  settings.initialize([{
-    id: 'themes.default.theme',
-    value: 'yeti',
-    type: String,
-    label: 'Default theme',
-    resolve: function (value) {
-      plugin.switchTo(value);
-    }
-  }]);   
-
   /* Register styles */
   angular.forEach(['amelia','cerulean','cosmo','custom','cyborg','darkly',
                    /*'default',*/'flatly','journal','lumen','paper','readable',
@@ -43,5 +32,16 @@ module.run(function (modals, plugins, settings) {
       plugin.register(id, capitalized, 'plugins/themes/css/'+id+'.bootstrap.min.css');
     }
   );
+
+  /* Set default setting / load setting theme from db */
+  settings.initialize([{
+    id: 'themes.default.theme',
+    value: 'yeti',
+    type: String,
+    label: 'Default theme',
+    resolve: function (value) {
+      plugin.switchTo(value);
+    }
+  }]);
 });
 })();
