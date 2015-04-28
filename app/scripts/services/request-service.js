@@ -26,7 +26,7 @@
  * The closing of the curtains in mofowallet terms can be the destruction
  * of a view. Before another view (a podium) is shown (open the curtains)
  * the previous view is destroyed (closing it's curtains). This can be
- * accomplished by listening for the $scope.$on('destroy') event.
+ * accomplished by listening for the $scope.$on('$destroy') event.
  * 
  * The opening of the curtains in mofowallet terms can be the creation
  * of a new view, to capture this in code terms this is simply the body
@@ -50,115 +50,115 @@ var module = angular.module('fim.base');
 module.factory('requests', function ($timeout, $q, $http) {
   var PULSE_MS         = 500;
   var BLACKLIST_PERIOD = 60 * 1000;
-  var DEFAULT_TIMEOUT  = 5 * 1000;
+  var DEFAULT_TIMEOUT  = 180 * 1000;
   var DEFAULT_RETRY    = 10;
-  var DEFAULT_GIVEUP   = 45 * 1000;
+  var DEFAULT_GIVEUP   = 360 * 1000;
   var DEFAULT_PRIORITY = 0;
 
 
-  /* Calls perform on all Actors in the iterator */
-  function start_actors(iterator) {
-    if (iterator.hasMore()) {
-      var actor = iterator.next();
-      if (actor.state !== actor.DESTROYED) {
-        if (actor.options.node) {
-          actor.perform(actor.options.node);
-          start_actors(iterator);
-        }
-        else {
-          actor.provider.getNode2().then(
-            function (node) {
-              if (node) {
-                actor.perform(node);
-              }
-              start_actors(iterator);
-            },
-            function () {
-              console.log('ERROR in pulse - getNode');
-              start_actors(iterator);
-            }
-          );
-        }
-      }
-    }
-    else {
-      $timeout(pulse, PULSE_MS, false);
-    }
-  };
+  // /* Calls perform on all Actors in the iterator */
+  // function start_actors(iterator) {
+  //   if (iterator.hasMore()) {
+  //     var actor = iterator.next();
+  //     if (actor.state !== actor.DESTROYED) {
+  //       if (actor.options.node) {
+  //         actor.perform(actor.options.node);
+  //         start_actors(iterator);
+  //       }
+  //       else {
+  //         actor.provider.getNode2().then(
+  //           function (node) {
+  //             if (node) {
+  //               actor.perform(node);
+  //             }
+  //             start_actors(iterator);
+  //           },
+  //           function () {
+  //             console.log('ERROR in pulse - getNode');
+  //             start_actors(iterator);
+  //           }
+  //         );
+  //       }
+  //     }
+  //   }
+  //   else {
+  //     $timeout(pulse, PULSE_MS, false);
+  //   }
+  // };
 
-  /* Repeatedly called */
-  function pulse() {
-    var now = Date.now(), 
-        pending = [], 
-        active = 0;
+  // /* Repeatedly called */
+  // function pulse() {
+  //   var now = Date.now(), 
+  //       pending = [], 
+  //       active = 0;
 
-    /* Destroy timedout and expired Actors */
-    for (var name in SERVICE.theater.podiums) {
-      var podium = SERVICE.theater.podiums[name];
-      for (var j=0; j<podium.actors.length; j++) {
-        var actor = podium.actors[j];
+  //   /* Destroy timedout and expired Actors */
+  //   for (var name in SERVICE.theater.podiums) {
+  //     var podium = SERVICE.theater.podiums[name];
+  //     for (var j=0; j<podium.actors.length; j++) {
+  //       var actor = podium.actors[j];
 
-        /* Destroy stale Actors */
-        if (actor.state !== actor.DESTROYED) {
-          if (actor.started && ((now - actor.started) > actor.options.timeout)) {
-            console.log('DESTROY Actor TIMEOUT', actor);
-            if (actor.retry(actor.options.node_out)) {
-              active++;
-            }
-          }
-          else if ((now - actor.created) > actor.options.giveup) {
-            console.log('DESTROY Actor GIVEUP', actor);
-            actor.destroy('giveup');
-          }
-          else if (actor.state === actor.ACTIVE) {
-            active++;
-          }
-          else if (actor.state === actor.PENDING) {
-            pending.push(actor);
-          }
-        }
-      }
-    }
+  //       /* Destroy stale Actors */
+  //       if (actor.state !== actor.DESTROYED) {
+  //         if (actor.started && ((now - actor.started) > actor.options.timeout)) {
+  //           console.log('DESTROY Actor TIMEOUT', actor);
+  //           if (actor.retry(actor.options.node_out)) {
+  //             active++;
+  //           }
+  //         }
+  //         else if ((now - actor.created) > actor.options.giveup) {
+  //           console.log('DESTROY Actor GIVEUP', actor);
+  //           actor.destroy('giveup');
+  //         }
+  //         else if (actor.state === actor.ACTIVE) {
+  //           active++;
+  //         }
+  //         else if (actor.state === actor.PENDING) {
+  //           pending.push(actor);
+  //         }
+  //       }
+  //     }
+  //   }
 
-    /* Unblacklist blacklisted nodes */
-    for (var i=0; i<SERVICE.providers.length; i++) {
-      var nodes = SERVICE.providers[i].getAllNodes();
-      for (var j=0; j<nodes.length; j++) {
-        var node = nodes[j];
-        if ((now - (node.failed_timestamp||0)) > BLACKLIST_PERIOD) {
-          node.blacklisted = false;
-        }
-      }
-    }
+  //   /* Unblacklist blacklisted nodes */
+  //   for (var i=0; i<SERVICE.providers.length; i++) {
+  //     var nodes = SERVICE.providers[i].getAllNodes();
+  //     for (var j=0; j<nodes.length; j++) {
+  //       var node = nodes[j];
+  //       if ((now - (node.failed_timestamp||0)) > BLACKLIST_PERIOD) {
+  //         node.blacklisted = false;
+  //       }
+  //     }
+  //   }
 
-    /* Let other Actors perform if there is room on the podia */
-    if (active < SERVICE.concurrent) {
-      pending.sort(function compare(a, b) {
-        if (a.options.priority > b.options.priority) { return -1; }
-        if (a.options.priority < b.options.priority) { return 1; }
-        return 0;
-      });
+  //   /* Let other Actors perform if there is room on the podia */
+  //   if (active < SERVICE.concurrent) {
+  //     pending.sort(function compare(a, b) {
+  //       if (a.options.priority > b.options.priority) { return -1; }
+  //       if (a.options.priority < b.options.priority) { return 1; }
+  //       return 0;
+  //     });
 
-      // if (pending.length > 0) {
-      //   console.log('--------------------------------------------');
-      //   console.log('-- Availabe Actors', pending);
-      //   console.log('--');
-      //   pending.forEach(function (actor, index) {
-      //     console.log(index + ' ' + actor.builder.methodName + ' ' + actor.options.priority, actor.options.trace);
-      //   });
+  //     // if (pending.length > 0) {
+  //     //   console.log('--------------------------------------------');
+  //     //   console.log('-- Availabe Actors', pending);
+  //     //   console.log('--');
+  //     //   pending.forEach(function (actor, index) {
+  //     //     console.log(index + ' ' + actor.builder.methodName + ' ' + actor.options.priority, actor.options.trace);
+  //     //   });
         
-      //   // console.log(printStackTrace().join('\n'));
-      //   console.log('--------------------------------------------');      
-      // }
+  //     //   // console.log(printStackTrace().join('\n'));
+  //     //   console.log('--------------------------------------------');      
+  //     // }
 
-      start_actors(new Iterator(pending));
-    }
-    else {
-      console.log('NO ROOM for Actor active='+active+' max='+SERVICE.concurrent);
-      $timeout(pulse, PULSE_MS, false);
-    }
-  }
-  $timeout(pulse, PULSE_MS, false);
+  //     start_actors(new Iterator(pending));
+  //   }
+  //   else {
+  //     console.log('NO ROOM for Actor active='+active+' max='+SERVICE.concurrent);
+  //     $timeout(pulse, PULSE_MS, false);
+  //   }
+  // }
+  // $timeout(pulse, PULSE_MS, false);
 
   /* The 'requests' service constructor */
   function Requests() {
@@ -202,7 +202,8 @@ module.factory('requests', function ($timeout, $q, $http) {
       var podium = new Podium(name, this);
       if ($scope) {
         var self = this;
-        $scope.$on('destroy', function () {
+        $scope.$on('$destroy', function () {
+          console.log("PODIUM $scope.$on('$destroy')");
           podium.destroy();
           podium = null;
           delete self.podiums[name];
@@ -240,6 +241,7 @@ module.factory('requests', function ($timeout, $q, $http) {
           }
         }
         this.actors.splice(index, 0, actor);
+
         return actor;
       }
     },  
@@ -361,6 +363,8 @@ module.factory('requests', function ($timeout, $q, $http) {
         this.state   = this.ACTIVE;
         this.started = Date.now();
 
+        console.log('START ' + this.builder.methodName + ' ' + this.options.priority, this.options.caller);
+
         $http(this.http_args).success(
           function (data, status, headers, config) {
             if (self.state !== self.DESTROYED) { 
@@ -380,7 +384,7 @@ module.factory('requests', function ($timeout, $q, $http) {
               //   }
               // }
 
-              // console.log('SUCCESS ' + self.builder.methodName + ' ' + self.options.priority, self.options.caller);              
+              console.log('SUCCESS ' + self.builder.methodName + ' ' + self.options.priority, self.options.caller);
               self.duration = Date.now() - self.started;
               self.notify('success', [node, data, (self.options.retry_count - self.retries)-1]);
               self.destroy('done');
@@ -388,6 +392,8 @@ module.factory('requests', function ($timeout, $q, $http) {
           }
         ).error(
           function (data, status, headers, config) {
+            console.log('FAILED ');
+
             self.canceller = null;
 
             /* Blacklist the node in case of an HTTP error */
@@ -478,11 +484,13 @@ module.factory('requests', function ($timeout, $q, $http) {
           var self = this;
           this.canceller.promise.then(
             function () {
+              console.log("ACTOR DESTROY - SUCCESS");
               self.canceller = null;
               self.notify('destroy', [reason]);
               delete self.observers;
             },
             function () {
+              console.log('ACTOR DESTROY - FAILURE');
               self.canceller = null;
               self.notify('destroy', [reason]);
               delete self.observers;
@@ -571,7 +579,7 @@ module.factory('requests', function ($timeout, $q, $http) {
       }
     },
     create_url: function (node, requestType) {
-      return [node.url,':',node.port,'/nxt?requestType=',requestType,'&random=',Math.random()].join('');
+      return [node.url,':',node.port,'/nxt?requestType=',requestType,'&random=',Math.floor(Math.random() * 99999) + 1].join('');
     }
   };
 
