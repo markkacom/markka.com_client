@@ -1,0 +1,100 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.4.2          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2015-04-25          
+| $$        | $$  | $$$$  /$$$$                  
+| $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
+| $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
+| $$        | $$  | $$\  $ | $$          http://forum.fimk.fi          
+| $$       /$$$$$$| $$ \/  | $$          https://github.com/fimkrypto/mofowallet
+|__/      |______/|__/     |__/                 
+                     /$$                                       /$$              
+                    | $$                                      | $$              
+                    | $$   /$$  /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$    /$$$$$$ 
+                    | $$  /$$/ /$$__  $$| $$  | $$ /$$__  $$|_  $$_/   /$$__  $$
+                    | $$$$$$/ | $$  \__/| $$  | $$| $$  \ $$  | $$    | $$  \ $$
+                    | $$_  $$ | $$      | $$  | $$| $$  | $$  | $$ /$$| $$  | $$
+                    | $$ \  $$| $$      |  $$$$$$$| $$$$$$$/  |  $$$$/|  $$$$$$/
+                    |__/  \__/|__/       \____  $$| $$____/    \___/   \______/ 
+                                         /$$  | $$| $$                          
+                                        |  $$$$$$/| $$                          
+                                         \______/ |__/            
+
+
+                                presents:
+
+
+             /$$      /$$            /$$$$$$                               
+            | $$$    /$$$           /$$__  $$                              
+            | $$$$  /$$$$  /$$$$$$ | $$  \__//$$$$$$                       
+            | $$ $$/$$ $$ /$$__  $$| $$$$   /$$__  $$                      
+            | $$  $$$| $$| $$  \ $$| $$_/  | $$  \ $$                      
+            | $$\  $ | $$| $$  | $$| $$    | $$  | $$                      
+            | $$ \/  | $$|  $$$$$$/| $$    |  $$$$$$/                      
+            |__/     |__/ \______/ |__/     \______/                       
+                                                                           
+                                                                           
+                                                                           
+                         /$$      /$$           /$$ /$$             /$$    
+                        | $$  /$ | $$          | $$| $$            | $$    
+                        | $$ /$$$| $$  /$$$$$$ | $$| $$  /$$$$$$  /$$$$$$  
+                        | $$/$$ $$ $$ |____  $$| $$| $$ /$$__  $$|_  $$_/  
+                        | $$$$_  $$$$  /$$$$$$$| $$| $$| $$$$$$$$  | $$    
+                        | $$$/ \  $$$ /$$__  $$| $$| $$| $$_____/  | $$ /$$
+                        | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
+                        |__/     \__/ \_______/|__/|__/ \_______/   \___/  
+
+Contains FIMK Server 0.4.1 and NXT+ Server based on NXT 1.4.16
+
+Lots of bug fixes in both client and server.
+
+Freetext blockchain search with instant results as you type.
+
+MofoWallet is now available in 64 languages.
+
+
+
+                             ~~~ DOWNLOAD ~~~
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.2/mofowallet.win32-0.4.2.zip
+ 
+SHA256 9865b79c1bb1005845059ef82d7c823b1b3456f234c5ecb06130b8d5ec8901fe 
+MD5    87efe94140f5456bee106051ebb0453b 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.2/mofowallet.win64-0.4.2.zip
+ 
+SHA256 73457fbc82fece61548ce562180c6327a7fc0c085925e1e9670461111f331801 
+MD5    45f029800710c1cb85d80a4923ff2fcd 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.2/mofowallet.osx32-0.4.2.zip
+ 
+SHA256 a829950f36f60992d1dec29abc95a85825faafc7c2ddcfb8ac4a0222fcaf94d9 
+MD5    755b709c022b79f1ebe21c997ac29147 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.2/mofowallet.osx64-0.4.2.zip
+ 
+SHA256 569c71cb1167f088a740c34d86e8f9a987586c3aa1cf94493a6a473f3c5d5df6 
+MD5    eb7ea5882e86bda3e2a54cbc1886936f 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.2/mofowallet.linux32-0.4.2.zip
+ 
+SHA256 d4a063c28eeb3f18f5c478db95777978500394631dc2a500186bff7ae8701a92 
+MD5    0841b81123a08fec09a889bdaa4a3ba0 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.2/mofowallet.linux64-0.4.2.zip
+ 
+SHA256 977dbe08f8efa21bcaee89bb281d87fdb612604c0d0b544d64af4544c6cbd138 
+MD5    acd72ce10d97ad982f6c89feb875f32e 
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJVO4cLAAoJEP9gzPcARnvncSQH/0gR4PMYX3NMDs9wivEbEELW
+mffSqD75TGRVCDgE872Nscww2kvefjde0FfzRZLpJQdACLOtYWT3uWjUj49mZMkd
+Yg+oCF23w0/IUBYGOWY+nTAjfHTLVe2NqonlxTlFk6Fyd+62i0XX2G9VDN9npkPl
+engSgAKh66J1Fz8SCWaYU/QcQoS7AunVrLonFet0PKnaNS4Ik927TBIwF7RF25SH
+VwSVatszYkmEiRaJm+T+jKwFSmqohEDcneRI136l3bRsInb0BvmamXH/9xIopjNH
+G4FHbWWzzzE+FgS4c/epCiO2W5xBFplmmkhFoIb5VfjU42bBbvSV09Xz2p/arJc=
+=Y/SP
+-----END PGP SIGNATURE-----

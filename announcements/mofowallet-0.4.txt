@@ -1,0 +1,78 @@
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.4          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2015-01-26          
+| $$        | $$  | $$$$  /$$$$                  
+| $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
+| $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
+| $$        | $$  | $$\  $ | $$          http://forum.fimk.fi          
+| $$       /$$$$$$| $$ \/  | $$          https://github.com/fimkrypto/mofowallet
+|__/      |______/|__/     |__/                 
+                     /$$                                       /$$              
+                    | $$                                      | $$              
+                    | $$   /$$  /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$    /$$$$$$ 
+                    | $$  /$$/ /$$__  $$| $$  | $$ /$$__  $$|_  $$_/   /$$__  $$
+                    | $$$$$$/ | $$  \__/| $$  | $$| $$  \ $$  | $$    | $$  \ $$
+                    | $$_  $$ | $$      | $$  | $$| $$  | $$  | $$ /$$| $$  | $$
+                    | $$ \  $$| $$      |  $$$$$$$| $$$$$$$/  |  $$$$/|  $$$$$$/
+                    |__/  \__/|__/       \____  $$| $$____/    \___/   \______/ 
+                                         /$$  | $$| $$                          
+                                        |  $$$$$$/| $$                          
+                                         \______/ |__/            
+
+
+                                presents:
+
+
+             /$$      /$$            /$$$$$$                               
+            | $$$    /$$$           /$$__  $$                              
+            | $$$$  /$$$$  /$$$$$$ | $$  \__//$$$$$$                       
+            | $$ $$/$$ $$ /$$__  $$| $$$$   /$$__  $$                      
+            | $$  $$$| $$| $$  \ $$| $$_/  | $$  \ $$                      
+            | $$\  $ | $$| $$  | $$| $$    | $$  | $$                      
+            | $$ \/  | $$|  $$$$$$/| $$    |  $$$$$$/                      
+            |__/     |__/ \______/ |__/     \______/                       
+                                                                           
+                                                                           
+                                                                           
+                         /$$      /$$           /$$ /$$             /$$    
+                        | $$  /$ | $$          | $$| $$            | $$    
+                        | $$ /$$$| $$  /$$$$$$ | $$| $$  /$$$$$$  /$$$$$$  
+                        | $$/$$ $$ $$ |____  $$| $$| $$ /$$__  $$|_  $$_/  
+                        | $$$$_  $$$$  /$$$$$$$| $$| $$| $$$$$$$$  | $$    
+                        | $$$/ \  $$$ /$$__  $$| $$| $$| $$_____/  | $$ /$$
+                        | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
+                        |__/     \__/ \_______/|__/|__/ \_______/   \___/  
+
+
+
+                             ~~~ DOWNLOAD ~~~
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4/mofowallet.win32-0.4.zip
+ 
+SHA256 c752dd221c6a95c9a9e761e745ad905d3f342487859f97ac3fac1ae4d2178bf4 
+MD5    4a1e9cf20831152827fcd1d649d5ea90 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4/mofowallet.win64-0.4.zip
+ 
+SHA256 dd7bb87d97f6d2a4858292076bfbb7ffb8ff4058a8d628c0a78800c82f865620 
+MD5    a5beebfd39dd5d958f8c17461432357a 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4/mofowallet.osx32-0.4.zip
+ 
+SHA256 8d67e2d86060edd42e103658e3c26462f96fda4fefa3660505f795f05c0daae8 
+MD5    d255d322be3ddeab5c33fa284e80d05a 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4/mofowallet.osx64-0.4.zip
+ 
+SHA256 b9267b83182b5b5e576a895b19cf2c28058586e51af3c2443bf04fb53437bc01 
+MD5    0fbac79e5d07b0d3fa614c4661bc884d 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4/mofowallet.linux32-0.4.zip
+ 
+SHA256 7af3e14cd9b28e05bb8f0750e32ce7427cfb09763ef5342ca52a6888c245d245 
+MD5    1393bf9dc99423aa77d75b8be95dbce1 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4/mofowallet.linux64-0.4.zip
+ 
+SHA256 1e07e5274ed9fcc63e8ff5e4a0bb540a2b795c92a06bff37f182d3b0af91f3bc 
+MD5    f7dec84c6d68191de9e32396c34c7ac7 
+
