@@ -9,7 +9,7 @@ cache
 .log
 npm-debug.log
 package.sh
-mofowallet.sh
 corsproxy.php
 nxt-client-*
-tunnistus_files
+downloads
+app/mode.js
