@@ -1,0 +1,21 @@
+<div class="panel panel-primary language-select">
+  <div class="panel-body">
+    <!-- <h1 class="text-center hidden-xs text-muted"><i class="fa fa-globe"></i></h1> -->
+    <div class="text-center">
+      <h2 translate="translate.selected_language" translate-values="{name: langName}"></h2>
+    </div>
+    <br class="hidden-xs">
+    <div class="text-center hidden-xs">
+      <p>{{'translate.available_languages' | translate}}</p>
+    </div>
+    <div class="text-center language-select-scroller">
+      <div ng-repeat="(code, name) in availableLanguages">
+        <a href ng-click="setLang(code)" style="font-size: 20px">{{name}}</a>
+      </div>
+    </div>
+    <br>
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+      <button class="btn btn-success btn-block" ng-click="close()" translate="translate.continue_with_lang" translate-values="{name: langName}"></button>
+    </div>
+  </div>
+</div>
