@@ -1,11 +1,19 @@
 (function () {
 'use strict';
-
 var uriParser = null;
 var module = angular.module('fim.base');
+module.controller('AppController', function($rootScope, $scope, $modal, $q, $log,  
+  $timeout, modals, $window, plugins, serverService, db, settings, $location, 
+  nxt, $route, $translate) {
 
-module.controller('appController', function($rootScope, $scope, $modal, $q, $log,  
-  $timeout, modals, $window, plugins, alerts, serverService, db, settings, $state, nxt) {
+  $rootScope.FIM_SERVER_VERSION = null;
+  $rootScope.TITLE = 'MofoWallet '+VERSION;
+  $rootScope.paramEngine = 'fim';
+  $rootScope.enableDualEngines = ENABLE_DUAL_ENGINES;
+  $rootScope.isTestnet = IS_TEST_NET;
+  $rootScope.forceLocalHost = FORCE_LOCAL_HOST;
+  $rootScope.multiLanguage = true;
+  $rootScope.MONETARY_SYSTEM = false;
 
   /* Install app plugins | these all get a menu entry */
   $scope.plugins = [];
@@ -16,63 +24,129 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
 
   /* Install system plugins | shown at the bottom of each page OR ANYWHERE by making them position:absolute */
   $scope.systemPlugins = [];
-  plugins.install('system', function (plugin) {
-    console.log('install-system-plugin', plugin)
-    $scope.systemPlugins.push(plugin);
-  });
+  if (isNodeJS) {
+    plugins.install('system', function (plugin) {
+      console.log('install-system-plugin', plugin)
+      $scope.systemPlugins.push(plugin);
+    });
+  }
 
-  $scope.alerts   = [];
   $scope.isNodeJS = isNodeJS;
 
-  $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error){
-    $log.warn('STATE CHANGE ERROR');
-    $log.error(event);
-  });
+  // $rootScope.$on('$translatePartialLoaderStructureChanged', function () {
+  //   $translate.refresh();
+  // });
 
-  /* Optionally you can provide a callback that receives the param { id_rs: 'XX', publicKey: 'YY' } */
-  $scope.createAccount = function (callback) {
-    var account = {};
-    plugins.get('accounts').add(account).then(
-      function (items) {
-        if (callback) {
-          callback.call(null, items);
-        }
-        else {
-          $state.go('accounts', {id_rs: items.id_rs}, {reload:true});
-        }
-      }
-    );
+  $rootScope.availableLanguages = {
+    'af': 'Afrikaans',
+    'sq': 'Shqip',
+    'ar': 'العربية',
+    'az': 'azərbaycan dili',
+    'eu': 'euskara',
+    'bn': 'বাংলা',
+    'be': 'беларуская мова',
+    'bg': 'български език',
+    'ca': 'català',
+    'zh': '简化中国',
+    'zh-TW': '中國傳統',
+    'hr': 'hrvatski jezik',
+    'cs': 'čeština, český jazyk',
+    'da': 'dansk',
+    'nl': 'Nederlands',
+    'en': 'English',
+    'eo': 'Esperanto',
+    'et': 'eesti',
+    'tl': 'Wikang Filipino',
+    'fi': 'Suomi',
+    'fr': 'Français',
+    'gl': 'Galego',
+    'ka': 'ქართული',
+    'de': 'Deutsch',
+    'el': 'Ελληνικά',
+    'gu': 'ગુજરાતી',
+    'ht': 'Kreyòl Ayisyen',
+    'iw': 'עברית',
+    'hi': 'हिन्दी',
+    'hu': 'Magyar',
+    'is': 'Íslenska',
+    'id': 'Bahasa Indonesia',
+    'ga': 'Gaeilge',
+    'it': 'Italiano',
+    'ja': '日本語',
+    'kn': 'ಕನ್ನಡ',
+    'ko': '조선말',
+    'la': 'Latina',
+    'lv': 'Latviešu',
+    'lt': 'Lietuvių',
+    'mk': 'Mакедонски',
+    'ms': 'Bahasa Melayu',
+    'mt': 'Malti',
+    'no': 'Norsk',
+    'fa': 'فارسی',
+    'pl': 'Polski',
+    'pt': 'Português',
+    'ro': 'Română',
+    'ru': 'Русский',
+    'sr': 'Српски',
+    'sk': 'Slovenčina',
+    'sl': 'Slovenščina',
+    'es': 'Español',
+    'sw': 'Kiswahili',
+    'sv': 'Svenska',
+    'ta': 'தமிழ்',
+    'te': 'తెలుగు',
+    'th': 'ไทย',
+    'tr': 'Türkçe',
+    'uk': 'українська мова',
+    'ur': 'اردو',
+    'vi': 'Việtnam',
+    'cy': 'Cymraeg',
+    'yi': 'ייִדיש'
+  };
+
+  $rootScope.langCode = $translate.preferredLanguage();
+  $rootScope.langName = $rootScope.availableLanguages[$rootScope.langCode];
+  $rootScope.setLang  = function (langCode) {
+    $rootScope.langCode = langCode;
+    $rootScope.langName = $rootScope.availableLanguages[langCode];
+    $translate.use(langCode);    
   }
 
-  $scope.stateIncludes = function (sref) {
+  if (!$rootScope.multiLanguage) {
+    $rootScope.setLang('en');
+  }
+
+  $scope.reloadMofoWallet = function () {
     try { 
-      return $state.includes(sref) 
-    } 
-    catch (e) { 
-      return false 
+      if (isNodeJS) {
+        var wait = 0;
+        if (serverService.isRunning('TYPE_FIM')) {
+          serverService.stopServer('TYPE_FIM');
+          wait += 5000;
+        }
+        if (serverService.isRunning('TYPE_NXT')) {
+          serverService.stopServer('TYPE_NXT');
+          wait += 5000;
+        }
+        $timeout(function () {
+          require('nw.gui').Window.get().window.location.reload();
+        }, wait, false);
+      }
+      else {
+        window.location.reload();
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
 
-  $rootScope.alert = {
-    failed: function (msg) {
-      var id = UTILS.uniqueID();
-      var data = { type: 'danger', msg: msg, id:id };      
-      $scope.alerts.push(data);
-      $timeout(function () { $rootScope.closeAlert(id); }, 5000);
-    },
-    success: function (msg) {
-      var id = UTILS.uniqueID();
-      var data = { type: 'success', msg: msg, id:id };      
-      $scope.alerts.push(data);
-      $timeout(function () { $rootScope.closeAlert(id); }, 5000);
+  $scope.openDevTools = function () {
+    try { 
+      require('nw.gui').Window.get().showDevTools();
+    } catch (e) {
+      console.log(e)
     }
-  };
-
-  $rootScope.closeAlert = function(id) {
-    UTILS.removeFirst($scope.alerts, function (data) { 
-      return data.id == id 
-    });
-  };
+  }
 
   /* handler for rendered transaction identifier onclick events */
   $scope.onTransactionIdentifierClick = function (element) {
@@ -86,38 +160,37 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
     }
     // console.log('onTransactionIdentifierClick', {type:type,value:value});
     switch (type) {
-      case api.renderer.TYPE.ACCOUNT: {
-        var deferred  = plugins.get('alerts').wait({ message: 'Downloading Account Data' });
-        var canceller = $q.defer();
+      // case api.renderer.TYPE.ACCOUNT: {
+      //   var deferred  = plugins.get('alerts').wait({ message: 'Downloading Account Data' });
+      //   var canceller = $q.defer();
 
-        /* Clicking Cancel in the dialog cause reject and thus catch to be called */
-        deferred.promise.catch(
-          function () {
-            canceller.resolve();
-          }
-        );
+      //   /* Clicking Cancel in the dialog cause reject and thus catch to be called */
+      //   deferred.promise.catch(
+      //     function () {
+      //       canceller.resolve();
+      //     }
+      //   );
 
-        api.getAccount({account:value}, null, canceller).then(
-          function (account) {
+      //   api.getAccount({account:value}, null, canceller).then(
+      //     function (account) {
 
-            /* Close the Wait modal */
-            deferred.resolve();
+      //       /* Close the Wait modal */
+      //       deferred.resolve();
 
-            var inspector = plugins.get('inspector');
-            inspector.inspect({
-              title: 'Account Details',
-              object: account,
-              order: 'accountRS,balanceNQT,effectiveBalanceNXT,unconfirmedBalanceNQT,forgedBalanceNQT,garanteedBalanceNQT',
-              translator: inspector.createAccountTranslator(api, account)
-            });
-          },
-          function (error) {
-            alerts.failed('Could not download account');
-            deferred.resolve();
-          }
-        );
-        break;
-      }
+      //       var inspector = plugins.get('inspector');
+      //       inspector.inspect({
+      //         title: 'Account Details',
+      //         object: account,
+      //         order: 'accountRS,balanceNQT,effectiveBalanceNXT,unconfirmedBalanceNQT,forgedBalanceNQT,garanteedBalanceNQT',
+      //         translator: inspector.createAccountTranslator(api, account)
+      //       });
+      //     },
+      //     function (error) {
+      //       deferred.resolve();
+      //     }
+      //   );
+      //   break;
+      // }
       case api.renderer.TYPE.JSON: {
         try {
           var transaction = JSON.parse(decodeURIComponent(value));
@@ -164,8 +237,8 @@ module.controller('appController', function($rootScope, $scope, $modal, $q, $log
           }
         }
       },
-      close: function () {
-        $state.go($state.current, {}, {reload: true});
+      close: function () {        
+        $route.reload();
       }
     });
   }
