@@ -26,7 +26,7 @@ module.run(function (modals, plugins, settings) {
   angular.forEach(['amelia','cerulean','cosmo','custom','cyborg','darkly',
                    /*'default',*/'flatly','journal','lumen','paper','readable',
                    'sandstone','simplex','slate','spacelab','superhero',
-                   'united','yeti'], 
+                   'united','yeti', 'google'], 
     function (id) {
       var capitalized = id.charAt(0).toUpperCase() + id.slice(1);
       plugin.register(id, capitalized, 'plugins/themes/css/'+id+'.bootstrap.min.css');
