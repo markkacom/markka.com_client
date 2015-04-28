@@ -15,24 +15,24 @@ var engine = {
       WIN: {
         start: {
           command: 'java',
-          args: ['-cp', 'classes;lib\\*;conf', 'nxt.Nxt']
+          args: ['-cp', 'nxt.jar;lib\\*;conf', 'nxt.Nxt']
         }
       },
       LINUX: {
         start: {
           command: 'java',
-          args: ['-cp', 'classes:lib/*:conf', 'nxt.Nxt']
+          args: ['-cp', 'nxt.jar:lib/*:conf', 'nxt.Nxt']
         }
       },
       MAC: {
         start: {
           command: 'java',
-          args: ['-cp', 'classes:lib/*:conf', 'nxt.Nxt'],
+          args: ['-cp', 'nxt.jar:lib/*:conf', 'nxt.Nxt'],
           extra: '../../../../Resources/'
         }
       }
     },
-    listeners: { stdout: [], stderr: [], exit: [], start: [] },
+    listeners: { stdout: [], stderr: [], exit: [], start: [], ready: [] },
     messages: [],
     server: null
   },
@@ -58,7 +58,7 @@ var engine = {
         }
       }
     },
-    listeners: { stdout: [], stderr: [], exit: [], start: [] },
+    listeners: { stdout: [], stderr: [], exit: [], start: [], ready: [] },
     messages: [],
     server: null
   }
@@ -104,13 +104,22 @@ if (isNodeJS) {
 }
 
 var module = angular.module('fim.base');
-module.factory('serverService', function () {
+module.factory('serverService', function ($timeout) {
 
 function notifyListeners(listeners, data) {
   for (var i=0; i<listeners.length; i++) {
     listeners[i].call(null, data);
   }
 }
+
+function maybeNotifyServerReady(id, line) {
+  if (!engine[id].isReady && line.indexOf(' started successfully.') != -1) {
+    notifyListeners(engine[id].listeners.ready, 'Server is ready');
+    engine[id].isReady = true;
+  }
+}
+
+var NON_WHITESPACE = /\S/;
 
 return {
   getDir: function (id) {
@@ -134,6 +143,13 @@ return {
       return '';
     }
   },
+  getConfFilePath: function (id, fileName) {
+    if (isNodeJS) {
+      var path = require('path');
+      return path.join(this.getDir(id), 'conf', fileName);
+    }
+    return '';
+  },  
   getStartCommand: function (id) {
     return engine[id].commands[getOS()].start;
   },
@@ -149,6 +165,8 @@ return {
     var start_options = {  cwd: this.getDir(id) };    
     var commands  = engine[id].commands;
 
+    engine[id].isReady = false;
+
     var os        = getOS();
     notifyListeners(listeners.stdout, 'Detected Operating System '+os);
     notifyListeners(listeners.stdout, 'Starting mofowallet in '+start_options.cwd);    
@@ -161,18 +179,37 @@ return {
         this.kill("SIGTERM");
       } 
       finally {
-        engine[id].server = null;
+        engine[id].server  = null;
+        engine[id].isReady = false;
       }
     }
 
     child.onstdout = function (data) {
-      messages.push(data.toString());
-      notifyListeners(listeners.stdout, data);
+      var str = data.toString(), lines = str.split(/(\r?\n)/g);
+      for (var i=0; i<lines.length; i++) {
+        if (lines[i].match(NON_WHITESPACE)) {
+          messages.push(lines[i]);
+          while (messages.length > 2000) {
+            messages.shift();
+          }
+          notifyListeners(listeners.stdout, lines[i]);
+          maybeNotifyServerReady(id, lines[i]);
+        }
+      }
     }
 
     child.onstderr = function (data) {
-      messages.push(data.toString());
-      notifyListeners(listeners.stderr, data);
+      var str = data.toString(), lines = str.split(/(\r?\n)/g);
+      for (var i=0; i<lines.length; i++) {
+        if (lines[i].match(NON_WHITESPACE)) {
+          messages.push(lines[i]);
+          while (messages.length > 2000) {
+            messages.shift();
+          }
+          notifyListeners(listeners.stderr, lines[i]);
+          maybeNotifyServerReady(id, lines[i]);
+        }
+      }
     }
 
     child.onexit = function (code, signal) {
@@ -182,6 +219,8 @@ return {
       // Helper function added to the child process to manage shutdown.
       console.log("Child process terminated with code: " + code);
       // process.exit(1);
+      engine[id].isReady = false;
+      engine[id].server  = null;
     }
 
     child.stdout.on('data', child.onstdout);
@@ -193,11 +232,16 @@ return {
   stopServer: function (id) {
     if (engine[id].server) {
       engine[id].server.shutdown();
-      engine[id].server = null;
+      engine[id].server  = null;
+      engine[id].isReady = false;
     }
+    $timeout(function () { notifyListeners(engine[id].listeners.exit, 'Stopping server'); }, 1000, false);
   },
   isRunning: function (id) {
     return !!(engine[id].server);
+  },
+  isReady: function (id) {
+    return engine[id].isReady;
   },
   addListener: function (id, type, listener) {
     engine[id].listeners[type].push(listener);
