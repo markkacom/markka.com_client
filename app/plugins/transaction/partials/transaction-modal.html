@@ -1,0 +1,251 @@
+<div class="panel panel-primary" ng-init="items.initialize && items.initialize(items)">
+  <div class="panel-heading">
+    <h3 class="panel-title" ng-bind="items.title"></h3>
+  </div>
+
+  <!-- Perform payment -->
+  <div class="panel-body">
+    <form accept-charset="UTF-8" role="form" name="transactionCreateForm" novalidate>
+      <div class="col-xs-12" ng-show="items.message && !sendSuccess"><p ng-bind-html="items.message"></p></div>
+      <div class="col-xs-12">
+        <div class="alert alert-success" role="alert" ng-show="sendSuccess"><b>Transaction sent successfully.</b></div>
+      </div>
+      <div class="col-xs-12">
+        <div class="alert alert-{{recipientAlertLevel}}" role="alert" 
+            ng-show="recipientDescriptionHTML && !sendSuccess" ng-bind-html="recipientDescriptionHTML"></div>
+      </div>
+     
+      <!-- Show static sender control -->
+      <div class="form-group col-xs-12"
+           ng-class="{ 'has-error' : transactionCreateForm.senderField.$invalid && ! transactionCreateForm.senderField.$pristine }">
+        <span class="form-control-static">
+          <label class="control-label">Sender</label>
+          <span ng-if="!items.editSender" class="form-control">
+            <b>{{items.senderRS}}</b>
+          </span>
+          <div ng-if="items.editSender" class="input-group">
+            <input class="form-control" ng-model="items.senderRS" type="text" 
+                 required ui-validate=" 'validateAddress($value)' " ui-validate-watch=" 'items.senderRS' "
+                 name="senderField" ng-change="items.onRecipientChange && items.onRecipientChange(items)">
+            <div class="input-group-btn" dropdown>
+              <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="caret"></span></button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li ng-repeat="a in items.accounts" class="input">
+                  <a href ng-click="items.senderRS = a.id_rs">
+                    <span style="font-family: monospace !important;">{{a.id_rs}}&nbsp;&nbsp;</span>
+                    <span ng-if="a.name" class="badge"><b>{{a.name}}</b></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </span>
+      </div>
+
+      <!-- Show static recipient control -->
+      <div class="form-group col-xs-12" ng-if="items.canHaveRecipient"
+           ng-class="{ 'has-error' : transactionCreateForm.recipientField.$invalid && ! transactionCreateForm.recipientField.$pristine }"
+           ng-init="items.onRecipientChange && iems.onRecipientChange(items)">
+        <span class="form-control-static">
+          <label class="control-label" translate="translate.recipient"></label>
+          <span ng-if="!items.editRecipient" class="form-control">
+            <b>{{items.recipient}}</b>
+          </span>
+          <div ng-if="items.editRecipient" class="input-group">
+            <input class="form-control" ng-model="items.recipient" type="text" 
+                 required ui-validate=" 'validateAddress($value)' " ui-validate-watch=" 'items.recipient' "
+                 name="recipientField" ng-change="items.onRecipientChange && items.onRecipientChange(items)">
+            <div class="input-group-btn" dropdown>
+              <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="caret"></span></button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li ng-repeat="a in items.accounts" class="input">
+                  <a href ng-click="(items.recipient = a.id_rs) && (items.onRecipientChange && iems.onRecipientChange(items))">
+                    <span style="font-family: monospace !important;">{{a.id_rs}}&nbsp;&nbsp;</span>
+                    <span ng-if="a.name" class="badge"><b>{{a.name}}</b></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </span>
+      </div>
+
+      <!-- Show static asset control -->
+      <div class="form-group col-xs-12" ng-if="items.editAsset" 
+           ng-init="items.onAssetChange && items.onAssetChange(items)"
+           ng-class="{ 'has-error' : transactionCreateForm.assetField.$invalid && ! transactionCreateForm.assetField.$pristine }">
+        <span class="form-control-static">
+          <label class="control-label" translate="translate.asset"></label>
+          <div class="input-group">
+            <input class="form-control" ng-model="items.asset" type="text" 
+                 required name="assetField" ng-change="items.onAssetChange && items.onAssetChange(items)">
+            <div class="input-group-btn" dropdown>
+              <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="caret"></span></button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li ng-repeat="a in items.assets" class="input">
+                  <a href ng-click="(items.asset = a.asset) && (items.onAssetChange && items.onAssetChange(items))">
+                    <span style="font-family: monospace !important;">{{a.asset}}&nbsp;&nbsp;</span>
+                    <span ng-if="a.name" class="badge"><b>{{a.name}}</b></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </span>
+      </div>      
+
+      <div ng-repeat="f in items.fields" ng-show="f.__show">
+        <ng-form name="userFieldForm">
+          <div class="form-group col-xs-12" 
+            ng-class="{ 'has-error' : userFieldForm.userFieldName.$invalid && ! userFieldForm.userFieldName.$pristine }">
+            <div>
+              <label class="control-label">{{f.label}}</label>
+              <span class="text-danger pull-right" ng-show="f.errorMsg">{{f.errorMsg}}</span>
+            </div>
+            <div ng-switch on="f.type">
+              <div ng-switch-default>
+                <div ng-if="f.required">
+                  <input ng-if="!f.validate" class="form-control" ng-model="f.value" type="text" 
+                         placeholder="{{f.placeHolder}}" required name="userFieldName" ng-disabled="sendSuccess"
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">
+                  <input ng-if="f.validate" class="form-control" ng-model="f.value" type="text" 
+                         placeholder="{{f.placeHolder}}" required
+                         ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                         name="userFieldName" ng-disabled="sendSuccess"
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">
+                </div>
+                <div ng-if="!f.required">
+                  <input ng-if="!f.validate" class="form-control" ng-model="f.value" type="text" 
+                         placeholder="{{f.placeHolder}}" name="userFieldName" ng-disabled="sendSuccess"
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">
+                  <input ng-if="f.validate" class="form-control" ng-model="f.value" type="text" 
+                         placeholder="{{f.placeHolder}}" 
+                         ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                         name="userFieldName" ng-disabled="sendSuccess"
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">
+                </div>
+              </div>
+              <div ng-switch-when="money">
+                <div ng-if="f.required">
+                  <input money precision="{{f.precision||8}}" class="form-control" name="userFieldName" placeholder="{{f.placeHolder}}" 
+                         type="text" ng-model="f.value" ng-disabled="sendSuccess" required
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">
+                </div>
+                <div ng-if="!f.required">
+                  <input money precision="{{f.precision||8}}" class="form-control" name="userFieldName" placeholder="{{f.placeHolder}}" 
+                         type="text" ng-model="f.value" ng-disabled="sendSuccess"
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">
+                </div>
+              </div>
+              <div ng-switch-when="textarea">
+                <div ng-if="f.required">
+                  <textarea ng-if="!f.validate" rows="3" class="form-control" ng-model="f.value" 
+                            placeholder="{{f.placeHolder}}" required name="userFieldName" ng-disabled="sendSuccess"
+                            ng-readonly="f.readonly"
+                            ng-change="f.onchange && f.onchange(items)"></textarea>
+                  <textarea ng-if="f.validate" rows="3" class="form-control" ng-model="f.value" 
+                            placeholder="{{f.placeHolder}}" required
+                            ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                            name="userFieldName" ng-disabled="sendSuccess"
+                            ng-readonly="f.readonly"
+                            ng-change="f.onchange && f.onchange(items)"></textarea>
+                </div>
+                <div ng-if="!f.required">
+                  <textarea ng-if="!f.validate" rows="3" class="form-control" ng-model="f.value" 
+                            placeholder="{{f.placeHolder}}" name="userFieldName" ng-disabled="sendSuccess"
+                            ng-readonly="f.readonly"
+                            ng-change="f.onchange && f.onchange(items)"></textarea>
+                  <textarea ng-if="f.validate" rows="3" class="form-control" ng-model="f.value" 
+                            placeholder="{{f.placeHolder}}" 
+                            ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                            name="userFieldName" ng-disabled="sendSuccess"
+                            ng-readonly="f.readonly"
+                            ng-change="f.onchange && f.onchange(items)"></textarea>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </ng-form>        
+      </div>
+
+
+      <!-- Payment message -->
+      <div class="form-group col-xs-12" collapse="!show.message" ng-show="!items.hideMessage">
+        <label for="msg-1" class="control-label">Message</label>
+        <textarea rows="3" class="form-control" id="msg-1" ng-model="items.txnMessage" placeholder="Include message" 
+          ng-disabled="sendSuccess"></textarea>
+        <div class="radio">
+          <label ng-if="items.canHaveRecipient">
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="to_recipient" 
+              ng-disabled="sendSuccess">Message to recipient&nbsp;
+          </label>
+          <label>
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="to_self" 
+              ng-disabled="sendSuccess">Message to self&nbsp;
+          </label>
+          <label>
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="public" 
+              ng-disabled="sendSuccess">Public message
+          </label>
+        </div>
+      </div>
+
+      <!-- Fee and deadline input control -->
+      <div class="form-group col-xs-12" ng-if="!items.hideFee" collapse="!show.advanced"
+          ng-class="{ 'has-error' : (paymentCreateForm.fee.$invalid && !paymentCreateForm.fee.$pristine) || (paymentCreateForm.deadline.$invalid && !paymentCreateForm.deadline.$pristine) }">
+        <div class="row">
+          <div class="col-xs-6">
+            <label for="payment-fee-1" class="control-label">Fee</label>
+            <input money precision="8" class="form-control" id="payment-fee-1" placeholder="Fee" name="fee" type="text" 
+                ng-model="items.feeNXT" ng-disabled="sendSuccess" required>
+          </div>
+          <div class="col-xs-6">
+            <label for="payment-deadline-1" class="control-label">Deadline</label>
+            <input class="form-control" id="payment-deadline-1" placeholder="Deadline" name="deadline" 
+                  type="text" ng-model="items.deadline" ng-disabled="sendSuccess" required>
+          </div>
+        </div>
+      </div>      
+
+      <!-- Show Fee + Deadline + Message-->
+      <div class="form-group col-xs-12" ng-if="!items.hideFee">
+        <span class="form-control-static">
+          <span ng-show="!items.showMessage && !items.hideMessage">
+            <a href ng-click="show.message = !show.message" 
+              ng-class="{ 'text-muted': show.message }"><strong>Add Message</strong></a>&nbsp;/&nbsp;
+          </span>
+          <a href ng-click="show.advanced = !show.advanced" 
+            ng-class="{ 'text-muted': show.advanced }"><strong>Fee</strong> {{items.feeNXT}} {{items.symbol}} <strong>Deadline</strong> {{items.deadline}}</a>
+          <span ng-if="items.canHaveRecipient">
+            &nbsp;/&nbsp;<a href ng-click="show.showPublicKey = !show.showPublicKey" 
+              ng-class="{ 'text-muted': show.showPublicKey }"><strong>Publickey</strong></a>
+          </span>
+        </span>
+      </div>
+    </form>
+  </div>
+
+  <!-- Send Cancel buttons -->
+  <div class="panel-footer">
+    <div class="form-group">
+      <div class="col-xs-6">
+        <button ng-show="!sendSuccess && !isSending" class="btn btn-block btn-primary" ng-click="close()"
+          ng-disabled="!transactionCreateForm.$valid">Send</button>
+        <button ng-show="isSending" class="btn btn-block btn-success" disabled>
+          <i class="fa fa-circle-o-notch fa-spin pull-left"></i>&nbsp;&nbsp;Sending
+        </button>
+        <button ng-show="sendSuccess && !isSending" class="btn btn-block btn-primary" ng-click="close()">Close</button>
+      </div>
+      <div class="col-xs-6">
+        <button ng-click="dismiss()" type="button" class="btn btn-block btn-default" ng-disabled="sendSuccess">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
