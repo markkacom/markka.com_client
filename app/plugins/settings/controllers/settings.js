@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('SettingsPlugin', function($scope, plugins, $stateParams, $state) {  
+module.controller('SettingsPlugin', function($scope, plugins, $routeParams) {  
   $scope.plugins = [];
   var plugin_id  = {};
   
@@ -10,6 +10,6 @@ module.controller('SettingsPlugin', function($scope, plugins, $stateParams, $sta
     plugin_id[plugin.id] = plugin;
   });
 
-  $scope.selectedPlugin = plugin_id[$stateParams.id];
+  $scope.selectedPlugin = plugin_id[$routeParams.id];
 });
 })();
