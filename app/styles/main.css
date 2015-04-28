@@ -8,13 +8,11 @@ html, body {
 }
 
 body {
-  padding-bottom: 90px;
-  padding-top: 70px;
+  padding-top: 60px;
 }
 
 .status-popup {
-  min-height: 300px;
-  min-width: 350px;
+  min-width: 300px;
 }
 
 .assets-table {
@@ -25,7 +23,7 @@ body {
   display: none;
 }
 
-.activity-plugin .btn-rendered-transaction {
+.btn-rendered-transaction {
   display: none;
 }
 
@@ -116,7 +114,7 @@ table.accounts-transactions thead {
   text-align: left;
 }
 
-input.monospace, select.monospace, textarea.monospace {
+input.monospace, select.monospace, textarea.monospace, a.monospace, div.monospace, td.monospace {
   font: 14px monospace;
 }
 

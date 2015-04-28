@@ -1,0 +1,265 @@
+@import "../bower_components/bootstrap/less/variables.less";
+
+@media screen and (max-width: @screen-sm-max) {
+  .lang-columns{
+    height: 320px;
+    overflow: scroll;
+  }
+}
+
+@media screen and (min-width: @screen-md){
+  .lang-columns{
+    -moz-column-count: 4;
+    -webkit-column-count: 4;
+    column-count: 4;
+    width: 940px;
+  }
+}
+
+@media (min-width: @screen-sm) {
+  .pull-right-sm {
+    float: right;
+  }
+}
+
+@media (min-width: @screen-sm) {
+  .pull-right-sm {
+    float: right;
+  }
+}
+
+@media screen and (max-width: @screen-sm) {
+    h3.account-header {
+      font-size:14px;
+    }
+}
+
+.account-panel {
+  background-color: @gray-lighter;
+  border: solid 1px @gray-light;
+  padding: @panel-body-padding;
+  &:extend(.clearfix all);
+  margin-bottom: @line-height-computed / 4;
+  border-radius: @panel-border-radius;
+
+  h3, h4 {
+    margin-top: 5px;
+  }
+
+  table {
+    td:nth-child(2) {
+      padding-left: @panel-body-padding;
+    }
+
+    .balance {
+      font-size: ceil((@font-size-base * 1.125));
+    }    
+  }
+}
+
+table.activity-table {
+  tr {
+    -webkit-transition: all 2s 1.5s ease-out;
+    -moz-transition: all 1.5s ease-out;
+    transition: all 1.5s ease-out;
+    
+    list-style: none;
+    padding: 10px;
+  }
+
+  .highlight-enter-setup {
+    background: @brand-primary;
+  }
+  .highlight-enter-start {
+    background: white;
+  }
+}
+
+/*.ng-enter, .ng-move {
+  -webkit-animation: fadeIn 1s;
+  -moz-animation: fadeIn 1s;
+  -o-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+.ng-leave {
+  -webkit-animation: fadeOut 1s;
+  -moz-animation: fadeOut 1s;
+  -o-animation: fadeOut 1s;
+  animation: fadeOut 1s;
+}*/
+
+.account-list-item {
+  cursor: pointer;
+  .account-settings-btn {
+    .dropdown-toggle {
+      i {
+        color: @gray-light;
+      }
+      i:hover {
+        color: @gray
+      }
+      cursor: pointer;
+    }
+  }
+}
+.account-list-item:hover {
+  background-color: @gray-lighter;
+}
+
+.load-more-button {
+  padding-bottom: 20px;
+  margin: 15px;
+  .btn:hover {
+    color: @btn-primary-color;
+    background-color: @btn-primary-bg;
+    border-color: @btn-primary-border;
+  }
+}
+
+.panel-heading {
+  a.no-glyph:after {
+    content: "";
+  }
+}
+
+.elipses {
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+  overflow: hidden;
+}
+
+hr.stacked-divider {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/* Compacted forms */
+.form-compact {
+  font-size: 0.8em;
+  .form-control {
+    padding: 1px 2px;
+    height: 24px;
+    font-size:1em;
+  }
+  label {
+    margin-bottom: 1px;
+  }
+  .form-group {
+    margin-bottom:0px;
+  }
+  .form-control-static {
+    font-size:1.3em;
+    font-weight: bold;
+  }
+}
+
+.statistics-form {
+  margin-left: 0px !important;
+  marging-top: 0px;
+  .form-control-static {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+
+.start-pane {
+  .panel-body {
+    height: 250px;
+    table {
+      height: 100%;
+      tr:first-child {
+        td {
+          vertical-align: top !important;
+        }
+      }      
+      tr:last-child {
+        td {
+          vertical-align: bottom !important;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: @screen-md) {
+  .start-pane {
+    .panel-body {
+      height: 100%;
+    }
+  }
+}
+
+.language-select {
+  h1 {
+    font-size: 500%;
+  }
+  .language-select-scroller {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+
+@media screen and (max-width: @screen-sm) {
+  .language-select {
+    h2 {
+      font-size: 150%;
+    } 
+    .language-select-scroller {
+      max-height: 320px;
+      overflow-y: auto;
+    }
+  }
+}
+
+/* Slide in sidebar */
+
+.sidebar-offcanvas {
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+}
+
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+
+  .row-offcanvas-right {
+    right: 0;
+    .sidebar-offcanvas {
+      right: -50%; /* 6 columns */
+    }
+  }
+
+  .row-offcanvas-left {
+    left: 0;
+    .sidebar-offcanvas {
+      left: -50%; /* 6 columns */
+    }
+  }
+
+  .row-offcanvas-right.active {
+    right: 50%; /* 6 columns */
+  }
+
+  .row-offcanvas-left.active {
+    left: 50%; /* 6 columns */
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+    padding-left: 15px;
+  }
+}
+
+#fake-console {
+  p {
+    margin: 0 0 0;
+  } 
+}
