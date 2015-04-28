@@ -1,0 +1,188 @@
+<div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+    <ul class="nav navbar-stacked">
+      <li>
+        <a href="#/search/fim/accounts/{{paramQuery}}">FIMK Search</a>
+      </li>
+      <li ng-if="enableDualEngines">
+        <a href="#/search/nxt/accounts/{{paramQuery}}">NXT Search</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-xs-12 col-sm-10">
+    <p class="visible-xs">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+            ng-click="offCanvas=!offCanvas">
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+      </button>
+    </p>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
+            <span ng-if="b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>
+            </span>
+            <span ng-if="!b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
+              <span ng-if="!b.href">{{ b.label }}</span>              
+            </span>
+            <span ng-if="b.period">
+              <span translate="translate.show_results_before"></span>&nbsp;<b>{{paramPeriod}}</b>
+              <a href="#/home/{{paramEngine}}/{{paramSection}}/latest">
+                <small>
+                  <i class="fa fa-times"></i>&nbsp;<span translate="translate.show_latest"></span>
+                </small>
+              </a>
+            </span>
+          </li>
+
+          <a href ng-click="provider.reload()" class="pull-right">
+            {{ 'translate.reload' | translate }}&nbsp;&nbsp;
+            <i class="fa fa-refresh" ng-class="{'fa-spin': provider.isLoading}"></i>
+          </a>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6" style="padding-bottom: 15px">
+        <form ng-submit="doSearch()">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for..." ng-model="paramQuery">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit">Go!</button>
+            </span>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6" style="padding-bottom: 15px">
+        <ul class="nav nav-pills">
+          <li role="presentation" route-active="search/{{paramEngine}}/accounts">
+            <a href="#/search/{{paramEngine}}/accounts/{{paramQuery}}">Accounts</a>
+          </li>
+          <li role="presentation" route-active="search/{{paramEngine}}/assets">
+            <a href="#/search/{{paramEngine}}/assets/{{paramQuery}}">Assets</a>
+          </li>
+          <!-- <li role="presentation" route-active="search/{{paramEngine}}/currencies">
+            <a href="#/search/{{paramEngine}}/currencies/{{paramQuery}}">Currencies</a>
+          </li> -->
+          <li role="presentation" route-active="search/{{paramEngine}}/market">
+            <a href="#/search/{{paramEngine}}/market/{{paramQuery}}">Market</a>
+          </li>
+          <li role="presentation" route-active="search/{{paramEngine}}/aliases">
+            <a href="#/search/{{paramEngine}}/aliases/{{paramQuery}}">Aliases</a>
+          </li>          
+        </ul>        
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12" style="padding-bottom: 15px">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        
+        <!-- search accounts -->
+        <div ng-if="paramCategory == 'accounts'">
+          <div ng-if="provider.entities == 0 && paramQuery">
+            <div translate="translate.no_search_results"></div>
+          </div>
+          <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
+            <div ng-repeat="o in provider.entities" class="well well-sm">
+              <div>
+                <big><span ng-if="o.name">{{o.name}}&nbsp;&nbsp;</span></big>
+                <a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.accountRS}}</a>
+                &nbsp;|&nbsp;
+                <small>Balance</small>&nbsp;<b>{{o.balanceNXT}}</b>
+                &nbsp;|&nbsp;
+                <small>Effective</small>&nbsp;<b>{{o.effectiveBalanceNXT}}</b>
+              </div>
+              <div>{{o.description}}</div>
+            </div>
+            <div class="load-more-button" ng-show="provider.hasMore">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_results"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- search assets -->
+        <div ng-if="paramCategory == 'assets'">
+          <div ng-if="provider.entities == 0 && paramQuery">
+            <div translate="translate.no_search_results"></div>
+          </div>
+          <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
+            <div ng-repeat="o in provider.entities" class="well well-sm">
+              <div>
+                <big>{{o.name}}</big>&nbsp;<a href="#/assets/{{paramEngine}}/{{o.asset}}/trade">{{o.asset}}</a>
+                <br><small>Issuer</small>&nbsp;<a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.accountRS}}</a>
+              </div>
+              <div>{{o.description}}</div>
+            </div>
+            <div class="load-more-button" ng-show="provider.hasMore">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_results"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- search aliases -->
+        <div ng-if="paramCategory == 'aliases'">
+          <div ng-if="provider.entities == 0 && paramQuery">
+            <div translate="translate.no_search_results"></div>
+          </div>
+          <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
+            <div ng-repeat="o in provider.entities" class="well well-sm">
+              <div>
+                <big>{{o.aliasName}}</big>&nbsp;|&nbsp;<small>Issuer</small>&nbsp;<a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.accountRS}}</a>
+              </div>
+              <div>{{o.aliasURI}}</div>
+              <!-- <div>{{o | json}}</div> -->
+            </div>
+            <div class="load-more-button" ng-show="provider.hasMore">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_results"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- search goods -->
+        <div ng-if="paramCategory == 'market'">
+          <div ng-if="provider.entities == 0 && paramQuery">
+            <div translate="translate.no_search_results"></div>
+          </div>
+          <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
+            <div ng-repeat="o in provider.entities" class="well well-sm">
+              <div>
+                <big>{{o.name}}</big>&nbsp;|&nbsp;<small>{{o.goods}}</small>&nbsp;|&nbsp;<a href="#/accounts/{{o.sellerRS}}/activity/latest">{{o.sellerName || o.sellerRS}}</a>
+              </div>
+              <div>{{ o | json }}</div>
+              <div>{{o.description}}</div>
+            </div>
+            <div class="load-more-button" ng-show="provider.hasMore">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_results"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
