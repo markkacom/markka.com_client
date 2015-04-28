@@ -11,6 +11,25 @@ module.filter('money', function () {
 });
 
 module.directive('money', function($timeout) {
+
+  function JQueryHasClass(element, clazz) {
+    var className=" "+clazz+" ",rclass=/[\t\r\n]/g;
+    if (element.nodeType === 1 && (" " + element.className + " ").replace(rclass, " ").indexOf(className) >= 0) {
+      return true;
+    }
+    return false;
+  }
+
+  function JQueryClosestByClass(element, clazz) {
+    while (element) {
+      if (JQueryHasClass(element, clazz)) {
+        return element;
+      }
+      element = element.parentNode;
+    }
+    return null;
+  }
+
   return {
     restrict: 'A',
     require: 'ngModel',
@@ -34,18 +53,18 @@ module.directive('money', function($timeout) {
           } else {
             var msg = new RegExp('^\\d+\\.\\d{9,}$').test(text) ? ('Only '+precision+' decimals allowed') : 'Allowed format is 12.345';            
           }
-          $(element[0]).popover('destroy');
-          $(element[0]).popover({
-            html: false,
-            content: msg,
-            placement: 'auto top',
-            container: 'body'
-          });
-          $(element[0]).closest('.form-group').addClass('has-error');
-          $(element[0]).popover('show');
+          // $(element[0]).popover('destroy');
+          // $(element[0]).popover({
+          //   html: false,
+          //   content: msg,
+          //   placement: 'auto top',
+          //   container: 'body'
+          // });
+          angular.element(JQueryClosestByClass(element[0], 'form-group')).addClass('has-error');
+          // $(element[0]).popover('show');
           $timeout(function () {
-            $(element[0]).popover('destroy');
-            $(element[0]).closest('.form-group').removeClass('has-error');
+            // $(element[0]).popover('destroy');
+            angular.element(JQueryClosestByClass(element[0], 'form-group')).removeClass('has-error');
           }, 2000);
 
           ngModelCtrl.$setViewValue(old);
