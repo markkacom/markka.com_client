@@ -1,0 +1,468 @@
+<div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+    <ul class="nav navbar-stacked">
+      <li role="presentation" route-active="assets/{{paramEngine}}/{{paramAsset}}/trade">
+        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade" translate-cloak>
+          <i class="fa fa-line-chart"></i>&nbsp;&nbsp;<span translate="translate.trade" />
+        </a>
+      </li>
+      <li role="presentation" route-active="assets/{{paramEngine}}/{{paramAsset}}/pulse">
+        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" translate-cloak>
+          <i class="fa fa-heartbeat"></i>&nbsp;&nbsp;<span translate="translate.pulse" />
+        </a>
+      </li>
+      <li role="presentation" route-active="assets/{{paramEngine}}/{{paramAsset}}/private">
+        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/private" translate-cloak>
+          <i class="fa fa-university"></i>&nbsp;&nbsp;<span>Private</span>
+        </a>
+      </li>
+      <li role="presentation" >
+        <a href ng-click="buyAsset()" translate="translate.buy"></a>
+      </li>
+      <li role="presentation" >
+        <a href ng-click="sellAsset()" translate="translate.sell"></a>
+      </li>
+      <li role="presentation" >
+        <a href ng-click="writePost()" translate="translate.write_post"></a>
+      </li>      
+    </ul>
+  </div>
+
+  <div class="col-xs-12 col-sm-10">
+    <p class="visible-xs">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+            ng-click="offCanvas=!offCanvas">
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+      </button>
+    </p>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
+            <span ng-if="b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>
+            </span>
+            <span ng-if="!b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
+              <span ng-if="!b.href">{{ b.label }}</span>              
+            </span>
+          </li>
+
+          <a href ng-click="reload()" class="pull-right">
+            {{ 'translate.reload' | translate }}&nbsp;&nbsp;
+            <i class="fa fa-refresh" ng-class="{'fa-spin': my_orders.isLoading || chart.isLoading || askOrders.isLoading || bidOrders.isLoading || trades.isLoading }"></i>
+          </a>
+        </ol>
+      </div>
+    </div>
+
+    <div ng-if="paramSection=='pulse'">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="media">
+            <a class="pull-left" style="width: 100px">
+              <i class="fa fa-pie-chart fa-5x text-muted"></i>
+            </a>
+            <div class="media-body" style="min-height: 120px">
+              <h4 class="media-heading">{{assetName}}</h4>
+              <p>{{assetDescription}}<span ng-if="!assetDescription">no description</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div>
+            <table class="table table-condensed">
+              <tr><td>Id</td><td colspan="3"><a ng-href="#/assets/{{paramEngine}}/{{paramAsset}}/trade">{{paramAsset}}</a></td></tr>
+              <tr><td>Issuer</td colspan="3"><td><a ng-href="#/accounts/{{assetIssuerRS}}/activity/latest">{{assetIssuerName||assetIssuerRS}}</a></td></tr>
+              <tr><td>Type</td><td colspan="3"></td></tr>            
+              <tr><td>Quantity</td><td>{{assetQuantity}}</td><td>Decimals</td><td>{{assetDecimals}}</td></tr>
+              <tr><td>Trades</td><td>{{assetTrades}}</td><td>Transfers</td><td>{{assetTransfers}}</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div ng-if="provider.entities.length == 0">
+            <p>{{assetName}} did not write any posts</p>
+            <button class="btn btn-primary" ng-click="writePost()">Write first post</button>
+          </div>
+          <div ng-if="provider.entities.length > 0">
+            <div>
+              
+              <!-- List all posts -->
+              <ul class="media-list">
+                <li class="media" ng-repeat="p in provider.entities">
+                  <a class="pull-left" style="width: 100px">
+                    <i class="fa fa-pencil-square-o fa-5x text-muted"></i>
+                    <div class="pull-right">
+                      <span ng-if="p.confirmations < 0"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                      <span ng-if="p.confirmations >= 0 && p.confirmations <= 10" class="text-danger"><b>{{p.confirmations}}</b></span>
+                      <span ng-if="p.confirmations > 10" tooltip="{{p.confirmations}} confirmations">
+                        <i class="fa fa-check text-success"></i>
+                      </span>
+                    </div>
+                  </a>
+                  <div class="media-body">
+                    <h4 class="media-heading"><small>{{p.date}}&nbsp;&nbsp;
+                      <a href><i class="fa fa-twitter text-muted"></i></a>&nbsp;&nbsp;
+                      <a href><i class="fa fa-facebook text-muted"></i></a>&nbsp;&nbsp;
+                      <a href><i class="fa fa-linkedin text-muted"></i></a>&nbsp;&nbsp;
+                      <a href><i class="fa fa-google-plus text-muted"></i></a></small>
+                    </h4>
+                    <p>{{p.message}}</p>
+                    <p>
+                      <button class="btn btn-sm btn-primary" ng-click="writeComment(p.transaction)">
+                        <i class="fa fa-comment-o"></i>&nbsp;&nbsp;{{p.comment_count}}&nbsp;&nbsp;<span translate="translate.leave_comment"/>
+                      </button>
+                      &nbsp;
+                      <a href ng-click="p.commentProvider.reload()" 
+                          ng-if="p.comment_count > 0 && p.commentProvider.entities.length == 0">
+                        <span ng-show="p.commentProvider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                        <span translate="translate.load_comments" />
+                      </a>
+                      <a href ng-click="p.commentProvider.clear()" 
+                          ng-if="p.comment_count > 0 && p.commentProvider.entities.length > 0">
+                        <span translate="translate.hide_comments" />
+                      </a>                          
+                    </p>
+                    <br>
+
+                    <!-- comments -->
+                    <div ng-if="p.commentProvider.entities.length > 0">
+                      <div class="media" ng-repeat="c in p.commentProvider.entities">
+                        <a class="pull-left">
+                          <i class="fa fa-user fa-5x text-muted"></i>
+                          <div class="pull-right">
+                            <span ng-if="c.confirmations < 0"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                            <span ng-if="c.confirmations >= 0 && c.confirmations <= 10" class="text-danger"><b>{{c.confirmations}}</b></span>
+                            <span ng-if="c.confirmations > 10" tooltip="{{c.confirmations}} confirmations">
+                              <i class="fa fa-check text-success"></i>
+                            </span>
+                          </div>                                
+                        </a>
+                        <div class="media-body">
+                          <h4 class="media-heading"><small><a ng-href="#/accounts/{{c.senderRS}}/activity/latest">{{c.senderName||c.senderRS}}</a>&nbsp;&nbsp;{{c.date}}&nbsp;&nbsp;
+                            <a href><i class="fa fa-twitter text-muted"></i></a>&nbsp;&nbsp;
+                            <a href><i class="fa fa-facebook text-muted"></i></a>&nbsp;&nbsp;
+                            <a href><i class="fa fa-linkedin text-muted"></i></a>&nbsp;&nbsp;
+                            <a href><i class="fa fa-google-plus text-muted"></i></a></small>
+                          </h4>
+                          <p>{{c.text}}</p>
+                        </div>
+                      </div>  
+                      <div class="load-more-button" ng-show="p.commentProvider.hasMore">
+                        <a href ng-click="p.commentProvider.loadMore()" class="text-lowercase text-muted">
+                          <span ng-show="p.commentProvider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                          <span translate="translate.load_more_comments"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="load-more-button" ng-show="provider.hasMore">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_posts"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>          
+    </div>
+
+    <div ng-if="paramSection=='trade'">
+      <!-- Chart + Description -->
+
+      <div class="row">
+        <div class="col-md-12">
+          <div>
+            <h4 class="account-header" style="margin-top: 5px">
+              {{assetName}}&nbsp;&nbsp;
+              <span>
+                <small>
+                  <a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade">
+                    <i class="fa fa-link"></i>&nbsp;&nbsp;{{paramAsset}}
+                  </a>
+                </small>
+              </span>
+              <span class="pull-right">
+                <b>{{trades.entities[0].price}}</b>
+                <!-- <span style="color:green">&nbsp;+ 0.98%</span><br> -->
+              </span>
+            </h4>        
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-body" style="padding: 0px; height: 300px;">
+              <div id="chartdiv" style="width:100%; height:100%"></div>    
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ask + Buy orders-->
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default" style="margin-top: 5px">
+            <div class="panel-heading">
+              <b>{{ 'translate.sell_orders' | translate }}</b>
+              <a class="pull-right no-glyph" href ng-click="buyAsset()">{{ 'translate.buy' | translate }}</a>
+            </div>
+            <div class="panel-body" style="padding: 0px; height: 250px; overflow-y: scroll">
+              <!-- <div infinite-scroll="askOrders.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false"> -->
+              <div>
+                <div class="table-responsive">
+                  <table class="table table-striped table-condensed">
+                    <thead>
+                      <tr translate-cloak>
+                        <th></th>
+                        <th>{{ 'translate.height' | translate }}</th>
+                        <th>{{ 'translate.price' | translate }}</th>
+                        <th>{{ 'translate.quantity' | translate }}</th>
+                        <th>{{ 'translate.total' | translate }}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="o in askOrders.entities" ng-class="{'text-danger': o.cancellers}" ng-hide="o.cancel_height">
+                        <td>
+                          <span ng-if="o.confirmations <= 0" class="text-muted">
+                            <i class="fa fa-spinner fa-spin"></i>
+                          </span>
+                          <span ng-if="o.confirmations > 0 && o.confirmations <= 10" class="text-muted">
+                            <b>{{o.confirmations}}</b>
+                          </span>
+                          <span ng-if="o.confirmations > 10" tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}" 
+                                  class="text-success">
+                            <i class="fa fa-check"></i>
+                          </span>
+                        </td>
+                        <td>{{o.height}}</td>                       
+                        <td>{{o.price}}</td>
+                        <td>{{o.quantity}}</td>
+                        <td>{{o.total}}</td>
+                        <td>
+                          <span ng-if="accounts[o.accountRS]" ng-click="cancelOrder(o)" 
+                                tooltip="{{ 'translate.cancel_own_order' | translate }}" style="cursor:pointer" class="text-muted">
+                            <i class="fa fa-hand-o-left"></i>
+                          </span>
+                          <a ng-if="!accounts[o.accountRS]" ng-href="#/accounts/{{o.accountRS}}/activity/latest"
+                              tooltip="{{o.accountRS}}" class="text-muted">
+                            <i class="fa fa-user"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="load-more-button" ng-show="askOrders.hasMore">
+                  <a href ng-click="askOrders.loadMore()" class="text-lowercase text-muted">
+                    <span ng-show="askOrders.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                    <span translate-cloak>{{ 'translate.load_more_ask_orders' | translate }}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="panel panel-default" style="margin-top: 5px">
+            <div class="panel-heading">
+              <b>{{ 'translate.buy_orders' | translate }}</b>
+              <a class="pull-right no-glyph" href ng-click="sellAsset()">{{ 'translate.sell' | translate }}</a>
+            </div>
+            <div class="panel-body" style="padding: 0px; height: 250px; overflow-y: scroll">
+              <!-- <div infinite-scroll="bidOrders.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false"> -->
+              <div>
+                <div class="table-responsive">
+                  <table class="table table-striped table-condensed">
+                    <thead>
+                      <tr translate-cloak>
+                        <th></th>
+                        <th>{{ 'translate.height' | translate }}</th>                      
+                        <th>{{ 'translate.price' | translate }}</th>
+                        <th>{{ 'translate.quantity' | translate }}</th>
+                        <th>{{ 'translate.total' | translate }}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="o in bidOrders.entities" ng-class="{'text-danger': o.cancellers}" ng-hide="o.cancel_height">
+                        <td>
+                          <span ng-if="o.confirmations <= 0" class="text-muted">
+                            <i class="fa fa-spinner fa-spin"></i>
+                          </span>
+                          <span ng-if="o.confirmations > 0 && o.confirmations <= 10" class="text-muted">
+                            <b>{{o.confirmations}}</b>
+                          </span>
+                          <span ng-if="o.confirmations > 10" tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}" class="text-success">
+                            <i class="fa fa-check"></i>
+                          </span>
+                        </td>
+                        <td>{{o.height}}</td>                      
+                        <td>{{o.price}}</td>
+                        <td>{{o.quantity}}</td>
+                        <td>{{o.total}}</td>
+                        <td>
+                          <span ng-if="accounts[o.accountRS]" ng-click="cancelOrder(o)" 
+                                tooltip="{{ 'translate.cancel_own_order' | translate }}" style="cursor:pointer" class="text-muted">
+                            <i class="fa fa-hand-o-left"></i>
+                          </span>
+                          <a ng-if="!accounts[o.accountRS]" ng-href="#/accounts/{{o.accountRS}}/activity/latest"
+                              tooltip="{{o.accountRS}}" class="text-muted">
+                            <i class="fa fa-user"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="load-more-button" ng-show="bidOrders.hasMore">
+                  <a href ng-click="bidOrders.loadMore()" class="text-lowercase text-muted">
+                    <span ng-show="bidOrders.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                    <span translate-cloak>{{ 'translate.load_more_bid_orders' | translate }}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent trades -->
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default" style="margin-top: 5px">
+            <div class="panel-heading"><b>{{ 'translate.recent_trades' | translate }}</b></div>
+            <div class="panel-body" style="padding: 0px; height: 250px; overflow-y: scroll">
+              <!-- <div infinite-scroll="trades.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false"> -->
+              <div>
+                <div class="table-responsive">
+                  <table class="table table-striped table-condensed">
+                    <thead>
+                      <tr translate-cloak>
+                        <th></th>
+                        <th>{{ 'translate.height' | translate }}</th>
+                        <th>{{ 'translate.date' | translate }}</th>
+                        <th>{{ 'translate.type' | translate }}</th>
+                        <th>{{ 'translate.price' | translate }}</th>
+                        <th>{{ 'translate.quantity' | translate }}</th>
+                        <th>{{ 'translate.total' | translate }}</th>
+                        <th class="hidden-xs">{{ 'translate.seller' | translate }}</th>
+                        <th class="hidden-xs">{{ 'translate.buyer' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="o in trades.entities">
+                        <td>
+                          <span ng-if="o.confirmations <= 0" class="text-muted">
+                            <i class="fa fa-spinner fa-spin"></i>
+                          </span>
+                          <span ng-if="o.confirmations > 0 && o.confirmations <= 10" class="text-muted">
+                            <b>{{o.confirmations}}</b>
+                          </span>
+                          <span ng-if="o.confirmations > 10" tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}" class="text-success">
+                            <i class="fa fa-check"></i>
+                          </span>
+                        </td>
+                        <td>{{o.height}}</td>
+                        <td>{{o.date}}</td>
+                        <td style="color: {{trades.getTypeColor(o.tradeType)}}">{{o.tradeType}}</td>
+                        <td>{{o.price}}</td>
+                        <td>{{o.quantity}}</td>
+                        <td>{{o.total}}</td>
+                        <td class="hidden-xs"><a ng-href="#/accounts/{{o.sellerRS}}/activity/latest">{{o.sellerName||o.sellerRS}}</a></td>
+                        <td class="hidden-xs"><a ng-href="#/accounts/{{o.buyerRS}}/activity/latest">{{o.buyerName||o.buyerRS}}</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="load-more-button" ng-show="trades.hasMore">
+                  <a href ng-click="trades.loadMore()" class="text-lowercase text-muted">
+                    <span ng-show="trades.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                    <span translate-cloak>{{ 'translate.load_more_trades' | translate }}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- My orders -->
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default" style="margin-top: 5px">
+            <div class="panel-heading"><b>{{ 'translate.my_orders' | translate }}</b></div>
+            <div class="panel-body" style="padding: 0px; height: 300px; overflow-y: scroll">
+              <!-- <div infinite-scroll="trades.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false"> -->
+              <div>
+                <div class="table-responsive">
+                  <table class="table table-striped table-condensed">
+                    <thead>
+                      <tr translate-cloak>
+                        <th></th>
+                        <th>{{ 'translate.height' | translate }}</th>
+                        <th>{{ 'translate.type' | translate }}</th>
+                        <th class="hidden-xs">{{ 'translate.order' | translate }}</th>
+                        <th>{{ 'translate.quantity' | translate }}</th>
+                        <th>{{ 'translate.price' | translate }}</th>
+                        <th>{{ 'translate.total' | translate }}</th>
+                        <th class="hidden-xs">{{ 'translate.account' | translate }}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="o in my_orders.entities" ng-class="{'text-danger': o.cancellers}" ng-hide="o.cancel_height">
+                        <td>
+                          <span ng-if="o.confirmations <= 0" class="text-muted">
+                            <i class="fa fa-spinner fa-spin"></i>
+                          </span>
+                          <span ng-if="o.confirmations > 0 && o.confirmations <= 10" class="text-muted">
+                            <b>{{o.confirmations}}</b>
+                          </span>
+                          <span ng-if="o.confirmations > 10" tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}" 
+                                ng-class="{'text-danger': o.cancellers, 'text-success': !o.cancellers}">
+                            <i class="fa fa-check"></i>
+                          </span>
+                        </td>
+                        <td>{{o.height}}</td>
+                        <td style="color: {{my_orders.getTypeColor(o.type)}}">{{o.type}}</td>                      
+                        <td class="hidden-xs">{{o.order}}</td>
+                        <td>{{o.quantity}}</td>                      
+                        <td>{{o.price}}</td>
+                        <td>{{o.total}}</td>
+                        <td class="hidden-xs"><a ng-href="#/accounts/{{a.accountRS}}/activity/latest">{{o.accountName||o.accountRS}}</a></td>
+                        <td><a href ng-click="cancelOrder(o)">Cancel</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>            
+              <div class="load-more-button" ng-show="my_orders.hasMore">
+                <a href ng-click="my_orders.loadMore()" class="text-lowercase text-muted">
+                  <span ng-show="my_orders.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                  <span translate-cloak>{{ 'translate.load_more_orders' | translate }}</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
