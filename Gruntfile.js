@@ -15,6 +15,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-node-webkit-builder');
+  grunt.loadNpmTasks('grunt-google-translate');
 
   // Load grunt tasks automatically
   require('load-grunt-tasks')(grunt);
@@ -29,26 +30,111 @@ module.exports = function (grunt) {
     tmp: '.tmp'
   };
 
+  var languages = [
+    { n: "Afrikaans", c:"af" },
+    { n: "Albanian", c:"sq" },
+    { n: "Arabic", c:"ar" },
+    { n: "Azerbaijani", c:"az" },  
+    { n: "Basque", c:"eu" },
+    { n: "Bengali", c:"bn" },
+    { n: "Belarusian", c:"be" },  
+    { n: "Bulgarian", c:"bg" },
+    { n: "Catalan", c:"ca" },
+    { n: "Chinese Simplified", c:"zh" },
+    { n: "Chinese Traditional", c:"zh-TW" },
+    { n: "Croatian", c:"hr" },
+    { n: "Czech", c:"cs" },
+    { n: "Danish", c:"da" },
+    { n: "Dutch", c:"nl" },
+    { n: "English", c:"en" },
+    { n: "Esperanto", c:"eo" },
+    { n: "Estonian", c:"et" },
+    { n: "Filipino", c:"tl" },
+    { n: "Finnish", c:"fi" },
+    { n: "French", c:"fr" },
+    { n: "Galician", c:"gl" },
+    { n: "Georgian", c:"ka" },
+    { n: "German", c:"de" },
+    { n: "Greek", c:"el" },
+    { n: "Gujarati", c:"gu" },  
+    { n: "Haitian Creole", c:"ht" },
+    { n: "Hebrew", c:"iw" },
+    { n: "Hindi", c:"hi" },  
+    { n: "Hungarian", c:"hu" },  
+    { n: "Icelandic", c:"is" },  
+    { n: "Indonesian", c:"id" },  
+    { n: "Irish", c:"ga" },
+    { n: "Italian", c:"it" },
+    { n: "Japanese", c:"ja" },
+    { n: "Kannada", c:"kn" },
+    { n: "Korean", c:"ko" },
+    { n: "Latin", c:"la" },
+    { n: "Latvian", c:"lv" },
+    { n: "Lithuanian", c:"lt" },
+    { n: "Macedonian", c:"mk" },
+    { n: "Malay", c:"ms" },
+    { n: "Maltese", c:"mt" },
+    { n: "Norwegian", c:"no" },
+    { n: "Persian", c:"fa" },
+    { n: "Polish", c:"pl" },
+    { n: "Portuguese", c:"pt" },
+    { n: "Romanian", c:"ro" },
+    { n: "Russian", c:"ru" },
+    { n: "Serbian", c:"sr" },
+    { n: "Slovak", c:"sk" },
+    { n: "Slovenian", c:"sl" },
+    { n: "Spanish", c:"es" },
+    { n: "Swahili", c:"sw" },
+    { n: "Swedish", c:"sv" },
+    { n: "Tamil", c:"ta" },
+    { n: "Telugu", c:"te" },
+    { n: "Thai", c:"th" },
+    { n: "Turkish", c:"tr" },
+    { n: "Ukrainian", c:"uk" },
+    { n: "Urdu", c:"ur" },
+    { n: "Vietnamese", c:"vi" },
+    { n: "Welsh", c:"cy" },
+    { n: "Yiddish", c:"yi" }  
+  ];
+  var restrictToLanguages = languages.map(function (language) { return language.c });
+
   // Define the configuration for all the tasks
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
 
     // Project settings
     yeoman: appConfig,
 
     nodewebkit: {
       options: {
-        version: '0.10.4',
+        version: '0.11.6',
         // https://github.com/mllrsohn/node-webkit-builder#optionswinico
         // macIcns: './icon.icns',
         // winIco: './win-icon.ico',
         build_dir: './dist',
         // choose what platforms to compile for here
-        mac: true,
-        win: true,
+        osx32: true,
+        osx64: true,
+        win32: true,
+        win64: true,
         linux32: true,
-        linux64: false
+        linux64: true
       },
-      src: ['./app/**/*']
+      src: [
+        './app/**/*',
+        './node_modules/java-properties/**/*'
+      ]
+    },
+
+    google_translate: {
+      default_options: {
+        options: {
+          srcPath: '<%= yeoman.app %>/i18n/**/en.json',
+          sourceLanguageCode: 'en',
+          googleApiKey: 'AIzaSyB_ByI7WlHNfELDOCqyJ-57_UhSjwJt-D8',
+          restrictToLanguages: restrictToLanguages /*.slice(-13).slice(0, 1)*/
+        }
+      }
     },
 
     // Watches files for changes and runs tasks based on the changed files
@@ -82,6 +168,10 @@ module.exports = function (grunt) {
       sass: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.sass'],
         tasks: ['sass:dist']
+      },
+      less: {
+        files: ['<%= yeoman.app %>/styles/{,*/}*.less'],
+        tasks: ['less:dist']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -161,6 +251,19 @@ module.exports = function (grunt) {
         files: {
           '<%= yeoman.tmp %>/styles/main.css': '<%= yeoman.app %>/styles/main.sass',       // 'destination': 'source'
           '<%= yeoman.app %>/styles/main.css': '<%= yeoman.app %>/styles/main.sass'
+        }
+      }
+    },
+
+    // Less
+    less: {
+      dist: {
+        options: {
+          style: 'expanded'
+        },
+        files: {
+          '<%= yeoman.tmp %>/styles/main-less.css': '<%= yeoman.app %>/styles/main.less',       // 'destination': 'source'
+          '<%= yeoman.app %>/styles/main-less.css': '<%= yeoman.app %>/styles/main.less'
         }
       }
     },
@@ -264,7 +367,7 @@ module.exports = function (grunt) {
         flow: {
           html: {
             steps: {
-              js: ['concat' /*, 'uglifyjs' */],
+              js: ['concat', 'uglifyjs'],
               css: ['cssmin']
             },
             post: {}
@@ -383,9 +486,12 @@ module.exports = function (grunt) {
             '*.html',
             'views/{,*/}*.html',
             'partials/{,*/}*.html',
+            'i18n/*',
             'plugins/**/*',
+            '!plugins/**/*.js',
+            'amstockchart/**/*',
             'JSON/{,*/}*.json',
-            'images/{,*/}*.{webp}',
+            'images/{,*/}*.{webp,wav}',
             'fonts/*'
           ]
         }, {
@@ -427,6 +533,7 @@ module.exports = function (grunt) {
             '*.html',
             'views/{,*/}*.html',
             'partials/{,*/}*.html',
+            'i18n/{,*/}*.json',
             'plugins/**/*',
             'JSON/{,*/}*.json',
             'images/{,*/}*.{webp}',
@@ -505,6 +612,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     //'html2js',
+    //'google_translate',
     'wiredep',
     'useminPrepare',
     'concurrent:dist',
@@ -515,12 +623,35 @@ module.exports = function (grunt) {
     'copy:dist',
     'cdnify',
     'sass:dist',
+    'less:dist',
     'cssmin',
-     // 'uglify',
+    'uglify',
     'filerev',
     'usemin',
-    'htmlmin'
+    //'htmlmin',
   ]);
+
+  grunt.registerTask('build-uncompressed', [
+    'clean:dist',
+    //'html2js',
+    //'google_translate',
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'autoprefixer',
+    // 'concat',
+    'ngmin',
+    // 'nodewebkit',
+    'copy:dist',
+    // 'cdnify',
+    'sass:dist',
+    'less:dist',
+    'cssmin',
+    // 'uglify',
+    'filerev',
+    // 'usemin',
+    //'htmlmin',
+  ]);  
 
   grunt.registerTask('default', [
     'newer:jshint',
