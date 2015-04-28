@@ -161,7 +161,7 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt, $sce) {
      */
     createOnWalletFileSelectedPromise: function ($scope) {
       if ($scope) {
-        $scope.$on('destroy', function () {
+        $scope.$on('$destroy', function () {
           if (gDeferred) {
             gDeferred.reject();
             gDeferred = null;
@@ -226,7 +226,7 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt, $sce) {
                   'A wallet is <b>not an alternavtive to remembering or writing down your secret phrase</b>.<br><br> ',
                   'A wallet is meant as a secure and convenient way of saving your secret phrase in a file, thats all, you still need to back it up somewhere save.<br><br>',
                   'To make life easier MofoWallet can not only store keys in a wallet, it can also read them from a wallet you provide.</p>']
-      html = $sce.trustAsHtml(html.join(''));
+      html = $sce.getTrustedHtml(html.join(''));
       plugins.get('alerts').confirm({ html: html }).then(
         function (confirmed) {
           deferred.resolve(confirmed);

@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('WalletPasswordModalController', function (items, $modalInstance, $scope, $timeout) {
+module.controller('WalletPasswordModalController', function (items, $modalInstance, $scope, $timeout, timeagoService) {
   $scope.items = items;
   $scope.items.wrongPassword = false;
 
@@ -29,7 +29,7 @@ module.controller('WalletPasswordModalController', function (items, $modalInstan
   }
 
   $scope.formatFile = function (file) {
-    return 'File: ' + file.name + ' | ' + bytesToSize(file.size) + ' | last modified: ' + $.timeago(file.lastModifiedDate);
+    return 'File: ' + file.name + ' | ' + bytesToSize(file.size) + ' | last modified: ' + timeagoService.format(file.lastModifiedDate);
   }
 });
 })();

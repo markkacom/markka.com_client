@@ -40,7 +40,7 @@
           <tbody>
             <tr ng-repeat="e in entries">
               <td><strong>{{e.name}}</strong></td>
-              <td><a ui-sref="accounts({id_rs:'{{e.id_rs}}'})">{{e.id_rs}}</a></td>
+              <td><a ng-href="#/accounts/{{e.id_rs}}/activity/latest">{{e.id_rs}}</a></td>
               <td><a href ng-click="showSecretPhrase(e.id_rs)">Show password</a></td>
               <td><a href ng-click="removeSecretPhrase(e.id_rs)">Remove</a></td>
             </tr>

@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('SettingsPluginWalletController', function($scope, $timeout, plugins, db, alerts, nxt, $sce) {
+module.controller('SettingsPluginWalletController', function($scope, $timeout, plugins, db, nxt, $sce, timeagoService) {
 
   var walletPlugin  = plugins.get('wallet');
   $scope.fileName   = '';
@@ -42,7 +42,7 @@ module.controller('SettingsPluginWalletController', function($scope, $timeout, p
   }
 
   function formatFile(file) {
-    return file ? ('File: ' + file.name + ' | ' + bytesToSize(file.size) + ' | last modified: ' + $.timeago(file.lastModifiedDate)) : '';
+    return file ? ('File: ' + file.name + ' | ' + bytesToSize(file.size) + ' | last modified: ' + timeagoService.format(file.lastModifiedDate)) : '';
   }  
 
   /* XXX TODO investigate if using a modal window will help to detect native save as to complete
@@ -67,7 +67,7 @@ module.controller('SettingsPluginWalletController', function($scope, $timeout, p
     var entry = $scope.wallet[key];
     if (entry) {
       plugins.get('alerts').confirm({ 
-        html: $sce.trustAsHtml('<p>Please confirm that you want to remove this account from your wallet.<br>'+
+        html: $sce.getTrustedHtml('<p>Please confirm that you want to remove this account from your wallet.<br>'+
               'You must save/backup your wallet for the removal to take effect.</p>')
       }).then(
         function (remove_from_wallet) {
@@ -75,7 +75,7 @@ module.controller('SettingsPluginWalletController', function($scope, $timeout, p
             $scope.$evalAsync(function () {
               walletPlugin.remove(key);
               plugins.get('alerts').confirm({ 
-                html: $sce.trustAsHtml('<p>Do you want to remove this account from mofo\'s database too?<br>'+
+                html: $sce.getTrustedHtml('<p>Do you want to remove this account from mofo\'s database too?<br>'+
                         'If you choose not to remove the account from the database you can remove it later from within the accounts section.</p>')
               }).then(
                 function (remove_from_db) {
