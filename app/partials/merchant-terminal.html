@@ -1,0 +1,39 @@
+<div class="row landing-page">
+  <div class="col-md-offset-3 col-md-6">
+    
+
+    <div class="panel panel-primary language-select">
+      <div class="panel-heading">
+        <h3 class="panel-title">Merchant terminal</h3>
+      </div>  
+      <div class="panel-body">
+        <h2>Amount <b>{{amountNXT}}</b> {{symbol}}</h2>
+        <p></p>
+        <p>
+          <div class="form-group">
+            <span class="form-control-static">
+              <!-- <label class="control-label">Recipient</label> -->
+              <div>
+                <span ng-if="recipientName">{{recipientName}}<br><span class="text-muted">{{paramRecipient}}</span></span>
+                <span ng-if="!recipientName">{{paramRecipient}}</span>
+              </div>
+            </span>
+          </div>
+        </p>
+        <p>
+          <div class="form-group">
+            <span class="form-control-static">
+              <!-- <label class="control-label">Message</label> -->
+              <div>{{paramDescription}}</div>
+            </span>
+          </div>
+        </p>
+        <p>
+          <a class="btn btn-lg btn-success pull-right" href ng-click="payNow()">
+            <i class="fa fa-1x fa-paper-plane-o"></i>&nbsp;&nbsp;Pay now</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
