@@ -7,49 +7,28 @@
          this file.
 
          The only way the plugins differ is at the top of the status.js controller. -->
+
     <li>&nbsp;</li>
     <li style="padding-top: 2px">
       <div class="btn-group dropup">
-        <button style="text-align: left; padding-left:10px" type="button" class="btn btn-default navbar-btn" 
-        ui-sref="blocks({engine:'fimk'})">
-          <span>
-            <span ng-if="show_spinner"><i class="fa fa-circle-o-notch fa-spin"></i></span>&nbsp;FIM&nbsp;
-            <span ng-if="server_running && !downloading">{{numberOfBlocks}}&nbsp;&nbsp;<i class="fa fa-lightbulb-o"></i></span>
-            <span ng-if="server_running && downloading">{{numberOfBlocks}}/{{lastBlockchainFeederHeight}}&nbsp;<i class="fa fa-cog fa-spin"></i></span>
-            <span ng-if="!server_running">{{blockheight}}</span>
-          </span>
+
+        <a href class="btn btn-default navbar-btn">FIMK</a>
+
+        <!-- global network - always displays the height of the connected public node -->              
+        <a style="text-align: left;" class="btn btn-default navbar-btn" 
+            href="#/activity/fim/activity/latest">
+          <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{provider.remoteheight}}</span>
+        </a>
+
+        <!-- local network - when server is off it displays -->
+        <a style="text-align: left; padding-left:10px" class="btn btn-default navbar-btn" 
+            href="#/server/fim/console">
+          <i class="fa fa-desktop"></i><span ng-show="provider.server_running">&nbsp;&nbsp;{{provider.blockheight}}</span>
           <div style="position: absolute; width: 100%; left: 5px; top: 2px; padding-right: 10px;">
-            <progressbar ng-if="downloading" style="max-height:5px; padding: 0px; border: 0px;" class="progress-striped active" type="default" max="100" value="(numberOfBlocks * 100) / lastBlockchainFeederHeight" >&nbsp;</progressbar>
-          </div>       
-        </button>
-        <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
-          <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <div class="panel panel-default dropdown-menu">
-          <div class="panel-body status-popup">
-            <div>Connected to <strong>{{net_name}}</strong> on port <strong>{{port}}</strong></div>
-            <div ng-if="!server_running">Local server <strong><a href ui-sref="settings({id: 'full-node'})">not running</a></strong></div>
-            <div ng-if="server_running">Local server <strong><a href ui-sref="settings({id: 'full-node'})">running</a></strong> version {{version}} <span class="pull-right">{{blockheight}}</span></div>
-            <div ng-if="server_running && downloading">
-              <p>Blockchain download in progress <strong>{{numberOfBlocks}}/{{lastBlockchainFeederHeight}}</strong></p>
-              <p><progressbar class="progress-striped active" type="default" max="100" value="(numberOfBlocks * 100) / lastBlockchainFeederHeight" >&nbsp;</progressbar></p>
-            </div>
-            <p>Recent activity</p>
-            <div ng-repeat="r in requests">
-              <span>
-                <span ng-if="r.glyph_icon" class="{{r.glyph_icon}}"></span>
-                <i ng-if="r.font_awsome" class="{{r.font_awsome}}"></i>
-              </span>&nbsp;
-              <span>{{r.url}}</span>&nbsp;
-              <span ng-if="r.use_cors">
-                <span ng-if="r.glyph_icon" class="glyphicon glyphicon-copyright-mark"></span>
-              </span>
-              <span class="pull-right">{{r.methodName}} <span ng-if="r.tries_left">(retry {{10-r.tries_left}}/10)</span></span>            
-            </div>
-            <p><br><a href ui-sref="settings({id:'nodes'})">Manage nodes</a></p>
+            <progressbar ng-if="provider.downloading" style="max-height:5px; padding: 0px; border: 0px;" class="progress-striped active" 
+            type="default" max="100" value="provider.progress" >&nbsp;</progressbar>
           </div>
-        </div>    
+        </a>
       </div>
     </li>
   </ul>
