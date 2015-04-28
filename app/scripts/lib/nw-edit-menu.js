@@ -1,4 +1,4 @@
-$(function() {
+angular.element(document).ready(function() {
   function Menu(cutLabel, copyLabel, pasteLabel) {
     var gui = require('nw.gui')
       , menu = new gui.Menu()
@@ -45,6 +45,22 @@ $(function() {
     return false;
   }
 
+  function installMinimizeToTray() {
+    var gui = require('nw.gui');
+    var win = gui.Window.get();
+    var tray;
+
+    win.on('minimize', function() {
+      this.hide();
+      tray = new gui.Tray({ icon: 'images/fim_coin.png' });
+      tray.on('click', function() {
+        win.show();
+        this.remove();
+        tray = null;
+      });
+    });
+  }
+
   try {
     var menu = new Menu(/* pass cut, copy, paste labels if you need i18n*/);
     $(document).on("contextmenu", function(e) {
@@ -53,6 +69,9 @@ $(function() {
         menu.popup(e.originalEvent.x, e.originalEvent.y);
       }
     });
+    /*if (navigator.appVersion.indexOf("Win")!=-1) {
+      installMinimizeToTray();
+    }*/
   } catch (e) {
     console.log('nodewebkit-specific', e);
   }
