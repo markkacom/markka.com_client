@@ -1,7 +1,7 @@
 {
   "name": "mofowallet",
   "description": "Are you a bad mofo? | mofowallet.com | desktop version",
-  "version": "0.3.0",
+  "version": "0.4",
   "main": "index.html",
   "window": {
     "toolbar": false,
