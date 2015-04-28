@@ -1,7 +1,11 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('InspectorPluginInspectModalController', function (items, $modalInstance, $scope, $sce, $timeout, $state) {
+module.controller('InspectorPluginInspectModalController', function (items, $modalInstance, $scope, $sce, $timeout, $location, $rootScope) {
+
+  $rootScope.$on("$routeChangeStart", function (event, next, current) {  
+    $timeout(function () { $scope.close(); }, 1000, false);
+  });
   
   $scope.items = items;
   var order = items.order ? items.order.split(',') : [];
@@ -12,7 +16,7 @@ module.controller('InspectorPluginInspectModalController', function (items, $mod
 
   $scope.goToAccount = function (id_rs) {
     $timeout(function () {
-      $state.transitionTo('accounts', {id_rs:id_rs, action:'show'}, {reload:true});      
+      $location.path('/accounts/'+id_rs);
     });
     $scope.close();
   }
@@ -20,7 +24,7 @@ module.controller('InspectorPluginInspectModalController', function (items, $mod
   $scope.goToAsset = function (asset_id, issuerRS) {
     var engine = issuerRS.indexOf('NXT-') == 0 ? 'nxt' : 'fimk';
     $timeout(function () {
-      $state.transitionTo('assets', {engine:engine, asset:asset_id}, {reload:true});
+      $location.path('/assets/'+engine+'/'+asset_id);
     });
     $scope.close();
   }
@@ -46,7 +50,6 @@ module.controller('InspectorPluginInspectModalController', function (items, $mod
       renderObject(s, 0, tuple.key, tuple.value, items.translator||{});
     });
     s.push('</tbody></table>');
-    console.log(s.join(''));
     return s.join('');
   }
 
@@ -80,6 +83,6 @@ module.controller('InspectorPluginInspectModalController', function (items, $mod
     }    
   }
 
-  $scope.tableHTML = $sce.trustAsHtml(renderTable(items.object));
+  $scope.tableHTML = $sce.getTrustedHtml(renderTable(items.object));
 });
 })();

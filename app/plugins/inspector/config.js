@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (modals, plugins, nxt, alerts, $q, db, $timeout) {
+module.run(function (modals, plugins, nxt, $q, db, $timeout) {
 
   var baseTranslator = {
     timestamp: function (value) {
@@ -14,20 +14,27 @@ module.run(function (modals, plugins, nxt, alerts, $q, db, $timeout) {
       return ['Fee', nxt.util.convertToNXT(value)]
     },
     senderRS: function (value) {
-      return ['Sender', value+'&nbsp;<a href="#" onclick="angular.element(this).scope().goToAccount(\''+value+'\')">(open)</a>']
+      return ['Sender', '<a href="#/accounts/'+value+'/activity/latest">'+value+'</a>']
     },
     recipientRS: function (value) {
-      return ['Recipient', value+'&nbsp;<a href="#" onclick="angular.element(this).scope().goToAccount(\''+value+'\')">(open)</a>']
+      return ['Recipient', '<a href="#/accounts/'+value+'/activity/latest">'+value+'</a>']
     },
     nextLesseeRS: function (value) {
-      return ['Next Lessee', value+'&nbsp;<a href="#" onclick="angular.element(this).scope().goToAccount(\''+value+'\')">(open)</a>']
+      return ['Next Lessee', '<a href="#/accounts/'+value+'/activity/latest">'+value+'</a>']
     },
     currentLesseeRS: function (value) {
-      return ['Current Lessee', value+'&nbsp;<a href="#" onclick="angular.element(this).scope().goToAccount(\''+value+'\')">(open)</a>']
+      return ['Current Lessee', '<a href="#/accounts/'+value+'/activity/latest">'+value+'</a>']
     },
     accountRS: function (value) {
-      return ['Account', value+'&nbsp;<a href="#" onclick="angular.element(this).scope().goToAccount(\''+value+'\')">(open)</a>']
+      return ['Account', '<a href="#/accounts/'+value+'/activity/latest">'+value+'</a>']
+      //return ['Account', value+'&nbsp;<a href="#" ui-sref="accounts({id_rs:\''+value+'\'})" ui-sref-opts="{reload:true}">(open)</a>']
     },
+    buyerRS: function (value) {
+      return ['Buyer', '<a href="#/accounts/'+value+'/activity/latest">'+value+'</a>']
+    },
+    sellerRS: function (value) {
+      return ['Seller', '<a href="#/accounts/'+value+'/activity/latest">'+value+'</a>']
+    }
   };
 
   function TransactionTranslator(api, transaction) {
