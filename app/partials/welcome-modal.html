@@ -1,0 +1,214 @@
+<div class="panel panel-primary language-select">
+  <div class="panel-body">
+
+    <!-- welcome screen -->
+    <div ng-if="items.state==0" class="col-xs-12">
+      <h3 class="text-center" translate="translate.select_option_to_continue"></h3>
+      <!-- <p translate="translate.select_option_to_continue"></p> -->
+      <p class="text-center" >
+        <button ng-click="items.state=1" class="btn btn-lg btn-block btn-primary">
+          <b translate="translate.create_new_account"></b><br>
+          <small>(<span translate="translate.and_get_free_coins"/>)</small>
+        </button>
+      </p>
+      <p class="text-center" >
+        <button ng-click="items.state=6" class="btn btn-lg btn-block btn-default">
+          <b translate="translate.add_existing_account"></b><br>
+          <small>(<span translate="translate.passphrase_not_needed"/>)</small>
+        </button>
+      </p>
+      <p class="text-center">
+        <a href ng-click="close()" translate="translate.let_me_browse"></a>
+      </p>
+    </div>
+
+    <!-- create new account -->
+    <div ng-if="items.state==1" class="col-xs-12">
+      <div>
+        <h3 class="text-center" translate="translate.create_new_account"></h3>
+        <p>Creating accounts is <u>free</u>, create as many accounts as you want Mofowallet will keep track of them for you.</p>
+        <p>The key to your account is a 12 word sentence called a <u>passphrase</u>, if asked for your passphrase remember to enter the words in the same order.</p>
+        <p>Make sure you write down your passphrase before you continue.</p>
+        <p>
+          <div class="form-group" ng-init="generatePassphrase()">
+            <label>This is your passphrase - <a href ng-click="generatePassphrase()">click to generate another passphrase</a></label>
+            <textarea rows="2" class="form-control" ng-model="items.passphrase" select-on-click></textarea>
+          </div>
+        </p>
+        <br>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-default" href ng-click="items.state=0" translate="translate.back"></a>
+        </div>
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-primary" href ng-click="items.state=2" translate="translate.continue"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- confirm you stored your secret phrase --> 
+    <div ng-if="items.state==2" class="col-xs-12">
+      <div>
+        <h3 class="text-center" translate="translate.create_new_account"></h3>
+        <p class="text-center">Please confirm you have written down your passphrase by entering it below.</p>
+        <p>
+          <div class="form-group">
+            <label>Enter passphrase here</label>
+            <textarea rows="2" class="form-control" ng-model="items.passphraseConfirm"></textarea>            
+          </div>
+        </p>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-default" href ng-click="items.state=1" translate="translate.back"></a>
+        </div>
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-primary" href ng-click="items.state=3" 
+            ng-disabled="items.passphrase != items.passphraseConfirm" translate="translate.continue"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- choose account type (FIMK or NXT) -->
+    <div ng-if="items.state==3" class="col-xs-12">
+      <div>
+        <h3 class="text-center" translate="translate.create_new_account"></h3>
+        <p>Please select what kind of account you wish to create.</p>
+        <p>
+          <div class="row">
+            <div class="col-xs-6">
+              <button class="btn btn-block btn-default btn-lg" ng-click="setEngineType('TYPE_FIM')" 
+              ng-class="{'btn-success': items.engineType == 'TYPE_FIM'}"><b><u>FIMK</u></b></button>
+            </div>
+            <div class="col-xs-6" ng-if="enableDualEngines">
+              <button class="btn btn-block btn-default btn-lg" ng-click="setEngineType('TYPE_NXT')" 
+              ng-class="{'btn-success': items.engineType == 'TYPE_NXT'}"><b><u>NXT</u></b></button>
+            </div>
+          </div>
+        </p>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-default" href ng-click="items.state=2" translate="translate.back"></a>
+        </div>
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-primary" href ng-click="items.state=4" 
+            ng-disabled="!items.engineType" translate="translate.continue"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- use faucet -->
+    <div ng-if="items.state==4" class="col-xs-12">
+      <div>
+        <h3 class="text-center" translate="translate.create_new_account"></h3>
+        <div class="well text-center">This is your new account.<br><b>{{items.id_rs}}</b></div>
+
+        <div ng-if="!items.faucetOnline">
+          <p>Unfortunately the faucet is currently <span class="text-danger"><u>offline</u></span>.</p>
+        </div>
+        <div ng-if="items.faucetOnline">
+          <p>To receive free {{items.symbol}} on your new account enter your email address below.</p>
+          <p>
+            <div class="form-group">
+              <div class="input-group">
+                <input class="form-control" placeholder="Email" name="email" type="email" ng-model="items.email" required>
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" disabled>
+                    <span class="glyphicon glyphicon-envelope"></span>
+                  </button>
+                </span>
+              </div>
+            </div>
+            <a href ng-click="items.state=5" translate="translate.no_thanks_faucet"></a>
+          </p>
+        </div>
+      </div>
+      <div class="row" ng-init="saveEnabled=false">
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-default" href ng-click="items.state=3" translate="translate.back"></a>
+        </div>
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-success" href ng-click="items.faucetOnline ? sendEmail() : items.state=5" 
+              ng-disabled="!items.email && items.faucetOnline">{{ (items.faucetOnline ? 'translate.send' : 'translate.continue') | translate }}</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- save account -->
+    <div ng-if="items.state==5" class="col-xs-12">
+      <div>
+        <h3 class="text-center" translate="translate.create_new_account"></h3>
+        <div class="well text-center">This is your new account.<br><b>{{items.id_rs}}</b></div>
+        <p>Your account is ready for use and will be stored in memory, you will find this account and your other accounts on your Dashboard (the link to your Dashboard is in the toolbar at the top of the screen).</p>
+        <!-- XXX wallet disabled -->
+        <!-- <p>After you click Save you will be asked if you want to store your account passphrase in your local wallet.</p> -->
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-default" href ng-click="items.state=4" translate="translate.back"></a>
+        </div>
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-success" href ng-click="saveNewAccount()" translate="translate.save"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- add existing accounts -->
+    <div ng-if="items.state==6" class="col-xs-12">
+      <div>
+        <h3 class="text-center" translate="translate.add_existing_account"></h3>
+        <p>Add your existing FIMK <span ng-if="enableDualEngines">or NXT</span> account.</p>
+        <p>
+          <form accept-charset="UTF-8" role="form" name="addAccountForm" novalidate>
+            <div class="form-group" ng-class="{ 'has-error' : !addAccountForm.$valid && !addAccountForm.$pristine }">
+              <label>Enter account here&nbsp;&nbsp;<span class="text-danger" ng-show="!addAccountForm.$valid && !addAccountForm.$pristine">Invalid address</span></label>
+              <input type="text" class="form-control" ng-model="items.id_rs" required 
+                ui-validate=" 'isValidID($value)' " ui-validate-watch=" 'items.id_rs' " name="id_rs" ng-change="accountIDChanged()">
+            </div>
+            <div class="form-group">
+              <label>Or enter passphrase here</label>
+              <input type="password" class="form-control" ng-model="items.passphrase" ng-change="passphraseChanged()">
+            </div>
+            <div class="form-group">
+              <label>Account public key (calculated from passphrase)</label>
+              <input type="text" class="form-control" ng-model="items.publicKey">
+            </div>            
+          </form>
+        </p>
+        <br>        
+      </div>
+      <div class="row" ng-init="saveEnabled=false">
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-default" href ng-click="items.state=0" translate="translate.back"></a>
+        </div>
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-success" href ng-click="items.state=7" translate="translate.continue" 
+            ng-disabled="!addAccountForm.$valid"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- save existing account -->
+    <div ng-if="items.state==7" class="col-xs-12">
+      <div>
+        <h3 class="text-center" translate="translate.add_existing_account"></h3>
+        <div class="well text-center">Ready to add this account.<br><b>{{items.id_rs}}</b></div>
+        <p>This account will be stored in memory, you will find this account and your other accounts on your Dashboard (the link to your Dashboard is in the toolbar at the top of the screen).</p>
+        <!-- XXX wallet disabled -->
+        <!-- <p>After you click Save you will be asked if you want to store your account passphrase in your local wallet.</p> -->
+      </div>
+      <div class="row" ng-init="saveEnabled=false">
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-default" href ng-click="items.state=6" translate="translate.back"></a>
+        </div>
+        <div class="col-xs-6">
+          <a class="btn btn-block btn-success" href ng-click="saveExistingAccount()" translate="translate.save"></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
