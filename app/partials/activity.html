@@ -1,0 +1,434 @@
+<div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+    <ul class="nav navbar-stacked">
+      
+      <li role="presentation">
+        <a href class="text-success" ng-init="fimCollapse=true" 
+            ng-click="loadStatistics('TYPE_FIM', 'fimCollapse')">
+          <b>FIM</b>&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;&nbsp;<span>{{blockstate['TYPE_FIM'].height}}</span><br>
+          <span class="text-muted" translate translate-values="{seconds: blockstate['TYPE_FIM'].seconds_ago}">translate.seconds_ago</span>&nbsp;&nbsp;<span class="caret"></span>
+        </a>
+        <ul class="nav navbar-stacked" collapse="fimCollapse">
+          <li>
+            <form class="navbar-form statistics-form" role="search">
+              <div class="form-group" ng-if="!fimCollapse">
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.average_block_time</label>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].average}} {{ 'translate.seconds' | translate }}</div>
+                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsToday}} FIM</div>
+                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_week</label>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsWeek}} FIM</div>
+                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_month</label>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsMonth}} FIM</div>
+                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_today</label>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountToday}}</div>
+                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_week</label>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountWeek}}</div>
+                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_month</label>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountMonth}}</div>
+                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+              </div>
+            </form>
+          </li>
+        </ul>
+      </li>
+
+      <li role="presentation" ng-show="enableDualEngines">
+        <a href class="text-success" ng-init="nxtCollapse=true" 
+            ng-click="loadStatistics('TYPE_NXT', 'nxtCollapse')">
+          <b>NXT</b>&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;&nbsp;<span>{{blockstate['TYPE_NXT'].height}}</span><br>
+          <span class="text-muted" translate translate-values="{seconds: blockstate['TYPE_NXT'].seconds_ago}">translate.seconds_ago</span>&nbsp;&nbsp;<span class="caret"></span>
+        </a>
+        <ul class="nav navbar-stacked" collapse="nxtCollapse">
+          <li>
+            <form class="navbar-form statistics-form" role="search">
+              <div class="form-group" ng-if="!nxtCollapse">
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.average_block_time</label>
+                  <div ng-if="!statistics['TYPE_NXT'].isLoading">{{statistics['TYPE_NXT'].average}} {{ 'translate.seconds' | translate }}</div>
+                  <div ng-if="statistics['TYPE_NXT'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>
+                  <div ng-if="!statistics['TYPE_NXT'].isLoading">{{statistics['TYPE_NXT'].rewardsToday}} NXT</div>
+                  <div ng-if="statistics['TYPE_NXT'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_week</label>
+                  <div ng-if="!statistics['TYPE_NXT'].isLoading">{{statistics['TYPE_NXT'].rewardsWeek}} NXT</div>
+                  <div ng-if="statistics['TYPE_NXT'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_month</label>
+                  <div ng-if="!statistics['TYPE_NXT'].isLoading">{{statistics['TYPE_NXT'].rewardsMonth}} NXT</div>
+                  <div ng-if="statistics['TYPE_NXT'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_today</label>
+                  <div ng-if="!statistics['TYPE_NXT'].isLoading">{{statistics['TYPE_NXT'].transactionCountToday}}</div>
+                  <div ng-if="statistics['TYPE_NXT'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_week</label>
+                  <div ng-if="!statistics['TYPE_NXT'].isLoading">{{statistics['TYPE_NXT'].transactionCountWeek}}</div>
+                  <div ng-if="statistics['TYPE_NXT'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+                <div class="form-control-static">
+                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_month</label>
+                  <div ng-if="!statistics['TYPE_NXT'].isLoading">{{statistics['TYPE_NXT'].transactionCountMonth}}</div>
+                  <div ng-if="statistics['TYPE_NXT'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                </div>
+              </div>
+            </form>
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <hr class="stacked-divider">
+      </li>
+
+      <li role="presentation" route-active="activity/{{paramEngine}}/activity">
+        <a href ng-init="activityCollapse=true" ng-click="activityCollapse=!activityCollapse">
+          <i class="fa fa-book"></i>&nbsp;&nbsp;{{'translate.activity'|translate}}&nbsp;<span class="caret"></span>
+        </a>
+        <ul class="nav navbar-stacked" collapse="activityCollapse">
+          <li><a href="#/activity/fim/activity/latest">FIM</a></li>
+          <li><a href="#/activity/nxt/activity/latest" ng-if="enableDualEngines">NXT</a></li>
+        </ul>
+      </li>
+
+      <li role="presentation" route-active="activity/{{paramEngine}}/blockchain">
+        <a href ng-init="blockchainCollapse=true" ng-click="blockchainCollapse=!blockchainCollapse">
+          <i class="fa fa-cubes"></i>&nbsp;&nbsp;{{'translate.blockchain'|translate}}&nbsp;<span class="caret"></span>
+        </a>
+        <ul class="nav navbar-stacked" collapse="blockchainCollapse">
+          <li><a href="#/activity/fim/blockchain/latest">FIM</a></li>
+          <li><a href="#/activity/nxt/blockchain/latest" ng-if="enableDualEngines">NXT</a></li>
+        </ul>
+      </li>
+
+      <li role="presentation" route-active="activity/{{paramEngine}}/forgers">
+        <a href ng-init="forgersCollapse=true" ng-click="forgersCollapse=!forgersCollapse">
+          <i class="fa fa-wrench"></i>&nbsp;&nbsp;{{'translate.forgers'|translate}}&nbsp;<span class="caret"></span>
+        </a>
+        <ul class="nav navbar-stacked" collapse="forgersCollapse">
+          <li><a href="#/activity/fim/forgers/latest">FIM</a></li>
+          <li><a href="#/activity/nxt/forgers/latest" ng-if="enableDualEngines">NXT</a></li>
+        </ul>
+      </li>
+
+      <li role="presentation" route-active="activity/{{paramEngine}}/assets">
+        <a href ng-init="assetsCollapse=true" ng-click="assetsCollapse=!assetsCollapse">
+          <i class="fa fa-line-chart"></i>&nbsp;&nbsp;{{'translate.assets'|translate}}&nbsp;<span class="caret"></span>
+        </a>
+        <ul class="nav navbar-stacked" collapse="assetsCollapse">
+          <li><a href="#/activity/fim/assets/latest">FIM</a></li>
+          <li><a href="#/activity/nxt/assets/latest" ng-if="enableDualEngines">NXT</a></li>
+        </ul>
+      </li>
+
+      <li ng-show="showFilter">
+        <hr class="stacked-divider">
+      </li>
+
+      <li ng-show="showFilter">
+        <a href ng-init="filterCollapse=true" ng-click="filterCollapse=!filterCollapse">
+          <span class="glyphicon glyphicon-wrench"></span>
+          &nbsp;&nbsp;{{'translate.filter' | translate}}&nbsp;<span class="caret"></span>
+        </a>
+        <ul class="nav navbar-stacked" collapse="filterCollapse">
+          <li>
+            <form class="navbar-form" role="search">
+              <div class="form-group">
+                <span class="form-control-static">
+                  <label class="control-label" translate translate-cloak>translate.period</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" 
+                        min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" ng-required="true" 
+                        translate-cloak close-text="{{ 'translate.close' | translate }}" 
+                        placeholder="{{'translate.period' | translate}}"/>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </div>
+                </span>
+              </div>
+            </form>
+          </li>
+          <li ng-show="showTransactionFilter">
+            <form class="navbar-form" role="search">
+              <div class="form-group" style="width:100%">
+                <label class="control-label" translate translate-cloak>translate.transaction_type</label>
+                <span class="form-control-static">
+                  <div class="panel panel-default">
+                    <div class="panel-body">
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.all" ng-change="filterAllChanged()">
+                          {{ 'filter.all' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.payments" ng-change="filterChanged()">
+                          {{ 'filter.payments' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.messages" ng-change="filterChanged()">
+                          {{ 'filter.messages' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.aliases" ng-change="filterChanged()">
+                          {{ 'filter.aliases' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.namespacedAliases" ng-change="filterChanged()">FIMKrypto</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.accountInfo" ng-change="filterChanged()">
+                          {{ 'filter.account_info' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.announceHub" ng-change="filterChanged()">
+                          {{ 'filter.announce_hub' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.polls" ng-change="filterChanged()">
+                          {{ 'filter.polls' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.goodsStore" ng-change="filterChanged()">
+                          {{ 'filter.goods_store' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.balanceLeasing" ng-change="filterChanged()">
+                          {{ 'filter.balanace_leasing' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.trades" ng-change="filterChanged()">
+                          {{ 'filter.trades' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.assetIssued" ng-change="filterChanged()">
+                          {{ 'filter.asset_issued' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.assetTransfer" ng-change="filterChanged()">
+                          {{ 'filter.asset_transfer' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.assetOrder" ng-change="filterChanged()">
+                          {{ 'filter.asset_order' | translate }}</label>
+                      </div>
+                      <!-- Currency -->
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.currencyIssued" ng-change="filterChanged()">
+                          {{ 'filter.currency_issued' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.currencyTransfer" ng-change="filterChanged()">
+                          {{ 'filter.currency_transfer' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.currencyOther" ng-change="filterChanged()">
+                          {{ 'filter.currency_other' | translate }}</label>
+                      </div>    
+                    </div>
+                  </div>
+                </span>
+              </div>
+            </form>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-xs-12 col-sm-10">
+    <p class="visible-xs">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+            ng-click="offCanvas=!offCanvas">
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+      </button>
+    </p>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
+            <span ng-if="b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>
+            </span>
+            <span ng-if="!b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
+              <span ng-if="!b.href">{{ b.label }}</span>              
+            </span>
+            <span ng-if="b.period">
+              <span translate translate-cloak>translate.show_results_before</span>&nbsp;<b>{{paramPeriod}}</b>
+              <a href="#/activity/{{paramEngine}}/{{paramSection}}/latest">
+                <i class="fa fa-times"></i>&nbsp;<span translate="translate.show_latest"></span>
+              </a>
+            </span>
+          </li>
+          <a href ng-click="provider.reload()" class="pull-right">
+            {{ 'translate.reload' | translate }}&nbsp;&nbsp;
+            <i class="fa fa-refresh" ng-class="{'fa-spin': provider.isLoading}"></i>
+          </a>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div ng-if="paramSection=='activity'">
+          <div infinite-scroll="provider.loadMore()" 
+                infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <tbody>
+                  <tr ng-repeat="a in provider.entities">
+                    <td>
+                      <span ng-if="a.confirmations <= 0"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                      <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger"><b>{{a.confirmations}}</b></span>
+                      <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations">
+                        <i class="fa fa-check text-success"></i></span>
+                    </td>
+                    <td nowrap style="padding-left: 0px" class="hidden-xs text-muted">{{a.date}}</td>
+                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
+                      ng-bind-html="a.renderedHTML"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="load-more-button">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate-cloak>{{ 'translate.load_more_activities' | translate }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div ng-if="paramSection=='blockchain'">
+          <div infinite-scroll="provider.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr translate-cloak class="text-muted">
+                    <th>{{ 'translate.height' | translate }}</th>
+                    <th>{{ 'translate.date' | translate }}</th>
+                    <th>{{ 'translate.generator' | translate }}</th>
+                    <th>{{ 'translate.transactions' | translate }}</th>
+                    <th>{{ 'translate.amount' | translate }}</th>
+                    <th>{{ 'translate.fee' | translate }}</th>
+                    <th>{{ 'translate.block_reward' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="b in provider.entities">
+                    <td>{{b.height}}</td>
+                    <td>{{b.date}}</td>
+                    <td><a ng-href="#/accounts/{{b.generator}}/activity/latest">{{b.generator}}</a></td>
+                    <td>{{b.numberOfTransactions}}</td>
+                    <td>{{b.totalAmountNXT}}</td>
+                    <td>{{b.totalFeeNXT}}</td>
+                    <td>{{b.totalPOSRewardNXT}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="load-more-button" ng-show="provider.hasMore">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate-cloak>{{ 'translate.load_more_blocks' | translate }}</span>
+              </a>
+            </div>
+          </div>          
+        </div>
+
+        <div ng-if="paramSection=='forgers'">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr translate-cloak class="text-muted">
+                  <th>{{ 'translate.account' | translate }}</th>
+                  <th>{{ 'translate.name' | translate }}</th>
+                  <th>{{ 'translate.blocks_forged' | translate }}</th>
+                  <th>{{ 'translate.total_rewards' | translate:"{symbol:symbol}" }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="f in provider.forgers">
+                  <td><a ng-href="#/accounts/{{f.accountRS}}/activity/latest">{{f.accountRS}}</td>
+                  <td>{{f.accountName}}</td>
+                  <td>{{f.count}}</td>
+                  <td>{{f.totalFeeNXT}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div ng-if="paramSection=='assets'">
+          <div infinite-scroll="provider.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr translate-cloak class="text-muted">
+                    <th>{{ 'translate.name' | translate }}</th>
+                    <th>{{ 'translate.identifier' | translate }}</th>
+                    <th>{{ 'translate.total_supply' | translate }}</th>
+                    <th>{{ 'translate.issuer' | translate }}</th>
+                    <th>{{ 'translate.trades' | translate }}</th>
+                    <th>{{ 'translate.transfers' | translate }}</th>
+                    <th>{{ 'translate.accounts' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="a in provider.entities">
+                    <td>{{a.name}}</td>
+                    <td><a ng-href="#/assets/{{paramEngine}}/{{a.asset}}/trade">{{a.asset}}</a></td>
+                    <td>{{a.quantity}}</td>
+                    <td><a ng-href="#/accounts/{{a.accountRS}}/activity/latest">{{a.accountRS}}</a></td>
+                    <td>{{a.numberOfTrades}}</td>
+                    <td>{{a.numberOfTransfers}}</td>
+                    <td>{{a.numberOfAccounts}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="load-more-button" ng-show="provider.hasMore">
+              <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_assets"></span>
+              </a>
+            </div>            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
