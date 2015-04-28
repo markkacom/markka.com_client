@@ -1,9 +1,12 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (nxt) {
+module.run(function (nxt, timeagoService) {
 
   function convertNQT(amount, decimals) {
+    if (typeof amount == 'undefined') {
+      return '0';
+    }
     var negative        = '',
         decimals        = decimals || 8,
         afterComma      = '',
@@ -28,6 +31,9 @@ module.run(function (nxt) {
   }
 
   function convertToNQT(amountNXT) {
+    if (typeof amountNXT == 'undefined') {
+      return '0';
+    }
     amountNXT   = String(amountNXT).replace(/,/g,'');
     var parts   = amountNXT.split(".");
     var amount  = parts[0];
@@ -60,6 +66,9 @@ module.run(function (nxt) {
   }
 
   function convertToQNT(quantity, decimals) {
+    if (typeof quantity == 'undefined') {
+      return '0';
+    }   
     quantity  = String(quantity);
     var parts = quantity.split(".");
     var qnt   = parts[0];
@@ -94,6 +103,9 @@ module.run(function (nxt) {
   }
 
   function convertToQNTf(quantity, decimals) {
+    if (typeof quantity == 'undefined') {
+      return '0';
+    }     
     quantity = String(quantity);
     if (quantity.length < decimals) {
       for (var i = quantity.length; i < decimals; i++) {
@@ -116,6 +128,9 @@ module.run(function (nxt) {
   }
 
   function commaFormat(amount) {
+    if (typeof amount == 'undefined') {
+      return '0';
+    }      
     var neg    = amount.indexOf('-') == 0 && (amount.shift());
     amount     = amount.split('.'); // input is result of convertNQT
     var parts  = amount[0].split("").reverse().join("").split(/(\d{3})/).reverse();
@@ -133,22 +148,39 @@ module.run(function (nxt) {
     return date;
   }
 
+  var ONE_HOUR_MS = 60 * 60 * 1000;
+
+  /* EVerything older than 1 hour is considered old !! */  
+  function timestampIsOld(timestamp) {
+    var date = timestampToDate(timestamp);
+    var now  = Date.now();
+    return (now - date.getTime()) > ONE_HOUR_MS;
+  }
+
   /**
    * Formats a timestamp in NXT epoch format to a Date string
    * @param timestamp Number
    * @returns String
    */
   var timeago_cache = {};
+  var timeago_cache_count = 0;
   var date_cache = {};
+  var date_cache_count = 0;
 
-  function formatTimestamp(timestamp, timeago) {
+  /* timeago functionality functionality removed since it required jquery */
+
+  function formatTimestamp(timestamp, use_timeago) {
     if (timestamp) {
-      if (timeago) {
+      if (use_timeago) {
         if (timeago_cache[timestamp]) {
           return timeago_cache[timestamp];
         }
+        if (timeago_cache_count++ > 1000) {
+          timeago_cache_count = 0;
+          timeago_cache = {};
+        }
         var date = new Date(Date.UTC(2013, 10, 24, 12, 0, 0, 0) + timestamp * 1000);
-        return timeago_cache[timestamp] = $.timeago(date);
+        return timeago_cache[timestamp] = timeagoService.format(date);
       }
       else {
         if (date_cache[timestamp]) {
@@ -162,6 +194,10 @@ module.run(function (nxt) {
           month: "numeric",
           year: "2-digit"
         };
+        if (date_cache_count++ > 1000) {
+          date_cache_count = 0;
+          date_cache = {};
+        }
         var date = new Date(Date.UTC(2013, 10, 24, 12, 0, 0, 0) + timestamp * 1000);
         return date_cache[timestamp] = date.toLocaleDateString("en-US", options);
       }
@@ -253,6 +289,18 @@ module.run(function (nxt) {
     return str;
   }
 
+  function convertRSAddress(text) {
+    var api = null;
+    if (text.indexOf('FIM-') == 0) { api = nxt.fim(); }
+    else if (text.indexOf('NXT-') == 0) { api = nxt.nxt(); }
+    if (api) {
+      var address = api.createAddress();
+      if (address.set(text)) {
+        return address.account_id();
+      }
+    }
+  }
+
   nxt.util = {
     
     convertToNXT: function (amountNQT) {
@@ -267,12 +315,14 @@ module.run(function (nxt) {
     formatOrderPricePerWholeQNT: formatOrderPricePerWholeQNT,
     calculateOrderTotalNQT: calculateOrderTotalNQT,
     timestampToDate: timestampToDate,
+    timestampIsOld: timestampIsOld,
     formatTimestamp: formatTimestamp,
     calculatePricePerWholeQNT: calculatePricePerWholeQNT,
     calculateOrderPricePerWholeQNT: calculateOrderPricePerWholeQNT,
     convertFromHex16:convertFromHex16,
     convertFromHex8:convertFromHex8,
     convertToEpochTimestamp: convertToEpochTimestamp,
+    convertRSAddress: convertRSAddress,
 
     /**
      * @param nxtA String
