@@ -4,7 +4,7 @@
   </div>
   <div class="panel-body">
     <form class="form-horizontal">
-      <div ng-if="items.message" class="alert alert-info" role="alert">{{items.message}}</div>
+      <div ng-if="items.message">{{items.message}}</div>
       <div ng-if="items.html" ng-bind-html="items.html"></div>
     </form>
   </div>

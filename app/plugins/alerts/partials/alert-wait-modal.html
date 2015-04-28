@@ -3,13 +3,13 @@
     <h3 class="panel-title">{{items.title}}</h3>
   </div>
   <div class="panel-body">
-    <h2 ng-if="items.message"><small><i class="fa fa-cog fa-spin"></i>&nbsp;&nbsp;{{items.message}}</small></h2>
+    <h3 ng-if="items.message"><span ng-if="items.busy"><i class="fa fa-cog fa-spin"></i>&nbsp;&nbsp;</span>{{items.message}}</h3>
     <div ng-if="items.html" ng-bind-html="items.html"></div>
   </div>
   <div class="panel-footer">
     <div class="form-group">
       <div class="col-xs-6 col-xs-offset-3">
-        <button class="btn btn-block btn-default" ng-click="dismiss()">Cancel</button>
+        <button class="btn btn-block btn-default" ng-click="dismiss()">{{items.btnLabel}}</button>
       </div>
     </div> 
   </div>

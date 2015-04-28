@@ -6,6 +6,9 @@ module.controller('AlertWaitModalController', function (items, $modalInstance, $
   $scope.items = items;
   $scope.items.title = items.title || 'Please wait';
   $scope.items.message = items.message || 'Please wait';
+  $scope.items.busy = 'busy' in items ? items.busy : true;
+  $scope.items.btnLabel = items.btnLabel || 'Cancel';
+  
   var deferred = items.deferred;
 
   /* Close when the promise is resolved */

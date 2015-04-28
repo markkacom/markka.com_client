@@ -44,8 +44,9 @@ module.run(function (plugins, modals, $q) {
 
     /* @param args Object {message: String, title:String} */
     confirm: function (args) {
-      args.title = args.title || 'Confirm';
-      var deferred = $q.defer();
+      args.title    = args.title || 'Confirm';
+      args.level    = args.level || 'primary';
+      var deferred  = $q.defer();
       modals.open('alertConfirm', {
         resolve: {
           items: function () {
@@ -61,8 +62,9 @@ module.run(function (plugins, modals, $q) {
 
     /* @param args Object {message: String, title:String, value:String} */
     prompt: function (args) {
-      args.title = args.title || 'Prompt';
-      var deferred = $q.defer();
+      args.title    = args.title || 'Prompt';
+      args.level    = args.level || 'primary';
+      var deferred  = $q.defer();
       modals.open('alertPrompt', {
         resolve: {
           items: function () {
@@ -78,8 +80,9 @@ module.run(function (plugins, modals, $q) {
 
     /* @returns a deferred, close the dialog by resolving the deferred */
     wait: function (args) {
-      var deferred = $q.defer();
-      args.title = args.title || 'Please wait';
+      var deferred  = $q.defer();
+      args.title    = args.title || 'Please wait';
+      args.level    = args.level || 'primary';
       args.deferred = deferred;
       modals.open('alertWait', {
         resolve: {
@@ -92,6 +95,25 @@ module.run(function (plugins, modals, $q) {
         }
       });
       return deferred;
+    },
+
+    /* @returns a deferred thats resolved when the dialog is open. The deferred returns a progress
+       object with which you control the contents in the dialog and that is used to close the dialog */
+    progress: function (args) {
+      var deferred  = $q.defer();
+      args.title    = args.title || 'Please wait';
+      args.level    = args.level || 'primary';
+      modals.open('alertProgress', {
+        resolve: {
+          items: function () {
+            return args;
+         }
+        },
+        opened: function () {
+          deferred.resolve(args.progress);
+        }
+      });
+      return deferred.promise;
     }
   });
 
@@ -111,6 +133,10 @@ module.run(function (plugins, modals, $q) {
   modals.register('alertWait', { 
     templateUrl: 'plugins/alerts/partials/alert-wait-modal.html', 
     controller: 'AlertWaitModalController' 
+  });  
+  modals.register('alertProgress', { 
+    templateUrl: 'plugins/alerts/partials/alert-progress-modal.html', 
+    controller: 'AlertProgressModalController' 
   });  
 });
 })();
