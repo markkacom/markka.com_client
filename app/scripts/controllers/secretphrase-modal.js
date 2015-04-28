@@ -35,10 +35,10 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
   }
 
   if ($scope.state == $scope.SIMPLE) {
-    $scope.items.messageHTML    = $sce.trustAsHtml(items.messageHTML||'This operation requires your secret passphrase. Either enter it by hand or click Open Wallet to load a wallet file containing your secret phrase.');    
+    $scope.items.messageHTML    = $sce.getTrustedHtml(items.messageHTML||'This operation requires your secret passphrase. Either enter it by hand or click Open Wallet to load a wallet file containing your secret phrase.');    
   }
   else {
-    $scope.items.messageHTML    = $sce.trustAsHtml(items.messageHTML||'This operation requires a sender and secret passphrase.');
+    $scope.items.messageHTML    = $sce.getTrustedHtml(items.messageHTML||'This operation requires a sender and secret passphrase.');
     db.accounts.where('id_rs').anyOf(walletPlugin.getKeys()).toArray().then(
       function (accounts) {
         $scope.$evalAsync(function () {
