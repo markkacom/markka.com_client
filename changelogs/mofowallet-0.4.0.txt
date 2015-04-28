@@ -1,0 +1,2 @@
+This is our first ever revamped mofowallet desktop release and thus consider it BETA.
+Please expect numerous updates in this BETA testing period.
