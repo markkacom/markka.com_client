@@ -1,0 +1,63 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1 translate="translate.translator"></h1>
+    <br>
+    <div class="well well-sm" ng-init="introCollapsed=false">
+      <p>
+        <a href class="pull-right" ng-click="introCollapsed=!introCollapsed">
+          <span translate="translate.less" ng-show="!introCollapsed"/>
+          <span translate="translate.more" ng-show="introCollapsed"/>
+        </a>
+      </p>
+      <div collapse="introCollapsed" translate="translate.translate_intro"></div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3 col-xs-6">
+    <form>
+      <div class="form-group">
+        <select ng-model="targetLang" ng-options="key as value for (key , value) in availableLanguages" 
+          ng-change="onTargetLanguageChange()" id="languageSelect" class="form-control">
+        </select>
+        <br>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-9 col-xs-6" ng-init="shareCollapsed=true">
+    <span class="btn btn-primary pull-right" ng-click="shareCollapsed=!shareCollapsed">
+      <i class="fa fa-users"></i>&nbsp;&nbsp;<span translate="translate.share_translation"/>
+    </span>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" collapse="shareCollapsed">
+    <div class="well well-sm">
+      <p translate="translate.translate_sharehowto"></p>
+      <p><a href="mailto:incentivetoken@gmail.com?Subject=User%20translation%20{{paramLang}}" target="_top">incentivetoken@gmail.com</a></p>
+      <p><span class="btn btn-success" ng-click="download()" translate="translate.download_translation"></span></p>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table">
+      <tr>
+        <th translate="lang.English"></th>
+        <th>{{langFull}}</th>
+        <th translate="translate.my_translation"></th>
+      </tr>
+      <tr ng-repeat="l in LANG_MODEL">
+        <td width="33%">
+          <textarea class="form-control" readonly>{{l.ENGLISH}}</textarea>
+        </td>
+        <td width="33%">
+          <textarea class="form-control" readonly>{{l.TARGET}}</textarea>
+        </td>
+        <td width="33%" ng-class="{success: l.MY_TRANS != l.TARGET}">
+          <textarea class="form-control" ng-model="l.MY_TRANS" ng-change="storeTranslation(l)"></textarea>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
