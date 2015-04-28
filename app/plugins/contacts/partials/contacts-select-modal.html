@@ -12,7 +12,9 @@
           <thead style="display:none"></thead>
           <tr ng-repeat="c in $data">
             <td data-title="'Name'" sortable="name" header-class="text-left">{{c.name}}</td>
-            <td data-title="'Account'" header-class="text-left"><a href ng-click="showAccount(c.id_rs)">{{c.id_rs}}</a></td>
+            <td data-title="'Account'" header-class="text-left">
+              <a href="#/accounts/{{c.id_rs}}/activity/latest">{{c.id_rs}}</a>
+            </td>
             <td>
               <ul class="nav nav-pills pull-right">
                 <li><button class="btn btn-xs btn-info btn-navbar" ng-click="selectContact(c)">Select</button></li>

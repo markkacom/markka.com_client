@@ -1,20 +1,12 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.config(function($stateProvider) {  
-  $stateProvider.state('contacts', {
-    url: '/contacts',
-    views: {
-      '': { 
-        templateUrl: 'plugins/contacts/partials/contacts.html',
-        controller: 'ContactsPlugin'
-      },
-      'list@contacts': {
-        templateUrl: 'plugins/contacts/partials/contacts-list.html',
-        controller: 'ContactsPluginListController'
-      }
-    }
-  });
+module.config(function($routeProvider) {  
+  $routeProvider
+    .when('/contacts', {
+      templateUrl: 'plugins/contacts/partials/contacts.html',
+      controller: 'ContactsPlugin'
+    });
 });
 
 module.run(function (modals, plugins, $q) {

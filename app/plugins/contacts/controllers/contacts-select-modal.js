@@ -3,7 +3,7 @@
 var module = angular.module('fim.base');
 
 module.controller('ContactsPluginSelectModalController', function (items, $modalInstance, 
-  $scope, $timeout, db, ngTableParams, alerts, plugins, nxt, $q) {
+  $scope, $timeout, db, ngTableParams, plugins, nxt, $q) {
 
   $scope.items         = items;
   $scope.items.get_all = items.get_all || false;
@@ -35,7 +35,7 @@ module.controller('ContactsPluginSelectModalController', function (items, $modal
           }
           $scope.contacts = $scope.contacts.concat(contacts);
         }
-      ).catch(alerts.catch("Could not load contacts")));
+      ));
 
     }
 
@@ -50,7 +50,7 @@ module.controller('ContactsPluginSelectModalController', function (items, $modal
           }
           $scope.contacts = $scope.contacts.concat(accounts);
         }
-      ).catch(alerts.catch("Could not load accounts")));
+      ));
     }
 
     $q.all(promises).then(
@@ -71,10 +71,6 @@ module.controller('ContactsPluginSelectModalController', function (items, $modal
 
   $scope.selectContact = function (account) {
     $modalInstance.close(account);
-  };
-
-  $scope.showAccount = function (id_rs) {
-    plugins.get('accounts').detail(id_rs);
   };
 
   $scope.dismiss = function () {

@@ -2,7 +2,7 @@
 'use strict';
 var module = angular.module('fim.base');
 
-module.controller('ContactsPluginAddModalController', function (items, $modalInstance, $scope, alerts, db, $timeout, nxt) {
+module.controller('ContactsPluginAddModalController', function (items, $modalInstance, $scope, db, $timeout, nxt) {
   
   $scope.items = items;
   $scope.items.name   = $scope.items.name || '';
@@ -75,7 +75,7 @@ module.controller('ContactsPluginAddModalController', function (items, $modalIns
         function (count) {
           setErrorMessage(count > 0 ? 'Duplicate name' : null);
         }
-      ).catch(alerts.catch('Contact'));
+      );
     }
   };
 
@@ -91,14 +91,14 @@ module.controller('ContactsPluginAddModalController', function (items, $modalIns
         function () {
           $modalInstance.close($scope.items);
         }
-      ).catch(alerts.catch('Could not save contact'));
+      );
     }
     else {
       db.contacts.add($scope.items).then(
         function () {
           $modalInstance.close($scope.items);
         }
-      ).catch(alerts.catch('Could not save contact'));
+      );
     }
   }
 

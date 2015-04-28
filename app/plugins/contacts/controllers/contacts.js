@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('ContactsPlugin', function ($scope, plugins, alerts, ngTableParams, db, $timeout) {
+module.controller('ContactsPlugin', function ($scope, plugins, ngTableParams, db, $timeout) {
 
   $scope.addContact = function () {
     plugins.get('contacts').add({
@@ -10,10 +10,12 @@ module.controller('ContactsPlugin', function ($scope, plugins, alerts, ngTablePa
     }).then(
       function (success) {
         if (success) {
-          alerts.success('Successfully added contact');
+          plugins.get('alerts').success({ message: 'Successfully added contact' });
         }
       }
-    ).catch(alerts.catch('Could not safe contact'));
+    ).catch(function () {
+      plugins.get('alerts').error({ message: 'Could not safe contact' });
+    });
   };
 
   $scope.contacts = [];
@@ -38,7 +40,9 @@ module.controller('ContactsPlugin', function ($scope, plugins, alerts, ngTablePa
         }
       );
     }
-  ).catch(alerts.catch("Could not load contacts"));  
+  ).catch(function () {
+    plugins.get('alerts').error({ message: 'Could not load contacts' });
+  });
 
   /* Register CRUD observer for contacts */
   db.contacts.addObserver($scope, 
@@ -58,10 +62,6 @@ module.controller('ContactsPlugin', function ($scope, plugins, alerts, ngTablePa
     }
   }
 
-  $scope.showAccount = function (id_rs) {
-    plugins.get('accounts').detail(id_rs);
-  };
-
   $scope.editContact = function (contact) {
     var args = {
       message: 'Please enter the details for this contact',
@@ -73,22 +73,22 @@ module.controller('ContactsPlugin', function ($scope, plugins, alerts, ngTablePa
 
     plugins.get('contacts').update(args).then(
       function () {
-        alerts.success('Successfully updated contact');
+        plugins.get('alerts').success({ message: 'Successfully updated contact' });
       }
-    ).catch(alerts.catch('Could not update contact'));
+    ).catch(function () {
+      plugins.get('alerts').error({ message: 'Could not update contact' });
+    });
   };
 
   $scope.removeContact = function (contact) {
     if (window.confirm('Are you sure you want to delete this contact?')) {
-      db.contacts.delete(contact.id_rs).catch(alerts.catch('Could not delete contact'));
+      db.contacts.delete(contact.id_rs).catch(function () {
+        plugins.get('alerts').error({ message: 'Could not delete contact' });
+      });
     }
   };
 
   $scope.sendMoney = function (contact) {
-    plugins.get('payment').create({
-      recipientRS:        contact.id_rs,
-      recipientReadonly:  true
-    });
   };
 
 });
