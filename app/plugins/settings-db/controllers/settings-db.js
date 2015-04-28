@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('SettingsPluginDBController', function($scope, db, $compile, ngTableParams, $timeout, plugins, alerts) {
+module.controller('SettingsPluginDBController', function($scope, db, $compile, ngTableParams, $timeout, plugins) {
 
   $scope.tables = db.tables;
   $scope.selectedTable = $scope.tables [0];
@@ -32,9 +32,7 @@ module.controller('SettingsPluginDBController', function($scope, db, $compile, n
     }).then(
       function (value) {
         if (value) {
-          indexedDB.deleteDatabase('fimkrypto-db');
-          alerts.success('Successfully deleted database.');
-          alerts.failed('You must reload your browser for the changes to take effect.');
+          window.indexedDB.deleteDatabase('fimkrypto-db2');
         }
       }
     )
@@ -85,7 +83,7 @@ module.controller('SettingsPluginDBController', function($scope, db, $compile, n
             }
           ); 
           var element = $compile(generateTableHTML(schema))($scope);
-          angular.element('#settings-db-table-container').replaceWith(element);
+          angular.element(document.getElementById('settings-db-table-container')).replaceWith(element);
         });
       }
     );
