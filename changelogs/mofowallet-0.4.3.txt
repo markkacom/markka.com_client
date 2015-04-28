@@ -1,0 +1,9 @@
+Embeds FIMK server 0.4.2 and NXT+ which was based off 1.4.17
+
+Adds Namespaced Alias edit, update functionality.
+
+Numerous bug fixes.
+
+Updated Finnish and Polish translations.
+
+Code cleanup completed open sourcing the new mofowallet with this release.
