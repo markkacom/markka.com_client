@@ -8,16 +8,9 @@ module.factory('Account', function() {
       Account = db.accounts.defineClass({
         id: String,
         id_rs: String,
-        name: String,
-        passphrase: String,
-        guaranteedBalanceNXT: String,
-        balanceNXT: String,
-        effectiveBalanceNXT: String,
-        unconfirmedBalanceNXT: String,
-        forgedBalanceNXT: String,
         publicKey: String,
-        engine: String,
-        isPublished: Boolean
+        name: String,
+        engine: String
       });
 
       Account.prototype.formatEngine = function () {
@@ -36,14 +29,6 @@ module.factory('Account', function() {
         angular.extend(this, properties);
         return db.accounts.update(this.id_rs, properties);
       };
-
-      // Account.prototype.transactions = function () {
-      //   return db.transactions.where('recipientRS').equals(this.id_rs).or('senderRS').equals(this.id_rs).sortBy('timestamp');
-      // };
-
-      // Account.prototype.transactionCount = function () {
-      //   return db.transactions.where('recipientRS').equals(this.id_rs).or('senderRS').equals(this.id_rs).count();
-      // };      
 
       return Account;
     },
