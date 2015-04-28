@@ -1,0 +1,250 @@
+[
+  {
+    "code": "en",
+    "displayText": "English - (English)"
+  },
+  {
+    "code": "af",
+    "displayText": "Afrikaans - (Afrikaans)"
+  },
+  {
+    "code": "ar",
+    "displayText": "\nالعربية\n - (Arabic)"
+  },
+  {
+    "code": "az",
+    "displayText": "azərbaycan dili - (Azerbaijani)"
+  },
+  {
+    "code": "be",
+    "displayText": "беларуская мова - (Belarusian)"
+  },
+  {
+    "code": "bg",
+    "displayText": "български език - (Bulgarian)"
+  },
+  {
+    "code": "bn",
+    "displayText": "বাংলা - (Bengali, Bangla)"
+  },
+  {
+    "code": "ca",
+    "displayText": "català - (Catalan)"
+  },
+  {
+    "code": "cs",
+    "displayText": "čeština, český jazyk - (Czech)"
+  },
+  {
+    "code": "cy",
+    "displayText": "Cymraeg - (Welsh)"
+  },
+  {
+    "code": "da",
+    "displayText": "dansk - (Danish)"
+  },
+  {
+    "code": "de",
+    "displayText": "Deutsch - (German)"
+  },
+  {
+    "code": "el",
+    "displayText": "ελληνικά - (Greek (modern))"
+  },
+  {
+    "code": "eo",
+    "displayText": "Esperanto - (Esperanto)"
+  },
+  {
+    "code": "es",
+    "displayText": "español - (Spanish)"
+  },
+  {
+    "code": "et",
+    "displayText": "eesti, eesti keel - (Estonian)"
+  },
+  {
+    "code": "eu",
+    "displayText": "euskara, euskera - (Basque)"
+  },
+  {
+    "code": "fa",
+    "displayText": "\nفارسی\n - (Persian (Farsi))"
+  },
+  {
+    "code": "fi",
+    "displayText": "suomi, suomen kieli - (Finnish)"
+  },
+  {
+    "code": "fr",
+    "displayText": "français, langue française - (French)"
+  },
+  {
+    "code": "ga",
+    "displayText": "Gaeilge - (Irish)"
+  },
+  {
+    "code": "gl",
+    "displayText": "galego - (Galician)"
+  },
+  {
+    "code": "gu",
+    "displayText": "ગુજરાતી - (Gujarati)"
+  },
+  {
+    "code": "hi",
+    "displayText": "हिन्दी, हिंदी - (Hindi)"
+  },
+  {
+    "code": "hr",
+    "displayText": "hrvatski jezik - (Croatian)"
+  },
+  {
+    "code": "ht",
+    "displayText": "Kreyòl ayisyen - (Haitian, Haitian Creole)"
+  },
+  {
+    "code": "hu",
+    "displayText": "magyar - (Hungarian)"
+  },
+  {
+    "code": "id",
+    "displayText": "Bahasa Indonesia - (Indonesian)"
+  },
+  {
+    "code": "is",
+    "displayText": "Íslenska - (Icelandic)"
+  },
+  {
+    "code": "it",
+    "displayText": "italiano - (Italian)"
+  },
+  {
+    "code": "ja",
+    "displayText": "日本語 (にほんご) - (Japanese)"
+  },
+  {
+    "code": "ka",
+    "displayText": "ქართული - (Georgian)"
+  },
+  {
+    "code": "kn",
+    "displayText": "ಕನ್ನಡ - (Kannada)"
+  },
+  {
+    "code": "ko",
+    "displayText": "한국어, 조선어 - (Korean)"
+  },
+  {
+    "code": "la",
+    "displayText": "latine, lingua latina - (Latin)"
+  },
+  {
+    "code": "lt",
+    "displayText": "lietuvių kalba - (Lithuanian)"
+  },
+  {
+    "code": "lv",
+    "displayText": "latviešu valoda - (Latvian)"
+  },
+  {
+    "code": "mk",
+    "displayText": "македонски јазик - (Macedonian)"
+  },
+  {
+    "code": "ms",
+    "displayText": "bahasa Melayu, بهاس ملايو‎ - (Malay)"
+  },
+  {
+    "code": "mt",
+    "displayText": "Malti - (Maltese)"
+  },
+  {
+    "code": "nl",
+    "displayText": "Nederlands, Vlaams - (Dutch)"
+  },
+  {
+    "code": "no",
+    "displayText": "Norsk - (Norwegian)"
+  },
+  {
+    "code": "pl",
+    "displayText": "język polski, polszczyzna - (Polish)"
+  },
+  {
+    "code": "pt",
+    "displayText": "português - (Portuguese)"
+  },
+  {
+    "code": "ro",
+    "displayText": "limba română - (Romanian)"
+  },
+  {
+    "code": "ru",
+    "displayText": "Русский - (Russian)"
+  },
+  {
+    "code": "sk",
+    "displayText": "slovenčina, slovenský jazyk - (Slovak)"
+  },
+  {
+    "code": "sl",
+    "displayText": "slovenski jezik, slovenščina - (Slovene)"
+  },
+  {
+    "code": "sq",
+    "displayText": "Shqip - (Albanian)"
+  },
+  {
+    "code": "sr",
+    "displayText": "српски језик - (Serbian)"
+  },
+  {
+    "code": "sv",
+    "displayText": "svenska - (Swedish)"
+  },
+  {
+    "code": "sw",
+    "displayText": "Kiswahili - (Swahili)"
+  },
+  {
+    "code": "ta",
+    "displayText": "தமிழ் - (Tamil)"
+  },
+  {
+    "code": "te",
+    "displayText": "తెలుగు - (Telugu)"
+  },
+  {
+    "code": "th",
+    "displayText": "ไทย - (Thai)"
+  },
+  {
+    "code": "tl",
+    "displayText": "Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔ - (Tagalog)"
+  },
+  {
+    "code": "tr",
+    "displayText": "Türkçe - (Turkish)"
+  },
+  {
+    "code": "uk",
+    "displayText": "українська мова - (Ukrainian)"
+  },
+  {
+    "code": "ur",
+    "displayText": "\nاردو\n - (Urdu)"
+  },
+  {
+    "code": "vi",
+    "displayText": "Việt Nam - (Vietnamese)"
+  },
+  {
+    "code": "yi",
+    "displayText": "\nייִדיש\n - (Yiddish)"
+  },
+  {
+    "code": "zh",
+    "displayText": "中文 (Zhōngwén), 汉语, 漢語 - (Chinese)"
+  }
+]
