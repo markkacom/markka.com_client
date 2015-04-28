@@ -3,7 +3,7 @@
 
    By David Fahlander, david.fahlander@gmail.com
 
-   Version 0.9.9 - July 30, 2014.
+   Version 1.0.2 - December 9, 2014.
 
    Tested successfully on Chrome, IE, Firefox and Opera.
 
@@ -66,7 +66,6 @@
         var READONLY = "readonly", READWRITE = "readwrite";
         var db = this;
         var pausedResumeables = [];
-        var use_proto = (function () { function F() { }; var a = new F(); try { a.__proto__ = Object.prototype; return !(a instanceof F) } catch (e) { return false; } })()
         var autoSchema = false;
 
         function init() {
@@ -101,13 +100,13 @@
             /// <returns type="Version"></returns>
             if (idbdb) throw new Error("Cannot add version when database is open");
             this.verno = Math.max(this.verno, versionNumber);
-            var versionInstance = versions.filter(function (v) { return v._cfg.version == versionNumber; })[0];
+            var versionInstance = versions.filter(function (v) { return v._cfg.version === versionNumber; })[0];
             if (versionInstance) return versionInstance;
             versionInstance = new Version(versionNumber);
             versions.push(versionInstance);
             versions.sort(lowerVersionFirst);
             return versionInstance;
-        }
+        }; 
 
         function Version(versionNumber) {
             this._cfg = {
@@ -115,8 +114,8 @@
                 storesSource: null,
                 dbschema: {},
                 tables: {},
-                contentUpgrade: null,
-            }
+                contentUpgrade: null
+            }; 
             this.stores({}); // Derive earlier schemas by default.
         }
 
@@ -127,12 +126,12 @@
                 /// </summary>
                 /// <param name="stores" type="Object">
                 /// Example: <br/>
-                ///   {users: "id++,first,last,&username,*email", <br/>
-                ///   passwords: "id++,&username"}<br/>
+                ///   {users: "id++,first,last,&amp;username,*email", <br/>
+                ///   passwords: "id++,&amp;username"}<br/>
                 /// <br/>
-                /// Syntax: {Table: "[primaryKey][++],[&][*]index1,[&][*]index2,..."}<br/><br/>
+                /// Syntax: {Table: "[primaryKey][++],[&amp;][*]index1,[&amp;][*]index2,..."}<br/><br/>
                 /// Special characters:<br/>
-                ///  "&"  means unique key, <br/>
+                ///  "&amp;"  means unique key, <br/>
                 ///  "*"  means value is multiEntry, <br/>
                 ///  "++" means auto-increment and only applicable for primary key <br/>
                 /// </param>
@@ -175,7 +174,7 @@
                         indexes.forEach(function (idx) {
                             if (idx.auto) throw new Error("Only primary key can be marked as autoIncrement (++)");
                             if (!idx.keyPath) throw new Error("Index must have a name and cannot be an empty string");
-                            setByKeyPath(instanceTemplate, idx.keyPath, idx.compound ? idx.keyPath.map(function () { return "" }) : "");
+                            setByKeyPath(instanceTemplate, idx.keyPath, idx.compound ? idx.keyPath.map(function () { return ""; }) : "");
                         });
                         outSchema[tableName] = new TableSchema(tableName, primKey, indexes, instanceTemplate);
                     }
@@ -184,7 +183,7 @@
         });
 
         function runUpgraders(oldVersion, idbtrans, reject, openReq) {
-            if (oldVersion == 0) {
+            if (oldVersion === 0) {
                 //globalSchema = versions[versions.length - 1]._cfg.dbschema;
                 // Create tables:
                 Object.keys(globalSchema).forEach(function (tableName) {
@@ -200,7 +199,7 @@
                     try {
                         db.on("populate").fire(t);
                     } catch (err) {
-                        openReq.onerror = idbtrans.onerror = function (ev) { ev.preventDefault(); } // Prohibit AbortError fire on db.on("error") in Firefox.
+                        openReq.onerror = idbtrans.onerror = function (ev) { ev.preventDefault(); };  // Prohibit AbortError fire on db.on("error") in Firefox.
                         try { idbtrans.abort(); } catch (e) { }
                         idbtrans.db.close();
                         reject(err);
@@ -210,7 +209,7 @@
                 // Upgrade version to version, step-by-step from oldest to newest version.
                 // Each transaction object will contain the table set that was current in that version (but also not-yet-deleted tables from its previous version)
                 var queue = [];
-                var oldVersionStruct = versions.filter(function (version) { return version._cfg.version === oldVersion })[0];
+                var oldVersionStruct = versions.filter(function (version) { return version._cfg.version === oldVersion; })[0];
                 if (!oldVersionStruct) throw new Error("Dexie specification of currently installed DB version is missing");
                 globalSchema = db._dbSchema = oldVersionStruct._cfg.dbschema;
                 var anyContentUpgraderHasRun = false;
@@ -220,6 +219,8 @@
                     /// <param name="version" type="Version"></param>
                     var oldSchema = globalSchema;
                     var newSchema = version._cfg.dbschema;
+                    adjustToExistingIndexNames(oldSchema, idbtrans);
+                    adjustToExistingIndexNames(newSchema, idbtrans);
                     globalSchema = db._dbSchema = newSchema;
                     {
                         var diff = getSchemaDiff(oldSchema, newSchema);
@@ -261,15 +262,15 @@
                                         function proxy(fn) {
                                             return function () {
                                                 fn.apply(this, arguments);
-                                                if (--uncompletedRequests == 0) cb(); // A called db operation has completed without starting a new operation. The flow is finished, now run next upgrader.
-                                            }
+                                                if (--uncompletedRequests === 0) cb(); // A called db operation has completed without starting a new operation. The flow is finished, now run next upgrader.
+                                            };
                                         }
                                         return orig_promise.call(this, mode, function (resolve, reject, trans) {
                                             arguments[0] = proxy(resolve);
                                             arguments[1] = proxy(reject);
                                             fn.apply(this, arguments);
                                         }, writeLock);
-                                    }
+                                    };
                                 });
                                 idbtrans.onerror = eventRejectHandler(reject, ["running upgrader function for version", version._cfg.version]);
                                 t.on('error').subscribe(reject);
@@ -295,7 +296,7 @@
                         else
                             createMissingTables(globalSchema, idbtrans); // At last, make sure to create any missing tables. (Needed by addons that add stores to DB without specifying version)
                     } catch (err) {
-                        openReq.onerror = idbtrans.onerror = function (ev) { ev.preventDefault(); } // Prohibit AbortError fire on db.on("error") in Firefox.
+                        openReq.onerror = idbtrans.onerror = function (ev) { ev.preventDefault(); };  // Prohibit AbortError fire on db.on("error") in Firefox.
                         idbtrans.abort();
                         idbtrans.db.close();
                         reject(err);
@@ -327,7 +328,7 @@
                         add: [],
                         change: []
                     };
-                    if (oldDef.primKey.src != newDef.primKey.src) {
+                    if (oldDef.primKey.src !== newDef.primKey.src) {
                         // Primary key has changed. Remove and re-add table.
                         change.recreate = true;
                         diff.change.push(change);
@@ -341,7 +342,7 @@
                             var oldIdx = oldIndexes[idxName],
                                 newIdx = newIndexes[idxName];
                             if (!oldIdx) change.add.push(newIdx);
-                            else if (oldIdx.src != newIdx.src) change.change.push(newIdx);
+                            else if (oldIdx.src !== newIdx.src) change.change.push(newIdx);
                         }
                         if (change.recreate || change.del.length > 0 || change.add.length > 0 || change.change.length > 0) {
                             diff.change.push(change);
@@ -394,14 +395,14 @@
                 return new Table(tableSchema.name, transactionPromiseFactory, tableSchema, Collection);
             else
                 return new WriteableTable(tableSchema.name, transactionPromiseFactory, tableSchema);
-        }
+        }; 
 
-        this._createTransaction = function (mode, storeNames, dbschema) {
-            return new Transaction(mode, storeNames, dbschema);
-        }
+        this._createTransaction = function (mode, storeNames, dbschema, parentTransaction) {
+            return new Transaction(mode, storeNames, dbschema, parentTransaction);
+        }; 
 
         function tableNotInTransaction(mode, storeNames) {
-            return Promise.reject(stack(new Error("Table " + storeNames[0] + " not part of transaction. Original Scope Function Source: " + Dexie.Promise.PSD.trans.scopeFunc.toString())));
+            throw new Error("Table " + storeNames[0] + " not part of transaction. Original Scope Function Source: " + Dexie.Promise.PSD.trans.scopeFunc.toString());
         }
 
         this._transPromiseFactory = function transactionPromiseFactory(mode, storeNames, fn) { // Last argument is "writeLocked". But this doesnt apply to oneshot direct db operations, so we ignore it.
@@ -420,6 +421,11 @@
             } else {
                 var trans = db._createTransaction(mode, storeNames, globalSchema);
                 return trans._promise(mode, function (resolve, reject) {
+                    // An uncatched operation will bubble to this anonymous transaction. Make sure
+                    // to continue bubbling it up to db.on('error'):
+                    trans.error(function (err) {
+                        db.on('error').fire(err);
+                    });
                     fn(function (value) {
                         // Instead of resolving value directly, wait with resolving it until transaction has completed.
                         // Otherwise the data would not be in the DB if requesting it in the then() operation.
@@ -437,7 +443,7 @@
                     }, reject, trans);
                 });
             }
-        }
+        }; 
 
         this._whenReady = function (fn) {
             if (db_is_blocked && (!Promise.PSD || !Promise.PSD.letThrough)) {
@@ -451,7 +457,7 @@
                 });
             }
             return new Promise(fn);
-        },
+        }; 
 
         //
         //
@@ -483,7 +489,7 @@
                     isBeingOpened = true;
 
                     // Make sure caller has specified at least one version
-                    if (versions.length == 0) {
+                    if (versions.length === 0) {
                         autoSchema = true;
                     }
 
@@ -492,13 +498,13 @@
                     // A future version of Dexie.js will stopover an intermediate version to workaround this.
                     // At that point, we want to be backward compatible. Could have been multiplied with 2, but by using 10, it is easier to map the number to the real version number.
                     if (!indexedDB) throw new Error("indexedDB API not found. If using IE10+, make sure to run your code on a server URL (not locally). If using Safari, make sure to include indexedDB polyfill.");
-                    var dbWasCreated = false;
-                    var req = autoSchema ? indexedDB.open(dbName) : indexedDB.open(dbName, db.verno * 10);
+                    var dbWasCreated = false; // TODO: Remove this line. Never used.
+                    var req = autoSchema ? indexedDB.open(dbName) : indexedDB.open(dbName, Math.round(db.verno * 10));
                     req.onerror = eventRejectHandler(openError, ["opening database", dbName]);
                     req.onblocked = function (ev) {
                         db.on("blocked").fire(ev);
-                    }
-                    req.onupgradeneeded = function (e) {
+                    }; 
+                    req.onupgradeneeded = trycatch (function (e) {
                         if (autoSchema && !db._allowEmptyDB) { // Unless an addon has specified db._allowEmptyDB, lets make the call fail.
                             // Caller did not specify a version or schema. Doing that is only acceptable for opening alread existing databases.
                             // If onupgradeneeded is called it means database did not exist. Reject the open() promise and make sure that we 
@@ -510,17 +516,20 @@
                             var delreq = indexedDB.deleteDatabase(dbName); // The upgrade transaction is atomic, and javascript is single threaded - meaning that there is no risk that we delete someone elses database here!
                             delreq.onsuccess = delreq.onerror = function () {
                                 openError(new Error("Database '" + dbName + "' doesnt exist"));
-                            }
+                            }; 
                         } else {
-                            if (e.oldVersion == 0) dbWasCreated = true;
+                            if (e.oldVersion === 0) dbWasCreated = true; // TODO: Remove this line. Never used.
                             req.transaction.onerror = eventRejectHandler(openError);
-                            runUpgraders(e.oldVersion / 10, req.transaction, openError, req);
+                            var oldVer = e.oldVersion > Math.pow(2, 62) ? 0 : e.oldVersion; // Safari 8 fix.
+                            runUpgraders(oldVer / 10, req.transaction, openError, req);
                         }
-                    };
-                    req.onsuccess = function (e) {
+                    }, openError);
+                    req.onsuccess = trycatch(function (e) {
                         isBeingOpened = false;
                         idbdb = req.result;
                         if (autoSchema) readGlobalSchema();
+                        else if (idbdb.objectStoreNames.length > 0)
+                            adjustToExistingIndexNames(globalSchema, idbdb.transaction(idbdb.objectStoreNames, READONLY));
                         idbdb.onversionchange = db.on("versionchange").fire; // Not firing it here, just setting the function callback to any registered subscriber.
                         globalDatabaseList(function (databaseNames) {
                             if (databaseNames.indexOf(dbName) === -1) return databaseNames.push(dbName);
@@ -531,7 +540,7 @@
                             Promise.PSD.letThrough = true; // Set a Promise-Specific Data property informing that onready is firing. This will make db._whenReady() let the subscribers use the DB but block all others (!). Quite cool ha?
                             try {
                                 var res = db.on.ready.fire();
-                                if (res && typeof res.then == 'function') {
+                                if (res && typeof res.then === 'function') {
                                     // If on('ready') returns a promise, wait for it to complete and then resume any pending operations.
                                     res.then(resume, function (err) {
                                         idbdb.close();
@@ -555,12 +564,12 @@
                                 resolve();
                             }
                         });
-                    };
+                    }, openError);
                 } catch (err) {
                     openError(err);
                 }
             });
-        }
+        }; 
 
         this.close = function () {
             if (idbdb) {
@@ -569,7 +578,7 @@
                 db_is_blocked = true;
                 dbOpenError = null;
             }
-        }
+        }; 
 
         this.delete = function () {
             var args = arguments;
@@ -588,7 +597,7 @@
                     req.onerror = eventRejectHandler(reject, ["deleting", dbName]);
                     req.onblocked = function () {
                         db.on("blocked").fire();
-                    }
+                    };
                 }
                 if (isBeingOpened) {
                     pausedResumeables.push({ resume: doDelete });
@@ -596,18 +605,18 @@
                     doDelete();
                 }
             });
-        }
+        }; 
 
         this.backendDB = function () {
             return idbdb;
-        }
+        }; 
 
         this.isOpen = function () {
             return idbdb !== null;
-        }
+        }; 
         this.hasFailed = function () {
             return dbOpenError !== null;
-        }
+        }; 
 
         /*this.dbg = function (collection, counter) {
             if (!this._dbgResult || !this._dbgResult[counter]) {
@@ -683,10 +692,10 @@
             //
             // Get storeNames from arguments. Either through given table instances, or through given table names.
             //
-            var tables = Array.isArray(tableInstances[0]) ? tableInstances.reduce(function (a, b) { return a.concat(b) }) : tableInstances;
+            var tables = Array.isArray(tableInstances[0]) ? tableInstances.reduce(function (a, b) { return a.concat(b); }) : tableInstances;
             var error = null;
             var storeNames = tables.map(function (tableInstance) {
-                if (typeof tableInstance == "string") {
+                if (typeof tableInstance === "string") {
                     return tableInstance;
                 } else {
                     if (!(tableInstance instanceof Table)) error = error || new TypeError("Invalid type. Arguments following mode must be instances of Table or String");
@@ -697,9 +706,9 @@
             //
             // Resolve mode. Allow shortcuts "r" and "rw".
             //
-            if (mode == "r" || mode == READONLY)
+            if (mode === "r" || mode === READONLY)
                 mode = READONLY;
-            else if (mode == "rw" || mode == READWRITE)
+            else if (mode === "rw" || mode === READWRITE)
                 mode = READWRITE;
             else
                 error = new Error("Invalid transaction mode: " + mode);
@@ -707,7 +716,7 @@
             if (parentTransaction) {
                 // Basic checks
                 if (!error) {
-                    if (parentTransaction.db != db) {
+                    if (parentTransaction.db !== db) {
                         if (onlyIfCompatible) parentTransaction = null; // Spawn new transaction instead.
                         else error = new Error("Current transaction bound to different database instance");
                     }
@@ -749,7 +758,7 @@
                     //
                     // Create Transaction instance
                     //
-                    trans = db._createTransaction(mode, storeNames, globalSchema);
+                    trans = db._createTransaction(mode, storeNames, globalSchema, parentTransaction);
 
                     // Provide arguments to the scope function (for backward compatibility)
                     var tableArgs = storeNames.map(function (name) { return trans.tables[name]; });
@@ -775,14 +784,17 @@
                                     function proxy(fn2) {
                                         return function (val) {
                                             var retval = fn2(val);
-                                            if (--uncompletedRequests == 0 && trans.active) trans.on.complete.fire(); // A called db operation has completed without starting a new operation. The flow is finished
+                                            if (--uncompletedRequests === 0 && trans.active) {
+                                                trans.active = false;
+                                                trans.on.complete.fire(); // A called db operation has completed without starting a new operation. The flow is finished
+                                            }
                                             return retval;
-                                        }
+                                        };
                                     }
                                     return orig.call(this, mode, function (resolve2, reject2, trans) {
                                         return fn(proxy(resolve2), proxy(reject2), trans);
                                     }, writeLock);
-                                }
+                                };
                             });
                         }
                         trans.complete(function () {
@@ -806,8 +818,7 @@
                         returnValue = scopeFunc.apply(trans, tableArgs); // NOTE: returnValue is used in trans.on.complete() not as a returnValue to this func.
                     });
                     if (!trans.idbtrans || parentTransaction && uncompletedRequests === 0) {
-                        trans.active = false;
-                        trans.on.complete.fire(); // Empty block (not starting any transaction)
+                        trans._nop(); // Make sure transaction is being used so that it will resolve.
                     }
                 } catch (e) {
                     // If exception occur, abort the transaction and reject Promise.
@@ -820,13 +831,13 @@
                     });
                 }
             }
-        }
+        }; 
 
         this.table = function (tableName) {
             /// <returns type="WriteableTable"></returns>
             if (!autoSchema && !allTables.hasOwnProperty(tableName)) { throw new Error("Table does not exist"); return { AN_UNKNOWN_TABLE_NAME_WAS_SPECIFIED: 1 }; }
             return allTables[tableName];
-        }
+        }; 
 
         //
         //
@@ -873,7 +884,7 @@
                 //
                 get: function (key, cb) {
                     var self = this;
-                    fakeAutoComplete(function () { cb(self.schema.instanceTemplate) });
+                    fakeAutoComplete(function () { cb(self.schema.instanceTemplate); });
                     return this._idbstore(READONLY, function (resolve, reject, idbstore) {
                         var req = idbstore.get(key);
                         req.onerror = eventRejectHandler(reject, ["getting", key, "from", self.name]);
@@ -902,7 +913,7 @@
                 },
                 each: function (fn) {
                     var self = this;
-                    fakeAutoComplete(function () { fn(self.schema.instanceTemplate) });
+                    fakeAutoComplete(function () { fn(self.schema.instanceTemplate); });
                     return this._idbstore(READONLY, function (resolve, reject, idbstore) {
                         var req = idbstore.openCursor();
                         req.onerror = eventRejectHandler(reject, ["calling", "Table.each()", "on", self.name]);
@@ -911,7 +922,7 @@
                 },
                 toArray: function (cb) {
                     var self = this;
-                    fakeAutoComplete(function () { cb([self.schema.instanceTemplate]) });
+                    fakeAutoComplete(function () { cb([self.schema.instanceTemplate]); });
                     return this._idbstore(READONLY, function (resolve, reject, idbstore) {
                         var a = [];
                         var req = idbstore.openCursor();
@@ -951,15 +962,15 @@
 
                     // Now, subscribe to the when("reading") event to make all objects that come out from this table inherit from given class
                     // no matter which method to use for reading (Table.get() or Table.where(...)... )
-                    var readHook = use_proto ?
+                    var readHook = Object.setPrototypeOf ?
                         function makeInherited(obj) {
                             if (!obj) return obj; // No valid object. (Value is null). Return as is.
-                            // The JS engine supports __proto__. Just change that pointer on the existing object. A little more efficient way.
-                            obj.__proto__ = constructor.prototype;
+                            // Object.setPrototypeOf() supported. Just change that pointer on the existing object. A little more efficient way.
+                            Object.setPrototypeOf(obj, constructor.prototype);
                             return obj;
                         } : function makeInherited(obj) {
                             if (!obj) return obj; // No valid object. (Value is null). Return as is.
-                            // __proto__ not supported - do it by the standard: return a new object and clone the members from the old one.
+                            // Object.setPrototypeOf not supported (IE10)- return a new object and clone the members from the old one.
                             var res = Object.create(constructor.prototype);
                             for (var m in obj) if (obj.hasOwnProperty(m)) res[m] = obj[m];
                             return res;
@@ -1120,7 +1131,7 @@
                     if (this.hook.deleting.subscribers.length) {
                         // People listens to when("deleting") event. Must implement delete using WriteableCollection.delete() that will
                         // call the CRUD event. Only WriteableCollection.delete() will knows which objects that are actually deleted.
-                        this.toCollection().delete();
+                        return this.toCollection().delete();
                     } else {
                         return this._idbstore(READWRITE, function (resolve, reject, idbstore) {
                             var req = idbstore.clear();
@@ -1146,8 +1157,8 @@
                         // key to modify
                         return this.where(":id").equals(keyOrObject).modify(modifications);
                     }
-                },
-            }
+                }
+            };
         });
 
         //
@@ -1157,7 +1168,7 @@
         //
         //
         //
-        function Transaction(mode, storeNames, dbschema) {
+        function Transaction(mode, storeNames, dbschema, parent) {
             /// <summary>
             ///    Transaction class. Represents a database transaction. All operations on db goes through a Transaction.
             /// </summary>
@@ -1174,6 +1185,7 @@
             this._psd = null;
             this.active = true;
             this._dbschema = dbschema;
+            if (parent) this.parent = parent;
             this._tpf = transactionPromiseFactory;
             this.tables = Object.create(notInTransFallbackTables); // ...so that all non-included tables exists as instances (possible to call table.name for example) but will fail as soon as trying to execute a query on it.
 
@@ -1230,6 +1242,10 @@
                 // Promise.PSD.lockOwnerFor will point to current transaction object if the currently executing PSD scope owns the lock.
                 return this._reculock && (!Promise.PSD || Promise.PSD.lockOwnerFor !== this);
             },
+            _nop: function (cb) {
+                // An asyncronic no-operation that may call given callback when done doing nothing. An alternative to asap() if we must not lose the transaction.
+                this.tables[this.storeNames[0]].get(0).then(cb);
+            },
             _promise: function (mode, fn, bWriteLock) {
                 var self = this;
                 return Promise.newPSD(function() {
@@ -1244,15 +1260,15 @@
                                     self.on("error").fire(e && e.target.error);
                                     e.preventDefault(); // Prohibit default bubbling to window.error
                                     self.abort(); // Make sure transaction is aborted since we preventDefault.
-                                }
+                                }; 
                                 idbtrans.onabort = function (e) {
                                     self.active = false;
                                     self.on("abort").fire(e);
-                                }
+                                }; 
                                 idbtrans.oncomplete = function (e) {
                                     self.active = false;
                                     self.on("complete").fire(e);
-                                }
+                                }; 
                             }
                             if (bWriteLock) self._lock(); // Write lock if write operation is requested
                             try {
@@ -1328,7 +1344,7 @@
                 index: index === ":id" ? null : index,
                 collClass: table._collClass,
                 or: orCollection
-            }
+            }; 
         }
 
         extend(WhereClause.prototype, function () {
@@ -1342,15 +1358,15 @@
                 return collection;
             }
 
-            function getSortedSet(args) {
-                return Array.prototype.slice.call(Array.isArray(args[0]) ? args[0] : args, 0).sort(ascending);
+            function getSetArgs(args) {
+                return Array.prototype.slice.call(args.length === 1 && Array.isArray(args[0]) ? args[0] : args);
             }
 
             function upperFactory(dir) {
-                return dir === "next" ? function (s) { return s.toUpperCase(); } : function (s) { return s.toLowerCase(); }
+                return dir === "next" ? function (s) { return s.toUpperCase(); } : function (s) { return s.toLowerCase(); };
             }
             function lowerFactory(dir) {
-                return dir === "next" ? function (s) { return s.toLowerCase(); } : function (s) { return s.toUpperCase(); }
+                return dir === "next" ? function (s) { return s.toLowerCase(); } : function (s) { return s.toUpperCase(); };
             }
             function nextCasing(key, lowerKey, upperNeedle, lowerNeedle, cmp, dir) {
                 var length = Math.min(key.length, lowerNeedle.length);
@@ -1424,7 +1440,7 @@
                     includeLower = includeLower !== false;   // Default to true
                     includeUpper = includeUpper === true;    // Default to false
                     if ((lower > upper) ||
-                        (lower == upper && (includeLower || includeUpper) && !(includeLower && includeUpper)))
+                        (lower === upper && (includeLower || includeUpper) && !(includeLower && includeUpper)))
                         return new this._ctx.collClass(this, IDBKeyRange.only(lower)).limit(0); // Workaround for idiotic W3C Specification that DataError must be thrown if lower > upper. The natural result would be to return an empty collection.
                     return new this._ctx.collClass(this, IDBKeyRange.bound(lower, upper, !includeLower, !includeUpper));
                 },
@@ -1445,12 +1461,12 @@
                 },
                 startsWith: function (str) {
                     /// <param name="str" type="String"></param>
-                    if (typeof str != 'string') return fail(new this._ctx.collClass(this), new TypeError("String expected"));
+                    if (typeof str !== 'string') return fail(new this._ctx.collClass(this), new TypeError("String expected"));
                     return this.between(str, str + String.fromCharCode(65535), true, true);
                 },
                 startsWithIgnoreCase: function (str) {
                     /// <param name="str" type="String"></param>
-                    if (typeof str != 'string') return fail(new this._ctx.collClass(this), new TypeError("String expected"));
+                    if (typeof str !== 'string') return fail(new this._ctx.collClass(this), new TypeError("String expected"));
                     if (str === "") return this.startsWith(str);
                     var c = new this._ctx.collClass(this, IDBKeyRange.bound(str.toUpperCase(), str.toLowerCase() + String.fromCharCode(65535)));
                     addIgnoreCaseAlgorithm(c, function (a, b) { return a.indexOf(b) === 0; }, str);
@@ -1459,24 +1475,31 @@
                 },
                 equalsIgnoreCase: function (str) {
                     /// <param name="str" type="String"></param>
-                    if (typeof str != 'string') return fail(new this._ctx.collClass(this), new TypeError("String expected"));
+                    if (typeof str !== 'string') return fail(new this._ctx.collClass(this), new TypeError("String expected"));
                     var c = new this._ctx.collClass(this, IDBKeyRange.bound(str.toUpperCase(), str.toLowerCase()));
                     addIgnoreCaseAlgorithm(c, function (a, b) { return a === b; }, str);
                     return c;
                 },
                 anyOf: function (valueArray) {
-                    var set = getSortedSet(arguments);
+                    var ctx = this._ctx,
+                        schema = ctx.table.schema;
+                    var idxSpec = ctx.index ? schema.idxByName[ctx.index] : schema.primKey;
+                    var isCompound = idxSpec && idxSpec.compound;
+                    var set = getSetArgs(arguments);
+                    var compare = isCompound ? compoundCompare(ascending) : ascending;
+                    set.sort(compare);
                     if (set.length === 0) return new this._ctx.collClass(this, IDBKeyRange.only("")).limit(0); // Return an empty collection.
                     var c = new this._ctx.collClass(this, IDBKeyRange.bound(set[0], set[set.length - 1]));
-                    var sorter = ascending;
+                    
                     c._ondirectionchange = function (direction) {
-                        sorter = (direction === "next" ? ascending : descending);
-                        set.sort(sorter);
+                        compare = (direction === "next" ? ascending : descending);
+                        if (isCompound) compare = compoundCompare(compare);
+                        set.sort(compare);
                     };
                     var i = 0;
                     c._addAlgorithm(function (cursor, advance, resolve) {
                         var key = cursor.key;
-                        while (sorter(key, set[i]) > 0) {
+                        while (compare(key, set[i]) > 0) {
                             // The cursor has passed beyond this key. Check next.
                             ++i;
                             if (i === set.length) {
@@ -1485,7 +1508,7 @@
                                 return false;
                             }
                         }
-                        if (key === set[i]) {
+                        if (compare(key, set[i]) === 0) {
                             // The current cursor value should be included and we should continue a single step in case next item has the same key or possibly our next key in set.
                             advance(function () { cursor.continue(); });
                             return true;
@@ -1520,7 +1543,7 @@
             this._ctx = {
                 table: whereCtx.table,
                 index: whereCtx.index,
-                isPrimKey: (!whereCtx.index || (whereCtx.table.schema.primKey.keyPath && whereCtx.index === whereCtx.table.schema.primKey.keyPath)),
+                isPrimKey: (!whereCtx.index || (whereCtx.table.schema.primKey.keyPath && whereCtx.index === whereCtx.table.schema.primKey.name)),
                 range: keyRange,
                 op: "openCursor",
                 dir: "next",
@@ -1532,7 +1555,7 @@
                 limit: Infinity,
                 error: null, // If set, any promise must be rejected with this error
                 or: whereCtx.or
-            }
+            }; 
         }
 
         extend(Collection.prototype, function () {
@@ -1550,7 +1573,10 @@
             }
 
             function getIndexOrStore(ctx, store) {
-                return ctx.isPrimKey ? store : store.index(ctx.index);
+                if (ctx.isPrimKey) return store;
+                var indexSpec = ctx.table.schema.idxByName[ctx.index];
+                if (!indexSpec) throw new Error("KeyPath " + ctx.index + " on object store " + store.name + " is not indexed");
+                return ctx.isPrimKey ? store : store.index(indexSpec.name);
             }
 
             function openCursor(ctx, store) {
@@ -1653,7 +1679,7 @@
                             req.onerror = eventRejectHandler(reject, ["calling", "count()", "on", self.name]);
                             req.onsuccess = function (e) {
                                 resolve(Math.min(e.target.result, Math.max(0, ctx.limit - ctx.offset)));
-                            }
+                            };
                         }, cb);
                     }
                 },
@@ -1739,7 +1765,7 @@
                 first: function (cb) {
                     var self = this;
                     fakeAutoComplete(function () { cb(getInstanceTemplate(self._ctx)); });
-                    return this.limit(1).toArray(function (a) { return a[0] }).then(cb);
+                    return this.limit(1).toArray(function (a) { return a[0]; }).then(cb);
                 },
 
                 last: function (cb) {
@@ -1762,7 +1788,7 @@
                 },
 
                 reverse: function () {
-                    this._ctx.dir = (this._ctx.dir == "prev" ? "next" : "prev");
+                    this._ctx.dir = (this._ctx.dir === "prev" ? "next" : "prev");
                     if (this._ondirectionchange) this._ondirectionchange(this._ctx.dir);
                     return this;
                 },
@@ -1883,7 +1909,7 @@
                                         });
                                     }
                                 }
-                            }
+                            }; 
                         }
                     } else if (updatingHook === nop) {
                         // changes is a set of {keyPath: value} and no one is listening to the updating hook.
@@ -1899,7 +1925,7 @@
                                 }
                             }
                             return anythingModified;
-                        }
+                        }; 
                     } else {
                         // changes is a set of {keyPath: value} and people are listening to the updating hook so we need to call it and
                         // allow it to add additional modifications to make.
@@ -1918,7 +1944,7 @@
                             });
                             if (additionalChanges) changes = shallowClone(origChanges); // Restore original changes.
                             return anythingModified;
-                        }
+                        }; 
                     }
 
                     var count = 0;
@@ -1945,7 +1971,7 @@
                                 if (thisContext.onsuccess) thisContext.onsuccess(thisContext.value);
                                 ++successCount;
                                 checkFinished();
-                            }
+                            }; 
                         }
                     }
 
@@ -2031,8 +2057,8 @@
                     var cursor = req.result;
                     if (cursor) {
                         var c = function () { cursor.continue(); };
-                        if (filter(cursor, function (advancer) { c = advancer }, resolve, reject))
-                            fn(readingHook(cursor.value), cursor, function (advancer) { c = advancer });
+                        if (filter(cursor, function (advancer) { c = advancer; }, resolve, reject))
+                            fn(readingHook(cursor.value), cursor, function (advancer) { c = advancer; });
                         c();
                     } else {
                         resolve();
@@ -2043,7 +2069,7 @@
                     var cursor = req.result;
                     if (cursor) {
                         var c = function () { cursor.continue(); };
-                        fn(readingHook(cursor.value), cursor, function (advancer) { c = advancer });
+                        fn(readingHook(cursor.value), cursor, function (advancer) { c = advancer; });
                         c();
                     } else {
                         resolve();
@@ -2059,16 +2085,16 @@
             indexes.split(',').forEach(function (index) {
                 index = index.trim();
                 var name = index.replace("&", "").replace("++", "").replace("*", "");
-                var keyPath = (name.indexOf('[') !== 0 ? name : index.substring(1, index.indexOf(']')).split('+'));
+                var keyPath = (name.indexOf('[') !== 0 ? name : index.substring(index.indexOf('[') + 1, index.indexOf(']')).split('+'));
 
                 rv.push(new IndexSpec(
                     name,
                     keyPath || null,
-                    index.indexOf('&') != -1,
-                    index.indexOf('*') != -1,
-                    index.indexOf("++") != -1,
+                    index.indexOf('&') !== -1,
+                    index.indexOf('*') !== -1,
+                    index.indexOf("++") !== -1,
                     Array.isArray(keyPath),
-                    keyPath.indexOf('.') != -1
+                    keyPath.indexOf('.') !== -1
                 ));
             });
             return rv;
@@ -2082,8 +2108,22 @@
             return a < b ? 1 : a > b ? -1 : 0;
         }
 
+        function compoundCompare(itemCompare) {
+            return function (a, b) {
+                var i = 0;
+                while (true) {
+                    var result = itemCompare(a[i], b[i]);
+                    if (result !== 0) return result;
+                    ++i;
+                    if (i === a.length || i === b.length)
+                        return itemCompare(a.length, b.length);
+                }
+            };
+        }
+
+
         function combine(filter1, filter2) {
-            return filter1 ? filter2 ? function () { return filter1.apply(this, arguments) && filter2.apply(this, arguments) } : filter1 : filter2;
+            return filter1 ? filter2 ? function () { return filter1.apply(this, arguments) && filter2.apply(this, arguments); } : filter1 : filter2;
         }
 
         function hasIEDeleteObjectStoreBug() {
@@ -2095,20 +2135,46 @@
             db.verno = idbdb.version / 10;
             db._dbSchema = globalSchema = {};
             dbStoreNames = [].slice.call(idbdb.objectStoreNames, 0);
-            if (dbStoreNames.length == 0) return; // Database contains no stores.
+            if (dbStoreNames.length === 0) return; // Database contains no stores.
             var trans = idbdb.transaction(dbStoreNames, 'readonly');
             dbStoreNames.forEach(function (storeName) {
-                var store = trans.objectStore(storeName);
-                var primKey = new IndexSpec(store.keyPath, store.keyPath || "", false, false, !!store.autoIncrement, false, store.keyPath && store.keyPath.indexOf('.') != -1);
+                var store = trans.objectStore(storeName),
+                    keyPath = store.keyPath,
+                    dotted = keyPath && typeof keyPath === 'string' && keyPath.indexOf('.') !== -1;
+                var primKey = new IndexSpec(keyPath, keyPath || "", false, false, !!store.autoIncrement, keyPath && typeof keyPath !== 'string', dotted);
                 var indexes = [];
                 for (var j = 0; j < store.indexNames.length; ++j) {
                     var idbindex = store.index(store.indexNames[j]);
-                    var index = new IndexSpec(idbindex.name, idbindex.keyPath, !!idbindex.unique, !!idbindex.multiEntry, false, typeof idbindex.keyPath !== 'string', idbindex.keyPath.indexOf('.') != -1);
+                    keyPath = idbindex.keyPath;
+                    dotted = keyPath && typeof keyPath === 'string' && keyPath.indexOf('.') !== -1;
+                    var index = new IndexSpec(idbindex.name, keyPath, !!idbindex.unique, !!idbindex.multiEntry, false, keyPath && typeof keyPath !== 'string', dotted);
                     indexes.push(index);
                 }
                 globalSchema[storeName] = new TableSchema(storeName, primKey, indexes, {});
             });
             setApiOnPlace([allTables], db._transPromiseFactory, Object.keys(globalSchema), READWRITE, globalSchema);
+        }
+
+        function adjustToExistingIndexNames(schema, idbtrans) {
+            /// <summary>
+            /// Issue #30 Problem with existing db - adjust to existing index names when migrating from non-dexie db
+            /// </summary>
+            /// <param name="schema" type="Object">Map between name and TableSchema</param>
+            /// <param name="idbtrans" type="IDBTransaction"></param>
+            var storeNames = idbtrans.db.objectStoreNames;
+            for (var i = 0; i < storeNames.length; ++i) {
+                var storeName = storeNames[i];
+                var store = idbtrans.objectStore(storeName);
+                for (var j = 0; j < store.indexNames.length; ++j) {
+                    var indexName = store.indexNames[j];
+                    var keyPath = store.index(indexName).keyPath;
+                    var dexieName = typeof keyPath === 'string' ? keyPath : "[" + [].slice.call(keyPath).join('+') + "]";
+                    if (schema[storeName]) {
+                        var indexSpec = schema[storeName].idxByName[dexieName];
+                        if (indexSpec) indexSpec.name = indexName;
+                    }
+                }
+            }
         }
 
         extend(this, {
@@ -2118,7 +2184,7 @@
             Version: Version,
             WhereClause: WhereClause,
             WriteableCollection: WriteableCollection,
-            WriteableTable: WriteableTable,
+            WriteableTable: WriteableTable
         });
 
         init();
@@ -2149,12 +2215,29 @@
     var Promise = (function () {
 
         // The use of asap in handle() is remarked because we must NOT use setTimeout(fn,0) because it causes premature commit of indexedDB transactions - which is according to indexedDB specification.
-        var asap = typeof (setImmediate) === 'undefined' ? function (fn, arg1, arg2, argN) {
+        var _slice = [].slice;
+        var _asap = typeof (setImmediate) === 'undefined' ? function(fn, arg1, arg2, argN) {
             var args = arguments;
-            setTimeout(function () { fn.apply(this, [].slice.call(args, 1)) }, 0);// If not FF13 and earlier failed, we could use this call here instead: setTimeout.call(this, [fn, 0].concat(arguments));
-        } : function (fn, arg1, arg2, argN) {
-            setImmediate.apply(this, arguments); // IE10+ and node.
-        };
+            setTimeout(function() { fn.apply(window, _slice.call(args, 1)); }, 0); // If not FF13 and earlier failed, we could use this call here instead: setTimeout.call(this, [fn, 0].concat(arguments));
+        } : setImmediate; // IE10+ and node.
+
+        var asap = _asap,
+            isRootExecution = true;
+
+        var operationsQueue = [];
+        function enqueueImmediate(fn, args) {
+            operationsQueue.push([fn, _slice.call(arguments, 1)]);
+        }
+
+        function executeOperationsQueue() {
+            var queue = operationsQueue;
+            operationsQueue = [];
+            for (var i = 0, l = queue.length; i < l; ++i) {
+                var item = queue[i];
+                item[0].apply(window, item[1]);
+            }
+        }
+
         //var PromiseID = 0;
         function Promise(fn) {
             if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new');
@@ -2187,10 +2270,9 @@
             }
         }
 
-        function handle(deferred) {
-            var self = this;
-            if (this._state === null) {
-                this._deferreds.push(deferred);
+        function handle(self, deferred) {
+            if (self._state === null) {
+                self._deferreds.push(deferred);
                 return;
             }
 
@@ -2199,7 +2281,9 @@
                 // This Deferred doesnt have a listener for the event being triggered (onFulfilled or onReject) so lets forward the event to any eventual listeners on the Promise instance returned by then() or catch()
                 return (self._state ? deferred.resolve : deferred.reject)(self._value);
             }
-            var ret;
+            var ret, isRootExec = isRootExecution;
+            isRootExecution = false;
+            asap = enqueueImmediate;
             try {
                 ret = cb(self._value);
                 if (!self._state && (!ret || typeof ret.then !== 'function' || ret._state !== false)) setCatched(self); // Caller did 'return Promise.reject(err);' - don't regard it as catched!
@@ -2211,6 +2295,11 @@
                 return;
             }
             deferred.resolve(ret);
+            if (isRootExec) {
+                while(operationsQueue.length > 0) executeOperationsQueue();
+                asap = _asap;
+                isRootExecution = true;
+            }
         }
 
         function setCatched(promise) {
@@ -2238,7 +2327,7 @@
                 promise._state = true;
                 promise._value = newValue;
                 finale.call(promise);
-            } catch (e) { reject(e) } finally {
+            } catch (e) { reject(e); } finally {
                 Promise.PSD = outerPSD;
             }
         }
@@ -2259,7 +2348,7 @@
 
         function finale() {
             for (var i = 0, len = this._deferreds.length; i < len; i++) {
-                handle.call(this, this._deferreds[i]);
+                handle(this, this._deferreds[i]);
             }
             this._deferreds = [];
         }
@@ -2288,7 +2377,7 @@
                     if (done) return promise._catched;
                     done = true;
                     return onRejected(reason);
-                })
+                });
             } catch (ex) {
                 if (done) return;
                 return onRejected(ex);
@@ -2306,7 +2395,7 @@
                         if (val && (typeof val === 'object' || typeof val === 'function')) {
                             var then = val.then;
                             if (typeof then === 'function') {
-                                then.call(val, function (val) { res(i, val) }, reject);
+                                then.call(val, function (val) { res(i, val); }, reject);
                                 return;
                             }
                         }
@@ -2328,7 +2417,10 @@
         Promise.prototype.then = function (onFulfilled, onRejected) {
             var self = this;
             var p = new Promise(function (resolve, reject) {
-                handle.call(self, new Deferred(onFulfilled, onRejected, resolve, reject));
+                if (self._state === null)
+                    handle(self, new Deferred(onFulfilled, onRejected, resolve, reject));
+                else
+                    asap(handle, self, new Deferred(onFulfilled, onRejected, resolve, reject));
             });
             p._PSD = this._PSD;
             p.onuncatched = this.onuncatched; // Needed when exception occurs in a then() clause of a successful parent promise. Want onuncatched to be called even in callbacks of callbacks of the original promise.
@@ -2383,7 +2475,7 @@
             return new Promise(function (resolve, reject) {
                 values.map(function (value) {
                     value.then(resolve, reject);
-                })
+                });
             });
         };
 
@@ -2398,7 +2490,7 @@
             } finally {
                 Promise.PSD = outerScope;
             }
-        }
+        }; 
 
         return Promise;
     })();
@@ -2419,14 +2511,14 @@
         if (f1 === mirror) return f2;
         return function (val) {
             return f2(f1(val));
-        }
+        }; 
     }
 
     function callBoth(on1, on2) {
         return function () {
             on1.apply(this, arguments);
             on2.apply(this, arguments);
-        }
+        }; 
     }
 
     function hookCreatingChain(f1, f2) {
@@ -2444,7 +2536,7 @@
             if (onsuccess) this.onsuccess = this.onsuccess ? callBoth(onsuccess, this.onsuccess) : onsuccess;
             if (onerror) this.onerror = this.onerror ? callBoth(onerror, this.onerror) : onerror;
             return res2 !== undefined ? res2 : res;
-        }
+        }; 
     }
 
     function hookUpdatingChain(f1, f2) {
@@ -2459,8 +2551,10 @@
             var res2 = f2.apply(this, arguments);
             if (onsuccess) this.onsuccess = this.onsuccess ? callBoth(onsuccess, this.onsuccess) : onsuccess;
             if (onerror) this.onerror = this.onerror ? callBoth(onerror, this.onerror) : onerror;
-            return res === undefined ? res2 === undefined ? undefined : res2 : res.extend(res2);
-        }
+            return res === undefined ?
+                (res2 === undefined ? undefined : res2) :
+                (res2 === undefined ? res : extend(res, res2));
+        }; 
     }
 
     function stoppableEventChain(f1, f2) {
@@ -2469,7 +2563,7 @@
         return function () {
             if (f1.apply(this, arguments) === false) return false;
             return f2.apply(this, arguments);
-        }
+        }; 
     }
 
     function reverseStoppableEventChain(f1, f2) {
@@ -2477,7 +2571,7 @@
         return function () {
             if (f2.apply(this, arguments) === false) return false;
             return f1.apply(this, arguments);
-        }
+        }; 
     }
 
     function nonStoppableEventChain(f1, f2) {
@@ -2485,21 +2579,21 @@
         return function () {
             f1.apply(this, arguments);
             f2.apply(this, arguments);
-        }
+        }; 
     }
 
     function promisableChain(f1, f2) {
         if (f1 === nop) return f2;
         return function () {
             var res = f1.apply(this, arguments);
-            if (res && typeof res.then == 'function') {
+            if (res && typeof res.then === 'function') {
                 var thiz = this, args = arguments;
                 return res.then(function () {
                     return f2.apply(thiz, args);
                 });
             }
             return f2.apply(this, arguments);
-        }
+        }; 
     }
 
     function events(ctx, eventNames) {
@@ -2516,7 +2610,7 @@
                 // Return interface allowing to fire or unsubscribe from event
                 return evs[eventName];
             }
-        }
+        }; 
         rv.addEventType = add;
 
         function add(eventName, chainFunction, defaultFunction) {
@@ -2562,12 +2656,12 @@
                         // Change how subscribe works to not replace the fire function but to just add the subscriber to subscribers
                         if (context.subscribers.indexOf(fn) === -1)
                             context.subscribers.push(fn);
-                    }
+                    }; 
                     context.unsubscribe = function (fn) {
                         // Change how unsubscribe works for the same reason as above.
                         var idxOfFn = context.subscribers.indexOf(fn);
                         if (idxOfFn !== -1) context.subscribers.splice(idxOfFn, 1);
-                    }
+                    }; 
                 } else throw new Error("Invalid event config");
             });
         }
@@ -2623,28 +2717,25 @@
         if (obj.hasOwnProperty(keyPath)) return obj[keyPath]; // This line is moved from last to first for optimization purpose.
         if (!keyPath) return obj;
         if (typeof keyPath !== 'string') {
-            //if (Array.isArray(keyPath)) {
             var rv = [];
             for (var i = 0, l = keyPath.length; i < l; ++i) {
                 var val = getByKeyPath(obj, keyPath[i]);
-                if (val === undefined) return;
                 rv.push(val);
             }
-            return val;
+            return rv;
         }
         var period = keyPath.indexOf('.');
         if (period !== -1) {
             var innerObj = obj[keyPath.substr(0, period)];
             return innerObj === undefined ? undefined : getByKeyPath(innerObj, keyPath.substr(period + 1));
         }
-        //return obj.hasOwnProperty(keyPath) ? obj[keyPath] : undefined;
         return undefined;
     }
 
     function setByKeyPath(obj, keyPath, value) {
         if (!obj || keyPath === undefined) return;
-        if (Array.isArray(keyPath)) {
-            assert(Array.isArray(value));
+        if (typeof keyPath !== 'string' && 'length' in keyPath) {
+            assert(typeof value !== 'string' && 'length' in value);
             for (var i = 0, l = keyPath.length; i < l; ++i) {
                 setByKeyPath(obj, keyPath[i], value[i]);
             }
@@ -2709,7 +2800,7 @@
         for (var prop in a) if (a.hasOwnProperty(prop)) {
             if (!b.hasOwnProperty(prop))
                 rv[prop] = undefined; // Property removed
-            else if (a[prop] !== b[prop] && JSON.stringify(a[prop]) != JSON.stringify(b[prop]))
+            else if (a[prop] !== b[prop] && JSON.stringify(a[prop]) !== JSON.stringify(b[prop]))
                 rv[prop] = b[prop]; // Property changed
         }
         for (var prop in b) if (b.hasOwnProperty(prop) && !a.hasOwnProperty(prop)) {
@@ -2719,11 +2810,11 @@
     }
 
     function parseType(type) {
-        if (typeof type == 'function') {
+        if (typeof type === 'function') {
             return new type();
         } else if (Array.isArray(type)) {
             return [parseType(type[0])];
-        } else if (type && typeof type == 'object') {
+        } else if (type && typeof type === 'object') {
             var rv = {};
             applyStructure(rv, type);
             return rv;
@@ -2758,7 +2849,7 @@
                         if (errObj.stack) rv += (errObj.stack ? ". Stack: " + errObj.stack : "");
                         this.toString = toString;
                         return rv;*/
-                    }
+                    };
                 } else {
                     errObj = errObj + occurredWhen;
                 }
@@ -2812,7 +2903,8 @@
         this.auto = auto;
         this.compound = compound;
         this.dotted = dotted;
-        this.src = (unique ? '&' : '') + (multi ? '*' : '') + (auto ? "++" : "") + keyPath;
+        var keyPathSrc = typeof keyPath === 'string' ? keyPath : keyPath && ('[' + [].join.call(keyPath, '+') + ']');
+        this.src = (unique ? '&' : '') + (multi ? '*' : '') + (auto ? "++" : "") + keyPathSrc;
     }
 
     //
@@ -2828,6 +2920,10 @@
         this.indexes = indexes || [new IndexSpec()];
         this.instanceTemplate = instanceTemplate;
         this.mappedClass = null;
+        this.idxByName = indexes.reduce(function (hashSet, index) {
+            hashSet[index.name] = index;
+            return hashSet;
+        }, {});
     }
 
     //
@@ -2853,7 +2949,7 @@
             return this;
         };
         return promise;
-    }
+    }; 
 
     //
     // Static method for retrieving a list of all existing databases at current host.
@@ -2864,13 +2960,16 @@
                 var req = ('getDatabaseNames' in indexedDB ? indexedDB.getDatabaseNames() : indexedDB.webkitGetDatabaseNames());
                 req.onsuccess = function (event) {
                     resolve([].slice.call(event.target.result, 0)); // Converst DOMStringList to Array<String>
-                }
+                }; 
                 req.onerror = eventRejectHandler(reject);
             } else {
-                globalDatabaseList(resolve);
+                globalDatabaseList(function (val) {
+                    resolve(val);
+                    return false;
+                });
             }
         }).then(cb);
-    }
+    }; 
 
     Dexie.defineClass = function (structure) {
         /// <summary>
@@ -2888,7 +2987,7 @@
         }
         applyStructure(Class.prototype, structure);
         return Class;
-    }
+    }; 
 
     Dexie.spawn = function (scopeFunc) {
         // In case caller is within a transaction but needs to create a separate transaction.
@@ -2915,7 +3014,7 @@
             Promise.PSD.trans = null;
             return scopeFunc();
         });
-    }
+    }; 
 
     Dexie.vip = function (fn) {
         // To be used by subscribers to the on('ready') event.
@@ -2930,7 +3029,7 @@
             Promise.PSD.letThrough = true; // Make sure we are let through if still blocking db due to onready is firing.
             return fn();
         });
-    }
+    }; 
 
     // Dexie.currentTransaction property. Only applicable for transactions entered using the new "transact()" method.
     Object.defineProperty(Dexie, "currentTransaction", {
@@ -2938,7 +3037,7 @@
             /// <returns type="Transaction"></returns>
             return Promise.PSD && Promise.PSD.trans || null;
         }
-    })
+    }); 
 
 
     // Export our Promise implementation since it can be handy as a standalone Promise implementation
@@ -2979,10 +3078,10 @@
         SyntaxError: window.SyntaxError || String,
         TypeError: window.TypeError || String,
         DOMError: window.DOMError || String
-    }
+    }; 
 
     // API Version Number: Type Number, make sure to always set a version number that can be comparable correctly. Example: 0.9, 0.91, 0.92, 1.0, 1.01, 1.1, 1.2, 1.21, etc.
-    Dexie.version = 0.99;
+    Dexie.version = 1.02;
 
 
 
@@ -2991,6 +3090,6 @@
     // Publish the Dexie to browser or NodeJS environment.
     publish("Dexie", Dexie);
 
-}).apply(this, typeof module === 'undefined' || (typeof window !== 'undefined' && this == window)
+}).apply(this, typeof module === 'undefined' || (typeof window !== 'undefined' && this === window)
     ? [window, function (name, value) { window[name] = value; }, true]    // Adapt to browser environment
     : [global, function (name, value) { module.exports = value; }, false]); // Adapt to Node.js environment
