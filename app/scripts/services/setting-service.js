@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');  
-module.factory('settings', function($log, db, alerts, $timeout) {
+module.factory('settings', function($log, db, $timeout) {
 
   function resolve(id, value) {
     var list = [];
@@ -72,6 +72,7 @@ module.factory('settings', function($log, db, alerts, $timeout) {
 
     /* Store default settings in local registry */
     registry[setting.id] = setting;
+    registry[setting.id].__initialized = true;
 
     var stored_setting = stored_settings[setting.id];
     if (stored_setting==undefined) {
@@ -124,46 +125,6 @@ module.factory('settings', function($log, db, alerts, $timeout) {
           });
         }).catch(function (e) { console.error(e); });
       }
-
-      // db.transaction('rw', db.settings, function () {
-      //   angular.forEach(settings, function (setting) {
-      //     /* Don't allow duplicate registrations of settings */
-      //     if (setting.id in registry) {
-      //       throw new Error('Duplicate initialization of setting '+setting.id);
-      //     }
-
-      //     /* Validate that the type and value are a match */
-      //     if (setting.type && !(new Object(setting.value) instanceof setting.type)) {
-      //       throw new Error("Setting for "+setting.id+" of wrong type");
-      //     }
-
-      //     /* Store default settings in local registry */
-      //     registry[setting.id] = setting;
-
-      //     /* Initialization only happens the first time - so optimize for all other times */
-      //     db.settings.where('id').equals(setting.id).first().then(
-      //       function (stored_setting) {
-      //         try {
-      //           if (stored_setting==undefined) {
-      //             db.settings.add({ id: setting.id, value: setting.value, label: setting.label });
-      //           }
-      //           else {
-      //             registry[setting.id].value = stored_setting.value;
-      //           }
-      //           if (setting.resolve || resolvers[setting.id]) {
-      //             $timeout(function () {
-      //               resolve(setting.id, stored_setting==undefined ? setting.value : stored_setting.value);
-      //               // setting.resolve(stored_setting==undefined ? setting.value : stored_setting.value);
-      //             });
-      //           }
-      //         }
-      //         catch (e) {
-      //           console.log('settings-exception', e);
-      //         }
-      //       }
-      //     ).catch(alerts.catch('Init settings'));
-      //   });
-      // });
     },
 
     /**
@@ -225,8 +186,11 @@ module.factory('settings', function($log, db, alerts, $timeout) {
         resolvers[key] = [];
       }
       resolvers[key].push(resolve);
+      if (registry[key] && registry[key].__initialized) {
+        resolve(registry[key].value);
+      }
       if ($scope) {
-        $scope.$on('destroy', function () {
+        $scope.$on('$destroy', function () {
           for (var i=0; i<resolvers[key].length; i++) {
             if (resolvers[key][i] == resolve) {
               resolvers[key].splice(i, 1);
