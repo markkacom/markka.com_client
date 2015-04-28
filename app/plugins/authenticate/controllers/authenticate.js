@@ -1,23 +1,23 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('AuthenticatePlugin', function($scope, $stateParams, modals, $q, nxt, plugins, requests) {
+module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $q, nxt, plugins, requests) {
 
   var FIMKRYPTO_ALIAS     = "FIMKAUTHACCOUNT";
   var FIMKRYPTO_RS        = null;
   var FIMKRYPTO_PUBLICKEY = null;
   
-  $scope.challenger_id_rs = $stateParams.challenger_id_rs;
-  $scope.identifier_id_rs = $stateParams.identifier_id_rs;
-  $scope.challenger_name  = decodeURIComponent($stateParams.challenger_name);
-  $scope.challenger_url   = decodeURIComponent($stateParams.challenger_url);
+  $scope.challenger_id_rs = $routeParams.challenger_id_rs;
+  $scope.identifier_id_rs = $routeParams.identifier_id_rs;
+  $scope.challenger_name  = decodeURIComponent($routeParams.challenger_name);
+  $scope.challenger_url   = decodeURIComponent($routeParams.challenger_url);
   $scope.challenge_text   = getChallengeText();
   var secretPhrase        = null;
   $scope.confirmed        = false;
 
   // $scope.lender = {}
-  // $scope.lender.name = $stateParams.name;
-  // $scope.lender.url = decodeURIComponent($stateParams.url);
+  // $scope.lender.name = $routeParams.name;
+  // $scope.lender.url = decodeURIComponent($routeParams.url);
   // $scope.confirmed = false;
 
   $scope.login = function () {
