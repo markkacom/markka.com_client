@@ -10,26 +10,67 @@ if (typeof process != 'undefined') {
 
 var module = angular.module('fim.base', [
   'ngAnimate',
-  // 'ngCookies',
-  // 'ngResource',
-  'ui.router',
-  'ui.bootstrap',
   'ngSanitize',
   'ngTouch',
-  // 'angular-loading-bar',  
-  // 'ngGrid',
-  'pascalprecht.translate',
   'ngTable',
-  'ui.validate'
+  'ngRoute',
+  'ngCookies',
+  'ui.bootstrap',
+  'ui.validate',
+  'pascalprecht.translate',
+  'infinite-scroll'
 ]);
 
-module.run(function ($log, $rootScope, serverService, transactionService) {
+module.run(function ($log, $rootScope, $translate, plugins, serverService) {
   $log.log('fim.base application started');
+  if (isNodeJS) {
+    var win = require('nw.gui').Window.get();
+    win.on('close', function (event) {
+    
+      var self = this;
+      plugins.get('alerts').confirm({
+        title: 'Close Mofowallet',
+        message: 'Are you sure you want to exit MofoWallet?'
+      }).then( 
+        function (confirmed) {
+          if (confirmed) {
+            var count = 0;
+            angular.forEach(['TYPE_NXT','TYPE_FIM'], function (id) {
+              if (serverService.isRunning(id)) {
+                serverService.addListener(id, 'exit', function () {
+                  count--;
+                  if (count == 0) {
+                    self.close(true);
+                  }
+                });
+
+                count++;
+                serverService.stopServer(id);
+              }
+            });
+            if (count == 0) {
+              self.hide();
+              self.close(true);
+            }
+            else {
+              plugins.get('alerts').wait({
+                title: "Please wait",
+                message: "Shutting down"
+              });
+            }
+          }
+        }
+      );
+    });
+  }
 });
 
-module.config(function($httpProvider) {
+module.config(function($translateProvider, $httpProvider) {
+  $translateProvider.useStaticFilesLoader({ prefix: './i18n/', suffix: '.json' });
+  $translateProvider.preferredLanguage('en');
+  $translateProvider.useLocalStorage();
+
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
-
 
 })();
