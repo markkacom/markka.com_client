@@ -1,0 +1,6 @@
+Includes better forging and leasing feedback.
+Fixes a bug where the client did not reconnect to your local server after it diconnected.
+
+Changed nxt-default.properties, nxt.allowedBotHosts is now set to * by default. Users can 
+restore this setting if they whish the old value is commented out but can still be 
+restored.
