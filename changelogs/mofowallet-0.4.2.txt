@@ -1,0 +1,7 @@
+Contains FIMK Server 0.4.1 and NXT+ Server based on NXT 1.4.16
+
+Lots of bug fixes in both client and server.
+
+Freetext blockchain search with instant results as you type.
+
+MofoWallet is now available in 64 languages.
