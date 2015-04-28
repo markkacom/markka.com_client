@@ -28,112 +28,28 @@ function versions(updates, db) {
 }
 
 var module = angular.module('fim.base');
-module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
-  var db = new Dexie('fimkrypto-db');
+module.factory('db', function ($log, $injector, $timeout, $rootScope) {
 
-  var blockstore          = "height,&id,timestamp,numberOfTransactions,generator,totalAmountNQT,totalFeeNQT";
-  var fim_blockstore      = blockstore+',totalPOSRewardNQT';
-  var transactionstore    = "transaction,type,subtype,timestamp,recipientRS,senderRS,height,block,isLast";
-  var assetsstore         = "asset,name,accountRS,description,decimals,quantityQNT,numberOfTrades";
-  var assetsstore2        = assetsstore+",latestPriceNQT,diff24h";
-  var nodes               = "++id,url,port,downloaded,success_timestamp,failed_timestamp,start_timestamp,require_cors_proxy,first_cors,last_cors,last_non_cors";
-  var nodes2              = nodes+",scan_height,onfork";
-  var trades              = "++id,timestamp,quantityQNT,priceNQT,asset,askOrder,bidOrder,block";
-  var orders              = "order,asset,accountRS,quantityQNT,priceNQT,height,type";
-  var orders2             = "order,asset,accountRS,quantityQNT,priceNQT,height";
-  var trades2             = "++id,timestamp,asset,sellerRS,buyerRS,tradeType,name";
+  var old_db = new Dexie('fimkrypto-db');
+  old_db.delete();
+  old_db = null;
 
-  /* related_rs_a and related_rs_b are used to keep track to what account a 'partially' downloaded transaction belongs. */
-  var transactionstore2   = transactionstore+',related_rs_a,related_rs_b,related_index';
-
-  var masspay_payments    = "++id,index,recipientRS,amountNQT,transactionSuccess,broadcastSuccess,blockchainStatus,created,broadcasted";
-
+  var db = new Dexie('fimkrypto-db2');
+  db.createObserver = createObserver;
+  var masspay_payments = "++id,index,recipientRS,amountNQT,transactionSuccess,broadcastSuccess,blockchainStatus,created,broadcasted";
+  var settings = "++id";
+  var accounts = "id_rs,name";
+  var nodes = "++id,port";
+  var contacts = "++id,id_rs,name";
   versions([{
     update: {
-      settings:             "id,label,value",
-      accounts:             "id_rs,id,name,balanceNXT,forgedBalanceNXT",
-      contacts:             "id_rs,&name,email,website",
-
-      nodes:                nodes,
-      fimblocks_test:       fim_blockstore,
-      fimblocks:            fim_blockstore,
-      nxtblocks_test:       blockstore,
-      nxtblocks:            blockstore,
-
-      fimtransactions_test: transactionstore,
-      fimtransactions:      transactionstore,
-      nxttransactions_test: transactionstore,
-      nxttransactions:      transactionstore,
-
-      fimassets_test:       assetsstore,
-      fimassets:            assetsstore,
-      nxtassets_test:       assetsstore,
-      nxtassets:            assetsstore
-    }
-  }, {
-    /* Add related_rs_a and related_rs_b fields to transactions store */
-    update: {
-      fimtransactions_test: transactionstore2,
-      fimtransactions:      transactionstore2,
-      nxttransactions_test: transactionstore2,
-      nxttransactions:      transactionstore2,   
-    }
-  }, {
-    update: {
-      nodes:                nodes2
-    }
-  }, {
-    update: {
-      fimtrades:            trades,
-      fimtrades_test:       trades,
-      fimorders:            orders,
-      fimorders_test:       orders,
-      nxttrades:            trades,
-      nxttrades_test:       trades,
-      nxtorders:            orders,
-      nxtorders_test:       orders,
-
-      fimassets_test:       assetsstore2,
-      fimassets:            assetsstore2,
-      nxtassets_test:       assetsstore2,
-      nxtassets:            assetsstore2
-    }
-  }, {
-    remove: {
-      fimorders:            1,
-      fimorders_test:       1,
-      nxtorders:            1,
-      nxtorders_test:       1,      
-    },
-    update: {
-      fimasks:              orders2,
-      fimasks_test:         orders2,
-      fimbids:              orders2,
-      fimbids_test:         orders2,
-      nxtasks:              orders2,
-      nxtasks_test:         orders2,
-      nxtbids:              orders2,
-      nxtbids_test:         orders2
-    }
-  },{
-    update: {
-      masspay_payments:     masspay_payments
-    }
-  }, {
-    update: {
-      fimtrades:            trades2,
-      nxttrades:            trades2
+      masspay_payments: masspay_payments,
+      settings: settings,
+      accounts: accounts,
+      nodes: nodes,
+      contacts: contacts
     }
   }], db);
-
-  /* Load models here to prevent cicrular dependency errors */
-  $injector.get('Setting').initialize(db);
-  $injector.get('Account').initialize(db);
-  $injector.get('Contact').initialize(db);
-  $injector.get('TradeFactory').mapToTable(db, 'fimtrades');
-  $injector.get('TradeFactory').mapToTable(db, 'nxttrades');
-  $injector.get('Node').initialize(db);
-  $injector.get('MasspayPluginPayment').initialize(db);
 
   db.on('error', function (e) { console.error(e) });
   db.on('populate', function () {
@@ -172,23 +88,6 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
         'https://nxt4.mofowallet.org|CORS',
       ]
     };
-
-    // if (isNodeJS) {
-    //   nodes[7876] = nodes[7876].concat([
-    //     'http://allbits.vps.nxtcrypto.org|CORS',
-    //     'http://jefdiesel.vps.nxtcrypto.org',
-    //     'http://vps3.nxtcrypto.org',
-    //     'http://xeqtorcreed.vps.nxtcrypto.org',
-    //     'http://abctc.vps.nxtcrypto.org',
-    //     'http://bitsy08.vps.nxtcrypto.org|CORS',
-    //     'http://bitsy09.vps.nxtcrypto.org|CORS',
-    //     'http://bitsy02.vps.nxtcrypto.org|CORS',
-    //     'http://bitsy10.vps.nxtcrypto.org|CORS',
-    //     'http://lyynx.vps.nxtcrypto.org|CORS',
-    //     'http://samson.vps.nxtcrypto.org'
-    //   ]);
-    // }
-
     angular.forEach(nodes, function (list, port) {
       angular.forEach(list, function (url) {
         var t = url.split('|');
@@ -254,6 +153,22 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
     console.log('DB.open.error',e);
   }
 
+  $injector.get('Setting').initialize(db);
+  $injector.get('Account').initialize(db);
+  $injector.get('Contact').initialize(db);
+  $injector.get('Node').initialize(db);
+  $injector.get('MasspayPluginPayment').initialize(db);
+
+  function findFirstPropIndex(array, source, propertySource, propertyArray)  {
+    propertyArray = propertyArray || propertySource;
+    for (var i=0; i<array.length; i++) {
+      if (source[propertySource] == array[i][propertyArray]) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   /**
    * The default observer is enough for most CRUD requirements.
    * It works on all tables where a table is a list of model objects.
@@ -264,7 +179,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
    * @param observer  Standard optional observer, if a method is defined it is 
    *                  called after the crud operations.
    * */
-  db.createObserver = function ($scope, name, indexName, observer) {
+  function createObserver($scope, name, indexName, observer) {
     return {
       create: function (models) {
         $scope[name] = $scope[name].concat(models);
@@ -274,7 +189,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
       },
       update: function (models) {
         angular.forEach(models, function (model) {
-          var index = UTILS.findFirstPropIndex($scope[name], model, indexName);
+          var index = findFirstPropIndex($scope[name], model, indexName);
           if (index > 0) {
             angular.extend($scope[name][index], model);
           }
@@ -285,7 +200,7 @@ module.factory('db', function ($log, $injector, alerts, $timeout, $rootScope) {
       },
       remove: function (models) {
         angular.forEach(models, function (model) {
-          var index = UTILS.findFirstPropIndex($scope[name], model, indexName);
+          var index = findFirstPropIndex($scope[name], model, indexName);
           var old = $scope[name][index];
           if (old) {
             $scope[name].splice(index, 1);
