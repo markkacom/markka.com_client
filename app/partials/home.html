@@ -1,181 +1,305 @@
-<div class="row">
-  <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-body">     
-        <center>
-          <!-- <img src="images/mofo_logo.png" style="width:200px"> -->
-          <h1>Mofo Wallet</h1>
-          <h4><small>Multicurrency Operating Financial Offspring</small></h4>
-          <br>
-          <div class="clearfix">
-            <span class="btn btn-primary btn-lg btn-file" style="margin-right: 5px">
-              <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Open wallet <input type="file" 
-                onchange="window.onWalletFileSelected(event)">
+<div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+    <ul class="nav navbar-stacked">
+
+      <li ng-if="enableDualEngines">
+        <a ng-href="#/home/fim/activity/latest" translate-cloak>{{ 'translate.dashboard_symbol' | translate:"{symbol:'FIM'}" }}</a>
+      </li>
+      <li ng-if="enableDualEngines">
+        <a ng-href="#/home/nxt/activity/latest" translate-cloak>{{ 'translate.dashboard_symbol' | translate:"{symbol:'NXT'}" }}</a>
+      </li>
+      <li ng-if="enableDualEngines">
+        <hr class="stacked-divider">
+      </li> 
+      <li route-active="home/">
+        <a href="#/home/fim/activity/latest">
+          <i class="fa fa-book"></i>&nbsp;&nbsp;{{'translate.activity' | translate}}
+        </a>
+      </li>  
+      <li>
+        <a href="#/home/fim/inbox/latest">
+          <i class="fa fa-inbox"></i>&nbsp;&nbsp;{{'translate.inbox' | translate}}
+        </a>
+      </li>
+      <li>
+        <a href="#/home/fim/balance/latest">
+          <i class="fa fa-bar-chart"></i>&nbsp;&nbsp;{{'translate.balance' | translate}}
+        </a>
+      </li>
+      <li>
+        <hr class="stacked-divider">
+      </li> 
+      <li ng-repeat="a in accounts">
+        <a ng-href="#/accounts/{{a.id_rs}}/activity/latest">{{a.name||a.id_rs}}</a>
+      </li>
+      <li>
+        <a href ng-click="addAccount()">
+          <i class="fa fa-plus text-success"></i>&nbsp;&nbsp;{{'translate.add_account' | translate}}
+        </a>
+      </li>
+      <li ng-show="showFilter">
+        <hr class="stacked-divider">
+      </li>
+
+      <li ng-show="showFilter">
+        <a href ng-init="filterCollapse=true" ng-click="filterCollapse=!filterCollapse">
+          <span class="glyphicon glyphicon-wrench"></span>
+          &nbsp;&nbsp;{{'translate.filter' | translate}}&nbsp;<span class="caret"></span>
+        </a>
+
+        <ul class="nav navbar-stacked" collapse="filterCollapse">
+          <li>
+            <form class="navbar-form" role="search">
+              <div class="form-group">
+                <span class="form-control-static">
+                  <label class="control-label" translate="translate.period"></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min-date="minDate" 
+                        max-date="maxDate" datepicker-options="dateOptions" ng-required="true" translate-cloak 
+                        close-text="{{ 'translate.close' | translate }}" placeholder="{{'translate.period' | translate}}"/>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                  </div>
+                </span>
+              </div>
+            </form>
+          </li>
+
+          <li ng-show="showTransactionFilter">
+            <form class="navbar-form" role="search">
+              <div class="form-group" style="width:100%">
+                <label class="control-label" translate="translate.transaction_type"></label>
+                <span class="form-control-static">
+                  <div class="panel panel-default">
+                    <div class="panel-body">
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.all" ng-change="filterAllChanged()">
+                          {{ 'filter.all' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.payments" ng-change="filterChanged()">
+                          {{ 'filter.payments' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.messages" ng-change="filterChanged()">
+                          {{ 'filter.messages' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.aliases" ng-change="filterChanged()">
+                          {{ 'filter.aliases' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.namespacedAliases" ng-change="filterChanged()">FIMKrypto</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.accountInfo" ng-change="filterChanged()">
+                          {{ 'filter.account_info' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.announceHub" ng-change="filterChanged()">
+                          {{ 'filter.announce_hub' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.polls" ng-change="filterChanged()">
+                          {{ 'filter.polls' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.goodsStore" ng-change="filterChanged()">
+                          {{ 'filter.goods_store' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.balanceLeasing" ng-change="filterChanged()">
+                          {{ 'filter.balanace_leasing' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.assetIssued" ng-change="filterChanged()">
+                          {{ 'filter.asset_issued' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.assetTransfer" ng-change="filterChanged()">
+                          {{ 'filter.asset_transfer' | translate }}</label>
+                      </div>
+                      <div class="checkbox">
+                        <label><input type="checkbox" ng-model="filter.assetOrder" ng-change="filterChanged()">
+                          {{ 'filter.asset_order' | translate }}</label>
+                      </div>
+                    </div>
+                  </div>
+                </span>
+              </div>
+            </form>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-xs-12 col-sm-10">
+    <p class="visible-xs">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+            ng-click="offCanvas=!offCanvas">
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+      </button>
+    </p>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
+            <span ng-if="b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>
             </span>
-            <span class="btn btn-primary btn-lg" ng-click="createAccount()" style="margin-left: 5px">
-              <span class="glyphicon glyphicon-credit-card"></span>&nbsp;&nbsp;&nbsp;Create account
+            <span ng-if="!b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
+              <span ng-if="!b.href">{{ b.label }}</span>              
             </span>
-            <span ng-if="isNodeJS" class="btn btn-primary btn-lg" ui-sref="settings({id:'full-node'})" style="margin-left: 10px">
-              <span class="glyphicon glyphicon-play"></span>&nbsp;&nbsp;&nbsp;Start server
+            <span ng-if="b.period">
+              <span translate="translate.show_results_before"></span>&nbsp;<b>{{paramPeriod}}</b>
+              <a href="#/home/{{paramEngine}}/{{paramSection}}/latest">
+                <small>
+                  <i class="fa fa-times"></i>&nbsp;<span translate="translate.show_latest"></span>
+                </small>
+              </a>
             </span>
+          </li>
+
+          <a href ng-click="provider.reload()" class="pull-right">
+            {{ 'translate.reload' | translate }}&nbsp;&nbsp;
+            <i class="fa fa-refresh" ng-class="{'fa-spin': provider.isLoading}"></i>
+          </a>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        
+        <!-- section: inbox and activity -->
+        <div ng-if="paramSection == 'activity' || paramSection == 'inbox'">
+          <div ng-if="transactionProvider.entities == 0">
+            <div class="well" translate="translate.dashboard_explained"></div>
           </div>
-          <div>
-            <br>Current theme: <strong>{{selectedThemeName}}</strong>&nbsp;&nbsp;<a href ui-sref="settings({id:'themes'})">I'm in a different mood</a>
+          <div ng-if="transactionProvider.entities.length > 0" infinite-scroll="transactionProvider.loadMore()" infinite-scroll-distance="0">
+            <table class="table table-striped activity-table">
+              <tbody>
+                <tr ng-repeat="a in transactionProvider.entities" ng-class="{ success: a.confirmations == 0 }">
+                  <td>
+                    <span ng-if="a.confirmations == 0"><i class="fa fa-refresh fa-spin"></i></span>
+                    <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger"><b>{{a.confirmations}}</b></span>
+                    <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations"><i class="fa fa-check text-success"></i></span>
+                  </td>
+                  <td nowrap class="hidden-xs">{{a.date}}</td>
+                  <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" ng-bind-html="a.renderedHTML"></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="load-more-button" ng-show="transactionProvider.hasMore">
+              <a href ng-click="transactionProvider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="transactionProvider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_activities"></span>
+              </a>
+            </div>
           </div>
-        </center>
-<!--         <br><br><br><br>
-        <div class="col-xs-3">
-          <center>
-            <figure class="pull-left well" style="width:240px; height:200px">
-              <figcaption><label>Powered by FIMKrypto</label></figcaption>              
-              <br><img src="images/fimk.png" class="main_logo" style="width:200px"><br>
-            </figure>
-          </center>
         </div>
-        <div  class="col-xs-3">
-          <center>
-            <figure class="well" style="width:240px; height:200px">
-              <figcaption><label>Compatible with FIMK</label></figcaption>              
-              <br><img src="images/fimk_coin.png" class="main_logo" style="width:70px"><br>
-            </figure>
-          </center>
-        </div>        
-        <div  class="col-xs-3">
-          <center>
-            <figure class="well" style="width:240px; height:200px">
-              <figcaption><label>Compatible with NXT</label></figcaption>
-              <br><img src="images/nxt.png" class="main_logo" style="width:130px"><br>
-            </figure>
-          </center>
-        </div>
-        <div  class="col-xs-3">
-          <center>
-            <figure class="pull-right well" style="width:240px; height:200px">
-              <figcaption><label>Sponsored by DGEX</label></figcaption>              
-              <br><img src="images/dgex.gif" class="main_logo" style="width:150px"><br>
-            </figure>
-          </center>
+
+        <!-- section: balance -->
+        <div ng-if="paramSection == 'balance'">
+          <div class="row">
+            <div class="col-md-6" ng-repeat="b in balanceProvider.balances">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <b>{{b.name||b.accountRS}}</b>
+                  <span ng-if="b.name"> - {{b.accountRS}}</span>
+                </div>
+                <div class="panel-body">
+                  <form class="form-compact" role="form">
+                    <div class="form-group">
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.balance' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.balanceNXT }}</span></div>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.unconfirmed_balance' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.unconfirmedBalanceNXT }}</span></div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.effective_balance' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.effectiveBalanceNXT }}</span></div>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.guaranteed_balance' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.guaranteedBalanceNXT }}</span></div>
+                      </div>
+                    </div>
+                    <div class="form-group" ng-if="b.forging">
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.forged_balance' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.forgedBalanceNXT }}</span></div>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.total_blocks_forged' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.numberOfBlocks }}</span></div>
+                      </div>
+                    </div>
+                    <div class="form-group" ng-if="b.forging">
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.last_block_forged' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.date }}</span></div>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.last_block_height' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.lastBlockHeight }}</span></div>
+                      </div>
+                    </div>
+                    <div class="form-group" ng-if="b.forging">
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.forged_amount_today' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.forgedBalanceTodayNXT }}</span></div>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.block_count_today' | translate }}</label>
+                        <div>
+                          <span type="text" class="form-control-static">{{ b.forgedBalanceTodayCount }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group" ng-if="b.forging">
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.forged_amount_week' | translate }}</label>
+                        <div>
+                          <span type="text" class="form-control-static">{{ b.forgedBalanceWeekNXT }}</span>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.block_count_week' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.forgedBalanceWeekCount }}</span></div>
+                      </div>
+                    </div>
+                    <div class="form-group" ng-if="b.forging">
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.forged_amount_month' | translate }}</label>
+                        <div>
+                          <span type="text" class="form-control-static">{{ b.forgedBalanceMonthNXT }}</span>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">{{ 'translate.block_count_month' | translate }}</label>
+                        <div><span type="text" class="form-control-static">{{ b.forgedBalanceMonthCount }}</span></div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>              
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
- --><!--
-<div class="panel panel-default" ng-if="!isNodeJS">
-  <div class="panel-body">  
-    <div class="row">  
-      <div class="col-md-2 col-md-offset-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c1=true" ng-mouseover="c1 = false" ng-mouseleave="c1 = true">
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-money fa-3x fa-fw"></i>
-            </span>
-            <h4>Multi Currency</h4>
-            <div collapse="c1"><h4>We support NXT and FIMK, other currencies are planned.</h4></div>
-          </center>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c2=true" ng-mouseover="c2 = false" ng-mouseleave="c2 = true">
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-plug fa-3x fa-fw"></i>
-            </span>
-            <h4>Plugin Based</h4>
-            <div collapse="c2"><h4>The plugin based architecture allows anyone to write plugins for mofowallet</h4></div>
-          </center>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c3=true" ng-mouseover="c3 = false" ng-mouseleave="c3 = true">
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-space-shuttle fa-3x fa-fw"></i>
-            </span>
-            <h4>Thin/Fat</h4>
-            <div collapse="c3"><h4>Supports running as thin (remote) or fat (downloads blockchain) client</h4></div>
-          </center>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c4=true" ng-mouseover="c4 = false" ng-mouseleave="c4 = true">
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-line-chart fa-3x fa-fw"></i>
-            </span>
-            <h4>Asset Exchange</h4>
-            <div collapse="c4"><h4>This feature is under development</h4></div>
-          </center>
-        </div>
-      </div>    
-    </div>
-    <div class="row">  
-      <div class="col-md-2 col-md-offset-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c5=true" ng-mouseover="c5 = false" ng-mouseleave="c5 = true">
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-briefcase fa-3x fa-fw"></i>
-            </span>
-            <h4>wallet.dat</h4>
-            <div collapse="c5"><h4>Supports encrypted wallet.dat to backup and restore your secret keys on local workstation</h4></div>
-          </center>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c6=true" ng-mouseover="c6 = false" ng-mouseleave="c6 = true">
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-lock fa-3x fa-fw"></i>
-            </span>
-            <h4>Encryption</h4>
-            <div collapse="c6"><h4>Browser side encryption, your secret keys are never transmitted to the internet</h4></div>
-          </center>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c7=true" ng-mouseover="c7 = false" ng-mouseleave="c7 = true" >
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-users fa-3x fa-fw"></i>
-            </span>
-            <h4>Multi Account</h4>
-            <div collapse="c7"><h4>Supports controlling multiple <strong>FIMK and NXT</strong> accounts</h4></div>
-          </center>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="thumbnail" style="border: 0px" ng-init="c8=true" ng-mouseover="c8 = false" ng-mouseleave="c8 = true">
-          <center>
-            <span class="btn btn-default btn-lg">
-              <i class="fa fa-cubes fa-3x fa-fw"></i>
-            </span>
-            <h4>Block Explorer</h4>
-            <div collapse="c8"><h4>Built in block explorer for all supported currencies</h4></div>
-          </center>
-        </div>        
-      </div>    
-    </div>  
-  </div>
-  <div class="row">      
-    <div class="col-md-12">  
-      <center>
-        <br>
-        Mofowallet is powered by
-        <br>
-        <p><a rel="external" href="http://fimk.fi" target="_blank"><img src="images/fimk.png" class="main_logo" style="width:200px"></a></p>
-        <br>
-        <p>Are you a bad mofo? Come join us <a rel="external" target="_blank" href="http://mofowallet.com">http://mofowallet.com</a></p>
-        <p>
-          <div class="clearfix">
-            <a rel="external" href="https://twitter.com/fimkrypto" target="_blank" class="btn btn-social-icon btn-twitter"><span class="fa fa-twitter"></span></a>
-            <a rel="external" href="https://www.facebook.com/FIMKrypto" target="_blank" 
-            class="btn btn-social-icon btn-facebook"><span class="fa fa-facebook"></span></a>
-            <a rel="external" href="http://www.reddit.com/r/FIMK/" target="_blank" class="btn btn-social-icon btn-reddit"><span class="fa fa-reddit"></span></a>
-            <a rel="external" href="https://github.com/fimkrypto" target="_blank" class="btn btn-social-icon btn-github"><span class="fa fa-github"></span></a>
-          </div>
-        </p>
-        <br>        
-      </center>
-    </div>
-  </div>-->
 </div>
