@@ -1,8 +1,8 @@
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
- /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.4.3          
-| $$_____/|_  $$_/| $$$    /$$$          Date    : 2015-04-28          
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.4.4          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2015-04-29          
 | $$        | $$  | $$$$  /$$$$                  
 | $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
 | $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
@@ -45,58 +45,52 @@ Hash: SHA1
                         | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
                         |__/     \__/ \_______/|__/|__/ \_______/   \___/  
 
-Embeds FIMK server 0.4.2 and NXT+ which was based off 1.4.17
+Contains FIMK server 0.4.2 and NXT+ based of 1.4.17
 
-Adds Namespaced Alias edit, update functionality.
-
-Numerous bug fixes.
-
-Updated Finnish and Polish translations.
-
-Code cleanup completed open sourcing the new mofowallet with this release.
+Fixes a bug where forging feeback was not properly displayed in the UI.
 
 
 
                              ~~~ DOWNLOAD ~~~
 
-https://github.com/fimkrypto/mofowallet/releases/download/v0.4.3/mofowallet.win32-0.4.3.zip
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.4/mofowallet.win32-0.4.4.zip
  
-SHA256 74b7dd61f7ccf197585489ea32c32df2e5071f2aacd5b0cb8226ed986ac29c3f 
-MD5    7f4dedd4328d5b36e5a7946f8f890ea9 
+SHA256 a28feba0a280d40d3d08822a6198137aa72da3f02fc1abc598936f477b2bcb03 
+MD5    c1a96aa3f9020ec6b0a9d15399dbd1d8 
 
-https://github.com/fimkrypto/mofowallet/releases/download/v0.4.3/mofowallet.win64-0.4.3.zip
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.4/mofowallet.win64-0.4.4.zip
  
-SHA256 17403f786fe1ba6f6bd6de19821ab34220dc8e4bfdc3b4905a219aa136d20660 
-MD5    48952deac56a7f3558c1e8b1a95c0a5a 
+SHA256 02e3a19f459dc9386ef65603438ea572963f22237071bc09eaa672c5195d947b 
+MD5    d7e0dc19bb556641cf3b84bb1d8464fd 
 
-https://github.com/fimkrypto/mofowallet/releases/download/v0.4.3/mofowallet.osx32-0.4.3.zip
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.4/mofowallet.osx32-0.4.4.zip
  
-SHA256 499202588613148f7046d666e589cfe9299baf432789cf52fb6fe70ebf799309 
-MD5    217b2bc985a6341421cd109a30424065 
+SHA256 5b0ac253954b43dd20c9a5c01e9cad006a91cd81031e26e26604faad69639c9e 
+MD5    04cc534e33f9c313c9845ba220e5459b 
 
-https://github.com/fimkrypto/mofowallet/releases/download/v0.4.3/mofowallet.osx64-0.4.3.zip
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.4/mofowallet.osx64-0.4.4.zip
  
-SHA256 8a6eb4c3e072995a05ad1e76ee3cd37f3276bb883c5a5b088357a30bc6c220f4 
-MD5    134affe77db26bebaf47c77f01c5a8ac 
+SHA256 b79f2d3fb89a67489c3e08ee664b944a8e28d63b84c2b33fdffa35983cc85e6e 
+MD5    ca45343e4bf6b2dbf84dc8ab951dd22d 
 
-https://github.com/fimkrypto/mofowallet/releases/download/v0.4.3/mofowallet.linux32-0.4.3.zip
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.4/mofowallet.linux32-0.4.4.zip
  
-SHA256 a82eed20434c1e65398ccb9edab9adb0123edb539b66386afc67747ea3b08954 
-MD5    36b88c9af77394d3443fe24ea670c117 
+SHA256 76ad1cf857f6fa5819ca78996c258b15bd66aba7b0a3cd5d24433cc1a839e480 
+MD5    9078f1815e469b893ccaa1fb25430415 
 
-https://github.com/fimkrypto/mofowallet/releases/download/v0.4.3/mofowallet.linux64-0.4.3.zip
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.4/mofowallet.linux64-0.4.4.zip
  
-SHA256 377dd3174ddf236b22b6f7a2651d64868ae28077fca4e28bf12c53796f7c612d 
-MD5    9dd215870dfc6eb3394f9d57db6f790e 
+SHA256 7e7d1cd8919e9c1ce6825b6ee7098f51cb2c472372950c2ebd4889d140ce0bb9 
+MD5    2e78a7a709d040e3293bdba9bbc80cca 
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJVP5s3AAoJEP9gzPcARnvnjOoH/1z6B0w0XZgRRD8vbRURu6OK
-HmQjqTkiz5I97RtQPjWC3TXk7FuAGYYpqR2H5wBqGCIFExz+K1O9cswG+R0XpwjB
-Y+IMlwYn7lVczo+zCCMfgMtI38NkXYv5P+lsqYywducEHey9IZv/h3IPdpyEKgTH
-l9dIxNsjOqvTk2K8lpnPfWGEeAS+JnHgaUN/O6Re5hQAZHjeyRR9OVzcWBcW5fiJ
-ydBtucDlRYe7eAdqMsSEdpQylB2r/Qj+guFU78TNQ/kFByCcMtue1rSfd0syzeLh
-3ExKrjcDtT8aZef4SACuGtcGdHQP5GQmfPZB6TC+E0Ea2dA1Zhysu3eeeT7fcPg=
-=kC1q
+iQEcBAEBAgAGBQJVQLdcAAoJEP9gzPcARnvnbosIAKT3EvcHIVxNAR79FNZRaf3j
+byB7msbGEEetu7lak1URI1zQ4pOjNXl8ZJv//G48jsddMsAo/UpQLm945mUUTevv
+L9a9vMcfuagbgLOdbpbxi0me+KszGSjo9pnjqdTC1+1lO9eLXg2oh/2AFKXmLqgj
+FQWGzwpDMuWwOPNMsq5XDlpMOxjGLtnv2AO+YqM6/NJGmCHmpb1yRzuYpc3MzREL
+4HixyKLz3/WVwznqNCAS4Px5oUnwoqP42wJ+HcCkIv8x/gMmxVeHsbOihWWSCvHl
+/nvb4JiBsZGrFvrghrqhTwAP5g6cu6S0ttC7x8HMNOLSd/wL5ka4HJHHtfGnRRk=
+=nylO
 -----END PGP SIGNATURE-----

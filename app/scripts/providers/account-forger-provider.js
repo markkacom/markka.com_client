@@ -63,7 +63,10 @@ module.factory('AccountForgerProvider', function (nxt, $q, $timeout, $interval, 
   }
   AccountForgerProvider.prototype = {
     socket: function () {
-      return this.api.engine.socket();
+      if ($rootScope.forceLocalHost) {
+        return this.api.engine.socket();  
+      }
+      return this.api.engine.localSocket();      
     },
 
     reload: function () {

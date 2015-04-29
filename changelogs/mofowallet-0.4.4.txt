@@ -1,0 +1,3 @@
+Contains FIMK server 0.4.2 and NXT+ based of 1.4.17
+
+Fixes a bug where forging feeback was not properly displayed in the UI.

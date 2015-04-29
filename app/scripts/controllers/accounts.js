@@ -13,7 +13,7 @@ module.config(function($routeProvider) {
 module.controller('AccountsController', function($location, $q, $scope, modals, $routeParams, nxt, db, plugins, requests, $timeout, 
   ActivityProvider, MessagesProvider, BlocksProvider, AliasProvider, NamespacedAliasProvider, AssetsProvider, CurrencyProvider, AccountProvider, 
   BuyOrderProvider, SellOrderProvider, AccountPostProvider, AccountForgerProvider, AccountLessorsProvider, 
-  dateParser, dateFilter, accountsService, PaymentsProvider, $rootScope) {
+  dateParser, dateFilter, accountsService, PaymentsProvider, $rootScope, serverService) {
 
   $scope.id_rs          = $routeParams.id_rs;
   $scope.paramSection   = $routeParams.section;
@@ -123,7 +123,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
   $scope.account = new AccountProvider(api, $scope, $scope.id_rs);
   $scope.account.reload();
 
-  if ($rootScope.forceLocalHost) {
+  if ($rootScope.forceLocalHost || serverService.isReady(api.type)) {
     $scope.forger = new AccountForgerProvider(api, $scope, $scope.id_rs);
     $scope.forger.reload();
   }
