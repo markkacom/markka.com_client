@@ -6,12 +6,17 @@
           <i class="fa fa-book"></i>&nbsp;&nbsp;<span translate="translate.activity"/>
         </a>
       </li>
+      <!-- <li role="presentation" route-active="messenger/{{id_rs}}" ng-show="isCurrentAccount(id_rs)">
+        <a href="#/messenger/{{id_rs}}">
+          <i class="fa fa-comment-o"></i>&nbsp;&nbsp;<span translate="translate.messenger"/>
+        </a>
+      </li> -->      
       <li role="presentation" route-active="accounts/{{id_rs}}/pulse">
         <a href="#/accounts/{{id_rs}}/pulse/{{paramPeriod}}">
           <i class="fa fa-heartbeat"></i>&nbsp;&nbsp;<span translate="translate.pulse"/>
         </a>
       </li>
-      <li role="presentation" >
+      <li role="presentation" ng-hide="isCurrentAccount(id_rs)">
         <a ng-if="!following" href ng-click="followUser()" translate="translate.follow_me"></a>
         <a ng-if="following" href ng-click="unFollowUser()" translate="translate.un_follow_me"></a>
       </li>
@@ -25,11 +30,11 @@
         <a href ng-click="tipUser()" translate="translate.tip_me"></a>
       </li> -->
       <li>
-        <a href ng-init="moreCollapse=true" ng-click="moreCollapse=!moreCollapse">
+        <a href ng-init="moreCollapse=(isCurrentAccount(id_rs))" ng-click="moreCollapse=!moreCollapse" ng-show="isCurrentAccount(id_rs)">
           <span translate="translate.more"/>&nbsp;<span class="caret"></span>
         </a>
         <ul class="nav navbar-stacked" collapse="moreCollapse">
-          <li role="presentation" route-active="accounts/{{id_rs}}/messages">
+          <li role="presentation" route-active="accounts/{{id_rs}}/messages" ng-hide="TRADE_UI_ONLY">
             <a href="#/accounts/{{id_rs}}/messages/{{paramPeriod}}">
               <i class="fa fa-comments-o"></i>&nbsp;&nbsp;<span translate="translate.messages"/>
             </a>
@@ -39,55 +44,55 @@
               <i class="fa fa-line-chart"></i>&nbsp;&nbsp;<span translate="translate.assets"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/currency">
+          <li role="presentation" route-active="accounts/{{id_rs}}/currency" ng-hide="TRADE_UI_ONLY">
             <a href="#/accounts/{{id_rs}}/currency/{{paramPeriod}}">
               <i class="fa fa-money"></i>&nbsp;&nbsp;<span translate="translate.currencies"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/blocks">
+          <li role="presentation" route-active="accounts/{{id_rs}}/blocks" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/blocks/{{paramPeriod}}" role="menuitem">
               <i class="fa fa-cubes"></i>&nbsp;&nbsp;<span translate="translate.blocks_forged"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/aliases">
+          <li role="presentation" route-active="accounts/{{id_rs}}/aliases" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/aliases/{{paramPeriod}}" role="menuitem">
               <i class="fa fa-gear"></i>&nbsp;&nbsp;<span translate="translate.aliases"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/fim_aliases">
+          <li role="presentation" route-active="accounts/{{id_rs}}/fim_aliases" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/fim_aliases/{{paramPeriod}}" role="menuitem">
               <i class="fa fa-gears"></i>&nbsp;&nbsp;<span translate="translate.namespaced_aliases"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/goods">
+          <li role="presentation" route-active="accounts/{{id_rs}}/goods" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/goods/{{paramPeriod}}" role="menuitem">
               <i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;<span translate="translate.goods"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/leasing">
+          <li role="presentation" route-active="accounts/{{id_rs}}/leasing" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/leasing/{{paramPeriod}}" role="menuitem">
               <i class="fa fa-university"></i>&nbsp;&nbsp;<span translate="translate.balance_leasing"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/sell_orders">
+          <li role="presentation" route-active="accounts/{{id_rs}}/sell_orders" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/sell_orders/{{paramPeriod}}" role="menuitem">
               <i class="fa fa-paper-plane"></i>&nbsp;&nbsp;<span translate="translate.sell_orders"/>
             </a>
           </li>
-          <li role="presentation" route-active="accounts/{{id_rs}}/buy_orders">
+          <li role="presentation" route-active="accounts/{{id_rs}}/buy_orders" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/buy_orders/{{paramPeriod}}" role="menuitem">
               <i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;<span translate="translate.buy_orders"/>
             </a>
           </li>
           <!-- mass pay -->
-          <li role="presentation" route-active="accounts/{{id_rs}}/payments">
+          <li role="presentation" route-active="accounts/{{id_rs}}/payments" ng-hide="TRADE_UI_ONLY || !isCurrentAccount(id_rs)">
             <a ng-href="#/accounts/{{id_rs}}/payments/latest" role="menuitem">
               <i class="fa fa-diamond"></i>&nbsp;&nbsp;<span translate="translate.payments"/>
             </a>
           </li>          
         </ul>
       </li>
-      <li>
+      <li ng-if="isCurrentAccount(id_rs)">
         <a href ng-init="accountCollapse=true" ng-click="accountCollapse=!accountCollapse">
           <span translate="translate.account"/>&nbsp;<span class="caret"></span>
         </a>
@@ -222,7 +227,7 @@
 
     <!-- =============================================== -->
 
-    <div class="row">
+    <div class="row hidden-xs">
       <div class="col-md-12">
         <ol class="breadcrumb">
           <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
@@ -281,10 +286,10 @@
               <td><i class="fa fa-circle-o-notch fa-spin text-success"></i></td>
               <td colspan="2">Expected to forge block in {{forger.remaining}}&nbsp;|&nbsp;<a ng-href="#/accounts/{{id_rs}}/blocks/latest">history</a></td>
             </tr>            
-            <tr>
+            <!-- <tr>
               <td colspan="2"><a href ng-click="sendMoney()">Send me {{symbol}}</a></td>
               <td colspan="2"><a href ng-click="sendMessage()">Send me a message</a></td>
-            </tr>
+            </tr> -->
           </table>
         </div>
       </div>
@@ -407,15 +412,31 @@
                   <tbody>
                     <tr ng-repeat="a in provider.entities">
                       <td>
-                        <span ng-if="a.confirmations <= 0"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                        <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger"><b>{{a.confirmations}}</b></span>
-                        <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations">
-                          <i class="fa fa-check text-success"></i>
+                        <span ng-if="a.transient" tooltip="Transient (will disapear)">
+                          <i class="fa fa-clock-o text-muted"></i>
+                        </span>
+                        <span ng-if="!a.transient">
+                          <span ng-if="a.confirmations <= 0">
+                            <i class="fa fa-spinner fa-spin text-muted"></i>
+                          </span>
+                          <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger">
+                            <b>{{a.confirmations}}</b>
+                          </span>
+                          <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations">
+                            <i class="fa fa-check text-success"></i>
+                          </span>
                         </span>
                       </td>
                       <td nowrap style="padding-left: 0px" class="hidden-xs text-muted">{{a.date}}</td>
                       <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
-                        ng-bind-html="a.renderedHTML"></td>
+                        ng-if="!IS_SMALL_DEVICE" ng-bind-html="a.renderedHTML"></td>
+                      <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
+                        ng-if="IS_SMALL_DEVICE">
+                        <div>
+                          <span ng-bind-html="a.renderedHTML"></span>
+                          <small class="pull-right">{{a.date}}</small>
+                        </div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -440,7 +461,14 @@
                   <tr ng-repeat="m in provider.entities">
                     <td nowrap style="padding-left: 0px" class="hidden-xs text-muted">{{m.date}}</td>
                     <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
-                      ng-bind-html="m.renderedHTML"></td>
+                      ng-if="!IS_SMALL_DEVICE" ng-bind-html="m.renderedHTML"></td>
+                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
+                      ng-if="IS_SMALL_DEVICE">
+                      <div>
+                        <span ng-bind-html="m.renderedHTML"></span>
+                        <small class="pull-right">{{m.date}}</small>
+                      </div>
+                    </td>                      
                   </tr>
                 </tbody>
               </table>
@@ -468,7 +496,6 @@
                     <th translate="translate.total_supply"></th>
                     <th translate="translate.issuer"></th>
                     <th></th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -478,8 +505,8 @@
                     <td>{{a.quantity}}</td>
                     <td>{{a.totalQuantity}}</td>
                     <td><a ng-href="#/accounts/{{a.issuer}}/activity/latest">{{a.issuer}}</a></td>
-                    <td><a href ng-click="buyAsset(a)" translate="translate.buy"></a></td>
-                    <td><a href ng-click="sellAsset(a)" translate="translate.sell"></a></td>
+                    <!-- <td><a href ng-click="buyAsset(a)" translate="translate.buy"></a></td>
+                    <td><a href ng-click="sellAsset(a)" translate="translate.sell"></a></td> -->
                     <td><a href ng-click="transferAsset(a)" translate="translate.transfer"></a></td>
                   </tr>
                 </tbody>
