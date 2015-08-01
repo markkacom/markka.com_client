@@ -170,7 +170,13 @@
             </div>
             <div class="form-group">
               <label>Or enter passphrase here</label>
-              <input type="password" class="form-control" ng-model="items.passphrase" ng-change="passphraseChanged()">
+              <span ng-show="!items.symbol && enableDualEngines">
+                <br>
+                <b><a href ng-click="items.symbol='FIM'">FIMK</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href ng-click="items.symbol='NXT'">NXT</a></b>
+              </span>
+              <span ng-show="items.symbol || enableDualEngines">
+                <input type="password" class="form-control" ng-model="items.passphrase" ng-change="passphraseChanged()">
+              </span>
             </div>
             <div class="form-group">
               <label>Account public key (calculated from passphrase)</label>
@@ -182,7 +188,7 @@
       </div>
       <div class="row" ng-init="saveEnabled=false">
         <div class="col-xs-6">
-          <a class="btn btn-block btn-default" href ng-click="items.state=0" translate="translate.back"></a>
+          <a class="btn btn-block btn-default" href ng-click="items.state=0; items.symbol=null" translate="translate.back"></a>
         </div>
         <div class="col-xs-6">
           <a class="btn btn-block btn-success" href ng-click="items.state=7" translate="translate.continue" 
@@ -196,7 +202,7 @@
       <div>
         <h3 class="text-center" translate="translate.add_existing_account"></h3>
         <div class="well text-center">Ready to add this account.<br><b>{{items.id_rs}}</b></div>
-        <p>This account will be stored in memory, you will find this account and your other accounts on your Dashboard (the link to your Dashboard is in the toolbar at the top of the screen).</p>
+        <p ng-hide="TRADE_UI_ONLY">This account will be stored in memory, you will find this account and your other accounts on your Dashboard (the link to your Dashboard is in the toolbar at the top of the screen).</p>
         <!-- XXX wallet disabled -->
         <!-- <p>After you click Save you will be asked if you want to store your account passphrase in your local wallet.</p> -->
       </div>
