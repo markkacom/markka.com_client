@@ -160,9 +160,5 @@ module.controller('TranslationController', function ($scope, $rootScope, $routeP
     setMyLangTable($scope.paramLang, MY_TABLE);
   }
 
-
-
-
-
 });
 })();
