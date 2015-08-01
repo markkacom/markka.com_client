@@ -27,7 +27,7 @@ module.factory('ActivityProvider', function (nxt, $q, EntityProvider, $rootScope
   }
   angular.extend(ActivityProvider.prototype, EntityProvider.prototype, {
 
-    sortFunction: EntityProvider.prototype.transactionSort,
+    sortFunction: function (a, b) { return b.timestamp - a.timestamp },
     uniqueKey: function (entity) { return entity.transaction || entity.id /* for trade */; },
 
     /* TODO - make this method obey the active transaction filter */ 
