@@ -1,0 +1,298 @@
+<div ng-init="slide={offCanvas:false}" class="row row-offcanvas row-offcanvas-left" ng-class="{active: slide.offCanvas}">
+
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar" ng-init="slide.init('messenger')">
+    <div infinite-scroll="chatListProvider.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+      <ul class="nav navbar-stacked">
+        <!-- <li role="presentation">
+          <a href="#/accounts/{{id_rs}}/activity/latest" style="width:100%">
+            <i class="fa fa-book"></i>&nbsp;&nbsp;<span translate="translate.activity"/>
+          </a>
+        </li> -->   
+        <!-- <li role="presentation" ng-show="!showAddControls">
+          <div class="form-group" style="margin-top:8px">
+            <input type="text" class="form-control" placeholder="Search" ng-model="chatListProvider.nameFilter" 
+              ng-change="chatListProvider.applyNameFilter()">
+          </div>
+        </li> -->
+        <li role="presentation">
+          <a href ng-click="sendMessage()" class="btn elipses navbar-btn btn-default" 
+            style="width:100%; margin-top: 0px"><b>NEW</b>
+          </a>
+        </li>
+        <!-- <li role="presentation">
+          <a href ng-click="showInbox()" class="btn elipses navbar-btn btn-default" 
+            style="width:100%;" disabled><b>INBOX</b>
+          </a>
+        </li> -->
+        <li role="presentation" ng-repeat="e in chatListProvider.entities" ng-hide="e.hidden">
+          <a href ng-click="showChats(e.accountRS)" class="btn elipses navbar-btn" 
+            ng-class="{'btn-success': (e.accountRS==contactRS), 'btn-default': (e.accountRS!=contactRS)}" 
+            style="width:100%;">
+            {{e.accountName||e.accountRS}}<br>
+            <small>{{e.date}}</small>
+          </a>
+        </li>
+      </ul>
+
+      <div class="load-more-button text-center" ng-show="chatListProvider.hasMore">
+        <a href ng-click="chatListProvider.loadMore()" class="text-lowercase text-muted">
+          <span ng-show="chatListProvider.isLoading"><i class="fa fa-refresh fa-spin fa-2x"></i></span>
+          <span translate-cloak><i class="fa fa-arrow-circle-down fa-2x"></i></span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xs-12 col-sm-10">
+
+    <!-- ***************************************************
+     *   Small screens only - slide button and reply button 
+     * ***************************************************** -->
+    <div class="row" style="margin-bottom: 8px" ng-if="IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <table style="width:100%">
+          <tr>
+            <td>
+              <a class="btn btn-default elipses" ng-click="slide.offCanvas=!slide.offCanvas">
+                <i class="fa fa-angle-double-{{slide.offCanvas?'left':'right'}}"></i>&nbsp;&nbsp;<i class="fa fa-comments-o"></i>
+                <span>&nbsp;|&nbsp;{{contactName||contactRS}}</span>
+              </a>
+            </td>
+            <td>
+              <span class="pull-right">
+                <a class="btn btn-success" ng-click="toggleReply(); ui.permanentReply=true" ng-show="ui.replyCollapse">
+                  <i class="fa fa-envelope-o"></i>&nbsp;<b>{{feeCost}}</b>
+                </a>
+                <a class="btn btn-success" ng-click="toggleReply(); ui.transientReply=true" ng-show="ui.replyCollapse">
+                  <i class="fa fa-envelope-o"></i>&nbsp;<b>free</b>
+                </a>
+                <a class="btn btn-danger" ng-click="toggleReply()" ng-show="!ui.replyCollapse">
+                  <i class="fa fa-times"></i>
+                </a>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ***************************************************
+     *   Small screens only - slide button and reply button 
+     * ***************************************************** -->
+    <div class="row" style="margin-top:8px" collapse="ui.replyCollapse" ng-if="IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <div class="input-group">
+          <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
+          <textarea class="form-control" rows="3" ng-model="message.text" ng-change="messageChanged()"></textarea>
+          <span ng-if="message.text" class="input-group-addon btn btn-primary" ng-click="sendDirectMessage()">Send</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" collapse="ui.emojiCollapse" style="margin-top:8px" ng-if="IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <div ng-if="!ui.emojiCollapse">
+          <tabset class="mobileEmojiPicker">
+            <tab>
+              <tab-heading><i class="emoji emoji-smile"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.faces" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-sunny"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.nature" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-bamboo"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.life" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-house"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.travel" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-one"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.signs" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+
+    <!-- ***************************************************
+     *   Big screens only - slide button and reply button 
+     * ***************************************************** -->
+    <div class="row" ng-if="!IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <ol class="breadcrumb" style="margin-bottom:1px">
+          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
+            <span ng-if="b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>
+            </span>
+            <span ng-if="!b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>              
+            </span>
+            <span ng-if="b.period">
+              <span translate="translate.show_results_before"></span>&nbsp;<b>{{paramPeriod}}</b>
+              <a href="#/accounts/{{id_rs}}/{{paramSection}}/latest">
+                <small>
+                  <i class="fa fa-times"></i>&nbsp;<span translate="home.show_latest"></span>
+                </small>
+              </a>
+            </span>
+          </li>
+
+          <a href ng-click="reload()" class="pull-right">
+            <span translate="translate.reload"/>&nbsp;&nbsp;
+            <i class="fa fa-refresh" ng-class="{'fa-spin': provider.isLoading}"></i>
+          </a>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px; margin-bottom:8px" ng-if="!IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <div class="btn-toolbar pull-right" role="toolbar">
+          <div class="btn-group" role="group">
+            <button class="btn btn-default" ng-disabled="!ui.replyCollapse"
+              ng-class="{'btn-primary': ui.permanentReply}"
+              ng-click="toggleReply();ui.permanentReply=true">
+              <i class="fa fa-check"></i>&nbsp;&nbsp;Permanent Reply&nbsp;<b>({{feeCost}})</b>
+            </button>
+          </div>
+          <div class="btn-group" role="group">
+            <button class="btn btn-default" ng-disabled="!ui.replyCollapse"
+              ng-class="{'btn-primary': ui.transientReply}"
+              ng-click="toggleReply();ui.transientReply=true">
+              <i class="fa fa-clock-o"></i>&nbsp;&nbsp;Transient Reply&nbsp;<b>(free)</b>
+            </button>
+          </div>            
+          <div class="btn-group" role="group" ng-show="!ui.replyCollapse">
+            <button class="btn btn-danger" ng-show="!ui.replyCollapse"
+              ng-click="toggleReply()">Cancel</button>                
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row" ng-if="!IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <!-- <button class="btn btn-primary btn-lg">Reply to {{contactName||contactRS}}</button> -->
+        <div class="alert alert-success" ng-show="!message.text && message.send">
+          <b><i class="fa fa-check"></i></b>&nbsp;&nbsp;Message sent to <b>{{contactName||contactRS}}</b>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" collapse="ui.replyCollapse" ng-if="!IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <div class="input-group">
+          <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
+          <textarea class="form-control" rows="3" ng-model="message.text" ng-change="messageChanged()"></textarea>
+          <span ng-if="message.text" class="input-group-addon btn btn-default" ng-click="sendDirectMessage()">Send</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" collapse="ui.emojiCollapse" style="margin-top:8px" ng-if="!IS_SMALL_DEVICE">
+      <div class="col-md-12">
+        <div>
+          <tabset>
+            <tab>
+              <tab-heading><i class="emoji emoji-smile"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.faces" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-sunny"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.nature" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-bamboo"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.life" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-house"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.travel" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-one"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.signs" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="chat" style="padding-top: 10px;">
+          <div infinite-scroll="chatMessagesProvider.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <div ng-show="message.text">
+              <div class="fromMe" style="margin-bottom: 10px;">
+                <span><i class="fa fa-pencil-square-o"></i>&nbsp;</span>
+                <span ng-bind-html="message.html" style="word-wrap: break-word; word-break: break-all; white-space: normal;"></span>
+              </div>
+              <div class="clear"></div>
+            </div>
+
+            <div ng-repeat="e in chatMessagesProvider.entities">
+              <div class="{{e.clazz}}" style="margin-bottom: 10px">
+                <span ng-if="e.transient">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                <span ng-if="!e.transient">
+                  <span ng-if="e.confirmations <= 0">
+                    <i class="fa fa-spinner fa-spin"></i>
+                  </span>
+                  <span ng-if="e.confirmations > 0 && e.confirmations <= 10">
+                    <b>{{e.confirmations}}</b>
+                  </span>
+                  <span ng-if="e.confirmations > 10" tooltip="{{e.confirmations}} confirmations">
+                    <i class="fa fa-check"></i>
+                  </span>
+                </span>                
+                <span><i class="fa" ng-class="{'fa-key':e.encrypted}"></i>&nbsp;</span>
+                <span ng-bind-html="e.text || '[encrypted]'" 
+                      style="word-wrap: break-word; word-break: break-all; white-space: normal;"></span><br>
+                <small class="{{e.pull_clazz}}">{{e.date}}</small>
+              </div>
+              <div class="clear"></div>
+            </div>
+
+            <!-- <table style="width:100%">
+              <tr ng-show="message.text">
+                <td>
+                  <div class="pull-right">
+                    <div class="alert alert-info" style="display:inline-block;">
+                      <span ng-bind-html="message.html"></span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr ng-repeat="e in chatMessagesProvider.entities">
+                <td>
+                  <div class="alert {{[e.alert_clazz, e.pull_clazz].join(' ')}}" style="display:inline-block;">
+                    <b>{{e.senderRS}}</b>
+                    <span ng-show="e.encrypted"><i class="fa fa-lock"></i>&nbsp;</span>
+                    <span ng-bind-html="e.text || '[encrypted]'"></span><br>
+                    <small class="{{e.pull_clazz}}">{{e.date}}</small>
+                  </div>
+                </td>
+              </tr>
+            </table> -->
+
+            <div class="load-more-button text-center" ng-show="chatMessagesProvider.hasMore">
+              <a href ng-click="chatMessagesProvider.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="chatMessagesProvider.isLoading"><i class="fa fa-refresh fa-spin fa-2x"></i></span>
+                <span translate-cloak><i class="fa fa-arrow-circle-down fa-2x"></i></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
