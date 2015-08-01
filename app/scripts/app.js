@@ -18,7 +18,8 @@ var module = angular.module('fim.base', [
   'ui.bootstrap',
   'ui.validate',
   'pascalprecht.translate',
-  'infinite-scroll'
+  'infinite-scroll',
+  'ngClipboard'
 ]);
 
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {
@@ -72,5 +73,9 @@ module.config(function($translateProvider, $httpProvider) {
 
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
+
+module.config(['ngClipProvider', function(ngClipProvider) {
+  ngClipProvider.setPath("ZeroClipboard.swf");
+}]);
 
 })();
