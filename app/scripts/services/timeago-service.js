@@ -1,3 +1,4 @@
+/* Source modified from timeago jquery plugin */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
