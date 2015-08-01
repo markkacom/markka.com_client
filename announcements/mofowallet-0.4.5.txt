@@ -1,0 +1,151 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+ /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.4.5          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2015-08-01          
+| $$        | $$  | $$$$  /$$$$                  
+| $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
+| $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
+| $$        | $$  | $$\  $ | $$          http://forum.fimk.fi          
+| $$       /$$$$$$| $$ \/  | $$          https://github.com/fimkrypto/mofowallet
+|__/      |______/|__/     |__/                 
+                     /$$                                       /$$              
+                    | $$                                      | $$              
+                    | $$   /$$  /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$    /$$$$$$ 
+                    | $$  /$$/ /$$__  $$| $$  | $$ /$$__  $$|_  $$_/   /$$__  $$
+                    | $$$$$$/ | $$  \__/| $$  | $$| $$  \ $$  | $$    | $$  \ $$
+                    | $$_  $$ | $$      | $$  | $$| $$  | $$  | $$ /$$| $$  | $$
+                    | $$ \  $$| $$      |  $$$$$$$| $$$$$$$/  |  $$$$/|  $$$$$$/
+                    |__/  \__/|__/       \____  $$| $$____/    \___/   \______/ 
+                                         /$$  | $$| $$                          
+                                        |  $$$$$$/| $$                          
+                                         \______/ |__/            
+
+
+                                presents:
+
+
+             /$$      /$$            /$$$$$$                               
+            | $$$    /$$$           /$$__  $$                              
+            | $$$$  /$$$$  /$$$$$$ | $$  \__//$$$$$$                       
+            | $$ $$/$$ $$ /$$__  $$| $$$$   /$$__  $$                      
+            | $$  $$$| $$| $$  \ $$| $$_/  | $$  \ $$                      
+            | $$\  $ | $$| $$  | $$| $$    | $$  | $$                      
+            | $$ \/  | $$|  $$$$$$/| $$    |  $$$$$$/                      
+            |__/     |__/ \______/ |__/     \______/                       
+                                                                           
+                                                                           
+                                                                           
+                         /$$      /$$           /$$ /$$             /$$    
+                        | $$  /$ | $$          | $$| $$            | $$    
+                        | $$ /$$$| $$  /$$$$$$ | $$| $$  /$$$$$$  /$$$$$$  
+                        | $$/$$ $$ $$ |____  $$| $$| $$ /$$__  $$|_  $$_/  
+                        | $$$$_  $$$$  /$$$$$$$| $$| $$| $$$$$$$$  | $$    
+                        | $$$/ \  $$$ /$$__  $$| $$| $$| $$_____/  | $$ /$$
+                        | $$/   \  $$|  $$$$$$$| $$| $$|  $$$$$$$  |  $$$$/
+                        |__/     \__/ \_______/|__/|__/ \_______/   \___/  
+
+Preview release.
+
+Embeds FIMK 0.5 and NXT-PLUS based on NXT 1.5.13.
+
+This release starts the rebranding from mofowallet to what will become it's new
+identity lompsa.com.
+
+The login procedure has changed. It used to be possible to enter your secret 
+phrase in any transaction dialog. This is no longer the case, users must now 
+"Sign in".
+
+When signing in users have three options:
+
+1. Enter a secret phrase for that session only
+2. Enter a secret phrase and store it in your encrypted wallet
+3. Enter your wallet password and select one of your previously stored secret phrases
+
+The old wallet.dat file is still supported and will remain so but it's no longer
+the preferred way to provide your secret phrase. Instead the contents of the 
+wallet.dat file are now stored in the application localStorage (same mechanism
+is used when run in the browser).
+
+Since your wallet is now in the application it's must more user friendly 
+especially on small screen devices like your mobile.
+
+Account creation process was improved for FIMK and NXT, users can generate a 
+different secret phrase and move back and forward between secret 
+phrases selecting one that suits you best.
+
+Completely new messenger UI.
+1. Sends encrypted messages to your contacts
+2. Full built-in emoji support
+3. Supports sending transient messages (free messages that disapear)
+4. Supports sending permanent messages (stored on blockchain)
+5. Mobile friendly
+
+Emoji are supported everywhere (Explorer, Messenger, Dashboard, Account pages etc). 
+When sending a transaction it was already possible to attach a message, these
+messages now support the full set of emoji. To save room on the blockchain we
+currently use a base32 based emoji code, but if you wish you can enter the 
+real emoji name by hand. 
+
+Go here to look up all supported emoji. http://www.emoji-cheat-sheet.com/
+
+Increased performance when running local server. Out of memory problems should
+no longer occur, if they do please report them.
+
+Many bigger and smaller improvements in search, explorer, dashboard etc..
+
+Improved language support accessing one of the 64 supported languages was made easier.
+
+About (free) Transient Messages..
+
+  This FIMK and NXT feature is experimental and makes use of the existing support
+  for referenced transactions. A transient message is an AM transaction of which 
+  we set the referenced transaction to a value so that it never gets executed.
+  There are at any time a maximum of 2000 transient transactions on the network,
+  if more are added the oldest get removed.
+
+
+
+                             ~~~ DOWNLOAD ~~~
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.5/mofowallet.win32-0.4.5.zip
+ 
+SHA256 79e45881acf81777e683d0e6d0922228aba646f6c3340836d929bda76cba7843 
+MD5    97a3fc173832d4eaa684183572dd3625 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.5/mofowallet.win64-0.4.5.zip
+ 
+SHA256 ebd8a406ef901e98b69aeaf1552c4c92ffa3795a2cbc4fc5b5167e547301b9b8 
+MD5    e79b658644741f3fb8bfa1ace11b1160 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.5/mofowallet.osx32-0.4.5.zip
+ 
+SHA256 59958534c32db85063a411b67222251c3037f1c0275b041790652d8fc4585e15 
+MD5    19fc6f6f4d2e6e41c42d142dd1f89400 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.5/mofowallet.osx64-0.4.5.zip
+ 
+SHA256 0273ee46e688ab8526f8073617d73d89bac67a4b7aae0a086bd8b8a97d69812c 
+MD5    834c87d91fa5b340e109da7e5f6f234b 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.5/mofowallet.linux32-0.4.5.zip
+ 
+SHA256 e167767ad5e90ef69a2947446e40fe08986080c7aecdb1579db133d972178c17 
+MD5    948fca3c8bbc7f43c7478cf02b1bf46d 
+
+https://github.com/fimkrypto/mofowallet/releases/download/v0.4.5/mofowallet.linux64-0.4.5.zip
+ 
+SHA256 ac0077759f1302b79d07e34c62571e7db6a9b30d934fa40b83d48cae7e79fe2a 
+MD5    43babdfef1b9a34e371846e038bc69ce 
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJVvHzyAAoJEP9gzPcARnvns+oH/1R21aURYzjO9olK5Da6333R
+gWekzws91z8iOg5f5PxcxspEfRXKZTJ6h1ZXLZJp7Umu6tZDUhFtRpf1FxAhWA6U
+zoRNlpejF4lI8Hk2Nd0Vznj46Pd5JjpDHJyZbdgcIhC2d16871i3pFULYlv1epFU
+7uvxKH6Of0HgWyfdP1xUXE9lopiARmXzlvgZzUPOVndZXzB4emDho+7g9R2/NTHw
+urZKpvQBxS3Qw7nHkUGJr62/zsI1jDqy5hnpOzYLaeOcint6uQWC3RvLAu85UVKo
+OoXFbhRcDl5ZLz/mfm4k4XbTHQ43z+sdIIyK08f6R2OJXitnnLlzgSCRC5x3zic=
+=SRyI
+-----END PGP SIGNATURE-----
