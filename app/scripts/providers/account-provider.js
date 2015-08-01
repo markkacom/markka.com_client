@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('AccountProvider', function (nxt, $q, $timeout) {
+module.factory('AccountProvider', function (nxt, $q, $timeout, db, $rootScope) {
   
   function AccountProvider(api, $scope, account) {
     this.api                    = api;
@@ -20,6 +20,15 @@ module.factory('AccountProvider', function (nxt, $q, $timeout) {
     this.leasingHeightTo        = Number.MAX_VALUE;
     this.lesseeIdRS             = '';
     this.leaseRemaining         = 0;
+
+    var account_id              = nxt.util.convertRSAddress(this.account);
+    var delayedReload           = angular.bind(this, this.delayedReload);
+    var socket                  = api.engine.socket();
+    socket.subscribe('removedUnConfirmedTransactions-'+account_id, delayedReload, $scope);
+    socket.subscribe('addedUnConfirmedTransactions-'+account_id, angular.bind(this, this.addedUnConfirmedTransactions), $scope);
+    socket.subscribe('addedConfirmedTransactions-'+account_id, delayedReload, $scope);
+    socket.subscribe('blockPoppedNew', angular.bind(this, this.blockPopped), $scope);
+    socket.subscribe('blockPushedNew', angular.bind(this, this.blockPushed), $scope);
   }
   AccountProvider.prototype = {
     reload: function () {
@@ -29,7 +38,6 @@ module.factory('AccountProvider', function (nxt, $q, $timeout) {
         $timeout(function () {  self.getNetworkData(); }, 1, false);        
       });
     },
-
     getNetworkData: function () {
       var self = this, args = { account:this.account };
       this.api.engine.socket().getAccount(args).then(
@@ -52,7 +60,14 @@ module.factory('AccountProvider', function (nxt, $q, $timeout) {
             }
             else {
               self.leaseRemaining       = 0;
-            }            
+            }
+            if ($rootScope.TRADE_UI_ONLY) {
+              db.accounts.put({
+                id_rs: self.account,
+                engine: self.api.engine.type,
+                name: self.name||self.account
+              });
+            }
           });
         },
         function (data) {
@@ -61,6 +76,35 @@ module.factory('AccountProvider', function (nxt, $q, $timeout) {
           });
         }
       );
+    },
+    addedUnConfirmedTransactions: function (transactions) {
+      var t;
+      for (var i=0; i<transactions.length; i++) {
+        t = transactions[i];
+        if (t.senderRS == this.account) {
+
+        }
+      }
+    },
+    blockPushed: function (block) {
+      if (block.generator == this.account) {
+        this.delayedReload();
+      }
+    },
+    blockPopped: function (block) {
+      if (block.generator == this.account) {
+        this.delayedReload();
+      }
+    },
+    delayedReload: function () {
+      if (this.timeout) { 
+        clearTimeout(this.timeout); 
+      }
+      var self = this;
+      this.timeout = setTimeout(function () { 
+        self.timeout = null;
+        self.reload();
+      }, 1000);
     }
   };
   return AccountProvider;
