@@ -1,0 +1,63 @@
+<div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+    <ul class="nav navbar-stacked">
+    </ul>
+  </div>
+
+  <div class="col-xs-12 col-sm-10">
+    <p class="visible-xs">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+            ng-click="offCanvas=!offCanvas">
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+      </button>
+    </p>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
+            <span ng-if="b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>
+            </span>
+            <span ng-if="!b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
+              <span ng-if="!b.href">{{ b.label }}</span>              
+            </span>
+          </li>
+          <a href ng-click="reload()" class="pull-right">
+            {{ 'translate.reload' | translate }}&nbsp;&nbsp;
+            <i class="fa fa-refresh" ng-class="{'fa-spin': my_orders.isLoading || chart.isLoading || askOrders.isLoading || bidOrders.isLoading || trades.isLoading }"></i>
+          </a>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h3>Wallet contents</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Engine</th>
+              <th>Name</th>
+              <th>Account</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="a in entries">
+              <td>{{a.engine}}</td>
+              <td>{{a.name}}</td>
+              <td><a href="#/accounts/{{a.account}}/activity/latest">{{a.account}}</a></td>
+              <td><a href ng-click="remove(a)">remove</a></td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-primary" ng-click="loadBackup()" disabled>Load backup file</button>
+      </div>
+    </div>
+  </div>
+</div>
