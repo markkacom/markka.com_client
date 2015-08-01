@@ -6,6 +6,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>.ng-cloak { display:none; }</style>
+    <script src="mode.js"></script>    
     <script type="text/javascript">
     try {
       isNodeJS = typeof require == 'function' && require('child_process');
@@ -14,12 +15,14 @@
     }
     DEBUG = false;
 
-    if (("www.mofowallet.com" == window.location.host || 
-         "mofowallet.com" == window.location.host) && (window.location.protocol != "https:")) {
-      window.location.protocol = "https";
-    }
-    else if ("fimkrypto.github.io" == window.location.host) {
-      window.location = "https://www.mofowallet.com/launch.html" + window.location.hash;
+    if (IS_TEST_NET === false) {
+      if (("www.mofowallet.com" == window.location.host || 
+           "mofowallet.com" == window.location.host) && (window.location.protocol != "https:")) {
+        window.location.protocol = "https";
+      }
+      else if ("fimkrypto.github.io" == window.location.host) {
+        window.location = "https://www.mofowallet.com/launch.html" + window.location.hash;
+      }
     }
 
     var entityMap = {"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":'&#39;',"/":'&#x2F;',"\n":'<br>'};
@@ -36,23 +39,25 @@
     <!-- Bootswatch theme switcher -->
     <link type="text/css" rel="stylesheet" href="plugins/themes/css/spacelab.bootstrap.min.css" id="bootswatch.style" />
 
-    <link type="text/css" rel="stylesheet" href="amstockchart/amcharts/style.css" />
-
-    <!-- <link type="text/css" rel="stylesheet" href="bower_components/ng-table/ng-table.css" /> -->
-    
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link type="text/css" rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css" />
     <link type="text/css" rel="stylesheet" href="styles/bootstrap-social.css">
     <link type="text/css" rel="stylesheet" href="styles/main.css"> <!-- main.sass -->
     <link type="text/css" rel="stylesheet" href="styles/main-less.css"> <!-- main.less -->
     <link type="text/css" rel="stylesheet" href="styles/landing-page.css"> 
+    <link type="text/css" rel="stylesheet" href="styles/price-chart-style.css">
+    <link type="text/css" rel="stylesheet" href="styles/emojis.css">
     <!-- endbuild -->
 
+    <!--<link type="text/css" rel="stylesheet" href="/amstockchart/amcharts/style.css"> 
     <style>
       a[title="JavaScript charts"] {
         display: none !important;
       }
     </style>
+    <script src="amstockchart/amcharts/amcharts.js"></script> 
+    <script src="amstockchart/amcharts/serial.js"></script> 
+    <script src="amstockchart/amcharts/amstock.js"></script>-->
 
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -60,7 +65,6 @@
     <![endif]-->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <script src="mode.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script>
     window.jQuery = window.$ = angular.element;
@@ -77,13 +81,12 @@
     <script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
     <script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
     <script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.js"></script>
-    <script src="bower_components/ng-table/ng-table.js"></script>
-    <script src="bower_components/pako/dist/pako.min.js"></script>  
+    <script src="bower_components/ng-table/ng-table.js"></script><!-- depracated - dont use-->
+    <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/pako/dist/pako.min.js"></script>
+    <script src="bower_components/ng-clip/dest/ng-clip.min.js"></script>
+    <script src="bower_components/zeroclipboard/dist/ZeroClipboard.min.js"></script>
     
-    <script src="amstockchart/amcharts/amcharts.js"></script> 
-    <script src="amstockchart/amcharts/serial.js"></script> 
-    <script src="amstockchart/amcharts/amstock.js"></script>
-
     <script src="scripts/lib/iterator.js"></script>
     <script src="scripts/lib/jsbn.js"></script>
     <script src="scripts/lib/jsbn2.js"></script>    
@@ -102,6 +105,7 @@
     <script src="scripts/lib/Blob.js"></script>
     <script src="scripts/lib/FileSaver.js"></script>
     <script src="scripts/lib/ng-infinite-scroll.js"></script>
+    <script src="scripts/lib/techan.js"></script>
     
     <script src="scripts/app.js"></script>
 
@@ -109,13 +113,16 @@
     <script src="scripts/models/account.js"></script>
     <script src="scripts/models/contact.js"></script>
     <script src="scripts/models/node.js"></script>
-    <script src="scripts/models/masspayPluginPayment.js"></script>
+    <script src="scripts/models/masspayPluginPayment.js"></script>    
 
     <script src="scripts/directives/money.js"></script>
     <script src="scripts/directives/dd-text-collapse.js"></script>
     <script src="scripts/directives/route-active.js"></script>
     <script src="scripts/directives/select-on-click.js"></script>
     <script src="scripts/directives/file-select.js"></script>
+    <script src="scripts/directives/price-chart.js"></script>
+    <script src="scripts/directives/menu-close.js"></script>
+    <script src="scripts/directives/scrollglue.js"></script>
 
     <script src="scripts/providers/account-forger-provider.js"></script>
     <script src="scripts/providers/account-lessors-provider.js"></script>
@@ -132,6 +139,8 @@
     <script src="scripts/providers/blockchain-download-provider.js"></script>
     <script src="scripts/providers/blocks-provider.js"></script>
     <script src="scripts/providers/buy-order-provider.js"></script>
+    <script src="scripts/providers/chat-list-provider.js"></script>
+    <script src="scripts/providers/chat-messages-provider.js"></script>
     <script src="scripts/providers/comment-provider.js"></script>
     <script src="scripts/providers/currency-provider.js"></script>
     <script src="scripts/providers/forgers-provider.js"></script>
@@ -143,16 +152,24 @@
     <script src="scripts/providers/search-provider.js"></script>
     <script src="scripts/providers/sell-order-provider.js"></script>
     <script src="scripts/providers/server-config-provider.js"></script>
+    <script src="scripts/providers/server-console-provider.js"></script>
     <script src="scripts/providers/statistics-provider.js"></script>
     <script src="scripts/providers/ae/ask-order-provider.js"></script>
     <script src="scripts/providers/ae/asset-info-provider.js"></script>
     <script src="scripts/providers/ae/bid-order-provider.js"></script>
+    <script src="scripts/providers/ae/chart-data-provider.js"></script>
     <script src="scripts/providers/ae/charts-provider.js"></script>
     <script src="scripts/providers/ae/my-order-provider.js"></script>
     <script src="scripts/providers/ae/private-accounts-provider.js"></script>
     <script src="scripts/providers/ae/trades-provider.js"></script>
+    <script src="scripts/providers/ae/my-bid-order-provider.js"></script>
+    <script src="scripts/providers/ae/my-ask-order-provider.js"></script>
+    <script src="scripts/providers/ae/asset-detail-provider.js"></script>
+    <script src="scripts/providers/ae/order-entry-provider.js"></script>
 
     <script src="scripts/services/timeago-service.js"></script>
+    <script src="scripts/services/wallet-service.js"></script>
+    <script src="scripts/services/key-service.js"></script>
     <script src="scripts/services/entity-provider.js"></script>
     <script src="scripts/services/indexed-entity-provider.js"></script>
     <script src="scripts/services/accounts-service.js"></script>
@@ -166,8 +183,13 @@
     <script src="scripts/services/i18n.js"></script>
     <script src="scripts/services/setting-service.js"></script>
     <script src="scripts/services/mofo-socket.js"></script>
+    <script src="scripts/services/emoji-service.js"></script>
     
     <script src="scripts/controllers/app.js"></script>
+    <script src="scripts/controllers/login.js"></script>
+    <script src="scripts/controllers/login-to.js"></script>
+    <script src="scripts/controllers/wallet.js"></script>
+    <script src="scripts/controllers/register.js"></script>
     <script src="scripts/controllers/start.js"></script>
     <script src="scripts/controllers/search.js"></script>
     <script src="scripts/controllers/language-modal.js"></script>
@@ -182,6 +204,8 @@
     <script src="scripts/controllers/activity.js"></script>
     <script src="scripts/controllers/accounts.js"></script>
     <script src="scripts/controllers/assets.js"></script>
+    <script src="scripts/controllers/messenger.js"></script>
+    <script src="scripts/controllers/slidemenu.js"></script>
 
     <!-- Transaction plugin -->
     <script src="plugins/transaction/config.js"></script>
@@ -193,7 +217,6 @@
     <script src="plugins/transaction/transactions/namespaced-alias.js"></script>
     <script src="plugins/transaction/transactions/assets.js"></script>
     <script src="plugins/transaction/transactions/currency.js"></script>
-    <script src="plugins/transaction/transactions/dgs.js"></script>
     <script src="plugins/transaction/transactions/forging.js"></script>
     <script src="plugins/transaction/transactions/lease-balance.js"></script>
     <script src="plugins/transaction/transactions/poll.js"></script>
@@ -224,10 +247,6 @@
     <script src="plugins/alerts/controllers/alert-prompt-modal.js"></script>
     <script src="plugins/alerts/controllers/alert-wait-modal.js"></script>
     <script src="plugins/alerts/controllers/alert-progress-modal.js"></script>
-    <script src="plugins/fim-engine/config.js"></script>
-    <script src="plugins/fim-engine/controllers/status.js"></script>
-    <script src="plugins/nxt-engine/config.js"></script>
-    <script src="plugins/nxt-engine/controllers/status.js"></script>
 
     <!-- Authenticator plugin -->
     <script src="plugins/authenticate/config.js"></script>
@@ -239,6 +258,8 @@
   </head>
   <body ng-class="{'showing-landing-page': showingLandingPage}">
 
+    <div id="smallScreenTest" class="visible-xs"></div>
+
     <audio preload="auto"><source src="images/beep.wav"></audio>
 
     <!--[if lt IE 7]>
@@ -246,7 +267,7 @@
     <![endif]-->
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="navbar-header" ng-init="mainMenuCollapsed=true">
+      <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed"
             ng-click="mainMenuCollapsed=!mainMenuCollapsed">
           <span class="sr-only" translate="translate.toggle_navigation"></span>
@@ -254,15 +275,33 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" ng-href="#/start"><i class="fa fa-home text-success"></i>&nbsp;<strong>Mofo</strong>Wallet&nbsp;<span class="text-danger"><b>{{isTestnet? 'TEST' : 'BETA'}}</b></span></a>
+        <a ng-hide="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/start"><strong ng-bind="WALLET_NAME"></strong><span class="text-danger"><b>{{isTestnet? ' TEST' : ''}}</b></span>
+        </a>
+        <a ng-show="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/activity/fim/assets/latest"><strong ng-bind="WALLET_NAME"></strong>Wallet&nbsp;<span class="text-danger"><b>{{isTestnet? 'TEST' : 'BETA'}}</b></span>
+        </a>
       </div>
 
-      <div class="collapse navbar-collapse navbar-default" collapse="mainMenuCollapsed">
+      <div class="collapse navbar-collapse navbar-default" collapse="mainMenuCollapsed" menu-close="mainMenuCollapsed=true">
         <ul class="nav navbar-nav" nav-menu="active">
-          <li>
+          <li ng-if="IS_SMALL_DEVICE">
+            <div class="btn-group btn-group-justified">
+              <div class="btn-group" role="group">
+                <a href="javascript:window.history.back()" class="btn btn-default">
+                  <i class="fa fa-arrow-left"></i>&nbsp;<span translate="translate.back"></span>
+                </a>
+              </div>
+              <div class="btn-group" role="group">
+                <a href="javascript:window.history.forward()" class="btn btn-default">
+                  <span translate="translate.forward"></span>&nbsp;<i class="fa fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li ng-if="!IS_SMALL_DEVICE">
             <a href="javascript:window.history.back()"><i class="fa fa-arrow-left"></i></a>
           </li>
-          <li>
+          <li ng-if="!IS_SMALL_DEVICE">
             <a href="javascript:window.history.forward()"><i class="fa fa-arrow-right"></i></a>
           </li>
 
@@ -270,74 +309,74 @@
             <a ng-href="#/start"><i class="fa fa-home text-success"></i>&nbsp;&nbsp;{{'translate.home' | translate}}</a>
           </li> -->
 
-          <li route-active="home/">
-            <a ng-href="#/home/{{paramEngine}}/activity/latest"><i class="fa fa-tachometer"></i>&nbsp;&nbsp;{{'translate.dashboard' | translate}}</a>
+          <li route-active="accounts/{{currentAccount.id_rs}}/" ng-show="currentAccount">
+            <a ng-href="#/accounts/{{currentAccount.id_rs}}/activity/latest">
+              <b><i class="fa fa-home text-danger"></i></b>
+            </a>
+          </li>
+          <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount">
+            <a href="#/messenger/{{currentAccount.id_rs}}">
+              <i class="fa fa-comment-o"></i><span class="hidden-sm">&nbsp;&nbsp;<span translate="translate.messenger"/></span>
+            </a>
+          </li>
+       
+          <li route-active="home/" ng-hide="TRADE_UI_ONLY">
+            <a ng-href="#/home/{{paramEngine}}/activity/latest">
+              <i class="fa fa-users"></i><span class="hidden-sm">&nbsp;&nbsp;{{'translate.dashboard' | translate}}</span>
+            </a>
           </li>          
           
-          <li route-active="activity/">
-            <a ng-href="#/activity/{{paramEngine}}/activity/latest"><i class="fa fa-cloud"></i>&nbsp;&nbsp;{{'translate.explorer' | translate}}</a>
+          <li route-active="activity/" ng-hide="TRADE_UI_ONLY">
+            <a ng-href="#/activity/{{paramEngine}}/activity/latest"><i class="fa fa-cloud"></i><span class="hidden-sm">&nbsp;&nbsp;{{'translate.explorer' | translate}}</span></a>
           </li>
 
-          <li route-active="activity/{{paramEngine}}/assets">
-            <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;{{'translate.assets' | translate}}</a>
-          </li>          
+          <li>
+            <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart"></i><span class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span></a>
+          </li> 
+
+          <li ng-show="TRADE_UI_ONLY && selectedAccount">
+            <!-- <span>Account:&nbsp;<b>{{selectedAccount.name || selectedAccount.id_rs}}</b></span>&nbsp;&nbsp; -->            
+            <a href>
+              <span>Trading balance:&nbsp;<b>{{selectedAccount.unconfirmedBalanceNXT}}</b>
+                <span class="text-muted" ng-show="selectedAccount.unconfirmedBalanceNXT!=selectedAccount.balanceNXT">({{selectedAccount.balanceNXT}})</span> {{selectedAccount.symbol}}
+              </span>
+            </a>
+          </li>      
         </ul>
 
         <ul class="nav navbar-nav navbar-right" nav-menu="active">
-          <!-- <li>
-            <form class="navbar-form navbar-left" role="search">
-              <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" style="max-width: 250px" ng-model="search.query" ng-changed="search.changed($value)">
-              </div>
-            </form>
-          </li>
-          <li class="dropdown">
-            <a href class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-              <i class="fa fa-search"></i>&nbsp;<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-              <li ng-repeat="p in search.providers">
-                <a href ng-click="p.search()">{{p.label}}</a>
-              </li>
-            </ul>
-          </li> -->
-
-          <li>
+          <li ng-hide="TRADE_UI_ONLY">
             <a href="#/search/fim/accounts/">
-              <i class="fa fa-search"></i>&nbsp;&nbsp;{{'translate.search' | translate}}
+              <i class="fa fa-search"></i><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.search' | translate}}</span>
             </a>
           </li>          
 
-          <li style="margin-right: 10px" route-active="settings" dropdown>
+          <li route-active="settings" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
-              <span class="glyphicon glyphicon-wrench"></span>&nbsp;&nbsp;{{'translate.settings' | translate}}&nbsp;<span class="caret"></span>
+              <span class="glyphicon glyphicon-wrench"></span><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.settings' | translate}}</span>&nbsp;<span class="caret"></span>
             </a>
-
             <ul class="dropdown-menu" role="menu">
               <li route-active>
-                <a ng-href="#/settings/themes"><span class="glyphicon glyphicon-fire"></span>&nbsp;&nbsp;{{'translate.themes' | translate}}</a> 
+                <a ng-href="#/settings/themes"><span class="glyphicon glyphicon-fire"></span>&nbsp;&nbsp;{{'translate.themes' | translate}}</a>
               </li>
               <!-- only displayed when running as front end for FIMK server package-->
-              <li route-active ng-if="forceLocalHost && !enableDualEngines">
+              <li route-active ng-if="forceLocalHost && !enableDualEngines" ng-hide="TRADE_UI_ONLY">
                 <a ng-href="#/server/fim/peers"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{'translate.peers' | translate}}</a> 
               </li>
-              <li route-active ng-if="isNodeJS">
+              <li route-active ng-if="isNodeJS" ng-hide="TRADE_UI_ONLY">
                 <a ng-href="#/server/fim/console"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;{{'translate.fim_server' | translate}}</a> 
               </li>
-              <li route-active ng-if="isNodeJS && enableDualEngines">
+              <li route-active ng-if="isNodeJS && enableDualEngines" ng-hide="TRADE_UI_ONLY">
                 <a ng-href="#/server/nxt/console"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;{{'translate.nxt_server' | translate}}</a>
               </li>              
-              <li route-active>
+              <li route-active ng-hide="TRADE_UI_ONLY">
                 <a ng-href="#/settings/wallet"><span class="glyphicon glyphicon-briefcase"></span>&nbsp;&nbsp;{{'translate.wallet' | translate}}</a> 
               </li>
-              <li route-active>
+              <li route-active ng-hide="TRADE_UI_ONLY">
                 <a ng-href="#/settings/contacts"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;{{'translate.contacts' | translate}}</a> 
               </li>
-              <li route-active>
+              <li route-active ng-hide="TRADE_UI_ONLY">
                 <a ng-href="#/settings/database"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;{{'translate.database' | translate}}</a> 
-              </li>
-              <li route-active ng-show="false">
-                <a ng-href="#/settings/nodes"><span class="glyphicon glyphicon-tree-deciduous"></span>&nbsp;&nbsp;{{'translate.public_nodes' | translate}}</a> 
               </li>
               <li ng-if="isNodeJS">
                 <a href ng-click="openDevTools()">
@@ -347,85 +386,25 @@
               <li ng-if="isNodeJS">
                 <a href ng-click="reloadMofoWallet()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;{{'translate.reload_application' | translate}}</a> 
               </li>
-            </ul>
-          </li> 
-
-          <li style="margin-right: 10px" ng-if="multiLanguage" dropdown>
-            <a href class="dropdown-toggle" dropdown-toggle>
-              <i class="fa fa-globe text-danger"></i>&nbsp;&nbsp;{{'translate.language'|translate}}&nbsp;<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu lang-columns" role="menu">
-              <li><a ><b class="text-warning"><i class="fa fa-exclamation-triangle"></i></b><b class="text-danger">&nbsp;&nbsp;Experimental!</b></a></li>
               <li>
-                <a href="#/translation/en">
-                  <b class="text-primary"><i class="fa fa-users"></i></b><b class="text-success">&nbsp;&nbsp;Help Translate.</b>
-                </a>
+                <a href="#/translation/en"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{'translate.translator' | translate}}</a> 
               </li>
-              <li><a href ng-click="setLang('af')">Afrikaans - ({{'lang.Afrikaans'|translate}})</a></li>
-              <li><a href ng-click="setLang('sq')">Shqip - ({{'lang.Albanian'|translate}})</a></li>
-              <li><a href ng-click="setLang('ar')">العربية - ({{'lang.Arabic'|translate}})</a></li>
-              <li><a href ng-click="setLang('az')">azərbaycan dili - ({{'lang.Azerbaijani'|translate}})</a></li>
-              <li><a href ng-click="setLang('eu')">euskara - ({{'lang.Basque'|translate}})</a></li>
-              <li><a href ng-click="setLang('bn')">বাংলা - ({{'lang.Bengali'|translate}})</a></li>
-              <li><a href ng-click="setLang('be')">беларуская мова - ({{'lang.Belarusian'|translate}})</a></li>
-              <li><a href ng-click="setLang('bg')">български език - ({{'lang.Bulgarian'|translate}})</a></li>
-              <li><a href ng-click="setLang('ca')">català - ({{'lang.Catalan'|translate}})</a></li>
-              <li><a href ng-click="setLang('zh')">简化中国 - ({{'lang.Chinese_Simplified'|translate}})</a></li>
-              <li><a href ng-click="setLang('zh-TW')">中國傳統 - ({{'lang.Chinese_Traditional'|translate}})</a></li>
-              <li><a href ng-click="setLang('hr')">hrvatski jezik - ({{'lang.Croatian'|translate}})</a></li>
-              <li><a href ng-click="setLang('cs')">čeština, český jazyk - ({{'lang.Czech'|translate}})</a></li>
-              <li><a href ng-click="setLang('da')">dansk - ({{'lang.Danish'|translate}})</a></li>
-              <li><a href ng-click="setLang('nl')">Nederlands - ({{'lang.Dutch'|translate}})</a></li>
-              <li><a href ng-click="setLang('en')"><b>English - ({{'lang.English'|translate}})</b></a></li>
-              <li><a href ng-click="setLang('eo')">Esperanto - ({{'lang.Esperanto'|translate}})</a></li>
-              <li><a href ng-click="setLang('et')">eesti - ({{'lang.Estonian'|translate}})</a></li>
-              <li><a href ng-click="setLang('tl')">Wikang Filipino - ({{'lang.Filipino'|translate}})</a></li>
-              <li><a href ng-click="setLang('fi')"><b>Suomi - ({{'lang.Finnish'|translate}})</b></a></li>
-              <li><a href ng-click="setLang('fr')">Français - ({{'lang.French'|translate}})</a></li>
-              <li><a href ng-click="setLang('gl')">Galego - ({{'lang.Galician'|translate}})</a></li>
-              <li><a href ng-click="setLang('ka')">ქართული - ({{'lang.Georgian'|translate}})</a></li>
-              <li><a href ng-click="setLang('de')">Deutsch - ({{'lang.German'|translate}})</a></li>
-              <li><a href ng-click="setLang('el')">Ελληνικά - ({{'lang.Greek'|translate}})</a></li>
-              <li><a href ng-click="setLang('gu')">ગુજરાતી - ({{'lang.Gujarati'|translate}})</a></li>
-              <li><a href ng-click="setLang('ht')">Kreyòl Ayisyen - ({{'lang.Haitian_Creole'|translate}})</a></li>
-              <li><a href ng-click="setLang('iw')">עברית - ({{'lang.Hebrew'|translate}})</a></li>
-              <li><a href ng-click="setLang('hi')">हिन्दी - ({{'lang.Hindi'|translate}})</a></li>
-              <li><a href ng-click="setLang('hu')">Magyar - ({{'lang.Hungarian'|translate}})</a></li>
-              <li><a href ng-click="setLang('is')">Íslenska - ({{'lang.Icelandic'|translate}})</a></li>
-              <li><a href ng-click="setLang('id')">Bahasa Indonesia - ({{'lang.Indonesian'|translate}})</a></li>
-              <li><a href ng-click="setLang('ga')">Gaeilge - ({{'lang.Irish'|translate}})</a></li>
-              <li><a href ng-click="setLang('it')">Italiano - ({{'lang.Italian'|translate}})</a></li>
-              <li><a href ng-click="setLang('ja')">日本語 - ({{'lang.Japanese'|translate}})</a></li>
-              <li><a href ng-click="setLang('kn')">ಕನ್ನಡ - ({{'lang.Kannada'|translate}})</a></li>
-              <li><a href ng-click="setLang('ko')">조선말 - ({{'lang.Korean'|translate}})</a></li>
-              <li><a href ng-click="setLang('la')">Latina - ({{'lang.Latin'|translate}})</a></li>
-              <li><a href ng-click="setLang('lv')">Latviešu - ({{'lang.Latvian'|translate}})</a></li>
-              <li><a href ng-click="setLang('lt')">Lietuvių - ({{'lang.Lithuanian'|translate}})</a></li>
-              <li><a href ng-click="setLang('mk')">Mакедонски - ({{'lang.Macedonian'|translate}})</a></li>
-              <li><a href ng-click="setLang('ms')">Bahasa Melayu - ({{'lang.Malay'|translate}})'|translate}})</a></li>
-              <li><a href ng-click="setLang('mt')">Malti - ({{'lang.Maltese'|translate}})</a></li>
-              <li><a href ng-click="setLang('no')">Norsk - ({{'lang.Norwegian'|translate}})</a></li>
-              <li><a href ng-click="setLang('fa')">فارسی - ({{'lang.Persian'|translate}})</a></li>
-              <li><a href ng-click="setLang('pl')">Polski - ({{'lang.Polish'|translate}})</a></li>
-              <li><a href ng-click="setLang('pt')">Português - ({{'lang.Portuguese'|translate}})</a></li>
-              <li><a href ng-click="setLang('ro')">Română - ({{'lang.Romanian'|translate}})'|translate}})</a></li>
-              <li><a href ng-click="setLang('ru')">Русский - ({{'lang.Russian'|translate}})</a></li>
-              <li><a href ng-click="setLang('sr')">Српски - ({{'lang.Serbian'|translate}})</a></li>
-              <li><a href ng-click="setLang('sk')">Slovenčina - ({{'lang.Slovak'|translate}})</a></li>
-              <li><a href ng-click="setLang('sl')">Slovenščina - ({{'lang.Slovenian'|translate}})</a></li>
-              <li><a href ng-click="setLang('es')">Español - ({{'lang.Spanish'|translate}})</a></li>
-              <li><a href ng-click="setLang('sw')">Kiswahili - ({{'lang.Swahili'|translate}})</a></li>
-              <li><a href ng-click="setLang('sv')">Svenska - ({{'lang.Swedish'|translate}})</a></li>
-              <li><a href ng-click="setLang('ta')">தமிழ் - ({{'lang.Tamil'|translate}})</a></li>
-              <li><a href ng-click="setLang('te')">తెలుగు - ({{'lang.Telugu'|translate}})</a></li>
-              <li><a href ng-click="setLang('th')">ไทย - ({{'lang.Thai'|translate}})</a></li>
-              <li><a href ng-click="setLang('tr')">Türkçe - ({{'lang.Turkish'|translate}})</a></li>
-              <li><a href ng-click="setLang('uk')">українська мова - ({{'lang.Ukrainian'|translate}})</a></li>
-              <li><a href ng-click="setLang('ur')">اردو - ({{'lang.Urdu'|translate}})</a></li>
-              <li><a href ng-click="setLang('vi')">Việtnam - ({{'lang.Vietnamese'|translate}})</a></li>
-              <li><a href ng-click="setLang('cy')">Cymraeg - ({{'lang.Welsh'|translate}})</a></li>
-              <li><a href ng-click="setLang('yi')">ייִדיש - ({{'lang.Yiddish'|translate}})</a></li>
             </ul>
+          </li>
+          <li ng-if="multiLanguage">
+            <a href ng-click="showLanguageModal()">
+              <i class="fa fa-globe"></i><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.language'|translate}}</span>
+            </a>
+          </li>
+          <li style="margin-right: 10px">
+            <a href="#/login-to">
+              <span ng-show="!currentAccount">
+                <i class="fa fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span>
+            </span>
+              <span ng-show="currentAccount">
+                <i class="fa fa-sign-out"></i>&nbsp;&nbsp;<span translate="translate.sign_out"></span>
+            </span>
+            </a>
           </li>           
         </ul>
       </div>
@@ -437,8 +416,63 @@
 
     <nav ng-if="isNodeJS" class="navbar navbar-default navbar-fixed-bottom">
       <div class="container-fluid">
-        <div ng-repeat="p in systemPlugins">
-          <ng-include src="p.templateURL"></ng-include>
+        <div>
+          <span>
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
+              <li>&nbsp;</li>
+              <li style="padding-top: 2px">
+                <div class="btn-group dropup">
+
+                  <a href class="btn btn-default navbar-btn">FIMK</a>
+
+                  <!-- global network - always displays the height of the connected public node -->              
+                  <a style="text-align: left;" class="btn btn-default navbar-btn" 
+                      href="#/activity/fim/activity/latest">
+                    <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{fimDownloadProvider.remoteheight}}</span>
+                  </a>
+
+                  <!-- local network - when server is off it displays -->
+                  <a style="text-align: left; padding-left:10px" class="btn btn-default navbar-btn" 
+                      href="#/server/fim/console">
+                    <i class="fa fa-desktop"></i><span ng-show="fimDownloadProvider.server_running">&nbsp;&nbsp;{{fimDownloadProvider.blockheight}}</span>
+                    <div style="position: absolute; width: 100%; left: 5px; top: 2px; padding-right: 10px;">
+                      <progressbar ng-if="fimDownloadProvider.downloading" style="max-height:5px; padding: 0px; border: 0px;" class="progress-striped active" 
+                      type="default" max="100" value="fimDownloadProvider.progress" >&nbsp;</progressbar>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </span>
+        </div>
+        <div ng-if="enableDualEngines">
+          <span>
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
+              <li>&nbsp;</li>
+              <li style="padding-top: 2px">
+                <div class="btn-group dropup">
+
+                  <a href class="btn btn-default navbar-btn">NXT</a>
+
+                  <!-- global network - always displays the height of the connected public node -->              
+                  <a style="text-align: left;" class="btn btn-default navbar-btn" 
+                      href="#/activity/nxt/activity/latest">
+                    <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{nxtDownloadProvider.remoteheight}}</span>
+                  </a>
+
+                  <!-- local network - when server is off it displays -->
+                  <a style="text-align: left; padding-left:10px" class="btn btn-default navbar-btn" 
+                      href="#/server/nxt/console">
+                    <i class="fa fa-desktop"></i><span ng-show="nxtDownloadProvider.server_running">&nbsp;&nbsp;{{nxtDownloadProvider.blockheight}}</span>
+                    <div style="position: absolute; width: 100%; left: 5px; top: 2px; padding-right: 10px;">
+                      <progressbar ng-if="nxtDownloadProvider.downloading" style="max-height:5px; padding: 0px; border: 0px;" class="progress-striped active" 
+                      type="default" max="100" value="nxtDownloadProvider.progress" >&nbsp;</progressbar>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </span>
         </div>
       </div>
     </nav>
