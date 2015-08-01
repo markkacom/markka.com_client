@@ -65,7 +65,7 @@ module.run(function (modals, settings) {
   }]);
 });
 
-module.controller('StartController', function ($scope, settings, db, modals, plugins, $rootScope, serverService, $location) {
+module.controller('StartController', function ($scope, settings, db, modals, plugins, $rootScope, serverService, $location, $timeout) {
 
   /* While on the landing page the <body> will have the class showing-landing-page */
   $rootScope.showingLandingPage = true;
@@ -75,16 +75,41 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
 
   $scope.searchQuery = '';
 
-  settings.resolve('initialization.user_selected_language', function (value) {
+  var theme_id = settings.get('themes.default.theme');
+  $scope.themes = [];
+  $scope.selectedTheme = null;
+
+  angular.forEach(plugins.get('themes').registry, function (theme) {
+    $scope.themes.push(theme);
+    if (theme.id == theme_id) {
+      $scope.selectedTheme = theme;
+    }
+  });
+
+  settings.resolve('themes.default.theme', function (value) {
+    angular.forEach($scope.themes, function (theme) {
+      if (theme.id == value) {
+        $timeout(function () {
+          $scope.selectedTheme = theme;
+        });
+      }
+    });
+  });
+
+  $scope.changeTheme = function (theme) {
+    settings.update('themes.default.theme', theme.id);
+  }
+
+  /*settings.resolve('initialization.user_selected_language', function (value) {
     if (!$rootScope.multiLanguage || value) {
       maybeStartFIMKServer();
     }
     else {
       letUserSelectLanguage();
     }
-  }, $scope);
+  }, $scope);*/
 
-  function letUserSelectLanguage() {
+  /*function letUserSelectLanguage() {
     modals.open('language', {
       resolve: {
         items: function () { return {}; }
@@ -93,7 +118,9 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
         maybeStartFIMKServer();
       }
     });
-  }  
+  }*/  
+
+  //maybeStartFIMKServer();
 
   function maybeStartFIMKServer() {
     if (isNodeJS && 
@@ -147,14 +174,14 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
   }
 
   function maybeShowWelcomeScreen() {
-    db.accounts.count(function (count) {
+    /*db.accounts.count(function (count) {
       if (count == 0) {
         $rootScope.showNewAccountModal();
       }
-    });
+    });*/
   }
 
-  $rootScope.showNewAccountModal = function () {
+  /*$rootScope.showNewAccountModal = function () {
     modals.open('welcome', {
       resolve: {
         items: function () { 
@@ -162,7 +189,7 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
         }
       }
     });    
-  }
+  }*/
 
   $scope.doSearch = function () {
     $location.path('/search/fim/accounts/'+$scope.searchQuery);
