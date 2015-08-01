@@ -10,7 +10,8 @@ module.factory('Account', function() {
         id_rs: String,
         publicKey: String,
         name: String,
-        engine: String
+        engine: String,
+        excluded: Boolean
       });
 
       Account.prototype.formatEngine = function () {
