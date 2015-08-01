@@ -10,7 +10,7 @@ module.factory('accountsService', function ($q, db, plugins) {
 
   function getCombined(filter) {
     var deferred = $q.defer();
-    var promise = filter ? db.accounts.filter(filter).sortBy('id_rs') : db.accounts.sortBy('id_rs');
+    var promise = filter ? db.accounts.filter(filter).sortBy('id_rs') : db.accounts.toCollection().sortBy('id_rs');
     promise.then(
       function (accounts) {
         accounts = accounts || [];
@@ -49,10 +49,10 @@ module.factory('accountsService', function ($q, db, plugins) {
     return getCombined(filter);
   };
 
-  // @returns Promise
+  // @returns Promise ( { id_rs: String })
   SERVICE.getFirst = function (id_rs) {
     var deferred = $q.defer();
-    getCombined(function (_id_rs) { return _id_rs == id_rs; }).then(
+    getCombined(function (obj) { return obj.id_rs == id_rs; }).then(
       function (accounts) {
         deferred.resolve(accounts[0]);
       },
@@ -60,6 +60,16 @@ module.factory('accountsService', function ($q, db, plugins) {
     )
     return deferred.promise;
   };
+
+  SERVICE.update = function (arg) {
+    getFirst(arg.id_rs).then(
+      function (account) {
+        if (account) {
+          
+        }
+      }
+    )
+  }
 
   SERVICE.onChange = function ($scope, callback) {
     db.accounts.addObserver($scope, {
