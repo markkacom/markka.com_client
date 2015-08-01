@@ -34,7 +34,12 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
   old_db.delete();
   old_db = null;
 
-  var db = new Dexie('fimkrypto-db2');
+  if (IS_TEST_NET) {
+    var db = new Dexie('fimkrypto-db-test');
+  }
+  else {
+    var db = new Dexie('fimkrypto-db2');
+  }
   db.createObserver = createObserver;
   var masspay_payments = "++id,index,recipientRS,amountNQT,transactionSuccess,broadcastSuccess,blockchainStatus,created,broadcasted";
   var settings = "++id";
@@ -52,59 +57,6 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
   }], db);
 
   db.on('error', function (e) { console.error(e) });
-  db.on('populate', function () {
-    var nodes = {
-
-      /* FIM test net */
-      6886: [
-        'http://178.62.176.45|CORS',
-        'http://178.62.176.46|CORS'
-      ],
-
-      /* FIM main net */
-      7886: [
-        'https://wallet.fimk.fi|CORS',
-        'https://forum.fimk.fi|CORS',
-        'https://fim1.mofowallet.org|CORS',
-        'https://fim2.mofowallet.org|CORS',
-        'https://fim3.mofowallet.org|CORS',
-        'https://fim4.mofowallet.org|CORS',
-        'https://fim5.mofowallet.org|CORS',
-        'https://fim6.mofowallet.org|CORS',
-        'https://fim7.mofowallet.org|CORS',
-        'https://fim8.mofowallet.org|CORS',
-        'https://fim9.mofowallet.org|CORS',
-        'https://fim10.mofowallet.org|CORS',
-        'https://fim11.mofowallet.org|CORS'
-      ],
-
-      /* NXT main net */
-      7876: [
-        'https://wallet.fimk.fi|CORS',
-        'https://forum.fimk.fi|CORS',
-        'https://nxt1.mofowallet.org|CORS',
-        'https://nxt2.mofowallet.org|CORS',
-        'https://nxt3.mofowallet.org|CORS',
-        'https://nxt4.mofowallet.org|CORS',
-      ]
-    };
-    angular.forEach(nodes, function (list, port) {
-      angular.forEach(list, function (url) {
-        var t = url.split('|');
-        var cors = t[1] == 'CORS';
-        url = t[0];
-
-        db.nodes.add({
-          port: parseInt(port),
-          url: url,
-          supports_cors: cors,
-          downloaded: 0,
-          success_timestamp: 0,
-          failed_timestamp: 0
-        });
-      })
-    });
-  });
   db.on('changes', function (changes, partial) {
     var tables = {};
     changes.forEach(function (change) {
