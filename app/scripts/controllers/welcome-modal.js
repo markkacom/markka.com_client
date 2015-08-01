@@ -47,8 +47,12 @@ module.controller('WelcomeModalController', function (items, $scope, $rootScope,
   }
 
   $scope.passphraseChanged = function () {
-    $scope.items.publicKey = nxt.fim().crypto.secretPhraseToPublicKey($scope.items.passphrase);
-    $scope.items.id_rs = nxt.fim().crypto.getAccountIdFromPublicKey($scope.items.publicKey, true);
+    var api = nxt.get($scope.items.symbol+'-');
+    if (!api) {
+      api = nxt.fim();
+    }
+    $scope.items.publicKey = api.crypto.secretPhraseToPublicKey($scope.items.passphrase);
+    $scope.items.id_rs = api.crypto.getAccountIdFromPublicKey($scope.items.publicKey, true);
   }
 
   $scope.accountIDChanged = function () {
@@ -65,7 +69,9 @@ module.controller('WelcomeModalController', function (items, $scope, $rootScope,
     };
     db.accounts.put(args).then(function () {
       var id_rs = $scope.items.id_rs;
-      $timeout(function () { $location.path('/accounts/'+id_rs+'/pulse/latest');  }, 1, false);
+      if (!$rootScope.TRADE_UI_ONLY) {
+        $timeout(function () { $location.path('/accounts/'+id_rs+'/pulse/latest');  }, 1, false);
+      }
       $modalInstance.close($scope.items);
     });
   }
@@ -79,7 +85,9 @@ module.controller('WelcomeModalController', function (items, $scope, $rootScope,
     };
     db.accounts.put(args).then(function () {
       var id_rs = $scope.items.id_rs;
-      $timeout(function () { $location.path('/accounts/'+id_rs+'/pulse/latest');  }, 1, false);      
+      if (!$rootScope.TRADE_UI_ONLY) {
+        $timeout(function () { $location.path('/accounts/'+id_rs+'/pulse/latest');  }, 1, false);      
+      }
       $modalInstance.close($scope.items);
     });
   }
@@ -91,7 +99,7 @@ module.controller('WelcomeModalController', function (items, $scope, $rootScope,
         return false;
       }
       $scope.items.engineType = api.engine.type;
-      var address = new NxtAddress(api.engine.symbol);
+      var address = new NxtAddress(api.engine.symbol_lower.toUpperCase());
       return !!(address.set(id_rs));
     }
     return true;
