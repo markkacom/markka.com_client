@@ -1,12 +1,10 @@
 (function () {
 'use strict';
 
-var DEBUG = false;
-
 var module = angular.module('fim.base');
 module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db, 
   settings, $timeout, $sce, serverService, plugins, requests, $interval, 
-  $translate, MofoSocket) {
+  $translate, MofoSocket, Emoji) {
 
   var FAILED_RETRIES = 0;
 
@@ -44,19 +42,19 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       return this.api[TYPE_FIM] || (this.api[TYPE_FIM] = new ServerAPI(TYPE_FIM, $rootScope.isTestnet));
     },
     get: function (arg) {
-      if (arg == TYPE_NXT || arg.indexOf('NXT-')==0) {
+      if (arg == TYPE_NXT || arg.toUpperCase().indexOf('NXT')==0) {
         return this.nxt();
       }
-      if (arg == TYPE_FIM || arg.indexOf('FIM-')==0) {
+      if (arg == TYPE_FIM || arg.toUpperCase().indexOf('FIM')==0) {
         return this.fim();
       }
       console.log('Could not determine engine', arg);
     },
     crypto: function (arg) {
-      if (arg == TYPE_NXT || arg.indexOf('NXT-')==0) {
+      if (arg == TYPE_NXT || arg.toUpperCase().indexOf('NXT')==0) {
         return this.nxt().crypto;
       }
-      if (arg == TYPE_FIM || arg.indexOf('FIM-')==0) {
+      if (arg == TYPE_FIM || arg.toUpperCase().indexOf('FIM')==0) {
         return this.fim().crypto;
       }
       console.log('Could not determine engine', arg);      
@@ -81,6 +79,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.feeCost   = _type == TYPE_FIM ? 0.1 : 1;
     this.symbol    = _type == TYPE_FIM ? 'FIM' : 'NXT';
     this.symbol_lower = this.symbol.toLowerCase();
+
+    if ($rootScope.TRADE_UI_ONLY) {
+      this.symbol = 'EUR';
+    }
+
     this.localhost = 'http://localhost';
 
     if (_type == TYPE_FIM) {
@@ -88,7 +91,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:'); 
       }
       else if (_test) {
-        this.urlPool = new URLPool(this, ['188.166.36.203', '188.166.0.145'], false);
+        this.urlPool = new URLPool(this, [/*'188.166.36.203',*/ '188.166.0.145'], false);
       }
       else {
         this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
@@ -99,7 +102,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:'); 
       }
       else if (_test) {
-        throw new Error('There are no nxt testnet servers');
+        console.log('There are no nxt testnet servers');
       }
       else {
         this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
@@ -200,6 +203,12 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
   MessageDecoder.prototype = {
     MAX_SIZE: 1000,
     SLIZE_SIZE: 100,
+    lock: function () {
+      this.keys   = [];
+      this.values = [];
+      this.priv   = {};
+      this.pub    = {};
+    },
     /* @param transaction Transaction|JSON
        @returns { encrypted: Boolean, text: String } */
     decode: function (transaction) {
@@ -217,9 +226,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           return this.persist(id, true, decoded);
         } 
         catch (e) {
-          console.log(e);
-          return null;
-        }        
+         console.log(e);
+         return null;
+        }
       }
       else if (transaction.attachment.message) {
         if (!transaction.attachment["version.Message"]) {
@@ -255,10 +264,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     },    
     getPrivateKey: function (id_rs) {
       var privateKey = this.priv[id_rs];
-      if (!privateKey) {
-        var wallet = plugins.get('wallet');
-        if (wallet && wallet.hasKey(id_rs)) {
-          var secretPhrase = wallet.getSecretPhrase(id_rs);
+      if (!privateKey && $rootScope.currentAccount) {
+        if (id_rs == $rootScope.currentAccount.id_rs) {
+          var secretPhrase = $rootScope.currentAccount.secretPhrase;
           if (secretPhrase) {
             privateKey = converters.hexStringToByteArray(this.api.crypto.getPrivateKey(secretPhrase));
             this.priv[id_rs] = privateKey;
@@ -270,14 +278,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     /* used exclusively for decrypting crypt to self messages */
     getPublicKey: function (id_rs) {
       var publicKey = this.pub[id_rs];
-      if (!publicKey) {
-        var wallet = plugins.get('wallet');
-        if (wallet && wallet.hasKey(id_rs)) {
-          var secretPhrase = wallet.getSecretPhrase(id_rs);
-          if (secretPhrase) {
-            publicKey = converters.hexStringToByteArray(this.api.crypto.secretPhraseToPublicKey(secretPhrase));
-            this.pub[id_rs] = publicKey;
-          }
+      if (!publicKey && $rootScope.currentAccount) {
+        var secretPhrase = $rootScope.currentAccount.secretPhrase;
+        if (secretPhrase) {
+          publicKey = converters.hexStringToByteArray(this.api.crypto.secretPhraseToPublicKey(secretPhrase));
+          this.pub[id_rs] = publicKey;
         }
       }
       return publicKey;
@@ -287,11 +292,15 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (transaction.attachment.encryptedMessage) {
         if (this.getPrivateKey(transaction.senderRS)) {
           privateKey   = this.getPrivateKey(transaction.senderRS);
-          publicKey = converters.hexStringToByteArray(transaction.attachment.recipientPublicKey);
+          if (transaction.attachment.recipientPublicKey) {
+            publicKey = converters.hexStringToByteArray(transaction.attachment.recipientPublicKey);
+          }
         }
         else if (this.getPrivateKey(transaction.recipientRS)) {
           privateKey   = this.getPrivateKey(transaction.recipientRS);
-          publicKey = converters.hexStringToByteArray(transaction.senderPublicKey);
+          if (transaction.attachment.senderPublicKey) {
+            publicKey = converters.hexStringToByteArray(transaction.attachment.senderPublicKey);
+          }
         }
         if (privateKey && publicKey) {
           isText    = transaction.attachment.encryptedMessage.isText;
@@ -384,11 +393,10 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       }
     };
     this.templates = {};
-    angular.forEach(this.TYPE, function (type) { 
+    angular.forEach(this.TYPE, function (type) {
       self.templates[type] = ['<a href__HREF__ data-engine="',self.api.type,'" data-type="',type,'" data-value="__VALUE__" class="txn txn-',
-        type,'__CLICK__',
-        'onmouseover="if (angular.element(this).scope().onTransactionIdentifierMouseOver) { angular.element(this).scope().onTransactionIdentifierMouseOver(this) }" ',
-        'onmouseleave="if (angular.element(this).scope().onTransactionIdentifierMouseLeave) { angular.element(this).scope().onTransactionIdentifierMouseLeave(this) }">__LABEL__</a>'].join('')
+        type,'"','__CLICK__',
+        ' ','>__LABEL__</a>'].join('');
     });    
   }
   Renderer.prototype = {
@@ -484,10 +492,10 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         if (decoded) {
           var html = ['&nbsp;<span>'];
           if (transaction.attachment.encryptToSelfMessage) {
-            html.push('<i class="fa fa-comment-o"></i>');
+            html.push('<i class="fa fa-key"></i>');
           }
           else if (transaction.attachment.encryptedMessage) {
-            html.push('<i class="fa fa-comments-o"></i>');
+            html.push('<i class="fa fa-key"></i>');
           }
           else {
             html.push('<i class="fa fa-unlock"></i>');
@@ -495,7 +503,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           if (decoded.text) {
             var text = escapeHtml(decoded.text);
             html.push('&nbsp;<span data-text="',text,'" data-sender="',transaction.senderRS,'" data-recipient="',transaction.recipientRS,'" ',
-            '>',text,'</span></span>');
+            '>',Emoji.emojifi(text),'</span></span>');
           }
           else {
             html.push('&nbsp;encrypted&nbsp;<a href="#" ',
@@ -957,6 +965,31 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:   render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:   message(transaction)
               });
+              // {{sender}} adds {{recipient}} to {{assetName}} allowed accounts {{details}} {{message}}
+              case 1: return $translate.instant('transaction.40.1', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset), 
+                recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
+              // {{sender}} removed {{recipient}} from {{assetName}} allowed accounts {{details}} {{message}}
+              case 2: return $translate.instant('transaction.40.2', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset), 
+                recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
+              // {{sender}} set {{assetName}} order fee {{orderFee}}% trade fee {{tradeFee}}% {{details}} {{message}}
+              case 3: return $translate.instant('transaction.40.3', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset), 
+                orderFee:   INSTANCE.util.convertToQNTf(String(transaction.attachment.orderFeePercentage), 6)||'0',
+                tradeFee:   INSTANCE.util.convertToQNTf(String(transaction.attachment.tradeFeePercentage), 6)||'0',
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
             }
           }
         }
@@ -964,44 +997,29 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     } 
   };
 
-  function stackTrace() {
-    var e = new Error();
-    var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-      .replace(/^\s+at\s+/gm, '')
-      .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-      .split('\n')
-    return stack[2];
-  }  
-
   /**
    * @param _type Engine type 
    * @param _test Boolean for test network
    */
   function ServerAPI(_type, _test) {
     verifyEngineType(_type);
-    
-    //this.installMethods(this);
-
     this.type                 = _type;
     this.test                 = _test;
     this.downloaders          = {};
     this.engine               = new AbstractEngine(_type, _test);
-    //this.secretPhraseProvider = new SecretPhraseProvider(_type);
-    //this.requestHandler       = new RequestHandler(this.engine);
-    //this.blockchain           = new Blockchain(_type, _test, this);
     this.crypto               = new Crypto(_type, this);
     this.renderer             = new Renderer(this);
     this.decoder              = new MessageDecoder(this);    
 
     /* Registers AbstractEngine as NodeProvider with the requests service */
     requests.registerNodeProvider(this.engine);
-
-    // (function (blockchain) {
-    //   setInterval(function () { blockchain.getNewBlocks() }, 10 * 1000);
-    //   setTimeout( function () { blockchain.getNewBlocks() }, 100);
-    // })(this.blockchain);   
   };
   ServerAPI.prototype = {
+    lock: function () {
+      if (this.decoder) {
+        this.decoder.lock();
+      }
+    },
 
     /* Creates the NxtAddress for this coin */
     createAddress: function () {
@@ -1093,12 +1111,6 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // /////////////////////////////////////////////////////////////////////////////////////////////
 
-  /* Utility for determining if a block has passed */
-  function blockPassed(_type, height) {
-    // return INSTANCE.api[_type].blockchain.getHeight() > height;
-    return true;
-  }
-
   ServerAPI.prototype.verifyAndSignTransactionBytes = verifyAndSignTransactionBytes;
 
   function verifyAndSignTransactionBytes(transactionBytes, signature, requestType, data, _type, constants) {
@@ -1107,13 +1119,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     var byteArray     = converters.hexStringToByteArray(transactionBytes);
     transaction.type  = byteArray[0];
 
-    if (blockPassed(_type, constants.DIGITAL_GOODS_STORE_BLOCK)) {
-      transaction.version = (byteArray[1] & 0xF0) >> 4;
-      transaction.subtype = byteArray[1] & 0x0F;
-    } 
-    else {
-      transaction.subtype = byteArray[1];
-    }
+    transaction.version = (byteArray[1] & 0xF0) >> 4;
+    transaction.subtype = byteArray[1] & 0x0F;
 
     transaction.timestamp = String(converters.byteArrayToSignedInt32(byteArray, 2));
     transaction.deadline  = String(converters.byteArrayToSignedShort(byteArray, 6));
@@ -1216,16 +1223,6 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       case "sendMessage":
         if (transaction.type !== 1 || transaction.subtype !== 0) {
           return false;
-        }
-
-        if (!blockPassed(_type, constants.DIGITAL_GOODS_STORE_BLOCK)) {
-          var messageLength = String(converters.byteArrayToSignedInt32(byteArray, pos));
-          pos += 4;
-          var slice = byteArray.slice(pos, pos + messageLength);
-          transaction.message = converters.byteArrayToHexString(slice);
-          if (transaction.message !== data.message) {
-            return false;
-          }
         }
         break;
       case "setAlias":
@@ -1428,16 +1425,42 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         pos += 8;
         transaction.quantityQNT = String(converters.byteArrayToBigInteger(byteArray, pos));
         pos += 8;
-        if (!blockPassed(_type, constants.DIGITAL_GOODS_STORE_BLOCK)) {
-          var commentLength = converters.byteArrayToSignedShort(byteArray, pos);
-          pos += 2;
-          transaction.comment = converters.byteArrayToString(byteArray, pos, commentLength);
-          if (transaction.comment !== data.comment) {
-            return false;
-          }
-        }
-
         if (transaction.asset !== data.asset || transaction.quantityQNT !== data.quantityQNT) {
+          return false;
+        }
+        break;
+      case "addPrivateAssetAccount":
+        if (transaction.type !== 40 || transaction.subtype !== 1) {
+          return false;
+        }
+        transaction.asset = String(converters.byteArrayToBigInteger(byteArray, pos));
+        pos += 8;
+        if (transaction.asset !== data.asset) {
+          return false;
+        }
+        break;
+      case "removePrivateAssetAccount":
+        if (transaction.type !== 40 || transaction.subtype !== 2) {
+          return false;
+        }
+        transaction.asset = String(converters.byteArrayToBigInteger(byteArray, pos));
+        pos += 8;
+        if (transaction.asset !== data.asset) {
+          return false;
+        }
+        break;
+      case "setPrivateAssetFee":
+        if (transaction.type !== 40 || transaction.subtype !== 3) {
+          return false;
+        }
+        transaction.asset = String(converters.byteArrayToBigInteger(byteArray, pos));
+        pos += 8;
+        transaction.orderFeePercentage = String(converters.byteArrayToSignedInt32(byteArray, pos));
+        pos += 4;
+        transaction.tradeFeePercentage = String(converters.byteArrayToSignedInt32(byteArray, pos));
+        pos += 4;
+        if (transaction.asset !== data.asset || transaction.orderFeePercentage !== data.orderFeePercentage ||
+            transaction.tradeFeePercentage !== data.tradeFeePercentage) {
           return false;
         }
         break;
@@ -1650,120 +1673,118 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         return false;
     }
 
-    if (blockPassed(_type, constants.DIGITAL_GOODS_STORE_BLOCK)) {
-      var position = 1;
+    var position = 1;
 
-      //non-encrypted message
-      if ((transaction.flags & position) != 0 || (requestType == "sendMessage" && data.message)) {
-        var attachmentVersion = byteArray[pos];
-        pos++;
-        var messageLength = converters.byteArrayToSignedInt32(byteArray, pos);
-        transaction.messageIsText = messageLength < 0; // ugly hack??
+    //non-encrypted message
+    if ((transaction.flags & position) != 0 || (requestType == "sendMessage" && data.message)) {
+      var attachmentVersion = byteArray[pos];
+      pos++;
+      var messageLength = converters.byteArrayToSignedInt32(byteArray, pos);
+      transaction.messageIsText = messageLength < 0; // ugly hack??
 
-        if (messageLength < 0) {
-          messageLength &= 2147483647;
-        }
+      if (messageLength < 0) {
+        messageLength &= 2147483647;
+      }
 
-        pos += 4;
-        if (transaction.messageIsText) {
-          transaction.message = converters.byteArrayToString(byteArray, pos, messageLength);
-        } 
-        else {
-          var slice = byteArray.slice(pos, pos + messageLength);
-          transaction.message = converters.byteArrayToHexString(slice);
-        }
-
-        pos += messageLength;
-        var messageIsText = (transaction.messageIsText ? "true" : "false");
-        if (messageIsText != data.messageIsText) {
-          return false;
-        }
-
-        if (transaction.message !== data.message) {
-          return false;
-        }
+      pos += 4;
+      if (transaction.messageIsText) {
+        transaction.message = converters.byteArrayToString(byteArray, pos, messageLength);
       } 
-      else if (data.message) {
+      else {
+        var slice = byteArray.slice(pos, pos + messageLength);
+        transaction.message = converters.byteArrayToHexString(slice);
+      }
+
+      pos += messageLength;
+      var messageIsText = (transaction.messageIsText ? "true" : "false");
+      if (messageIsText != data.messageIsText) {
         return false;
       }
 
-      position <<= 1;
+      if (transaction.message !== data.message) {
+        return false;
+      }
+    } 
+    else if (data.message) {
+      return false;
+    }
 
-      //encrypted note
-      if ((transaction.flags & position) != 0) {
-        var attachmentVersion = byteArray[pos];
-        pos++;
-        var encryptedMessageLength = converters.byteArrayToSignedInt32(byteArray, pos);
-        transaction.messageToEncryptIsText = encryptedMessageLength < 0;
+    position <<= 1;
 
-        if (encryptedMessageLength < 0) {
-          encryptedMessageLength &= 2147483647; // http://en.wikipedia.org/wiki/2147483647
-        }
+    //encrypted note
+    if ((transaction.flags & position) != 0) {
+      var attachmentVersion = byteArray[pos];
+      pos++;
+      var encryptedMessageLength = converters.byteArrayToSignedInt32(byteArray, pos);
+      transaction.messageToEncryptIsText = encryptedMessageLength < 0;
 
-        pos += 4;
-        transaction.encryptedMessageData = converters.byteArrayToHexString(byteArray.slice(pos, pos + encryptedMessageLength));
-        pos += encryptedMessageLength;
-        transaction.encryptedMessageNonce = converters.byteArrayToHexString(byteArray.slice(pos, pos + 32));
-        pos += 32;
-        var messageToEncryptIsText = (transaction.messageToEncryptIsText ? "true" : "false");
-        if (messageToEncryptIsText != data.messageToEncryptIsText) {
-          return false;
-        }
+      if (encryptedMessageLength < 0) {
+        encryptedMessageLength &= 2147483647; // http://en.wikipedia.org/wiki/2147483647
+      }
 
-        if (transaction.encryptedMessageData !== data.encryptedMessageData || transaction.encryptedMessageNonce !== data.encryptedMessageNonce) {
-          return false;
-        }
-      } 
-      else if (data.encryptedMessageData) {
+      pos += 4;
+      transaction.encryptedMessageData = converters.byteArrayToHexString(byteArray.slice(pos, pos + encryptedMessageLength));
+      pos += encryptedMessageLength;
+      transaction.encryptedMessageNonce = converters.byteArrayToHexString(byteArray.slice(pos, pos + 32));
+      pos += 32;
+      var messageToEncryptIsText = (transaction.messageToEncryptIsText ? "true" : "false");
+      if (messageToEncryptIsText != data.messageToEncryptIsText) {
         return false;
       }
 
-      position <<= 1;
+      if (transaction.encryptedMessageData !== data.encryptedMessageData || transaction.encryptedMessageNonce !== data.encryptedMessageNonce) {
+        return false;
+      }
+    } 
+    else if (data.encryptedMessageData) {
+      return false;
+    }
 
-      if ((transaction.flags & position) != 0) {
-        var attachmentVersion = byteArray[pos];
-        pos++;
-        var recipientPublicKey = converters.byteArrayToHexString(byteArray.slice(pos, pos + 32));
-        if (recipientPublicKey != data.recipientPublicKey) {
-          return false;
-        }
-        pos += 32;
-      } 
-      else if (data.recipientPublicKey) {
+    position <<= 1;
+
+    if ((transaction.flags & position) != 0) {
+      var attachmentVersion = byteArray[pos];
+      pos++;
+      var recipientPublicKey = converters.byteArrayToHexString(byteArray.slice(pos, pos + 32));
+      if (recipientPublicKey != data.recipientPublicKey) {
+        return false;
+      }
+      pos += 32;
+    } 
+    else if (data.recipientPublicKey) {
+      return false;
+    }
+
+    position <<= 1;
+
+    if ((transaction.flags & position) != 0) {
+      var attachmentVersion = byteArray[pos];
+      pos++;
+      var encryptedToSelfMessageLength = converters.byteArrayToSignedInt32(byteArray, pos);
+      transaction.messageToEncryptToSelfIsText = encryptedToSelfMessageLength < 0;
+
+      if (encryptedToSelfMessageLength < 0) {
+        encryptedToSelfMessageLength &= 2147483647;
+      }
+
+      pos += 4;
+      transaction.encryptToSelfMessageData = converters.byteArrayToHexString(byteArray.slice(pos, pos + encryptedToSelfMessageLength));
+      pos += encryptedToSelfMessageLength;
+      transaction.encryptToSelfMessageNonce = converters.byteArrayToHexString(byteArray.slice(pos, pos + 32));
+      pos += 32;
+
+      var messageToEncryptToSelfIsText = (transaction.messageToEncryptToSelfIsText ? "true" : "false");
+      if (messageToEncryptToSelfIsText != data.messageToEncryptToSelfIsText) {
         return false;
       }
 
-      position <<= 1;
-
-      if ((transaction.flags & position) != 0) {
-        var attachmentVersion = byteArray[pos];
-        pos++;
-        var encryptedToSelfMessageLength = converters.byteArrayToSignedInt32(byteArray, pos);
-        transaction.messageToEncryptToSelfIsText = encryptedToSelfMessageLength < 0;
-
-        if (encryptedToSelfMessageLength < 0) {
-          encryptedToSelfMessageLength &= 2147483647;
-        }
-
-        pos += 4;
-        transaction.encryptToSelfMessageData = converters.byteArrayToHexString(byteArray.slice(pos, pos + encryptedToSelfMessageLength));
-        pos += encryptedToSelfMessageLength;
-        transaction.encryptToSelfMessageNonce = converters.byteArrayToHexString(byteArray.slice(pos, pos + 32));
-        pos += 32;
-
-        var messageToEncryptToSelfIsText = (transaction.messageToEncryptToSelfIsText ? "true" : "false");
-        if (messageToEncryptToSelfIsText != data.messageToEncryptToSelfIsText) {
-          return false;
-        }
-
-        if (transaction.encryptToSelfMessageData !== data.encryptToSelfMessageData || 
-            transaction.encryptToSelfMessageNonce !== data.encryptToSelfMessageNonce) {
-          return false;
-        }
-      } 
-      else if (data.encryptToSelfMessageData) {
+      if (transaction.encryptToSelfMessageData !== data.encryptToSelfMessageData || 
+          transaction.encryptToSelfMessageNonce !== data.encryptToSelfMessageNonce) {
         return false;
       }
+    } 
+    else if (data.encryptToSelfMessageData) {
+      return false;
     }
 
     return transactionBytes.substr(0, 192) + signature + transactionBytes.substr(320);
