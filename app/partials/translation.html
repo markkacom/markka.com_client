@@ -17,7 +17,7 @@
   <div class="col-md-3 col-xs-6">
     <form>
       <div class="form-group">
-        <select ng-model="targetLang" ng-options="key as value for (key , value) in availableLanguages" 
+        <select ng-model="targetLang" ng-options="k[0] as k[1] for k in availableLanguages" 
           ng-change="onTargetLanguageChange()" id="languageSelect" class="form-control">
         </select>
         <br>
