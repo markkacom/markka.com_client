@@ -12,12 +12,14 @@ module.factory('BalanceProvider', function (nxt, $q, $timeout) {
   }
   BalanceProvider.prototype = {
     reload: function () {
+      var deferred = $q.defer();
       var self = this;
       this.$scope.$evalAsync(function () {
         self.balances.length = [];
         self.isLoading       = true;
-        $timeout(function () { self.getNetworkData(); }, 1, false);        
+        self.getNetworkData().then(deferred.resolve, deferred.reject);
       });
+      return deferred.promise;
     },
 
     getNetworkData: function (timestamp) {
@@ -48,15 +50,19 @@ module.factory('BalanceProvider', function (nxt, $q, $timeout) {
             self.balances.sort(function (a,b) {
               a = parseFloat(a.forgedBalanceNQT), b = parseFloat(b.forgedBalanceNQT);
               return a - b;
-            })
+            });
+
+            deferred.resolve();
           });
         },
         function () {
           self.$scope.$evalAsync(function () {
             self.isLoading = false;
+            deferred.reject();
           });
         }
       );
+      return deferred.promise;
     }
   }
   return BalanceProvider;
