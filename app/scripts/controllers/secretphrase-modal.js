@@ -4,7 +4,9 @@ var module = angular.module('fim.base');
 
 var _secretPhraseCache = {};
 
-module.controller('secretPhraseModalController', function (items, $modalInstance, $scope, $timeout, nxt, modals, plugins, $sce, db) {
+module.controller('secretPhraseModalController', function (items, $modalInstance, $scope, 
+  $timeout, nxt, modals, plugins, $sce, db, KeyService) {
+
   var walletPlugin              = plugins.get('wallet');
 
   $scope.SIMPLE                 = 'simple';
@@ -25,6 +27,16 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
   // simple + complex
   $scope.items.secretPhrase     = $scope.items.secretPhrase || '';
   $scope.items.sender           = items.sender || '';
+
+  if (items.sender && $scope.items.secretPhrase == '') {
+    $scope.items.secretPhrase   = walletPlugin.getSecretPhrase(items.sender) || '';
+    if (!$scope.items.secretPhrase) {
+      $scope.items.secretPhrase = KeyService.get(items.sender);
+      if ($scope.items.secretPhrase) {
+        $scope.items.valid = true;
+      }
+    }
+  }
   
   // DEBUG
   //$scope.state = $scope.COMPLEX;
@@ -124,26 +136,36 @@ module.controller('secretPhraseModalController', function (items, $modalInstance
       $modalInstance.close($scope.items);
     }
     else {
-      walletPlugin.confirmSaveToWallet().then(
-        function (confirmed) {
-          if (confirmed) {
-            /* Save the secret in the in-memory wallet - will ask the user to save the wallet */
-            walletPlugin.addEntry({
-              name:         '',
-              id_rs:        $scope.items.sender,
-              secretPhrase: $scope.items.secretPhrase
-            }).then(
-              function () {
-                $modalInstance.close($scope.items);
-              },
-              function () {
-                $modalInstance.dismiss();
-              }
-            );
-          }
-          else {
+      db.accounts.where('id_rs').anyOf($scope.items.sender).count().then(
+        function (count) {
+          if (count > 0) {
             walletPlugin.saveToMemory($scope.items.sender, $scope.items.secretPhrase);
             $modalInstance.close($scope.items);
+          }
+          else {
+            walletPlugin.confirmSaveToWallet().then(
+              function (confirmed) {
+                if (confirmed) {
+                  /* Save the secret in the in-memory wallet - will ask the user to save the wallet */
+                  walletPlugin.addEntry({
+                    name:         '',
+                    id_rs:        $scope.items.sender,
+                    secretPhrase: $scope.items.secretPhrase
+                  }).then(
+                    function () {
+                      $modalInstance.close($scope.items);
+                    },
+                    function () {
+                      $modalInstance.dismiss();
+                    }
+                  );
+                }
+                else {
+                  walletPlugin.saveToMemory($scope.items.sender, $scope.items.secretPhrase);
+                  $modalInstance.close($scope.items);
+                }
+              }
+            );
           }
         }
       );
