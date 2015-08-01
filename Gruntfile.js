@@ -15,7 +15,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-node-webkit-builder');
-  grunt.loadNpmTasks('grunt-google-translate');
+  //grunt.loadNpmTasks('grunt-google-translate');
+  grunt.loadTasks('vendor/grunt-google-translate/tasks');
 
   // Load grunt tasks automatically
   require('load-grunt-tasks')(grunt);
