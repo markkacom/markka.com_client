@@ -9,6 +9,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
     this.callbacks    = {};
     this.timeout_ms   = 60 * 1000;
     this.debug        = false;
+    this.debugEvents  = false;
     this.keepAlive    = true;
     this.alive_ms     = 120 * 1000;
     this.alive_cb     = null;
@@ -45,7 +46,8 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       'getMyOpenOrders',
       'getBlockchainState',
       'getAccountLessors',
-      'search'
+      'search',
+      'getAssetPrivateAccounts'
     ],
 
     createIsOpenPromise: function () {
@@ -69,7 +71,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
      * Subscribe to a topic on the remote server
      **/
     subscribe: function (topic, callback, $scope) {
-      console.log('subscribe', topic);
+      if (this.debug) { console.log('subscribe', topic); }
       topic = topic.toUpperCase();
       if (!this.topics[topic]) {
         this.topics[topic] = [];
@@ -322,6 +324,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
         this.response(data[1], data[2]);
       }
       else if (op == "notify") {
+        if (this.debugEvents) { console.log('EVENT', data[1], data[2]); }
         this.notify(data[1], data[2]);
       }
       else {
