@@ -3,47 +3,19 @@
 var module = angular.module('fim.base');
 module.factory('AskOrderProvider', function (nxt, $q, IndexedEntityProvider) {
   
-  function AskOrderProvider(api, $scope, pageSize, asset) {
+  function AskOrderProvider(api, $scope, pageSize, asset, decimals) {
     this.init(api, $scope, pageSize);
     this.asset = asset;
-    this.decimals = 0; /* set on first invocation of getData */
+    this.decimals = decimals;
 
-    this.isAskOrder = function (transaction) {
-      return transaction.type == 2 && transaction.subtype == 2 && transaction.attachment.asset == asset;
-    }
-
-    this.isCancelAskOrder = function (transaction) {
-      return transaction.type == 2 && transaction.subtype == 4;
-    }
-
-    api.engine.socket().subscribe('addedUnConfirmedTransactions', angular.bind(this, this.addedUnConfirmedTransactions), $scope);
-    api.engine.socket().subscribe('removedUnConfirmedTransactions', angular.bind(this, this.removedUnConfirmedTransactions), $scope);
-    api.engine.socket().subscribe('addedConfirmedTransactions', angular.bind(this, this.addedConfirmedTransactions), $scope);
     api.engine.socket().subscribe('blockPopped', angular.bind(this, this.blockPopped), $scope);
-    api.engine.socket().subscribe('blockPushed', angular.bind(this, this.blockPopped), $scope);
-    api.engine.socket().subscribe('addedTrades*'+asset, angular.bind(this, this.addedTrades), $scope);
+    api.engine.socket().subscribe('blockPushed', angular.bind(this, this.blockPushed), $scope);
+
+    api.engine.socket().subscribe('ASK_ORDER_ADD*'+asset, angular.bind(this, this.orderAddUpdate), $scope);
+    api.engine.socket().subscribe('ASK_ORDER_UPDATE*'+asset, angular.bind(this, this.orderAddUpdate), $scope);
+    api.engine.socket().subscribe('ASK_ORDER_REMOVE*'+asset, angular.bind(this, this.orderRemove), $scope);    
   }
   angular.extend(AskOrderProvider.prototype, IndexedEntityProvider.prototype, {
-
-    /* Turns a Transaction into an Order object */
-    toOrder: function (transaction) {
-      var priceNQT = transaction.attachment.priceNQT;
-      var quantityQNT = transaction.attachment.quantityQNT;
-      var price = nxt.util.calculateOrderPricePerWholeQNT(priceNQT, this.decimals);
-      return {
-        order: transaction.transaction,
-        priceNQT: priceNQT,
-        quantityQNT: quantityQNT,
-        height: transaction.height,
-        confirmations: transaction.confirmations,
-        quantity: nxt.util.convertToQNTf(quantityQNT, this.decimals),
-        price: price,
-        total: nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(priceNQT, quantityQNT)),
-        priceNum: parseFloat(price.replace(',','')),
-        accountRS: transaction.senderRS,
-        type: 'sell'
-      };
-    },
 
     // ORDER BY price ASC, creation_height ASC, id ASC ");
     /* @override */
@@ -71,89 +43,50 @@ module.factory('AskOrderProvider', function (nxt, $q, IndexedEntityProvider) {
         asset:          this.asset,
         firstIndex:     firstIndex,
         lastIndex:      firstIndex + this.pageSize,
-        type:           'ask'
+        requestType:    'getVirtualAskOrders'
       }
-      this.api.engine.socket().getAssetOrders(args).then(deferred.resolve, deferred.reject);
+      this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
       return deferred.promise;
+    },
+
+    translate: function (order) {
+      if (order.quantityQNT) {
+        order.quantity = nxt.util.convertToQNTf(order.quantityQNT, this.decimals);
+      }
+      if (order.priceNQT) {
+        order.price = nxt.util.calculateOrderPricePerWholeQNT(order.priceNQT, this.decimals);
+        order.total = nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(order.priceNQT, order.quantityQNT));
+        order.priceNum = parseFloat(order.price.replace(',',''));
+      }
     },
 
     /* @override */
     dataIterator: function (data) {
-      this.decimals = data.decimals;
-      for (var i=0; i<data.orders.length; i++) {
-        var a = data.orders[i];
-        a.quantity = nxt.util.convertToQNTf(a.quantityQNT, this.decimals);
-        a.price = nxt.util.calculateOrderPricePerWholeQNT(a.priceNQT, this.decimals);
-        a.total = nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(a.priceNQT, a.quantityQNT));
-        a.priceNum = parseFloat(a.price.replace(',',''));
+      var orders = data.askOrders||[];
+      for (var i=0; i<orders.length; i++) {
+        this.translate(orders[i]);
       }
-      return new Iterator(data.orders);
+      return new Iterator(orders);
     },
 
-    addedUnConfirmedTransactions: function (transactions) {
+    /* @websocket */
+    orderAddUpdate: function (order) {
       var self = this;
       this.$scope.$evalAsync(function () {
-        angular.forEach(transactions, function (transaction) {
-          if (self.isAskOrder(transaction)) {
-            self.add(self.toOrder(transaction));
-          }
-          else if (self.isCancelAskOrder(transaction)) {
-            var order = self.keys[transaction.attachment.order];
-            if (order) {
-              order.cancellers = order.cancellers || {};
-              order.cancellers[transaction.transaction] = transaction;
-            }
-          }
-        });
-        self.sort();
+        self.translate(order);
+        self.add(order);
       });
     },
 
-    removedUnConfirmedTransactions: function (transactions) {
+    /* @websocket */
+    orderRemove: function (order) {
       var self = this;
       this.$scope.$evalAsync(function () {
-        angular.forEach(transactions, function (transaction) {
-          if (self.isAskOrder(transaction)) {
-            self.remove(transaction.transaction);
-          }
-          else if (self.isCancelAskOrder(transaction)) {
-            var order = self.keys[transaction.attachment.order];
-            if (order && order.cancellers) {
-              delete order.cancellers[transaction.transaction];
-              if (Object.keys(order.cancellers).length == 0) {
-                delete order.cancellers;
-              }
-            }
-          }
-        });
-        self.sort();
+        self.remove(self.uniqueKey(order));
       });
     },
 
-    addedConfirmedTransactions: function (transactions) {
-      var self = this;
-      this.$scope.$evalAsync(function () {
-        angular.forEach(transactions, function (transaction) {
-          if (self.isAskOrder(transaction)) {
-            self.add(self.toOrder(transaction));
-          }
-          else if (self.isCancelAskOrder(transaction)) {
-            var order = self.keys[transaction.attachment.order];
-            if (order) {
-              if (order.cancellers) {
-                delete order.cancellers[transaction.transaction];
-                if (Object.keys(order.cancellers).length == 0) {
-                  delete order.cancellers;
-                }
-              }
-              order.cancel_height = transaction.height;
-            }
-          }
-        });
-        self.sort();
-      });
-    },
-
+    /* @websocket */
     blockPushed: function (block) {
       var self = this;
       this.$scope.$evalAsync(function () {
@@ -163,34 +96,15 @@ module.factory('AskOrderProvider', function (nxt, $q, IndexedEntityProvider) {
       });
     },
 
+    /* @websocket */
     blockPopped: function (block) {
+      if (this.delayedReload) {
+        clearTimeout(this.delayedReload);
+      }
       var self = this;
-      this.$scope.$evalAsync(function () {      
-        self.filter(function (order) {
-          return order.height <= block.height;
-        });
-        self.forEach(function (order) {
-          order.confirmations = block.height - order.height;
-          if (order.cancel_height && order.cancel_height >= block.height) {
-            delete order.cancel_height;
-          }
-        });
-      });
-    },
-
-    /* TODO - update open orders based on trades seen on the blockchain - 
-              has to have a mechanism to handle blockchain reorgs */
-    addedTrades: function (trades) {
-      var self = this;
-      this.$scope.$evalAsync(function () {
-        angular.forEach(trades, function (trade) {
-
-          /* Find the ask order and create a new quantity entry for the current height */
-          var order = self.keys[trade.askOrder];
-
-        });
-      });
+      this.delayedReload = setTimeout(function () { self.reload(); }, 1000);
     }
+   
   });
   return AskOrderProvider;
 });
