@@ -11,8 +11,7 @@ module.factory('AssetInfoProvider', function (nxt, $q, $timeout) {
         deferred.resolve(c[asset]);
       }
       else {
-        var self = 
-        api.engine.socket().getAsset({ asset: asset }).then(
+        api.engine.socket().getAsset({ asset: asset, includeDetails: 'true', includeVolumes: 'true' }).then(
           function (data) {
             deferred.resolve(c[asset] = data);
           }
