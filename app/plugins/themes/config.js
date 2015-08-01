@@ -36,7 +36,7 @@ module.run(function (modals, plugins, settings) {
   /* Set default setting / load setting theme from db */
   settings.initialize([{
     id: 'themes.default.theme',
-    value: 'yeti',
+    value: 'google',
     type: String,
     label: 'Default theme',
     resolve: function (value) {
