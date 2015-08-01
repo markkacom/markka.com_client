@@ -67,9 +67,8 @@ module.directive('serverConfigTable', ['$compile', function($compile) {
 }]);
 
 
-module.controller('ServerController', function ($scope, $rootScope, nxt, $routeParams, serverService, $interval, settings, ServerConfigProvider, PeerProvider) {
-
-  var MAX_CONSOLE_SIZE    = 2000;
+module.controller('ServerController', function ($scope, $rootScope, nxt, $routeParams, serverService, $interval, 
+  settings, ServerConfigProvider, PeerProvider, ServerConsoleProvider) {
 
   $rootScope.paramEngine  = $routeParams.engine;
   $scope.paramEngine      = $routeParams.engine;
@@ -95,10 +94,7 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
     return;
   }
 
-  $scope.engineType = api.engine.type;
-  $scope.isRunning  = {};
-  $scope.isRunning['TYPE_FIM'] = serverService.isRunning('TYPE_FIM');
-  $scope.isRunning['TYPE_NXT'] = serverService.isRunning('TYPE_NXT');
+  $scope.consoleProvider = new ServerConsoleProvider(api, $scope);  
 
   /* Breadcrumbs */
   $scope.breadcrumb.push({
@@ -131,69 +127,7 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
       $scope.provider = new PeerProvider(api, $scope);
       $scope.provider.reload();
       break;
-    }
-  }
-
-  /* Since the console listener setup has a direct contact with the HTML (not very Angular, I know)
-     We need it to run only after the HTML was constructed. This is achieved with an ng-init which 
-     is placed on the HTML element we reference from the function below. */
-  $scope.initConsole = function () {
-
-    if (serverService.isRunning(api.engine.type)) {
-      var elems = [], p, el = angular.element(document.getElementById('fake-console'));
-      var messages = serverService.getMessages(api.engine.type).slice(-MAX_CONSOLE_SIZE);
-      angular.forEach(messages, function (msg) {
-        p = document.createElement('p');
-        p.textContent = msg;
-        elems.push(p);
-      });
-      el.append(elems);
-      if (p && $scope.scrolllock) {
-        p.scrollIntoView(false);
-      }
-    }
-
-    serverService.addListener(api.engine.type, 'stdout', onmsg);
-    serverService.addListener(api.engine.type, 'stderr', onmsg);
-    serverService.addListener(api.engine.type, 'start', onstart);
-    serverService.addListener(api.engine.type, 'exit', onexit);
-
-    $scope.$on('$destroy', function () {
-      serverService.removeListener(api.engine.type, 'stdout', onmsg);
-      serverService.removeListener(api.engine.type, 'stderr', onmsg);
-      serverService.removeListener(api.engine.type, 'start', onstart);
-      serverService.removeListener(api.engine.type, 'exit', onexit);
-    });
-  }
-
-  function writeln(content) {
-    var p = document.createElement('p'), el = document.getElementById('fake-console');
-    p.textContent = content;
-    angular.element(el).append(p);
-    while (el.childElementCount > MAX_CONSOLE_SIZE) {
-      el.removeChild(el.firstChild);
-    }
-    if ($scope.scrolllock) {
-      p.scrollIntoView(false);
-    }
-  }  
-
-  function onmsg(msg) {
-    writeln(msg);
-  }
-
-  function onstart(msg) {
-    writeln(msg);
-    $scope.$evalAsync(function () {
-      $scope.isRunning[$scope.engineType] = true;
-    });
-  }
-
-  function onexit(msg) {
-    writeln(msg);
-    $scope.$evalAsync(function () {
-      $scope.isRunning[$scope.engineType] = false;
-    });
+    }  
   }
 
   $scope.startServer = function (type) {
@@ -213,9 +147,7 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
   }
 
   $scope.clearConsole = function () {
-    var range = document.createRange();
-    range.selectNodeContents(document.getElementById('fake-console'));
-    range.deleteContents();    
+    serverService.getMessages(api.engine.type).length = 0;
   }
 
   /* always/never start preferences */
