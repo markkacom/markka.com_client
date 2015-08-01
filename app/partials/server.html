@@ -1,78 +1,32 @@
 <div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
   <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
     <ul class="nav navbar-stacked">
-      <li route-active="server/fim/console" ng-if="!forceLocalHost">
-        <a href="#/server/fim/console">
-          <i class="fa fa-desktop"></i>&nbsp;&nbsp;FIMK console
+      <li route-active="server/{{paramEngine}}/console">
+        <a href="#/server/{{paramEngine}}/console">
+          <i class="fa fa-desktop"></i>&nbsp;&nbsp;<span translate="translate.console"></span>
         </a>
       </li>  
-      <li route-active="server/fim/config" ng-if="!forceLocalHost">
-        <a href="#/server/fim/config">
-          <i class="fa fa-file-text-o"></i>&nbsp;&nbsp;FIMK config
+      <li route-active="server/{{paramEngine}}/config">
+        <a href="#/server/{{paramEngine}}/config">
+          <i class="fa fa-file-text-o"></i>&nbsp;&nbsp;<span translate="translate.config"></span>
         </a>
       </li>
-      <li route-active="server/fim/peers">
-        <a href="#/server/fim/peers">
-          <i class="fa fa-globe"></i>&nbsp;&nbsp;FIMK peers
+      <li route-active="server/{{paramEngine}}/peers">
+        <a href="#/server/{{paramEngine}}/peers">
+          <i class="fa fa-globe"></i>&nbsp;&nbsp;<span translate="translate.peers"></span>
         </a>
       </li>
-      <li ng-show="!isRunning['TYPE_FIM']" ng-if="!forceLocalHost">
-        <a href ng-click="startServer('TYPE_FIM')">
-          Start server
-        </a>
+      <li ng-show="!consoleProvider.isRunning">
+        <a href ng-click="startServer(paramEngine=='fim'?'TYPE_FIM':'TYPE_NXT')" translate="translate.start_server"></a>
       </li>
-      <li ng-show="isRunning['TYPE_FIM']" ng-if="!forceLocalHost">
-        <a href ng-click="stopServer('TYPE_FIM')">
-          Stop server
-        </a>
+      <li ng-show="consoleProvider.isRunning">
+        <a href ng-click="stopServer(paramEngine=='fim'?'TYPE_FIM':'TYPE_NXT')" translate="translate.stop_server"></a>
       </li>
-      <li ng-show="isRunning['TYPE_FIM']" style="display:none">
-        <a href ng-click="rescanChain('TYPE_FIM')">
-          Rescan blockchain
-        </a>
+      <li ng-show="consoleProvider.isRunning" style="display:none">
+        <a href ng-click="rescanChain(paramEngine=='fim'?'TYPE_FIM':'TYPE_NXT')" translate="translate.rescan_blockchain"></a>
       </li>
-      <li ng-show="isRunning['TYPE_FIM']" style="display:none">
-        <a href ng-click="deleteChain('TYPE_FIM')">
-          Delete blockchain
-        </a>
-      </li>
-      <li ng-show="enableDualEngines">
-        <hr class="stacked-divider">
-      </li>      
-      <li route-active="server/nxt/console" ng-if="enableDualEngines">
-        <a href="#/server/nxt/console">
-          <i class="fa fa-desktop"></i>&nbsp;&nbsp;NXT console
-        </a>
-      </li>
-      <li route-active="server/nxt/config" ng-if="enableDualEngines">
-        <a href="#/server/nxt/config">
-          <i class="fa fa-file-text-o"></i>&nbsp;&nbsp;NXT config
-        </a>
-      </li>
-      <li route-active="server/nxt/peers" ng-if="enableDualEngines">
-        <a href="#/server/nxt/peers">
-          <i class="fa fa-globe"></i>&nbsp;&nbsp;NXT peers
-        </a>
-      </li>
-      <li ng-show="!isRunning['TYPE_NXT']" ng-if="enableDualEngines">
-        <a href ng-click="startServer('TYPE_NXT')">
-          Start server
-        </a>
-      </li>
-      <li ng-show="isRunning['TYPE_NXT']" ng-if="enableDualEngines">
-        <a href ng-click="stopServer('TYPE_NXT')">
-          Stop server
-        </a>
-      </li>
-      <li ng-show="isRunning['TYPE_NXT']" ng-if="enableDualEngines" style="display:none">
-        <a href ng-click="rescanChain('TYPE_NXT')">
-          Rescan blockchain
-        </a>
-      </li>
-      <li ng-show="isRunning['TYPE_NXT']" ng-if="enableDualEngines" style="display:none">
-        <a href ng-click="deleteChain('TYPE_NXT')">
-          Delete blockchain
-        </a>
+      <li ng-show="consoleProvider.isRunning" style="display:none">
+        <a href ng-click="deleteChain(paramEngine=='fim'?'TYPE_FIM':'TYPE_NXT')" translate="translate.delete_blockchain"></a>
       </li>
     </ul>
   </div>
@@ -86,6 +40,19 @@
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
       </button>
     </p>
+
+    <div class="row" ng-if="enableDualEngines">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs" style="margin-bottom:15px">
+          <li role="presentation" ng-class="{'active': paramEngine=='fim'}">
+            <a href="#/server/fim/{{paramSection}}">FIMK</a>
+          </li>
+          <li role="presentation" ng-class="{'active': paramEngine=='nxt'}">
+            <a href="#/server/nxt/{{paramSection}}">NXT</a>
+          </li>
+        </ul>
+      </div>
+    </div> 
 
     <div class="row">
       <div class="col-md-12">
@@ -111,39 +78,43 @@
         </ol>
       </div>
     </div>
+
     <div class="row">
 
       <!-- console section -->
-      <div ng-if="paramSection=='console'" class="col-md-12" style="height: 100%">
-        <div ng-if="isRunning[engineType]" style="font-size: 120%">
+      <div ng-show="paramSection=='console'" class="col-md-12">
+        <div ng-show="consoleProvider.isRunning" style="font-size: 120%">
           <b translate="translate.server_is_running" translate-values="{symbol: symbol}"></b>
           <span class="pull-right">
-            <a href ng-click="scrolllock=!scrolllock" ng-class="{'text-muted': !scrolllock}" tooltip="Scrollock">
+            <a href ng-click="scrolllock=!scrolllock" 
+              ng-class="{'text-muted': !scrolllock}" tooltip="Scrollock">
               <i class="fa fa-list-alt"></i></a>
             <a href ng-click="clearConsole()" tooltip="Clear console" class="text-muted"><i class="fa fa-times"></i></a>            
           </span>
         </div>
-        <div ng-if="!isRunning[engineType]" style="font-size: 120%">
+        <div ng-show="!consoleProvider.isRunning" style="font-size: 120%">
           <b translate="translate.server_is_off" translate-values="{symbol: symbol}"></b>
           <span class="pull-right">
-            <a href ng-click="scrolllock=!scrolllock" ng-class="{'text-muted': scrolllock}" tooltip="Scrollock">
+            <a href ng-click="scrolllock=!scrolllock" 
+            ng-class="{'text-muted': scrolllock}" tooltip="Scrollock">
               <i class="fa fa-list-alt"></i></a>
             <a href ng-click="clearConsole()" tooltip="Clear console"><i class="fa fa-times"></i></a>            
           </span>
         </div>
         <div style="overflow-y: scroll; overflow-x: hidden; width: 100%; height: 500px; background-color: black; color: white;" 
-              class="form-control monospace" id="fake-console" ng-init="initConsole()">
+              class="form-control monospace" id="fake-console" scroll-glue="scrolllock">
+          <p ng-repeat="m in consoleProvider.messages">{{m.data}}</p>
         </div>
         <div class="row">
           <div class="col-md-12">
             <div class="checkbox">
               <label>
-                <input type="checkbox" ng-model="items.neverStart" ng-change="neverStartChanged()"> Never start server on startup
+                <input type="checkbox" ng-model="items.neverStart" ng-change="neverStartChanged()">&nbsp;<span translate="translate.never_start_server"></span>
               </label>
             </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" ng-model="items.alwaysStart" ng-change="alwaysStartChanged()"> Always start server on startup
+                <input type="checkbox" ng-model="items.alwaysStart" ng-change="alwaysStartChanged()">&nbsp;<span translate="translate.always_start_server"></span>
               </label>
             </div>
           </div>
@@ -163,14 +134,14 @@
           <table class="table table-striped">
             <tbody>
               <tr>
-                <th>Address</th>
-                <th>State</th>
-                <th>Weight</th>
-                <th>Download</th>
-                <th>Upload</th>
+                <th translate="translate.address"></th>
+                <th translate="translate.state"></th>
+                <th translate="translate.weight"></th>
+                <th translate="translate.download"></th>
+                <th translate="translate.upload"></th>
                 <th></th>
-                <th>Blacklisted</th>
-                <th>Last update</th>
+                <th translate="translate.blacklisted"></th>
+                <th translate="translate.last_update"></th>
               </tr>
               <tr ng-repeat="p in provider.peers | slice:0:40" class="{{p.stateClass}}">
                 <td class="text-primary">{{p.address}}</td>
@@ -182,7 +153,7 @@
                 <td><span ng-show="p.blacklisted"><b>blacklisted</b></span></td>
                 <td>{{p.lastUpdatedStr}}</td>
               </tr>
-              <tr><td colspan="8">Displaying 40 most recent active peers. Total number of peers is {{provider.peers.length}}.</td></tr>
+              <tr><td colspan="8" translate="translate.displaying_so_many_peers" translate-values="{limit:40, size:provider.peers.length}"></td></tr>
             </tbody>
           </table>
         </div>
