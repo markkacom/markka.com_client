@@ -178,6 +178,9 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q) {
             this.entities.push(entity); 
           }
         }
+        else {
+          angular.extend(this.keys[key], entity);
+        }
       }
       this.sort();
     },
@@ -198,13 +201,13 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q) {
       var key = this.uniqueKey(entity);
       if (this.keys[key]) {
         angular.extend(this.keys[key], entity);
-        this.sort();
       }
       else {
         this.keys[key] = entity;
         entity.uniqueKey = key;
         this.entities.unshift(entity);
       }
+      this.sort();      
     },
 
     filter: function (filter_fn) {
