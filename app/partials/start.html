@@ -19,15 +19,36 @@
     <div class="col-md-6 col-md-offset-3" style="padding-bottom: 15px">
       <form ng-submit="doSearch()">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search for..." ng-model="searchQuery">
+          <input type="text" class="form-control input-lg" placeholder="Search for..." ng-model="searchQuery">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="submit">Go!</button>
+            <button class="btn btn-default btn-lg" type="submit">Go!</button>
           </span>
         </div>
       </form>
     </div>
   </div>
   <div class="row">
+    <div class="col-md-12">
+      <center>
+        <div class="btn-group" dropdown>
+          <button type="button" class="btn btn-default"><b translate="translate.selected_theme_is"></b>&nbsp;<i>{{selectedTheme.label}}</i></button>
+          <button type="button" class="btn btn-default" dropdown-toggle>
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu" style="margin-bottom: 30px;">
+            <li ng-repeat="t in themes">
+              <a href ng-click="changeTheme(t)">{{t.label}}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="btn-group" ng-if="isNodeJS">
+          <a href="#/server/fim/console" class="btn btn-default"><b translate="translate.run_local_server"></b></a>          
+        </div>
+      </center>
+    </div>
+  </div>
+  <!-- <div class="row">
     <div class="col-md-6 col-md-offset-3">
       <div class="row">
         <div class="col-xs-6">
@@ -48,7 +69,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   <!-- <div ng-if="!isNodeJS">
     <div class="col-md-6">
       <div class="embed-responsive embed-responsive-16by9 hidden-xs" ng-if="!isNodeJS">
