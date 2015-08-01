@@ -82,7 +82,16 @@ module.factory('SearchProvider', function (nxt, $q, IndexedEntityProvider) {
         if (args.category == 'aliases') {
           args.query = args.query.replace('*','%');
         }
-        this.api.engine.socket().search(args).then(deferred.resolve, deferred.reject);
+
+        /* use searchAccounts API for nxt 1.5+ */
+        if (this.api.type == nxt.TYPE_NXT && this.category == 'accounts') {
+          delete args.category;
+          args.requestType = 'searchAccounts';
+          this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
+        }
+        else {
+          this.api.engine.socket().search(args).then(deferred.resolve, deferred.reject);
+        }
       }
       else {
         deferred.resolve({ results: [] });
@@ -92,7 +101,14 @@ module.factory('SearchProvider', function (nxt, $q, IndexedEntityProvider) {
 
     dataIterator: function (data) {
       var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
-      var results = data.results||[];
+      
+      /* use searchAccounts API for nxt 1.5+ */
+      if (this.api.type == nxt.TYPE_NXT && this.category == 'accounts') {
+        var results = data.accounts||[];
+      }
+      else {
+        var results = data.results||[];
+      }
       if (this.impl.process) {
         for (var i=0; i<results.length; i++) {
           index++;
