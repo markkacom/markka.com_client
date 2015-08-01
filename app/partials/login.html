@@ -1,0 +1,148 @@
+<div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+    <ul class="nav navbar-stacked">
+    </ul>
+  </div>
+
+  <div class="col-xs-12 col-sm-10">
+    <p class="visible-xs">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+            ng-click="offCanvas=!offCanvas">
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+      </button>
+    </p>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
+            <span ng-if="b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
+              <span ng-if="!b.href">{{ b.label | translate }}</span>
+            </span>
+            <span ng-if="!b.translate && !b.period">
+              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
+              <span ng-if="!b.href">{{ b.label }}</span>              
+            </span>
+          </li>
+          <a href ng-click="reload()" class="pull-right">
+            {{ 'translate.reload' | translate }}&nbsp;&nbsp;
+            <i class="fa fa-refresh" ng-class="{'fa-spin': my_orders.isLoading || chart.isLoading || askOrders.isLoading || bidOrders.isLoading || trades.isLoading }"></i>
+          </a>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <!-- New key, not stored before -->
+        <div ng-hide="login.keySaved || login.keyExists">
+          <div ng-hide="keyUnlocked.key">
+            <h3>Save key to wallet</h3>
+            <p>Enter password to unlock and save to wallet.</p>
+            <p>
+              <form class="form-inline">
+                <div class="form-group">
+                  <label>Key password</label>&nbsp;<br>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter key password"
+                      ng-model="keyPassword" ng-disabled="keyUnlocked.key">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" ng-click="unlockKey()" 
+                        ng-disabled="!keyPassword || keyUnlocked.key">Unlock</button>
+                    </span>
+                  </div>
+                </div>
+              </form>
+            </p>
+            <p ng-show="wrongPassword">
+              <b class="text-danger">Wrong password</b>
+            </p>
+          </div>
+          <div ng-show="keyUnlocked.key">
+            <h3>Key unlocked</h3>
+            <!-- <p>
+              <a href="#/accounts/{{keyUnlocked.account}}/activity/latest">{{keyUnlocked.account}}</a>
+            </p> -->
+            <p>Please provide a name for this key.</p>
+            <form class="form-inline">
+              <div class="form-group">
+                <label>Key name</label>&nbsp;<br>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Enter key name"
+                    ng-model="keyName" ng-change="keyNameChanged()">
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" ng-click="saveKey()" 
+                      ng-disabled="!keyName || keyNameExists">Save key</button>
+                  </span>
+                </div>
+              </div>
+            </form>
+            <div ng-show="keyNameExists">
+              <p><b class="text-danger">A key with that name exists, please choose another name.</b></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key successfully stored or already exists -->
+        <div ng-show="login.keySaved || login.keyExists">
+          <div ng-show="login.keySaved">
+            <h3>Key saved successfully</h3>
+            <p>
+              <b class="text-success">Key saved as '{{keyName}}'</b><br>
+              Key is for this account: <a href="#/accounts/{{keyUnlocked.account}}/activity/latest">{{keyUnlocked.account}}</a>
+            </p>
+            <p ng-init="hideBackupUI=true">
+              <a class="btn btn-success" href ng-click="hideBackupUI=!hideBackupUI"><b>Recommended!</b> click for backup options</a>
+            </p>
+
+            <div collapse="hideBackupUI">
+              <h3><small>Option 1.</small> Write it down</h3>
+              <p>If you did not do so already please write down these 12 words.<br>These words (in order) makeup your secret key, it is with this secret key that you can always access your account.</p>
+              <p>
+                <div class="form-group">
+                  <label>Secret phrase (write this down)</label><br>
+                  <textarea class="form-control" rows="2" readonly>{{keyUnlocked.key}}</textarea>
+                </div>
+                <!-- <b class="text-danger">Do not share this secret phrase, keep it private!</b> -->
+              </p>
+              <h3><small>Option 2.</small> Save backup file</h3>
+              <p>Download backup file, this file is encrypted with your key password it contains your 12 word secret key.</p>
+              <p>
+                <button class="btn btn-lg btn-primary" ng-click="saveBackup()">Click to save backup</button><br>
+                <!-- <b class="text-danger">Do not share this backup, keep it private!</b> -->
+              </p>
+              <h3><small>Option 3.</small> Save secret link</h3>
+              <p>The secret link below contains your encrypted key.<br>Visit that link in any browser on any device and use it store your key on that device/browser.</p>
+              <p>
+                <div class="form-group">
+                  <label>Secret link</label><br>
+                  <span class="form-control-static" style="word-wrap:break-word;">
+                    <a href="{{secretURL}}" target="_blank" title="Login: {{keyName}}">{{secretURL}}</a>
+                  </span>
+                </div>
+                <!-- <b class="text-danger">Do not share this link, keep it private!</b> -->
+              </p>
+            </div>
+          </div>
+          <div ng-show="login.keyExists">
+            <h3>Duplicate key</h3>
+            <p>
+              <b class="text-danger">That key already exists, it is stored as '{{keyName}}'.</b><br>
+              Key is for this account: <a href="#/accounts/{{keyAccount}}/activity/latest">{{keyAccount}}</a>
+            </p>
+          </div>
+        </div>
+
+        <br>
+
+        <p>
+          <a ng-href="#/login/{{mofoEncryptedPayload}}" role="menuitem">xx</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
