@@ -114,20 +114,11 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
     execute: function () {
       if (!this.locked) {
         this.locked = true;
-        var self = this;
         this.iterator = new Iterator(this.payments);
-        getSecretPhrase(this.id_rs, this.api).then(
-          function (secret) {
-            self.senderPublicKey = secret.publicKey;
-            self.secretPhrase = secret.secretPhrase;
-            self.next();
-          },
-          function () {
-            self.$scope.$evalAsync(function () {
-              self.locked = false;
-            });
-          }
-        );
+        this.secretPhrase = $rootScope.currentAccount.secretPhrase;
+        this.senderPublicKey = this.api.crypto.secretPhraseToPublicKey(this.secretPhrase);
+        this.next();
+        this.locked = false;
       }
     },
 
@@ -347,25 +338,6 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
   /* Returns true, false or undefined if the engine could not be determined */
   function isValidAddress(text, api) {
     return api.createAddress().set(text);
-  }
-
-  function getSecretPhrase(sender, api) {
-    var deferred = $q.defer();
-    modals.open('secretPhrase', {
-      resolve: {
-        items: function () {
-          return { sender: sender }
-        }
-      },
-      close: function (items) {
-        items.publicKey = api.crypto.secretPhraseToPublicKey(items.secretPhrase);
-        deferred.resolve(items);
-      },
-      cancel: function (error) {
-        deferred.reject(error);
-      }
-    });
-    return deferred.promise;
   }
 
   function getAccountPublicKey(account, api) {
