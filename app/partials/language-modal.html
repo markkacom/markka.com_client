@@ -6,16 +6,19 @@
     </div>
     <br class="hidden-xs">
     <div class="text-center hidden-xs">
-      <p>{{'translate.available_languages' | translate}}</p>
+      <p translate="translate.available_languages"></p>
     </div>
     <div class="text-center language-select-scroller">
-      <div ng-repeat="(code, name) in availableLanguages">
-        <a href ng-click="setLang(code)" style="font-size: 20px">{{name}}</a>
+      <div ng-repeat="l in availableLanguages" class="col-md-6 col-xs-12" style="padding: 5px">
+        <a href class="btn btn-default btn-block" ng-click="setLang(l[0])" 
+          ng-class="{'btn-primary': l[3], 'btn-success':l[0]==langCode}">{{l[1]}}&nbsp;({{ 'lang.'+l[2] | translate }})</a>
       </div>
     </div>
     <br>
     <div class="col-xs-12 col-md-6 col-md-offset-3">
-      <button class="btn btn-success btn-block" ng-click="close()" translate="translate.continue_with_lang" translate-values="{name: langName}"></button>
+      <button class="btn btn-default btn-block" ng-click="close()">
+        <b><span translate="translate.continue_with_lang" translate-values="{name: langName}"></span></b>
+      </button>
     </div>
   </div>
 </div>
