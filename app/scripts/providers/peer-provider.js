@@ -23,6 +23,15 @@ module.factory('PeerProvider', function (nxt, requests, $timeout, $q, $rootScope
     socket.subscribe("PEER_ADDED_ACTIVE_PEER", update, $scope);
     socket.subscribe("PEER_CHANGED_ACTIVE_PEER", update, $scope);
     socket.subscribe("PEER_NEW_PEER", angular.bind(this, this.onNewPeer), $scope);
+
+    var self = this, unregister = $rootScope.$on('$translateChangeSuccess', function () {
+      $scope.$evalAsync(function () {
+        angular.forEach(self.peers, function (peer) {
+          self.format(peer);
+        })
+      });
+    });
+    $scope.$on('$destroy', unregister);    
   }
   PeerProvider.prototype = {
     socket: function () {
