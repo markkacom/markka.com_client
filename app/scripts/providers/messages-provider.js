@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('MessagesProvider', function (nxt, $q, EntityProvider) {
+module.factory('MessagesProvider', function (nxt, $q, EntityProvider, $rootScope) {
   
   function MessagesProvider(api, $scope, timestamp, account) {
     this.init(api, $scope, timestamp);
@@ -14,6 +14,15 @@ module.factory('MessagesProvider', function (nxt, $q, EntityProvider) {
     this.subscribe('removedUnConfirmedTransactions-'+account_id, this.removedUnConfirmedTransactions);
     this.subscribe('addedUnConfirmedTransactions-'+account_id, this.addedUnConfirmedTransactions);
     this.subscribe('addedConfirmedTransactions-'+account_id, this.addedConfirmedTransactions);
+
+    var self = this, unregister = $rootScope.$on('$translateChangeSuccess', function () {
+      $scope.$evalAsync(function () {
+        angular.forEach(self.entities, function (entity) {
+          entity.renderedHTML = api.renderer.getHTML(entity);
+        })
+      });
+    });
+    $scope.$on('$destroy', unregister);       
   }
   angular.extend(MessagesProvider.prototype, EntityProvider.prototype, {
 
