@@ -1,26 +1,49 @@
 <div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
   <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
-    <ul class="nav navbar-stacked">
-      <li>
-        <a href="#/search/fim/accounts/{{paramQuery}}">FIMK Search</a>
+    <ul class="nav nav-pills nav-stacked">
+      <li role="presentation" route-active="search/{{paramEngine}}/accounts">
+        <a href="#/search/{{paramEngine}}/accounts/{{paramQuery}}">Accounts</a>
       </li>
-      <li ng-if="enableDualEngines">
-        <a href="#/search/nxt/accounts/{{paramQuery}}">NXT Search</a>
+      <li role="presentation" route-active="search/{{paramEngine}}/assets">
+        <a href="#/search/{{paramEngine}}/assets/{{paramQuery}}">Assets</a>
       </li>
-    </ul>
+      <!-- <li role="presentation" route-active="search/{{paramEngine}}/currencies">
+        <a href="#/search/{{paramEngine}}/currencies/{{paramQuery}}">Currencies</a>
+      </li> -->
+      <li role="presentation" route-active="search/{{paramEngine}}/market">
+        <a href="#/search/{{paramEngine}}/market/{{paramQuery}}">Market</a>
+      </li>
+      <li role="presentation" route-active="search/{{paramEngine}}/aliases">
+        <a href="#/search/{{paramEngine}}/aliases/{{paramQuery}}">Aliases</a>
+      </li>
+    </ul> 
+
   </div>
 
   <div class="col-xs-12 col-sm-10">
-    <p class="visible-xs">
+    <!-- <p class="visible-xs">
       <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
             ng-click="offCanvas=!offCanvas">
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
       </button>
-    </p>
+    </p> -->
 
-    <div class="row">
+    <div class="row" ng-if="enableDualEngines">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs" style="margin-bottom:15px">
+          <li role="presentation" ng-class="{'active': paramEngine=='fim'}">
+            <a href="#/search/fim/{{paramCategory}}/{{paramQuery}}">FIMK</a>
+          </li>
+          <li role="presentation" ng-class="{'active': paramEngine=='nxt'}">
+            <a href="#/search/nxt/{{paramCategory}}/{{paramQuery}}">NXT</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row hidden-xs">
       <div class="col-md-12">
         <ol class="breadcrumb">
           <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
@@ -50,19 +73,9 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-6" style="padding-bottom: 15px">
-        <form ng-submit="doSearch()">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search for..." ng-model="paramQuery">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="submit">Go!</button>
-            </span>
-          </div>
-        </form>
-      </div>
-      <div class="col-md-6" style="padding-bottom: 15px">
-        <ul class="nav nav-pills">
+    <div class="row visible-xs">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs" style="margin-bottom:15px">
           <li role="presentation" route-active="search/{{paramEngine}}/accounts">
             <a href="#/search/{{paramEngine}}/accounts/{{paramQuery}}">Accounts</a>
           </li>
@@ -77,15 +90,25 @@
           </li>
           <li role="presentation" route-active="search/{{paramEngine}}/aliases">
             <a href="#/search/{{paramEngine}}/aliases/{{paramQuery}}">Aliases</a>
-          </li>          
-        </ul>        
+          </li>
+        </ul>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-12" style="padding-bottom: 15px">
+        <form ng-submit="doSearch()">
+          <div class="input-group">
+            <input type="text" class="form-control input-lg" placeholder="Search for..." ng-model="paramQuery">
+            <span class="input-group-btn">
+              <button class="btn btn-default btn-lg" type="submit">Go!</button>
+            </span>
+          </div>
+        </form>
       </div>
     </div>
+
+
 
     <div class="row">
       <div class="col-md-12">
