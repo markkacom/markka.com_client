@@ -38,7 +38,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
   }
 
   $scope.symbol = api.engine.symbol;
-  $scope.symbol_lower = $scope.symbol.toLowerCase();
+  $scope.symbol_lower = api.engine.symbol_lower;
 
   $scope.showFilter            = ['activity', 'messages', 'blocks', 'pulse'].indexOf($scope.paramSection) != -1;;
   $scope.showTransactionFilter = ['activity'].indexOf($scope.paramSection) != -1;
@@ -193,6 +193,10 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
       $scope.provider.reload();
       break;
     case 'payments':
+      if (!$rootScope.currentAccount || $scope.id_rs != $rootScope.currentAccount.id_rs) {
+        $location.path('/login-to');
+        return;
+      }
       $scope.breadcrumb[2].label = 'translate.payments';
       $scope.provider = new PaymentsProvider(api, $scope, $scope.id_rs);
       break;
@@ -280,7 +284,8 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
             id_rs: $scope.id_rs,
             publicKey: '',
             engine: api.engine.type,
-            name: $scope.account.name
+            name: $scope.account.name,
+            excluded: false
           };
           db.accounts.put(args).then(function () {
             $scope.$evalAsync(function () {
@@ -315,19 +320,6 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
 
   $scope.sendMessage = function () {
     plugins.get('transaction').get('accountMessage').execute({ recipient: $scope.id_rs });
-  }
-
-  $scope.receiveMoney = function () {
-    modals.open('receiveMoney', {
-      resolve: {
-        items: function () {
-          return {
-            account: $scope.selectedAccount,
-            api: api
-          };
-        }
-      }
-    });
   }
 
   $scope.setAccountInfo = function () {
