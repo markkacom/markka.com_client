@@ -1,0 +1,58 @@
+Preview release.
+
+Embeds FIMK 0.5 and NXT-PLUS based on NXT 1.5.13.
+
+This release starts the rebranding from mofowallet to what will become it's new
+identity lompsa.com.
+
+The login procedure has changed. It used to be possible to enter your secret 
+phrase in any transaction dialog. This is no longer the case, users must now 
+"Sign in".
+
+When signing in users have three options:
+
+1. Enter a secret phrase for that session only
+2. Enter a secret phrase and store it in your encrypted wallet
+3. Enter your wallet password and select one of your previously stored secret phrases
+
+The old wallet.dat file is still supported and will remain so but it's no longer
+the preferred way to provide your secret phrase. Instead the contents of the 
+wallet.dat file are now stored in the application localStorage (same mechanism
+is used when run in the browser).
+
+Since your wallet is now in the application it's must more user friendly 
+especially on small screen devices like your mobile.
+
+Account creation process was improved for FIMK and NXT, users can generate a 
+different secret phrase and move back and forward between secret 
+phrases selecting one that suits you best.
+
+Completely new messenger UI.
+1. Sends encrypted messages to your contacts
+2. Full built-in emoji support
+3. Supports sending transient messages (free messages that disapear)
+4. Supports sending permanent messages (stored on blockchain)
+5. Mobile friendly
+
+Emoji are supported everywhere (Explorer, Messenger, Dashboard, Account pages etc). 
+When sending a transaction it was already possible to attach a message, these
+messages now support the full set of emoji. To save room on the blockchain we
+currently use a base32 based emoji code, but if you wish you can enter the 
+real emoji name by hand. 
+
+Go here to look up all supported emoji. http://www.emoji-cheat-sheet.com/
+
+Increased performance when running local server. Out of memory problems should
+no longer occur, if they do please report them.
+
+Many bigger and smaller improvements in search, explorer, dashboard etc..
+
+Improved language support accessing one of the 64 supported languages was made easier.
+
+About (free) Transient Messages..
+
+  This FIMK and NXT feature is experimental and makes use of the existing support
+  for referenced transactions. A transient message is an AM transaction of which 
+  we set the referenced transaction to a value so that it never gets executed.
+  There are at any time a maximum of 2000 transient transactions on the network,
+  if more are added the oldest get removed.
