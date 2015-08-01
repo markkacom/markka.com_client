@@ -225,7 +225,8 @@ module.run(function (plugins, modals, $q, $timeout, db, nxt, $sce) {
                   '<p>A wallet is a file that you download and store on your computer.<br> ',
                   'A wallet is <b>not an alternavtive to remembering or writing down your secret phrase</b>.<br><br> ',
                   'A wallet is meant as a secure and convenient way of saving your secret phrase in a file, thats all, you still need to back it up somewhere save.<br><br>',
-                  'To make life easier MofoWallet can not only store keys in a wallet, it can also read them from a wallet you provide.</p>']
+                  'To make life easier MofoWallet can not only store keys in a wallet, it can also read them from a wallet you provide.<br><br>',
+                  'Add this account to your dashboard if you don\'t want to see this dialog.</p>']
       html = $sce.getTrustedHtml(html.join(''));
       plugins.get('alerts').confirm({ html: html }).then(
         function (confirmed) {
