@@ -9,6 +9,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Lease Balance',
     id: 'leaseBalance',
+    exclude: $rootScope.TRADE_UI_ONLY,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
@@ -17,7 +18,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         senderRS: senderRS,
         requestType: 'leaseBalance',
         canHaveRecipient: true,
-        editSender: true,
         editRecipient: true,
         createArguments: function (items) {
           return {

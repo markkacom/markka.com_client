@@ -1,4 +1,4 @@
-<div class="panel panel-primary" ng-init="items.initialize && items.initialize(items)">
+<div class="panel panel-primary" ng-init="items.initialize && items.initialize(items)" ng-hide="items.autoSubmit">
   <div class="panel-heading">
     <h3 class="panel-title" ng-bind="items.title"></h3>
   </div>
@@ -16,7 +16,7 @@
       </div>
      
       <!-- Show static sender control -->
-      <div class="form-group col-xs-12"
+      <!-- <div class="form-group col-xs-12"
            ng-class="{ 'has-error' : transactionCreateForm.senderField.$invalid && ! transactionCreateForm.senderField.$pristine }">
         <span class="form-control-static">
           <label class="control-label">Sender</label>
@@ -40,7 +40,7 @@
             </div>
           </div>
         </span>
-      </div>
+      </div> -->
 
       <!-- Show static recipient control -->
       <div class="form-group col-xs-12" ng-if="items.canHaveRecipient"
@@ -92,9 +92,9 @@
             </div>
           </div>
         </span>
-      </div>      
+      </div>
 
-      <div ng-repeat="f in items.fields" ng-show="f.__show">
+      <div ng-repeat="f in items.fields" ng-show="f.label && f.__show">
         <ng-form name="userFieldForm">
           <div class="form-group col-xs-12" 
             ng-class="{ 'has-error' : userFieldForm.userFieldName.$invalid && ! userFieldForm.userFieldName.$pristine }">
@@ -143,6 +143,28 @@
                          ng-change="f.onchange && f.onchange(items)">
                 </div>
               </div>
+              <div ng-switch-when="radio">
+                <div ng-if="f.required">
+                  <input type="radio"  name="userFieldName" ng-model="f.value" checked
+                         ng-disabled="sendSuccess" required
+                         ng-readonly="f.readonly" ng-value="true"
+                         ng-change="f.onchange && f.onchange(items)">&nbsp;&nbsp;Yes&nbsp;&nbsp;
+                  <input type="radio"  name="userFieldName" ng-model="f.value"
+                         ng-disabled="sendSuccess" required
+                         ng-readonly="f.readonly" ng-value="false"
+                         ng-change="f.onchange && f.onchange(items)">&nbsp;&nbsp;No
+                </div>
+                <div ng-if="!f.required">
+                  <input type="radio"  name="userFieldName" ng-model="f.value" checked
+                         ng-disabled="sendSuccess" ng-value="true"
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">&nbsp;&nbsp;Yes&nbsp;&nbsp;
+                  <input type="radio" name="userFieldName" ng-model="f.value"
+                         ng-disabled="sendSuccess" ng-value="false"
+                         ng-readonly="f.readonly"
+                         ng-change="f.onchange && f.onchange(items)">&nbsp;&nbsp;No                  
+                </div>
+              </div>
               <div ng-switch-when="textarea">
                 <div ng-if="f.required">
                   <textarea ng-if="!f.validate" rows="3" class="form-control" ng-model="f.value" 
@@ -179,8 +201,35 @@
       <!-- Payment message -->
       <div class="form-group col-xs-12" collapse="!show.message" ng-show="!items.hideMessage">
         <label for="msg-1" class="control-label">Message</label>
-        <textarea rows="3" class="form-control" id="msg-1" ng-model="items.txnMessage" placeholder="Include message" 
-          ng-disabled="sendSuccess"></textarea>
+        <div class="input-group">
+          <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
+          <textarea rows="3" class="form-control" id="msg-1" ng-model="items.txnMessage" placeholder="Include message" 
+            ng-disabled="sendSuccess"></textarea>
+        </div>
+        <div collapse="ui.emojiCollapse">
+          <tabset class="mobileEmojiPicker" style="margin-top:8px;margin-bottom:8px">
+            <tab>
+              <tab-heading><i class="emoji emoji-smile"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.faces" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-sunny"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.nature" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>                    
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-bamboo"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.life" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>                    
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-house"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.travel" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>                    
+            </tab>
+            <tab>
+              <tab-heading><i class="emoji emoji-one"></i></tab-heading>
+              <a href ng-repeat="e in emoji.groups.signs" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
+            </tab>
+          </tabset>
+        </div>          
         <div class="radio">
           <label ng-if="items.canHaveRecipient">
             <input type="radio" name="type" ng-model="items.txnMessageType" value="to_recipient" 

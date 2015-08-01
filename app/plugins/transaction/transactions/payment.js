@@ -9,6 +9,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Send money from',
     id: 'sendMoney',
+    exclude: $rootScope.TRADE_UI_ONLY,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
@@ -55,7 +56,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       return plugin.create(angular.extend(args, {
         title: 'Send Money',
         message: 'Sends money to recipient',
-        editSender: true,
         editRecipient: false,
         recipient: args.recipient||'',
         requestType: 'sendMoney',

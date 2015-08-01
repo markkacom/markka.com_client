@@ -21,7 +21,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         message: 'Send an encrypted (private) message to recipient',
         requestType: 'sendMessage',
         hideMessage: true,
-        editSender: true,
         editRecipient: true,
         recipient: args.recipient||'',
         canHaveRecipient: true,
@@ -66,6 +65,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Send message from',
     id: 'sendMessage',
+    exclude: $rootScope.TRADE_UI_ONLY,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
@@ -74,10 +74,9 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         requestType: 'sendMessage',
         hideMessage: true,
         senderRS: senderRS,
-        editSender: true, 
-        editRecipient: true,
+        editRecipient: (args.editRecipient===false) ? false : true,
         recipient: args.recipient||'',
-        canHaveRecipient: true,        
+        canHaveRecipient: true,
         createArguments: function (items) {
           var _args = { 
             recipient: nxt.util.convertRSAddress(items.recipient),
@@ -87,7 +86,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           }
           if (items.recipientPublicKey) {
             _args.recipientPublicKey = items.recipientPublicKey;
-          }          
+          }
           return _args;
         },
         fields: [{
@@ -204,7 +203,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         message: 'Comments can be read by anyone and are permanantly stored in the blockchain',
         requestType: 'sendMessage',
         hideMessage: true,
-        editSender: true, 
         createArguments: function (items) {
           return { 
             recipient: nxt.util.convertRSAddress(items.recipient),

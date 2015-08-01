@@ -9,6 +9,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Start Forging',
     id: 'startForging',
+    exclude: $rootScope.TRADE_UI_ONLY,
     execute: function (senderRS) {
       return plugin.create({
         title: 'Start Forging',
@@ -17,7 +18,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         senderRS: senderRS,
         canHaveRecipient: false,
         hideMessage: true,
-        editSender: true,
         hideFee: true,
         forceLocal: true,
         createArguments: function (items) {
@@ -33,6 +33,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Stop Forging',
     id: 'stopForging',
+    exclude: $rootScope.TRADE_UI_ONLY,
     execute: function (senderRS) {
       return plugin.create({
         title: 'Stop Forging',
@@ -41,7 +42,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         senderRS: senderRS,
         canHaveRecipient: false,
         hideMessage: true,
-        editSender: true,
         hideFee: true,
         forceLocal: true,
         createArguments: function (items) {

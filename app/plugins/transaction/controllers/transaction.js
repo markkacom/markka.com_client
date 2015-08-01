@@ -1,20 +1,21 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('TransactionCreateModalController', function(items, $modalInstance, $scope, nxt, requests, modals, $sce, $q, plugins, i18n, $timeout, accountsService) {
+module.controller('TransactionCreateModalController', function(items, $modalInstance, $scope, nxt, 
+  requests, modals, $sce, $q, plugins, i18n, $timeout, accountsService, $rootScope, Emoji) {
 
   $scope.sendSuccess          = false;
   $scope.show                 = {};
   $scope.show.advanced        = false;
   $scope.show.message         = !!items.showMessage;
   $scope.items                = items;
+  $scope.emoji                = { groups: Emoji.groups };
+  $scope.ui                   = {};
+  $scope.ui.emojiCollapse     = true;
 
-  var api                     = nxt.get(items.senderRS || items.recipient || items.sender);
-
-  if (items.senderRS == nxt.TYPE_NXT || items.senderRS == nxt.TYPE_FIM) {
-    $scope.items.editSender   = true;
-    $scope.items.senderRS     = '';
-  }
+  var api                     = nxt.get($rootScope.currentAccount.id_rs);
+  $scope.items.senderRS       = $rootScope.currentAccount.id_rs;
+  $scope.items.secretPhrase   = $rootScope.currentAccount.secretPhrase;
 
   $scope.items.title          = items.title || 'Create Transaction';
   $scope.items.txnMessageType = items.txnMessageType || ($scope.items.canHaveRecipient ? 'to_recipient' : 'to_self');
@@ -25,7 +26,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
   $scope.items.message        = $sce.getTrustedHtml(items.message);
   $scope.items.accounts       = [];
 
-  if ($scope.items.editSender || $scope.items.editRecipient) {
+  if ($scope.items.editRecipient) {
     var promise = accountsService.getAll(api.engine.type == nxt.TYPE_FIM ? accountsService.FIM_FILTER : accountsService.NXT_FILTER);
     promise.then(function (accounts) {
       $scope.$evalAsync(function () {
@@ -44,6 +45,12 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
       });
     }
   });
+
+  $scope.insertEmoji = function (name) {
+    $scope.$evalAsync(function () {
+      $scope.items.txnMessage += ':'+Emoji.toBase32(name)+':';
+    });
+  }
 
   $scope.validateAddress = function (id_rs) {
     var address = api.createAddress();
@@ -70,44 +77,40 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
         deadline: $scope.items.deadline,
         sender:   $scope.items.senderRS
       };
+      args = angular.extend(args, $scope.items.createArguments($scope.items));
+      if ($scope.items.transient) {
+        args.referencedTransactionFullHash = converters.stringToHexString('00000000000000000000000000000000');
+      }
 
-      getSecretPhrase($scope.items.senderRS || null).then(
-        function (secret) {
+      var message = null, type = null;
+      if ($scope.show.message) {
+        message = $scope.items.txnMessage;
+        type = $scope.items.txnMessageType;
+      }
+      else if (args.txnMessage) {
+        message = args.txnMessage;
+        type = args.txnMessageType;
+      }
 
-          $scope.items.senderRS = $scope.items.senderRS || secret.sender;
-          $scope.items.secretPhrase = secret.secretPhrase
-          args                  = angular.extend(args, $scope.items.createArguments($scope.items));          
-
-          var message = null, type = null;
-          if ($scope.show.message) {
-            message = $scope.items.txnMessage;
-            type = $scope.items.txnMessageType;
-          }
-          else if (args.txnMessage) {
-            message = args.txnMessage;
-            type = args.txnMessageType;
-          }
-
-          if (message) {
-            args.message = message;
-            args.messageIsText = 'true';
-            if (type == "to_self") {
-              args.note_to_self = true;
-            }
-            else if (type == "to_recipient") {
-              args.encrypt_message = true;
-            }
-            else if (type == "public") {
-              args.public_message = true;
-            }
-            else {
-              throw new Error('Not reached');
-            }
-          }
-
-          prepareTransaction(args, secret.publicKey, secret.secretPhrase);
+      if (message) {
+        args.message = message;
+        args.messageIsText = 'true';
+        if (type == "to_self") {
+          args.note_to_self = true;
         }
-      );
+        else if (type == "to_recipient") {
+          args.encrypt_message = true;
+        }
+        else if (type == "public") {
+          args.public_message = true;
+        }
+        else {
+          throw new Error('Not reached');
+        }
+      }
+
+      var publicKey = api.crypto.secretPhraseToPublicKey($scope.items.secretPhrase);
+      prepareTransaction(args, publicKey, $scope.items.secretPhrase);
     }
 
     function prepareTransaction(args, senderPublicKey, secretPhrase) {
@@ -145,7 +148,16 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
       plugins.get('alerts').progress({ title: "Please wait" }).then(
         function (progress) {
 
+          if (items.autoSubmit) {
+            progress.onclose = function () {
+              $modalInstance.close($scope.items);
+            };
+          }
+
           var socket = $scope.items.forceLocal ? api.engine.localSocket() : api.engine.socket();
+
+          delete args.txnMessage;
+          delete args.txnMessageType;
 
           progress.setMessage('Creating Transaction');
           socket.callAPIFunction(args).then(
@@ -202,9 +214,15 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
                           new Audio('images/beep.wav').play();
                           progress.setMessage('Transaction sent successfully');
                           progress.enableCloseBtn();
-                          progress.onclose = function () {
+                          if ($scope.items.autoSubmit) {
+                            progress.close();
                             $modalInstance.close($scope.items);
-                          };
+                          }
+                          else {
+                            progress.onclose = function () {
+                              $modalInstance.close($scope.items);
+                            };
+                          }
                         }
                       );                        
                     },
@@ -218,30 +236,11 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
             },
             function (data) {
               progress.setMessage(JSON.stringify(data));
-              progress.enableCloseBtn();
+              progress.enableCloseBtn();             
             }
           );
         }
       );
-    }
-
-    function getSecretPhrase(sender) {
-      var deferred = $q.defer();
-      modals.open('secretPhrase', {
-        resolve: {
-          items: function () {
-            return { sender: sender }
-          }
-        },
-        close: function (items) {
-          items.publicKey = api.crypto.secretPhraseToPublicKey(items.secretPhrase);
-          deferred.resolve(items);
-        },
-        cancel: function (error) {
-          deferred.reject(error);
-        }
-      });
-      return deferred.promise;
     }
 
     function getAccountPublicKey(account) {
@@ -315,6 +314,10 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
         delete data.public_message;
       }
     }
+  }
+
+  if ($scope.items.autoSubmit) {
+    $scope.close();
   }
 
 });

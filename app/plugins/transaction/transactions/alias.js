@@ -8,13 +8,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Set Alias',
     id: 'setAlias',
+    exclude: $rootScope.TRADE_UI_ONLY,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Set Alias',
         message: 'Set or update an alias',
-        senderRS: senderRS,
-        editSender: true,        
+        senderRS: senderRS,      
         requestType: 'setAlias',
         canHaveRecipient: false,
         createArguments: function (items) {
@@ -124,7 +124,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         title: 'Buy Alias',
         message: "Buy an alias. Please enter the Alias <b>name</b> or it's <b>identifier</b>.",
         senderRS: senderRS,
-        editSender: true,
         requestType: 'buyAlias',
         canHaveRecipient: false,
         createArguments: function (items) {

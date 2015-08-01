@@ -39,19 +39,24 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
 
   function create(conf) {
     var deferred = $q.defer();
-    modals.open('transactionCreate', {
-      resolve: {
-        items: function () {
-          return angular.copy(conf);
+    if (!$rootScope.currentAccount) {
+      deferred.resolve(null);      
+    }
+    else {
+      modals.open('transactionCreate', {
+        resolve: {
+          items: function () {
+            return angular.copy(conf);
+          }
+        },
+        close: function (items) {
+          deferred.resolve(items);
+        },
+        cancel: function () {
+          deferred.resolve(null);
         }
-      },
-      close: function (items) {
-        deferred.resolve(items);
-      },
-      cancel: function () {
-        deferred.resolve(null);
-      }
-    });
+      });
+    }
     return deferred.promise;
   }
 

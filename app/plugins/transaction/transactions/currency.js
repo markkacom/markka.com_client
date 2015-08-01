@@ -21,6 +21,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Issue Currency',
     id: 'issueCurrency',
+    exclude: $rootScope.TRADE_UI_ONLY,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {

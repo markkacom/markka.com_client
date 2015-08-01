@@ -8,13 +8,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   plugin.add({
     label: 'Set Namespaced Alias',
     id: 'setNamespacedAlias',
-    execute: function (senderRS, args, dont_edit_sender) {
+    exclude: $rootScope.TRADE_UI_ONLY,
+    execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Set Namespaced Alias',
         message: 'Set or update a namespaced alias',
         senderRS: senderRS,
-        editSender: (typeof dont_edit_sender == 'undefined') ? true : !dont_edit_sender,
         requestType: 'setNamespacedAlias',
         canHaveRecipient: false,
         createArguments: function (items) {

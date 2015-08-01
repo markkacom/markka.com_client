@@ -18,7 +18,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         senderRS: senderRS,
         requestType: 'dgsListing',
         canHaveRecipient: false,
-        editSender: true,
         createArguments: function (items) {
           return {
             name: items.name, 
