@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('RecentTransactionsProvider', function (nxt, $q, EntityProvider) {
+module.factory('RecentTransactionsProvider', function (nxt, $q, EntityProvider, $rootScope) {
   
   function RecentTransactionsProvider(api, $scope, timestamp, accounts, filter) {
     this.init(api, $scope, timestamp);
@@ -18,6 +18,15 @@ module.factory('RecentTransactionsProvider', function (nxt, $q, EntityProvider) 
       this.subscribe('addedUnConfirmedTransactions-'+account_id, this.addedUnConfirmedTransactions);
       this.subscribe('addedConfirmedTransactions-'+account_id, this.addedConfirmedTransactions);
     }
+
+    var self = this, unregister = $rootScope.$on('$translateChangeSuccess', function () {
+      $scope.$evalAsync(function () {
+        angular.forEach(self.entities, function (entity) {
+          entity.renderedHTML = api.renderer.getHTML(entity);
+        })
+      });
+    });
+    $scope.$on('$destroy', unregister);    
   }
   angular.extend(RecentTransactionsProvider.prototype, EntityProvider.prototype, {
 
