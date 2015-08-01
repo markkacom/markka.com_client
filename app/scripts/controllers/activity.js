@@ -17,7 +17,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
   $scope.paramEngine      = $routeParams.engine;
   $scope.paramSection     = $routeParams.section;
   $scope.paramPeriod      = $routeParams.period;
-  $scope.paramTimestamp   = 0;//nxt.util.convertToEpochTimestamp(Date.now()) + (24 * 60 * 60);
+  $scope.paramTimestamp   = 0;
   $scope.statistics       = {};
   $scope.blockstate       = {};
   $scope.breadcrumb       = [];

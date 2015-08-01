@@ -108,44 +108,28 @@
         <hr class="stacked-divider">
       </li>
 
-      <li role="presentation" route-active="activity/{{paramEngine}}/activity">
-        <a href ng-init="activityCollapse=true" ng-click="activityCollapse=!activityCollapse">
-          <i class="fa fa-book"></i>&nbsp;&nbsp;{{'translate.activity'|translate}}&nbsp;<span class="caret"></span>
+      <li role="presentation" route-active="activity/{{paramEngine}}/activity" ng-hide="TRADE_UI_ONLY">
+        <a href="#/activity/{{paramEngine}}/activity/latest">
+          <i class="fa fa-book"></i>&nbsp;&nbsp;{{'translate.activity'|translate}}
         </a>
-        <ul class="nav navbar-stacked" collapse="activityCollapse">
-          <li><a href="#/activity/fim/activity/latest">FIM</a></li>
-          <li><a href="#/activity/nxt/activity/latest" ng-if="enableDualEngines">NXT</a></li>
-        </ul>
       </li>
 
-      <li role="presentation" route-active="activity/{{paramEngine}}/blockchain">
-        <a href ng-init="blockchainCollapse=true" ng-click="blockchainCollapse=!blockchainCollapse">
-          <i class="fa fa-cubes"></i>&nbsp;&nbsp;{{'translate.blockchain'|translate}}&nbsp;<span class="caret"></span>
+      <li role="presentation" route-active="activity/{{paramEngine}}/blockchain" ng-hide="TRADE_UI_ONLY">
+        <a href="#/activity/{{paramEngine}}/blockchain/latest">
+          <i class="fa fa-cubes"></i>&nbsp;&nbsp;{{'translate.blockchain'|translate}}
         </a>
-        <ul class="nav navbar-stacked" collapse="blockchainCollapse">
-          <li><a href="#/activity/fim/blockchain/latest">FIM</a></li>
-          <li><a href="#/activity/nxt/blockchain/latest" ng-if="enableDualEngines">NXT</a></li>
-        </ul>
       </li>
 
-      <li role="presentation" route-active="activity/{{paramEngine}}/forgers">
-        <a href ng-init="forgersCollapse=true" ng-click="forgersCollapse=!forgersCollapse">
-          <i class="fa fa-wrench"></i>&nbsp;&nbsp;{{'translate.forgers'|translate}}&nbsp;<span class="caret"></span>
+      <li role="presentation" route-active="activity/{{paramEngine}}/forgers" ng-hide="TRADE_UI_ONLY">
+        <a href="#/activity/{{paramEngine}}/forgers/latest">
+          <i class="fa fa-wrench"></i>&nbsp;&nbsp;{{'translate.forgers'|translate}}
         </a>
-        <ul class="nav navbar-stacked" collapse="forgersCollapse">
-          <li><a href="#/activity/fim/forgers/latest">FIM</a></li>
-          <li><a href="#/activity/nxt/forgers/latest" ng-if="enableDualEngines">NXT</a></li>
-        </ul>
       </li>
 
-      <li role="presentation" route-active="activity/{{paramEngine}}/assets">
-        <a href ng-init="assetsCollapse=true" ng-click="assetsCollapse=!assetsCollapse">
-          <i class="fa fa-line-chart"></i>&nbsp;&nbsp;{{'translate.assets'|translate}}&nbsp;<span class="caret"></span>
+      <li role="presentation" route-active="activity/{{paramEngine}}/assets" ng-hide="TRADE_UI_ONLY">
+        <a href="#/activity/{{paramEngine}}/assets/latest">
+          <i class="fa fa-line-chart"></i>&nbsp;&nbsp;{{'translate.assets'|translate}}
         </a>
-        <ul class="nav navbar-stacked" collapse="assetsCollapse">
-          <li><a href="#/activity/fim/assets/latest">FIM</a></li>
-          <li><a href="#/activity/nxt/assets/latest" ng-if="enableDualEngines">NXT</a></li>
-        </ul>
       </li>
 
       <li ng-show="showFilter">
@@ -272,7 +256,20 @@
       </button>
     </p>
 
-    <div class="row">
+    <div class="row" ng-if="enableDualEngines">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs" style="margin-bottom:15px">
+          <li role="presentation" ng-class="{'active': paramEngine=='fim'}">
+            <a href="#/activity/fim/{{paramSection}}/{{paramPeriod}}">FIMK</a>
+          </li>
+          <li role="presentation" ng-class="{'active': paramEngine=='nxt'}">
+            <a href="#/activity/nxt/{{paramSection}}/{{paramPeriod}}">NXT</a>
+          </li>
+        </ul>
+      </div>
+    </div>  
+
+    <div class="row hidden-xs">
       <div class="col-md-12">
         <ol class="breadcrumb">
           <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
@@ -309,14 +306,31 @@
                 <tbody>
                   <tr ng-repeat="a in provider.entities">
                     <td>
-                      <span ng-if="a.confirmations <= 0"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                      <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger"><b>{{a.confirmations}}</b></span>
-                      <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations">
-                        <i class="fa fa-check text-success"></i></span>
+                      <span ng-if="a.transient" tooltip="Transient (will disapear)">
+                        <i class="fa fa-clock-o text-muted"></i>
+                      </span>
+                      <span ng-if="!a.transient">
+                        <span ng-if="a.confirmations <= 0">
+                          <i class="fa fa-spinner fa-spin text-muted"></i>
+                        </span>
+                        <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger">
+                          <b>{{a.confirmations}}</b>
+                        </span>
+                        <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations">
+                          <i class="fa fa-check text-success"></i>
+                        </span>
+                      </span>
                     </td>
                     <td nowrap style="padding-left: 0px" class="hidden-xs text-muted">{{a.date}}</td>
                     <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
-                      ng-bind-html="a.renderedHTML"></td>
+                      ng-bind-html="a.renderedHTML" ng-if="!IS_SMALL_DEVICE"></td>
+                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
+                      ng-if="IS_SMALL_DEVICE">
+                      <div>
+                        <span ng-bind-html="a.renderedHTML"></span>
+                        <small class="pull-right">{{a.date}}</small>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -394,6 +408,12 @@
         <div ng-if="paramSection=='assets'">
           <div infinite-scroll="provider.loadMore()" 
             infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <form class="form-inline">
+              <div class="form-group">
+                <span>Filter on asset name and description</span>&nbsp;&nbsp;
+                <input type="text" ng-model="provider.filter" ng-change="provider.reload()" class="form-control" placeholder="Filter">
+              </div>
+            </form>            
             <div class="table-responsive">
               <table class="table table-striped">
                 <thead>
@@ -405,6 +425,7 @@
                     <th>{{ 'translate.trades' | translate }}</th>
                     <th>{{ 'translate.transfers' | translate }}</th>
                     <th>{{ 'translate.accounts' | translate }}</th>
+                    <th>{{ 'translate.private' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -416,6 +437,7 @@
                     <td>{{a.numberOfTrades}}</td>
                     <td>{{a.numberOfTransfers}}</td>
                     <td>{{a.numberOfAccounts}}</td>
+                    <td><span class="text-success" ng-show="a.isPrivate"><i class="fa fa-lock"></i></span></td>
                   </tr>
                 </tbody>
               </table>
