@@ -154,10 +154,29 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
       $scope.accounts  = accounts;
       accounts_hash = {};
 
-      var flattend = accounts.map(function (a) { 
+      var filtered = accounts.filter(function (a) {
+        return !a.excluded;
+      })
+      var flattend = filtered.map(function (a) { 
         accounts_hash[a.id_rs] = a;
         return a.id_rs 
-      }); 
+      });
+
+      var args = { accounts: flattend, excludeForging: 'true' };
+      api.engine.socket().getAccounts(args).then(
+        function (data) {
+          $scope.$evalAsync(function () {
+            angular.forEach(data.accounts, function (balance) {
+              balance.balanceNXT = nxt.util.convertToNXT(balance.balanceNQT);
+              balance.unconfirmedBalanceNXT = nxt.util.convertToNXT(balance.unconfirmedBalanceNQT);
+              balance.effectiveBalanceNXT = nxt.util.commaFormat(String(balance.effectiveBalanceNXT));
+              balance.guaranteedBalanceNXT = nxt.util.convertToNXT(balance.guaranteedBalanceNQT);
+              accounts_hash[balance.accountRS].balance = balance;
+            });
+          });
+        }
+      );
+
       if ($scope.paramSection == 'activity' || $scope.paramSection == 'inbox') {
         $scope.provider = $scope.transactionProvider = new RecentTransactionsProvider(api, $scope, $scope.paramTimestamp, flattend, $scope.filter);
         $scope.transactionProvider.reload();
@@ -194,21 +213,21 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
     $scope.provider.applyFilter($scope.filter);
   }
 
-  $scope.addAccount = function (symbol) {
-    modals.open('welcome', {
-      resolve: {
-        items: function () { 
-          return {}; 
-        }
-      }
-    });
-  }
+  // $scope.addAccount = function (symbol) {
+  //   modals.open('welcome', {
+  //     resolve: {
+  //       items: function () { 
+  //         return {}; 
+  //       }
+  //     }
+  //   });
+  // }
 
-  $scope.changeAccountName = function (id_rs) {
-    plugins.get('transaction').setAccountInfo(id_rs, {
-      name: '', description: '',
-    });
-  } 
+  // $scope.changeAccountName = function (id_rs) {
+  //   plugins.get('transaction').setAccountInfo(id_rs, {
+  //     name: '', description: '',
+  //   });
+  // } 
 
   $scope.selectedThemeName = settings.get('themes.default.theme');
 
@@ -219,6 +238,16 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
     });
   });
 
-}); 
+  $scope.excludeAccount = function (event, account) {
+    event.preventDefault();
+    account.update({excluded: true});
+  }
+
+  $scope.includeAccount = function (event, account) {
+    event.preventDefault();
+    account.update({excluded: false});
+  }
+
+});
 
 })();

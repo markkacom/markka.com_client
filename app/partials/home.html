@@ -1,40 +1,30 @@
 <div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
   <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
     <ul class="nav navbar-stacked">
-
-      <li ng-if="enableDualEngines">
-        <a ng-href="#/home/fim/activity/latest" translate-cloak>{{ 'translate.dashboard_symbol' | translate:"{symbol:'FIM'}" }}</a>
-      </li>
-      <li ng-if="enableDualEngines">
-        <a ng-href="#/home/nxt/activity/latest" translate-cloak>{{ 'translate.dashboard_symbol' | translate:"{symbol:'NXT'}" }}</a>
-      </li>
-      <li ng-if="enableDualEngines">
-        <hr class="stacked-divider">
-      </li> 
       <li route-active="home/">
-        <a href="#/home/fim/activity/latest">
+        <a href="#/home/{{paramEngine}}/activity/latest">
           <i class="fa fa-book"></i>&nbsp;&nbsp;{{'translate.activity' | translate}}
         </a>
       </li>  
       <li>
-        <a href="#/home/fim/inbox/latest">
+        <a href="#/home/{{paramEngine}}/inbox/latest">
           <i class="fa fa-inbox"></i>&nbsp;&nbsp;{{'translate.inbox' | translate}}
         </a>
       </li>
       <li>
-        <a href="#/home/fim/balance/latest">
+        <a href="#/home/{{paramEngine}}/balance/latest">
           <i class="fa fa-bar-chart"></i>&nbsp;&nbsp;{{'translate.balance' | translate}}
         </a>
       </li>
-      <li>
+      <li ng-show="accounts.length">
         <hr class="stacked-divider">
       </li> 
       <li ng-repeat="a in accounts">
-        <a ng-href="#/accounts/{{a.id_rs}}/activity/latest">{{a.name||a.id_rs}}</a>
-      </li>
-      <li>
-        <a href ng-click="addAccount()">
-          <i class="fa fa-plus text-success"></i>&nbsp;&nbsp;{{'translate.add_account' | translate}}
+        <a href ng-click="a.excluded?includeAccount($event, a):excludeAccount($event, a)">
+          <span>
+            <b><i ng-style="{visibility:a.excluded?'hidden':'visible'}" class="fa fa-check text-success"></i></b>&nbsp;
+          </span>
+          <span ng-class="{'font-bold':!a.excluded}">{{a.name||a.id_rs}}</span>
         </a>
       </li>
       <li ng-show="showFilter">
@@ -145,7 +135,20 @@
       </button>
     </p>
 
-    <div class="row">
+    <div class="row" ng-if="enableDualEngines">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs" style="margin-bottom:15px">
+          <li role="presentation" ng-class="{'active': paramEngine=='fim'}">
+            <a href="#/home/fim/{{paramSection}}/{{paramPeriod}}">FIMK</a>
+          </li>
+          <li role="presentation" ng-class="{'active': paramEngine=='nxt'}">
+            <a href="#/home/nxt/{{paramSection}}/{{paramPeriod}}">NXT</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row hidden-xs">
       <div class="col-md-12">
         <ol class="breadcrumb">
           <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
@@ -175,6 +178,16 @@
       </div>
     </div>
 
+    <div class="row" style="margin-bottom: 8px">
+      <div class="col-md-12">
+        <a ng-repeat="a in accounts" class="btn btn-default elipses" 
+          style="margin-right: 5px; margin-bottom: 5px" ng-hide="a.excluded"
+          href="#/accounts/{{a.id_rs}}/activity/latest">
+          <i class="fa fa-user"></i>&nbsp;&nbsp;{{a.name||a.id_rs}}&nbsp;&nbsp;<span class="badge">{{a.balance.balanceNXT}}</span>
+        </a>
+      </div>
+    </div>   
+
     <div class="row">
       <div class="col-md-12">
         
@@ -188,12 +201,30 @@
               <tbody>
                 <tr ng-repeat="a in transactionProvider.entities" ng-class="{ success: a.confirmations == 0 }">
                   <td>
-                    <span ng-if="a.confirmations == 0"><i class="fa fa-refresh fa-spin"></i></span>
-                    <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger"><b>{{a.confirmations}}</b></span>
-                    <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations"><i class="fa fa-check text-success"></i></span>
+                    <span ng-if="a.transient" tooltip="Transient (will disapear)">
+                      <i class="fa fa-clock-o text-muted"></i>
+                    </span>
+                    <span ng-if="!a.transient">
+                      <span ng-if="a.confirmations <= 0">
+                        <i class="fa fa-spinner fa-spin text-muted"></i>
+                      </span>
+                      <span ng-if="a.confirmations > 0 && a.confirmations <= 10" class="text-danger">
+                        <b>{{a.confirmations}}</b>
+                      </span>
+                      <span ng-if="a.confirmations > 10" tooltip="{{a.confirmations}} confirmations">
+                        <i class="fa fa-check text-success"></i>
+                      </span>
+                    </span>
                   </td>
-                  <td nowrap class="hidden-xs">{{a.date}}</td>
-                  <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" ng-bind-html="a.renderedHTML"></td>
+                  <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
+                    ng-bind-html="a.renderedHTML" ng-if="!IS_SMALL_DEVICE"></td>
+                  <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;" 
+                    ng-if="IS_SMALL_DEVICE">
+                    <div>
+                      <span ng-bind-html="a.renderedHTML"></span>
+                      <small class="pull-right">{{a.date}}</small>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
