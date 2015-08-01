@@ -64,7 +64,10 @@ var engine = {
   }
 };
 
+var path;
 if (isNodeJS) {
+  path = require('path');
+
   // SIGTERM AND SIGINT will trigger the exit event.
   process.once("SIGTERM", function () {
     process.exit(0);
@@ -120,6 +123,7 @@ function maybeNotifyServerReady(id, line) {
 }
 
 var NON_WHITESPACE = /\S/;
+var BUFFER_SIZE = 2000;
 
 return {
   getDir: function (id) {
@@ -158,21 +162,17 @@ return {
     if (this.isRunning(id)) {
       throw new Error('Server '+id+' already running');
     }
-    var messages  = engine[id].messages;
-    var listeners = engine[id].listeners;
     var self      = this;
-    var path      = require('path')
-    var start_options = {  cwd: this.getDir(id) };    
-    var commands  = engine[id].commands;
+    var start_options = {  cwd: this.getDir(id) };
 
     engine[id].isReady = false;
 
     var os        = getOS();
-    notifyListeners(listeners.stdout, 'Detected Operating System '+os);
-    notifyListeners(listeners.stdout, 'Starting mofowallet in '+start_options.cwd);    
+    notifyListeners(engine[id].listeners.stdout, 'Detected Operating System '+os);
+    notifyListeners(engine[id].listeners.stdout, 'Starting mofowallet in '+start_options.cwd);    
 
     var spawn     = require('child_process').spawn;
-    var child     = engine[id].server = spawn(commands[os].start.command, commands[os].start.args, start_options);
+    var child     = engine[id].server = spawn(engine[id].commands[os].start.command, engine[id].commands[os].start.args, start_options);
  
     child.shutdown = function () {
       try {
@@ -185,49 +185,44 @@ return {
     }
 
     child.onstdout = function (data) {
-      var str = data.toString(), lines = str.split(/(\r?\n)/g);
+      var lines = data.toString().split(/(\r?\n)/g);
       for (var i=0; i<lines.length; i++) {
         if (lines[i].match(NON_WHITESPACE)) {
-          messages.push(lines[i]);
-          while (messages.length > 2000) {
-            messages.shift();
-          }
-          notifyListeners(listeners.stdout, lines[i]);
+          self.write(id, lines[i]);
+          notifyListeners(engine[id].listeners.stdout, lines[i]);
           maybeNotifyServerReady(id, lines[i]);
         }
       }
     }
 
     child.onstderr = function (data) {
-      var str = data.toString(), lines = str.split(/(\r?\n)/g);
+      var lines = data.toString().split(/(\r?\n)/g);
       for (var i=0; i<lines.length; i++) {
         if (lines[i].match(NON_WHITESPACE)) {
-          messages.push(lines[i]);
-          while (messages.length > 2000) {
-            messages.shift();
-          }
-          notifyListeners(listeners.stderr, lines[i]);
+          self.write(id, lines[i]);
+          notifyListeners(engine[id].listeners.stderr, lines[i]);
           maybeNotifyServerReady(id, lines[i]);
         }
       }
     }
 
     child.onexit = function (code, signal) {
-      messages.push('Exit event. code='+code);
-      notifyListeners(listeners.exit, code);
+      self.write(id, 'Exit event. code='+code);
+      notifyListeners(engine[id].listeners.exit, code);
 
       // Helper function added to the child process to manage shutdown.
       console.log("Child process terminated with code: " + code);
       // process.exit(1);
       engine[id].isReady = false;
       engine[id].server  = null;
+      $rootScope.$apply();
     }
 
     child.stdout.on('data', child.onstdout);
     child.stderr.on('data', child.onstderr);
     child.on('exit', child.onexit);
 
-    notifyListeners(listeners.start, 'Starting server');
+    notifyListeners(engine[id].listeners.start, 'Starting server');
   },
   stopServer: function (id) {
     if (engine[id].server) {
@@ -251,6 +246,12 @@ return {
   },
   getMessages: function (id) {
     return engine[id].messages;
+  },
+  write: function (id, msg) {
+    engine[id].messages.push({ data: msg });
+    while (engine[id].messages.length > BUFFER_SIZE) {
+      engine[id].messages.shift();
+    }
   }
 };
 });
