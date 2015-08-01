@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (nxt, timeagoService) {
+module.run(function (nxt, timeagoService, $rootScope) {
 
   function convertNQT(amount, decimals) {
     if (typeof amount == 'undefined') {
@@ -204,6 +204,13 @@ module.run(function (nxt, timeagoService) {
     }
     return '';
   }
+
+  $rootScope.$on('$translateChangeSuccess', function () {
+    timeago_cache = {};
+    timeago_cache_count = 0;
+    date_cache = {};
+    date_cache_count = 0;
+  });  
 
   /**
    * Converts an UTC timestamp to a NXT epoch timestamp.
