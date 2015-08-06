@@ -24,6 +24,18 @@ function generatePassphrase() {
   return words.join(" ");
 }
 
+function isValidHex(hex) { 
+  var curCharCode = 0; 
+  hex = hex.toLowerCase(); 
+  for (var i=0; i<hex.length; i++) { 
+    curCharCode = hex.charCodeAt(i); 
+    if (!(curCharCode>47 && curCharCode<58 || curCharCode>96 && curCharCode<103)) { 
+      return false;
+    }
+  }
+  return true;
+}
+
 var module = angular.module('fim.base');
 module.config(function($routeProvider) {  
   $routeProvider
@@ -32,10 +44,18 @@ module.config(function($routeProvider) {
       controller: 'LoginToController'
     });
 });
-module.controller('LoginToController', function($scope, $rootScope, KeyService, nxt, $location, $q, $timeout, db) {
+module.run(function ($rootScope) {
+  $rootScope.isCurrentAccount = function (id_rs) { 
+    return $rootScope.currentAccount && $rootScope.currentAccount.id_rs == id_rs;
+  };
+})
+module.controller('LoginToController', function($scope, $rootScope, KeyService, nxt, $location, $q, $timeout, db, timeagoService) {
   
   $scope.walletExists = KeyService.walletExists();
   $scope.walletUnlocked = !!KeyService.wallet;
+  $scope.hideSecretphrase = true;
+
+  var cipherTextOverride = null;
 
   $scope.state = {};
   $scope.state.active = 0;
@@ -52,6 +72,8 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
   $scope.input.secretPhraseRotatorIndex = null;
   $scope.input.confirmed = null;
   $scope.input.duplicateNameAccount = null;
+  $scope.input.wallet='internal';
+  $scope.input.selectedFile=null;
 
   $scope.alerts = {};
   $scope.alerts.wrongPassword = false;
@@ -59,17 +81,49 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
   $scope.alerts.duplicateName = false;
   $scope.alerts.activated = false;
   $scope.alerts.activationBusy = false;
+  $scope.alerts.fileError = false;
+
+  $scope.walletTypeChanged = function () {
+    if ($scope.input.wallet == 'internal') {
+      $scope.input.selectedFile=null;
+      cipherTextOverride=null;
+    }
+  }
+
+  $scope.walletFileChanged = function (event) {
+    // console.log(event)
+    $scope.$evalAsync(function () {
+      $scope.alerts.fileError = false;
+      var selectedFile = event.target.files[0];
+      $scope.input.selectedFile = selectedFile.name;
+      var reader    = new FileReader();
+      reader.onload = function(event) {
+        cipherTextOverride = event.target.result;
+        if (!isValidHex(cipherTextOverride)) {
+          cipherTextOverride = converters.stringToHexString(cipherTextOverride);
+        }
+      };
+      reader.onerror = function (event) {
+        $scope.$evalAsync(function () {
+          $scope.alerts.fileError = true;
+        });
+      };
+      reader.onabort = function (event) {};
+      reader.readAsText(selectedFile); 
+    });
+  }
+
+  $scope.selectedAccountChanged = function () {
+    $scope.$evalAsync(function () {
+      $scope.alerts = {};
+      $scope.input.secretPhrase = $scope.input.account.secretPhrase;
+    });
+  }
 
   var forcedBack = {page:null};
 
   function setCurrentAccount(account) {
     $rootScope.currentAccount = angular.copy(account);
-    $rootScope.isCurrentAccount = function (id_rs) { 
-      if ($rootScope.currentAccount) {
-        return $rootScope.currentAccount.id_rs == id_rs 
-      }
-      return false;
-    };
     return $rootScope.currentAccount
   }
 
@@ -81,7 +135,30 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
     }
   }
 
+  $scope.backupWallet = function () {
+    var encrypted   = KeyService.toString();
+    var blob        = new Blob([encrypted], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, 'wallet.dat');
+  }
+
+  $scope.remember = function () {
+    if ($rootScope.currentAccount) {
+      var a = $rootScope.currentAccount;
+      var api = nxt.get(a.id_rs);
+      $scope.state.active = 4;
+      $scope.input.engine = api.engine.type == nxt.TYPE_FIM ? 'fim' : 'nxt';  
+      $scope.input.secretPhrase = a.secretPhrase;
+      $scope.walletExists = KeyService.walletExists();
+      $scope.walletUnlocked = false;
+    }
+  }
+
   var initializers = {
+    2: function () {
+      if ($scope.input.account) {
+        $scope.input.secretPhrase = $scope.input.account.secretPhrase;
+      }
+    },
     4: function () {
       var api = nxt.get($scope.input.engine);
       $scope.input.id_rs = api.crypto.getAccountId($scope.input.secretPhrase, true);
@@ -131,7 +208,7 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
 
   $scope.unlockWallet = function () {
     $scope.alerts = {};
-    var wallet = KeyService.unlock($scope.input.password);
+    var wallet = KeyService.unlock($scope.input.password, cipherTextOverride);
     if (wallet) {
       $scope.input.accounts = angular.copy(wallet.entries);
       $scope.input.account = $scope.input.accounts[0];
@@ -333,7 +410,7 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
         }
       })
     }
-  }
+  }  
 
   //var api = nxt.get($scope.$parent.unlock.id_rs);
 
