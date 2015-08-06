@@ -283,6 +283,11 @@
         <ul class="nav navbar-nav" nav-menu="active">
           <li ng-if="IS_SMALL_DEVICE">
             <div class="btn-group btn-group-justified">
+              <div class="btn-group" role="group" ng-if="currentAccount">
+                <a href="#/accounts/{{currentAccount.id_rs}}/activity/latest" class="btn btn-default">
+                  <i class="fa fa-home text-danger"></i>&nbsp;<span translate="translate.home"></span>
+                </a>
+              </div>
               <div class="btn-group" role="group">
                 <a href="javascript:window.history.back()" class="btn btn-default">
                   <i class="fa fa-arrow-left"></i>&nbsp;<span translate="translate.back"></span>
@@ -307,7 +312,7 @@
             <a ng-href="#/start"><i class="fa fa-home text-success"></i>&nbsp;&nbsp;{{'translate.home' | translate}}</a>
           </li> -->
 
-          <li route-active="accounts/{{currentAccount.id_rs}}/" ng-show="currentAccount">
+          <li route-active="accounts/{{currentAccount.id_rs}}/" ng-show="currentAccount && !IS_SMALL_DEVICE">
             <a ng-href="#/accounts/{{currentAccount.id_rs}}/activity/latest">
               <b><i class="fa fa-home text-danger"></i></b>
             </a>
