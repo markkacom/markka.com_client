@@ -36,6 +36,7 @@ module.factory('ActivityProvider', function (nxt, $q, EntityProvider, $rootScope
         var self = this;
         transactions = transactions.filter(function (t) { return t.senderRS == self.account || t.recipientRS == self.account; });
       }*/
+      var t;
       for (var i=0, t; i<transactions.length; i++) {
         t               = transactions[i];
         t.renderedHTML  = this.api.renderer.getHTML(t, null, this.account);
