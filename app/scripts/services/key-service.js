@@ -11,8 +11,8 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
       unlockedKeys = {};
       this.wallet = null;
     },
-    unlock: function (password) {
-      return this.wallet = loadWallet(password);
+    unlock: function (password, cipher_text_override) {
+      return this.wallet = loadWallet(password, cipher_text_override);
     },
     get: function (id_rs) {
       if (this.wallet) {
@@ -36,16 +36,22 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
       window.localStorage.removeItem("mofo.key.service");
       this.wallet = null;
       unlockedKeys = {};
+    },
+    toString: function () {
+      return encryptJSONObject(this.wallet.entries, this.wallet.password);
     }
   };
 
   function Wallet(entries, password) {
-    this.entries = entries;
-    this.mapped = {};
-    for (var i=0; i<this.entries.length; i++) {
-      this.mapped[this.entries[i].id_rs] = this.entries[i].secretPhrase;
-    }
     this.password = password;
+    this.mapped = {};
+    this.entries = [];
+    for (var i=0; i<entries.length;i++) {
+      if (!this.mapped[entries[i].id_rs]) {
+        this.entries.push(entries[i]);
+        this.mapped[entries[i].id_rs] = entries[i].secretPhrase;
+      }
+    }
   }
   Wallet.prototype = {
     save: function () {
@@ -54,6 +60,7 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
     },
 
     add: function (id_rs, secretPhrase) {
+      if (this.mapped[id_rs]) return;
       this.entries.push({id_rs:id_rs, secretPhrase:secretPhrase});
       this.mapped[id_rs] = secretPhrase;
       this.save();
@@ -72,19 +79,32 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
 
   /**
    * Reads the encrypted wallet list from localStorage and decrypts it.
+   * When @cipher_text_override is provided we use that instead of reading
+   * from localstorage.
    * Returns an array of objects.
    *
    * @param password
+   * @param cipher_text_override
    * @return Array of Object
    */
-  function loadWallet(password) {
-    var text = window.localStorage.getItem("mofo.key.service");
+  function loadWallet(password, cipher_text_override) {
+    var text = cipher_text_override || window.localStorage.getItem("mofo.key.service");
     if (!text) {
       return null;
     }
     var list = decryptJSONObject(text, password);
     if (list == null) {
       return null;
+    }
+    /* support legacy wallets that have a slightly different JSON schema */
+    if (!Array.isArray(list)) {
+      var temp = [];
+      angular.forEach(list, function (value, name) {
+        if (name !== 'padding') {
+          temp.push({id_rs: value.id_rs, secretPhrase:value.secretPhrase});
+        }
+      });
+      list = temp;
     }
     return new Wallet(list, password);
   }
@@ -114,10 +134,10 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
       var object = JSON.parse(text);
       return typeof object == 'object' ? object : null;
     } catch (e) {
-      console.log(e);
-      console.log('password',password);
-      console.log('text',text);
-      console.log('cipherText', cipherText);
+      // console.log(e);
+      // console.log('password',password);
+      // console.log('text',text);
+      // console.log('cipherText', cipherText);
       return null;
     }
   } 
