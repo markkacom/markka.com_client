@@ -13,7 +13,7 @@
 
     <div ng-show="!currentAccount">
       <div class="col-md-3 col-xs-12" style="margin-bottom: 8px">
-        <button class="btn btn-block btn-default btn-lg" ng-click="goto(1)" ng-disabled="!walletExists">
+        <button class="btn btn-block btn-default btn-lg" ng-click="goto(1)">
           <i class="fa fa-unlock fa-2x"></i><br>
           <small translate="translate.open_wallet"></small>
         </button>
@@ -44,11 +44,14 @@
       <div class="col-md-12 col-xs-12" style="margin-bottom: 8px">
         <h3 translate="translate.signed_in_as"></h3>
         <a href="#/accounts/{{currentAccount.id_rs}}/activity/latest">{{currentAccount.id_rs}}</a>
+        <!-- <div class="form-group">
+          <button class="btn btn-default" ng-click="backupWallet()">
+            <i class="fa fa-floppy-o"></i>&nbsp;Backup wallet</button>
+        </div> -->
       </div>
       <div class="col-md-3 col-xs-12" style="margin-bottom: 8px">
-        <button class="btn btn-block btn-default btn-lg" ng-click="logout()">
-          <i class="fa fa-sign-out fa-2x"></i><br>
-          <small translate="translate.sign_out"></small>
+        <button class="btn btn-block btn-default btn-lg" ng-click="backupWallet()">
+          <i class="fa fa-floppy-o"></i>&nbsp;<span>Backup wallet</span>
         </button>
       </div>
     </div>
@@ -61,56 +64,72 @@
   <div class="row" style="margin-top: 8px" ng-show="state.active==1">
     <div class="col-md-12">
 
-      <!-- There is no wallet -->
-      <div ng-show="!walletExists">
-        <div class="alert alert-warning">
-          <b><i class="fa fa-exclamation-triangle"></i>&nbsp;<span translate="translate.there_is_no_wallet"></span></b>
+      <!-- Wallet is unlocked already - must log out first -->
+      <div ng-show="walletUnlocked">
+        <div class="alert alert-info" style="margin-bottom: 8px">
+          <b translate="translate.msg_wallet_unlocked"></b>
         </div>
         <div class="row">
+          <div class="col-md-3 col-xs-12" style="margin-top: 8px">
+            <button class="btn btn-primary btn-lg btn-block" ng-click="refreshWallet(); goto(2)" translate="translate.continue"></button>
+          </div>
+          <div class="col-md-3 col-xs-12" style="margin-top: 8px">
+            <button class="btn btn-default btn-lg btn-block" ng-click="backupWallet()">
+              <i class="fa fa-floppy-o"></i>&nbsp;Backup wallet</button>
+          </div>
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
             <button class="btn btn-default btn-lg btn-block" ng-click="back(0)" translate="translate.back"></button>
           </div>
         </div>
       </div>
 
-      <!-- Wallet exists -->
-      <div ng-show="walletExists">
-
-        <!-- Wallet is locked -->
-        <div ng-show="!walletUnlocked">
-          <div class="alert alert-info" style="margin-bottom: 8px">
-            <b translate="translate.enter_wallet_password"></b>
-          </div>
-          <div class="alert alert-warning" ng-show="alerts.wrongPassword">
-            <i class="fa fa-exclamation-triangle"></i>&nbsp;<span translate="translate.wrong_password"></span>
-          </div>
-          <form>
-            <div class="form-group">
-              <input class="form-control" type="password" placeholder="Wallet Password" id="wallet-password" ng-model="input.password">
-            </div>
-          </form>
-          <div class="row">
-            <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-              <button class="btn btn-default btn-lg btn-block" ng-click="unlockWallet()" translate="translate.continue"></button>
-            </div>
-            <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-              <button class="btn btn-default btn-lg btn-block" ng-click="back(0)" translate="translate.back"></button>
-            </div>
-          </div>
+      <!-- Choose open local wallet or open wallet file -->
+      <div ng-show="!walletUnlocked">
+        <div class="alert alert-info" style="margin-bottom: 8px">
+          <b translate="translate.enter_wallet_password"></b>
         </div>
-
-        <!-- Wallet is unlocked -->
-        <div ng-show="walletUnlocked">
-          <div class="alert alert-info" style="margin-bottom: 8px">
-            <b translate="translate.msg_wallet_unlocked"></b>
+        <div class="alert alert-warning" ng-show="alerts.wrongPassword">
+          <i class="fa fa-exclamation-triangle"></i>&nbsp;<span translate="translate.wrong_password"></span>
+        </div>
+        <div class="alert alert-warning" ng-show="input.wallet=='internal' && !walletExists">
+          <b><i class="fa fa-exclamation-triangle"></i>&nbsp;<span translate="translate.there_is_no_wallet"></span></b>
+        </div>
+        <div class="alert alert-warning" ng-show="alerts.fileError">
+          <i class="fa fa-exclamation-triangle"></i>&nbsp;File error
+        </div>
+        <div class="alert alert-info" ng-show="input.wallet=='internal'&&!walletExists">
+          <span translate="translate.msg_wallet_not_created"></span>
+        </div>
+        <form>
+          <div class="form-group">
+            <select class="form-control monospace" ng-model="input.wallet" ng-change="walletTypeChanged()">
+              <option value="internal" selected>Internal</option>
+              <option value="external">External</option>
+            </select>
           </div>
-          <div class="row">
-            <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-              <button class="btn btn-default btn-lg btn-block" ng-click="refreshWallet(); goto(2)" translate="translate.continue"></button>
-            </div>
-            <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-              <button class="btn btn-default btn-lg btn-block" ng-click="back(0)" translate="translate.back"></button>
-            </div>
+          <div class="form-group" ng-show="input.wallet=='external'">
+            <span class="input-group">
+              <span class="input-group-btn">
+                <span class="btn btn-primary btn-block btn-file">
+                  <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;<span translate="translate.open_wallet"></span>
+                  <input type="file" onchange="angular.element(this).scope().walletFileChanged(event)">
+                </span>
+              </span>
+              <span class="form-control" ng-bind="input.selectedFile"></span>
+            </span>
+          </div>          
+          <div class="form-group">
+            <input class="form-control" type="password" placeholder="Wallet Password" id="wallet-password" 
+              ng-model="input.password" ng-disabled="input.wallet=='internal'&&!walletExists">
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-md-3 col-xs-12" style="margin-top: 8px">
+            <button class="btn btn-primary btn-lg btn-block" ng-click="unlockWallet()" translate="translate.continue"></button>
+          </div>
+          <div class="col-md-3 col-xs-12" style="margin-top: 8px">
+            <button class="btn btn-default btn-lg btn-block" ng-click="input.wallet='internal';walletTypeChanged();back(0)" 
+              translate="translate.back"></button>
           </div>
         </div>
       </div>
@@ -126,15 +145,39 @@
       <div class="alert alert-info" style="margin-bottom: 8px">
         <b translate="translate.msg_choose_account"></b>
       </div>
+      <div class="alert alert-info" style="margin-bottom: 8px" ng-show="alerts.clipped" translate="translate.msg_secret_copied"></div>
       <form>
+        <!-- <div class="form-group" ng-repeat="a in input.accounts" ng-if="!IS_SMALL_DEVICE">
+          <div class="input-group" ng-class="{'font-bold':a==input.account}">
+            <span class="form-control">
+              <a href ng-click="input.account=a;selectedAccountChanged()" ng-class="{'text-success':a==input.account}">{{a.label}}</a>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-class="{'btn-primary':a==input.account}">Remove</button>
+            </span>
+          </div>
+        </div> -->
         <div class="form-group">
           <select class="form-control monospace" ng-model="input.account" 
-            ng-options="a.label for a in input.accounts"></select>
+            ng-options="a.label for a in input.accounts" ng-change="selectedAccountChanged()"></select>
+        </div>
+        <div class="form-group">
+          <a href ng-click="hideSecretphrase=!hideSecretphrase">reveal secret phrase</a>
+        </div>
+        <div class="form-group" collapse="hideSecretphrase">
+          <div class="input-group">
+            <input type="text" class="form-control input-lg" rows="4" ng-model="input.secretPhrase" readonly>
+            <span class="input-group-btn">
+              <button class="btn btn-default btn-lg" type="button" 
+                clip-copy="input.secretPhrase" clip-click="alerts.clipped=true;">
+                <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
+            </span>
+          </div>
         </div>
       </form>      
       <div class="row">
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-          <button class="btn btn-default btn-lg btn-block" ng-click="selectAccountFromWallet()" ng-disabled="!input.account" translate="translate.continue"></button>
+          <button class="btn btn-primary btn-lg btn-block" ng-click="selectAccountFromWallet()" ng-disabled="!input.account" translate="translate.continue"></button>
         </div>
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
           <button class="btn btn-default btn-lg btn-block" ng-click="back()" translate="translate.back"></button>
@@ -181,7 +224,7 @@
         </form>
         <div class="row">
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-            <button class="btn btn-default btn-lg btn-block" ng-click="goto(4)" 
+            <button class="btn btn-primary btn-lg btn-block" ng-click="goto(4)" 
                 ng-disabled="!input.secretPhrase" translate="translate.continue"></button>
           </div>
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
@@ -204,14 +247,10 @@
           <span class="form-control-static">{{input.id_rs}}</span>
         </div>
         <div class="form-group" ng-show="input.name">
-          <span class="form-control-static">
-            <b><span translate="translate.name"></span>:</b>&nbsp;{{input.name}}
-          </span>
+          <span class="form-control-static" ng-bind="input.name"></span>
         </div>
         <div class="form-group" ng-show="input.description">
-          <span class="form-control-static">
-            <b><span translate="translate.description"></span>:</b>&nbsp;{{input.description}}
-          </span>
+          <span class="form-control-static" ng-bind="input.description"></span>
         </div>
       </form>
       <div class="row">
@@ -251,7 +290,7 @@
           </form>
           <div class="row">
             <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-              <button class="btn btn-default btn-lg btn-block" ng-click="unlockWallet()" translate="translate.continue"></button>
+              <button class="btn btn-primary btn-lg btn-block" ng-click="unlockWallet()" translate="translate.continue"></button>
             </div>
             <div class="col-md-3 col-xs-12" style="margin-top: 8px">
               <button class="btn btn-default btn-lg btn-block" ng-click="back()" translate="translate.back"></button>
@@ -315,7 +354,7 @@
       <div class="alert alert-info" style="margin-bottom: 8px" translate="translate.msg_secret_set_for_session"></div>
       <div class="row">
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-          <button class="btn btn-default btn-lg btn-block" ng-click="selectAccountFromSecretPhrase()" translate="translate.continue"></button>
+          <button class="btn btn-primary btn-lg btn-block" ng-click="selectAccountFromSecretPhrase()" translate="translate.continue"></button>
         </div>        
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
           <button class="btn btn-default btn-lg btn-block" ng-click="back(4)" translate="translate.back"></button>
@@ -335,7 +374,7 @@
       </div>
       <div class="row">
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-          <button class="btn btn-default btn-lg btn-block" ng-click="selectAccountFromSecretPhrase()" translate="translate.continue"></button>
+          <button class="btn btn-primary btn-lg btn-block" ng-click="selectAccountFromSecretPhrase()" translate="translate.continue"></button>
         </div>        
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
           <button class="btn btn-default btn-lg btn-block" ng-click="back(5)" translate="translate.back"></button>
@@ -416,7 +455,7 @@
                 <button class="btn btn-default btn-lg" type="button" 
                   clip-copy="input.secretPhrase" clip-click="alerts.clipped=true; input.pickSecretPhrase=false">
                   <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
-              </span>              
+              </span>
             </div>
           </div> 
           <div class="checkbox">
@@ -427,7 +466,7 @@
         </form>
         <div class="row">
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-            <button class="btn btn-default btn-lg btn-block" ng-click="goto(10)" 
+            <button class="btn btn-primary btn-lg btn-block" ng-click="goto(10)" 
                 ng-disabled="!input.secretPhrase" translate="translate.continue"></button>
           </div>
           <div class="col-md-3 col-xs-12" style="margin-top: 8px" ng-if="IS_SMALL_DEVICE && input.pickSecretPhrase">
@@ -469,13 +508,13 @@
       <div class="row">
         <!-- FIM engine -->
         <div class="col-md-3 col-xs-12" style="margin-top: 8px" ng-if="input.engine=='fim'">
-          <button class="btn btn-default btn-lg btn-block" ng-click="goto(11)" 
+          <button class="btn btn-primary btn-lg btn-block" ng-click="goto(11)" 
               ng-disabled="!input.confirmed || !input.secretPhrase" translate="translate.continue"></button>
         </div>
 
         <!-- NXT engine -->
         <div class="col-md-3 col-xs-12" style="margin-top: 8px" ng-if="input.engine=='nxt'">
-          <button class="btn btn-default btn-lg btn-block" ng-click="goto(4)" 
+          <button class="btn btn-primary btn-lg btn-block" ng-click="goto(4)" 
               ng-disabled="!input.confirmed || !input.secretPhrase" translate="translate.continue"></button>
         </div>
 
@@ -522,7 +561,7 @@
       </form>
       <div class="row">
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-          <button class="btn btn-default btn-lg btn-block" ng-click="goto(12)"
+          <button class="btn btn-primary btn-lg btn-block" ng-click="goto(12)"
             ng-disabled="!input.name || !input.email || alerts.duplicateName" translate="translate.continue"></button>
         </div>
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
@@ -575,7 +614,7 @@
           <button class="btn btn-default btn-lg btn-block" ng-click="activateAccount()" translate="translate.activate_account"></button>
         </div> 
         <div class="col-md-3 col-xs-12" style="margin-top: 8px" ng-show="alerts.activated">
-          <button class="btn btn-default btn-lg btn-block" ng-click="goto(4, 12)" translate="translate.continue"></button>
+          <button class="btn btn-primary btn-lg btn-block" ng-click="goto(4, 12)" translate="translate.continue"></button>
         </div>
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
           <button class="btn btn-default btn-lg btn-block" ng-click="back()" translate="translate.back"></button>
@@ -584,4 +623,14 @@
     </div>
   </div>
 
+  <div class="row" ng-show="walletUnlocked">
+    <div class="col-md-3 col-xs-12" style="margin-top: 8px">
+      <button class="btn btn-default btn-lg btn-block" ng-click="logout()">
+      <i class="fa fa-sign-out"></i>&nbsp;<span translate="translate.sign_out"></span></button>
+    </div>
+    <div class="col-md-3 col-xs-12" style="margin-top: 8px" ng-show="currentAccount">
+      <button class="btn btn-default btn-lg btn-block" ng-click="remember()">
+      <i class="fa fa-plus"></i>&nbsp;<span>Remember</span></button>
+    </div>    
+  </div>
 </div>
