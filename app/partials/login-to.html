@@ -91,9 +91,9 @@
         <div class="alert alert-warning" ng-show="alerts.wrongPassword">
           <i class="fa fa-exclamation-triangle"></i>&nbsp;<span translate="translate.wrong_password"></span>
         </div>
-        <div class="alert alert-warning" ng-show="input.wallet=='internal' && !walletExists">
+        <!-- <div class="alert alert-warning" ng-show="input.wallet=='internal' && !walletExists">
           <b><i class="fa fa-exclamation-triangle"></i>&nbsp;<span translate="translate.there_is_no_wallet"></span></b>
-        </div>
+        </div> -->
         <div class="alert alert-warning" ng-show="alerts.fileError">
           <i class="fa fa-exclamation-triangle"></i>&nbsp;File error
         </div>
@@ -125,7 +125,8 @@
         </form>
         <div class="row">
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-            <button class="btn btn-primary btn-lg btn-block" ng-click="unlockWallet()" translate="translate.continue"></button>
+            <button class="btn btn-primary btn-lg btn-block" ng-click="unlockWallet()" 
+              translate="translate.continue" ng-disabled="input.wallet=='internal'&&!walletExists"></button>
           </div>
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
             <button class="btn btn-default btn-lg btn-block" ng-click="input.wallet='internal';walletTypeChanged();back(0)" 
@@ -213,7 +214,7 @@
 
       <!-- Engine type set -->
       <div ng-show="input.engine">
-        <div class="alert alert-info" style="margin-bottom: 8px">
+        <div class="alert alert-info" style="margin-bottom: 8px" ng-hide="is_remember">
           <b translate="translate.msg_enter_secret_phrase"></b>
         </div>
         <form>
@@ -255,7 +256,7 @@
       </form>
       <div class="row">
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-          <button class="btn btn-default btn-lg btn-block" ng-click="goto(5)" translate="translate.yes"></button>
+          <button class="btn btn-primary btn-lg btn-block" ng-click="goto(5)" translate="translate.yes"></button>
         </div>
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
           <button class="btn btn-default btn-lg btn-block" ng-click="goto(6)" translate="translate.no"></button>
@@ -303,7 +304,7 @@
           <div class="alert alert-danger"><b translate="translate.msg_click_to_save_secret"></b></div>          
           <div class="row">
             <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-              <button class="btn btn-default btn-lg btn-block" 
+              <button class="btn btn-primary btn-lg btn-block" 
                   ng-click="saveSecretToWallet(); goto(7)">
                 <i class="fa fa-floppy-o"></i>&nbsp;&nbsp;<span translate="translate.save"></span></button>
             </div>
@@ -334,7 +335,7 @@
 
         <div class="row">
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-            <button class="btn btn-default btn-lg btn-block" ng-click="createWallet()"
+            <button class="btn btn-primary btn-lg btn-block" ng-click="createWallet()"
                 ng-disabled="!(input.password && input.password == input.passwordConfirm)" translate="translate.create"></button>
           </div>
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
@@ -623,7 +624,7 @@
     </div>
   </div>
 
-  <div class="row" ng-show="walletUnlocked">
+  <div class="row" ng-show="currentAccount">
     <div class="col-md-3 col-xs-12" style="margin-top: 8px">
       <button class="btn btn-default btn-lg btn-block" ng-click="logout()">
       <i class="fa fa-sign-out"></i>&nbsp;<span translate="translate.sign_out"></span></button>
