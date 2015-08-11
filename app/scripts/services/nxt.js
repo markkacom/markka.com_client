@@ -506,10 +506,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
             '>',Emoji.emojifi(text),'</span></span>');
           }
           else {
-            html.push('&nbsp;encrypted&nbsp;<a href="#" ',
-                      'onclick="event.preventDefault(); if (angular.element(this).scope().onMessageUnlockClick) { ',
-                      'angular.element(this).scope().onMessageUnlockClick(this) }" data-recipient="',transaction.recipientRS,'" data-sender="',transaction.senderRS,'">',
-                      'unlock&nbsp;<i class="fa fa-lock"></i></a></span>');
+            // html.push('&nbsp;encrypted&nbsp;<a href="#" ',
+            //           'onclick="event.preventDefault(); if (angular.element(this).scope().onMessageUnlockClick) { ',
+            //           'angular.element(this).scope().onMessageUnlockClick(this) }" data-recipient="',transaction.recipientRS,'" data-sender="',transaction.senderRS,'">',
+            //           'unlock&nbsp;<i class="fa fa-lock"></i></a></span>');
+            html.push('</span>');
           }
           return html.join('');
         }
