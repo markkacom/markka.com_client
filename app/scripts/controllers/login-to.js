@@ -54,6 +54,7 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
   $scope.walletExists = KeyService.walletExists();
   $scope.walletUnlocked = !!KeyService.wallet;
   $scope.hideSecretphrase = true;
+  $scope.is_remember = false;
 
   var cipherTextOverride = null;
 
@@ -145,7 +146,8 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
     if ($rootScope.currentAccount) {
       var a = $rootScope.currentAccount;
       var api = nxt.get(a.id_rs);
-      $scope.state.active = 4;
+      $scope.state.active = 3;
+      $scope.is_remember = true;
       $scope.input.engine = api.engine.type == nxt.TYPE_FIM ? 'fim' : 'nxt';  
       $scope.input.secretPhrase = a.secretPhrase;
       $scope.walletExists = KeyService.walletExists();
