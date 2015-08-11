@@ -22,7 +22,7 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
   var accounts_hash       = {};
   $scope.breadcrumb       = [];
 
-  $scope.showFilter       = 'activity' == $scope.paramSection || 'inbox' == $scope.paramSection;
+  $scope.showFilter       = 'activity' == $scope.paramSection;
   $scope.showTransactionFilter = 'activity' == $scope.paramSection;
 
   if ($scope.paramEngine == 'fim') {
@@ -36,7 +36,7 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
     return;
   }
 
-  if (['inbox', 'activity', 'balance'].indexOf($scope.paramSection) == -1) {
+  if (['activity', 'balance'].indexOf($scope.paramSection) == -1) {
     $location.path('home/'+$scope.paramEngine+'/activity/latest');
     return;
   }
@@ -56,7 +56,7 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
     label: api.engine.symbol,
     active: true,
   });  
-  if ($scope.paramSection == 'activity' || $scope.paramSection == 'inbox') {
+  if ($scope.paramSection == 'activity') {
     if ($scope.paramPeriod == 'latest') {
       $scope.breadcrumb.push({
         label: 'translate.latest',
@@ -115,38 +115,20 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
   });
 
   $scope.filter = {};
-  if ($scope.paramSection == 'inbox') {
-    $scope.filter.all = false;
-    $scope.filter.payments = false;
-    $scope.filter.messages = true;
-    $scope.filter.aliases = false;
-    $scope.filter.namespacedAliases = false;
-    $scope.filter.polls = false;
-    $scope.filter.accountInfo = false;
-    $scope.filter.announceHub = false;
-    $scope.filter.goodsStore = false;
-    $scope.filter.balanceLeasing = false;
-    $scope.filter.trades = false;
-    $scope.filter.assetIssued = false;
-    $scope.filter.assetTransfer = false;
-    $scope.filter.assetOrder = false;
-  }
-  else {
-    $scope.filter.all = true;
-    $scope.filter.payments = true;
-    $scope.filter.messages = true;
-    $scope.filter.aliases = true;
-    $scope.filter.namespacedAliases = true;
-    $scope.filter.polls = true;
-    $scope.filter.accountInfo = true;
-    $scope.filter.announceHub = true;
-    $scope.filter.goodsStore = true;
-    $scope.filter.balanceLeasing = true;
-    $scope.filter.trades = true;
-    $scope.filter.assetIssued = true;
-    $scope.filter.assetTransfer = true;
-    $scope.filter.assetOrder = true;
-  }
+  $scope.filter.all = true;
+  $scope.filter.payments = true;
+  $scope.filter.messages = true;
+  $scope.filter.aliases = true;
+  $scope.filter.namespacedAliases = true;
+  $scope.filter.polls = true;
+  $scope.filter.accountInfo = true;
+  $scope.filter.announceHub = true;
+  $scope.filter.goodsStore = true;
+  $scope.filter.balanceLeasing = true;
+  $scope.filter.trades = true;
+  $scope.filter.assetIssued = true;
+  $scope.filter.assetTransfer = true;
+  $scope.filter.assetOrder = true;
 
   var promise = accountsService.getAll(api.engine.type == nxt.TYPE_FIM ? accountsService.FIM_FILTER : accountsService.NXT_FILTER);
   promise.then(function (accounts) {
@@ -177,7 +159,7 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
         }
       );
 
-      if ($scope.paramSection == 'activity' || $scope.paramSection == 'inbox') {
+      if ($scope.paramSection == 'activity') {
         $scope.provider = $scope.transactionProvider = new RecentTransactionsProvider(api, $scope, $scope.paramTimestamp, flattend, $scope.filter);
         $scope.transactionProvider.reload();
       }
@@ -212,22 +194,6 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
   $scope.filterChanged = function () {
     $scope.provider.applyFilter($scope.filter);
   }
-
-  // $scope.addAccount = function (symbol) {
-  //   modals.open('welcome', {
-  //     resolve: {
-  //       items: function () { 
-  //         return {}; 
-  //       }
-  //     }
-  //   });
-  // }
-
-  // $scope.changeAccountName = function (id_rs) {
-  //   plugins.get('transaction').setAccountInfo(id_rs, {
-  //     name: '', description: '',
-  //   });
-  // } 
 
   $scope.selectedThemeName = settings.get('themes.default.theme');
 
