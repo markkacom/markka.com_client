@@ -81,7 +81,7 @@
     <script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
     <script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
     <script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.js"></script>
-    <script src="bower_components/ng-table/ng-table.js"></script><!-- depracated - dont use-->
+    <script src="bower_components/ng-table/dist/ng-table.js"></script><!-- depracated - dont use-->
     <script src="bower_components/d3/d3.js"></script>
     <script src="bower_components/pako/dist/pako.min.js"></script>
     <script src="bower_components/ng-clip/dest/ng-clip.min.js"></script>
@@ -144,6 +144,7 @@
     <script src="scripts/providers/comment-provider.js"></script>
     <script src="scripts/providers/currency-provider.js"></script>
     <script src="scripts/providers/forgers-provider.js"></script>
+    <script src="scripts/providers/gossip-chat-messages-provider.js"></script>
     <script src="scripts/providers/messages-provider.js"></script>
     <script src="scripts/providers/namespaced-alias-provider.js"></script>
     <script src="scripts/providers/payments-provider.js"></script>
@@ -318,7 +319,7 @@
             </a>
           </li>
           <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount">
-            <a href="#/messenger/{{currentAccount.id_rs}}">
+            <a href="#/messenger/{{currentAccount.id_rs}}/gossip">
               <i class="fa fa-comment-o"></i><span class="hidden-sm">&nbsp;&nbsp;<span translate="translate.messenger"/></span>
             </a>
           </li>
