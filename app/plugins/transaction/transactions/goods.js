@@ -56,5 +56,26 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
+
+  plugin.add({
+    label: 'Devious Good',
+    id: 'dgsDelisting',
+    exclude: true,
+    execute: function (senderRS, args) {
+      args = args||{};
+      return plugin.create(angular.extend(args, {
+        title: 'Devious Good',
+        message: 'Delete a DGS good with no length restricted tags',
+        // senderRS: senderRS,
+        requestType: 'dgsDelisting',
+        // canHaveRecipient: false,
+        createArguments: function (items) {
+          return {
+            goods: items.goods
+          }
+        }
+      }));
+    }
+  });
 });
 })();
