@@ -3,7 +3,7 @@
 
 var module = angular.module('fim.base');
 module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db, 
-  settings, $timeout, $sce, serverService, plugins, requests, $interval, 
+  settings, $timeout, $sce, serverService, plugins, $interval, 
   $translate, MofoSocket, Emoji) {
 
   var FAILED_RETRIES = 0;
@@ -1011,9 +1011,6 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.crypto               = new Crypto(_type, this);
     this.renderer             = new Renderer(this);
     this.decoder              = new MessageDecoder(this);    
-
-    /* Registers AbstractEngine as NodeProvider with the requests service */
-    requests.registerNodeProvider(this.engine);
   };
   ServerAPI.prototype = {
     lock: function () {

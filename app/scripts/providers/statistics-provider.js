@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('StatisticsProvider', function (nxt, requests, $timeout) {
+module.factory('StatisticsProvider', function (nxt, $timeout) {
 
   function StatisticsProvider(api, $scope) {
     this.api                    = api;

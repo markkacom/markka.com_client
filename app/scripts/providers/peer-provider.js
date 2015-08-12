@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('PeerProvider', function (nxt, requests, $timeout, $q, $rootScope) {
+module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
 
   var NON_CONNECTED = 0, CONNECTED = 1, DISCONNECTED = 2;
 

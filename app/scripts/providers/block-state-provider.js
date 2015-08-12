@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('BlockStateProvider', function (nxt, requests, $timeout, $interval) {
+module.factory('BlockStateProvider', function (nxt, $timeout, $interval) {
 
   function BlockStateProvider(api, $scope) {
     var self         = this;

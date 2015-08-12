@@ -10,7 +10,7 @@ module.config(function($routeProvider) {
     });
 });
 
-module.controller('AccountsController', function($location, $q, $scope, modals, $routeParams, nxt, db, plugins, requests, $timeout, 
+module.controller('AccountsController', function($location, $q, $scope, modals, $routeParams, nxt, db, plugins, $timeout, 
   ActivityProvider, MessagesProvider, BlocksProvider, AliasProvider, NamespacedAliasProvider, AssetsProvider, CurrencyProvider, AccountProvider, 
   BuyOrderProvider, SellOrderProvider, AccountPostProvider, AccountForgerProvider, AccountLessorsProvider, 
   dateParser, dateFilter, accountsService, PaymentsProvider, $rootScope, serverService) {
@@ -436,7 +436,11 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     plugins.get('transaction').get('setNamespacedAlias').execute($scope.id_rs, { 
       aliasName: alias.aliasName,
       aliasURI: alias.aliasURI
-   }, true);
+    }, true);
+  }
+
+  $scope.privateChat = function () {
+
   }
 
 });

@@ -2,7 +2,7 @@
 'use strict';
 var module = angular.module('fim.base');
 module.controller('TransactionCreateModalController', function(items, $modalInstance, $scope, nxt, 
-  requests, modals, $sce, $q, plugins, i18n, $timeout, accountsService, $rootScope, Emoji) {
+  modals, $sce, $q, plugins, i18n, $timeout, accountsService, $rootScope, Emoji) {
 
   $scope.sendSuccess          = false;
   $scope.show                 = {};

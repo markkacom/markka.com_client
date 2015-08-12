@@ -9,7 +9,7 @@ module.config(function($routeProvider) {
     });
 });
 
-module.controller('ActivityController', function($scope, $location, $routeParams, nxt, requests, $q, $sce, 
+module.controller('ActivityController', function($scope, $location, $routeParams, nxt, $q, $sce, 
   ActivityProvider, BlocksProvider, ForgersProvider, StatisticsProvider, AllAssetsProvider, BlockStateProvider,
   $timeout, dateParser, dateFilter, $rootScope) {
 
