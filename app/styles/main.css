@@ -173,6 +173,170 @@ fieldset {
 
 /*# sourceMappingURL=main.css.map */
 
+.goods-page .past-orders-button {
+  height: 39px; 
+  padding-top: 8px;
+}
+
+.goods-page .add-goods-button {
+  height: 39px; 
+  padding-top: 8px; 
+  margin-right: 10px;
+}
+
+.goods-details-page .past-orders-button {
+  height: 39px; 
+  padding-top: 8px; 
+  margin-right: 10px;
+}
+
+.goods-details-page .goods-button {
+  height: 39px; 
+  padding-top: 8px;
+}
+
+.goods-details-page .goods-details1 {
+  text-align: center;
+}
+
+.goods-details-page .goods-details1 .price {
+  font-size: 15px; 
+  margin-right: 10px; 
+  margin-top: 20px; 
+  margin-bottom: 20px;
+}
+
+.goods-details-page .goods-details1 .quantity {
+  font-size: 15px; 
+  margin-top: 20px; 
+  margin-bottom: 20px;
+}
+
+.goods-details-page .goods-details2 {
+  padding-left: 10%; 
+  padding-right: 10%;
+}
+
+.goods-details-page .goods-details2 .description {
+  margin-top: 20px; 
+  margin-bottom: 20px;
+}
+
+.goods-details-page .goods-details3 {
+  text-align: center; 
+  margin-top: 10px;
+}
+
+.goods-details-page .goods-details3 .add-to-cart {
+  width: 9.5%; 
+  border-radius: 4px;
+}
+
+.goods-details-page .goods-details3 .add-to-cart i {
+  font-size: 18px; 
+  margin-right: 8px;
+}
+
+.goods-details-page .goods-details3 .cancel-button {
+  width: 9.5%; 
+  border-radius: 4px;
+}
+
+.cart-page .top-buttons .goods-button {
+  height: 39px; 
+  padding-top: 8px;
+}
+
+.cart-page .top-buttons .past-orders {
+  height: 39px; 
+  padding-top: 8px; 
+  margin-right: 10px;
+}
+
+.cart-page .cart-table {
+  margin-top: 5%; 
+  margin-bottom: 0px;
+}
+
+.cart-page .cart-table .itemsRow {
+  height: 160px; 
+  border-bottom: 1px solid #DDDDDD;
+}
+
+.cart-page .cart-table .itemsRow .image {
+  width: 100px; 
+  padding-left: 50px;
+}
+
+.cart-page .cart-table .itemsRow .image img {
+  width: 100px; 
+  padding-top: 40px;
+}
+
+.cart-page .cart-table .itemsRow .item-desc {
+  width: 30%; 
+  padding-top: 12px; 
+  font-size: 15px; 
+  padding-top: 40px;
+}
+
+.cart-page .cart-table .itemsRow .item-desc .remove-item {
+  cursor: pointer; 
+  margin-right: 20px; 
+  color: #0F73D5; 
+  text-decoration: underline;
+}
+
+.cart-page .cart-table .itemsRow .quantity {
+  padding-top: 55px;
+}
+
+.cart-page .cart-table .itemsRow .price {
+  padding-top: 55px; 
+  font-size: 15px;
+}
+
+.cart-page .cart-table .total-price {
+  padding-top: 55px; 
+  font-size: 15px; 
+  width: 14.1%;
+}
+
+.cart-page .order-buttons {
+  padding: 0px; 
+  text-align: right;
+}
+
+.cart-page .order-buttons .back-to-goods {
+  margin-top: 20px; 
+  height: 37px; 
+  border-radius: 4px;
+}
+
+.cart-page .order-buttons .place-order {
+  margin-right: 30px; 
+  background-color: #F76618; 
+  border-radius: 4px; 
+  border: none; 
+  width: 200px; 
+  margin-top: 20px;
+}
+
+.cart-page .no-added .no-added-col {
+  text-align: center; 
+  padding-top: 10%;
+}
+
+.cart-page .no-added .no-added-col label {
+  font-size: 16px; 
+  margin-bottom: 15px;
+}
+
+.past-orders-page .goods-button {
+  height: 39px; 
+  padding-top: 8px;
+}
+
 .cart-count {
   height: 39px;
   margin: 0px;

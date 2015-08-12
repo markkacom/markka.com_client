@@ -104,3 +104,4 @@ module.config(['ngClipProvider', function(ngClipProvider) {
 }]);
 
 })();
+
