@@ -13,10 +13,11 @@ module.controller('CartCtrl', function($location, $q, $scope, modals, $routePara
 		// console.log(api);
 
 		$scope.shoppingCart = shoppingCartService.get();
-		// console.log($scope.shoppingCart);
+		console.log($scope.shoppingCart);
 
 		$scope.placeOrder = function() {
-			$scope.shoppingCart.forEach(function(abc) {
+			processCart($scope.shoppingCart);
+			/*$scope.shoppingCart.forEach(function(abc) {
 				// console.log(abc);
 				var time = new Date;
 				console.log(time.getTime);
@@ -24,10 +25,29 @@ module.controller('CartCtrl', function($location, $q, $scope, modals, $routePara
 					requestType: "dgsPurchase",
 					goods: abc.goods,
 					priceNQT: abc.priceNQT,
-					deliveryDeadlineTimestamp: nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168
+					deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
 				}
-				plugins.get('transaction').get('dgsPurchase').execute($scope.id_rs, order_args);
-			})
+				plugins.get('transaction').get('dgsPurchase').execute($scope.id_rs, order_args).then(function(abcd) {
+					console.log('ok pressed', abcd);
+				})
+			})*/
+		}
+
+		function processCart(shoppingCart) {
+			if(shoppingCart.length > 0) {
+				var shoppingCartGoods = shoppingCart[0];
+				var order_args = {
+					requestType: "dgsPurchase",
+					goods: shoppingCartGoods.goods,
+					priceNQT: shoppingCartGoods.priceNQT,
+					deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
+				}
+				plugins.get('transaction').get('dgsPurchase').execute($scope.id_rs, order_args).then(function() {
+					shoppingCartService.removeItem(0);
+					shoppingCart.splice(0,1);
+					processCart(shoppingCart);
+				});
+			}
 		}
 
 		$scope.remove = function(index) {

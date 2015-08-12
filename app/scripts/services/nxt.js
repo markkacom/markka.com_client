@@ -1138,7 +1138,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     }
 
     if (transaction.recipient !== data.recipient) {
-      if (data.recipient == "1739068987193023818" && transaction.recipient == "0") {
+      if (data.recipient == "1739068987193023818") {
         //ok
       } else {
         console.log('verifyAndSignTransactionBytes.failed | transaction.recipient !== data.recipient', transaction, data);
