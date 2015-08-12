@@ -32,6 +32,10 @@ module.config(function($routeProvider) {
       templateUrl: 'partials/goods-details.html',
       controller: 'GoodsDetailsCtrl'
     })
+    .when('/accounts/:id_rs/goods/viewcart', {
+      templateUrl: 'partials/cart.html',
+      controller: 'CartCtrl'
+    })
 });
 
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {
