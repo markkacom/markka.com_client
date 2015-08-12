@@ -210,19 +210,33 @@ fieldset {
 }
 
 .search-form {
-  /*float: left;*/
-  width: 100%;
+  float: left;
+  width: 80%;
 }
 
 .search-form input {
   margin-top: 20px; 
   margin-bottom: 20px; 
   display: inline-block; 
-  width: 95%;
+  width: 90%;
 }
 
 .search-form button {
   margin-top: -4px;
+}
+
+.filter-by-tags {
+  padding-top: 15px;
+}
+
+.filter-by-tags select {
+  margin-bottom: 20px;
+  min-width: 13%;
+  min-height: 34px;
+  padding-left: 10px;
+  border-radius: 4px;
+  margin-left: 10px;
+  margin-top: 5px;
 }
 
 
