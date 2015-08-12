@@ -172,3 +172,31 @@ fieldset {
 }
 
 /*# sourceMappingURL=main.css.map */
+
+.cart-count {
+  height: 39px;
+  margin: 0px;
+  display: -webkit-flex;
+  -webkit-flex-wrap: wrap;
+  -webkit-align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-right: 10px;
+  font-size: 15px;
+  background-color: #5F3F59;
+  color: #fff;
+  width: 100px;
+  padding-left: 24px;
+  border-radius: 4px;
+}
+
+.cart-count:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+
+
+
+

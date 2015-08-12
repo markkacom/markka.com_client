@@ -100,6 +100,9 @@
           <li ng-repeat="t in transactions">
             <a href ng-click="executeTransaction(t.id)">{{t.label}}</a>
           </li>
+          <li>
+            <a href="#/accounts/{{id_rs}}/goods">Goods</a>
+          </li>
         </ul>
       </li>      
       <li ng-show="showFilter">
