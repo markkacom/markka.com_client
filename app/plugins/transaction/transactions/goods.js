@@ -6,6 +6,8 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   
   var plugin = plugins.get('transaction');
 
+  // Add Goods
+
   plugin.add({
     label: 'Devious Good',
     id: 'dgsListing',
@@ -57,6 +59,8 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     }
   });
 
+  // Delete Goods
+
   plugin.add({
     label: 'Devious Good',
     id: 'dgsDelisting',
@@ -74,6 +78,46 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             goods: items.goods
           }
         }
+      }));
+    }
+  });
+
+  // Purchase Goods
+
+  plugin.add({
+    label: 'Devious Good',
+    id: 'dgsPurchase',
+    exclude: true,
+    execute: function (senderRS, args) {
+      console.log(args);
+      args = args||{};
+      return plugin.create(angular.extend(args, {
+        title: 'Devious Good',
+        message: 'Purchase a DGS good',
+        senderRS: senderRS,
+        requestType: 'dgsPurchase',
+        canHaveRecipient: false,
+        createArguments: function (items) {
+          return {
+            goods: items.goods, 
+            priceNQT: items.priceNQT,
+            quantity: String(items.quantity),
+            deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp
+            // priceNQT: nxt.util.convertToNQT(items.priceNXT)
+          }
+        },
+        fields: [{
+          label: 'Quantity',
+          name: 'quantity',
+          type: 'text',
+          value: args.quantity||''
+        }, 
+        {
+          label: 'deliveryDeadlineTimestamp',
+          name: 'deliveryDeadlineTimestamp',
+          type: 'text',
+          value: args.deliveryDeadlineTimestamp||''
+        }]
       }));
     }
   });
