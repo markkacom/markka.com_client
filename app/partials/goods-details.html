@@ -1,33 +1,35 @@
-	<div class="row">
-		<div class="col-md-12">
-      <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-primary pull-right" style= "height: 39px; padding-top: 8px;">Goods</a>
-      <a href="#/accounts/{{id_rs}}/goods/viewcart" class= "cart-count pull-right">Cart ({{shoppingCart.length}})</a>
-      <a href="#/accounts/{{id_rs}}/goods/past/orders" class= "btn btn-default pull-right" style= "height: 39px; padding-top: 8px; margin-right: 10px;">Past Orders</a>
-		</div>
-	</div>
-  <div class="row">
-    <div class="col-md-12">
-      <h4><b>Name: </b>{{goodsDetails.name}}</h4>
-      <p><b>Id: </b>{{goodsDetails.goods}}</p>
+	<div class="goods-details-page">
+    <div class="row">
+  		<div class="col-md-12">
+        <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-primary pull-right goods-button">Goods</a>
+        <a href="#/accounts/{{id_rs}}/goods/viewcart" class= "cart-count pull-right">Cart ({{shoppingCart.length}})</a>
+        <a href="#/accounts/{{id_rs}}/goods/past/orders" class= "btn btn-default pull-right past-orders-button">Past Orders</a>
+  		</div>
+  	</div>
+    <div class="row">
+      <div class="col-md-12">
+        <h4><b>Name: </b>{{goodsDetails.name}}</h4>
+        <p><b>Id: </b>{{goodsDetails.goods}}</p>
+      </div>
     </div>
+  	<div class="row">
+  		<div class="col-md-12">
+  			<div style= "text-align: center;">
+          <img src="images/imac.jpg" style= "width: 300px;">
+        </div>
+        <div class= "goods-details1">
+          <label class= "price"><b>Price: </b>{{goodsDetails.priceNQT}}</label>
+          <label class= "quantity"><b>Quantity: </b>{{goodsDetails.quantity}}</label>
+        </div>
+        <div class= "goods-details2">
+          <p class= "description">{{goodsDetails.description}}</p>
+          <p><b>Tags:</b> {{goodsDetails.tags}}</p>
+        </div>
+        <div class= "goods-details3">
+          <a class= "btn btn-primary add-to-cart" ng-click= "addToCart(goodsDetails)"><i class="fa fa-shopping-cart"></i> Add To Cart</a>
+          <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-danger cancel-button">Cancel</a>
+        </div>
+  		</div>
+  	</div>
+  <!-- #/accounts/{{id_rs}}/goods/viewcart -->
   </div>
-	<div class="row">
-		<div class="col-md-12">
-			<div style= "text-align: center;">
-        <img src="images/imac.jpg" style= "width: 300px;">
-      </div>
-      <div style= "text-align: center;">
-        <label style= "font-size: 15px; margin-right: 10px; margin-top: 20px; margin-bottom: 20px;"><b>Price: </b>{{goodsDetails.priceNQT}}</label>
-        <label style= "font-size: 15px; margin-top: 20px; margin-bottom: 20px;"><b>Quantity: </b>{{goodsDetails.quantity}}</label>
-      </div>
-      <div style= "padding-left: 10%; padding-right: 10%;">
-        <p style= "margin-top: 20px; margin-bottom: 20px;">{{goodsDetails.description}}</p>
-        <p><b>Tags:</b> {{goodsDetails.tags}}</p>
-      </div>
-      <div style= "text-align: center; margin-top: 10px;">
-        <a class= "btn btn-primary" style= "width: 9.5%; border-radius: 4px;" ng-click= "addToCart(goodsDetails)"><i class="fa fa-shopping-cart" style= "font-size: 18px; margin-right: 8px;"></i> Add To Cart</a>
-        <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-danger" style= "width: 9.5%; border-radius: 4px;">Cancel</a>
-      </div>
-		</div>
-	</div>
-<!-- #/accounts/{{id_rs}}/goods/viewcart -->
