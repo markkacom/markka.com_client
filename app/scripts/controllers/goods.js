@@ -12,20 +12,20 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
     $scope.filter         = {};
 
 		var api = nxt.get($scope.id_rs);
-		console.log(api);
+		// console.log(api);
 
 		$scope.shoppingCart = shoppingCartService.get();
-		console.log($scope.shoppingCart);
+		// console.log($scope.shoppingCart);
 
-		var getAllGoodsargs = {
-			requestType: 'getDGSGoods',
-			seller: $scope.id_rs
-		}
-		api.engine.socket().callAPIFunction(getAllGoodsargs).then(function(data) {
-			console.log(data);
-			$scope.allGoods = data.goods;
-			console.log($scope.allGoods.goods);
-		})
+		// var getAllGoodsargs = {
+		// 	requestType: 'getDGSGoods',
+		// 	seller: $scope.id_rs
+		// }
+		// api.engine.socket().callAPIFunction(getAllGoodsargs).then(function(data) {
+		// 	console.log(data);
+		// 	$scope.allGoods = data.goods;
+		// 	console.log($scope.allGoods.goods);
+		// })
 
 		$scope.deleteGood = function(good) {
 			var deleteGoodArgs = {
@@ -35,17 +35,17 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
         plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs);
 		}
 
-		// $scope.details = function(goodsDetails) {
-		// 	console.log(goodsDetails);
-		// 	$location.path('/accounts/'+$scope.id_rs+'/goods/'+goodsDetails.goods+'/details');
-		// }
+		$scope.details = function(goodsDetails) {
+			// console.log(goodsDetails);
+			$location.path('/accounts/'+$scope.id_rs+'/goods/'+goodsDetails.goods+'/details');
+		}
 
 		$scope.add = function() {
 			var args = {
         requestType: 'dgsListing'
       }
 	    var a =plugins.get('transaction').get('dgsListing').execute($scope.id_rs, args)
-      console.log(a);
+      // console.log(a);
 		}
 
 	  $scope.showGoods = new GoodsProvider(api, $scope, $scope.id_rs);

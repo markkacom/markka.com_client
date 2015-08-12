@@ -28,6 +28,10 @@ module.config(function($routeProvider) {
       templateUrl: 'partials/goods.html',
       controller: 'GoodsCtrl'
     })
+    .when('/accounts/:id_rs/goods/:goods_id/details', {
+      templateUrl: 'partials/goods-details.html',
+      controller: 'GoodsDetailsCtrl'
+    })
 });
 
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {
