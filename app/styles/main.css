@@ -239,6 +239,29 @@ fieldset {
   margin-top: 5px;
 }
 
+.past-orders-div {
+  cursor: pointer; 
+  border: 1px solid #dddddd;
+  width: 65%;
+  display: inline-block;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.past-orders-div p, .past-orders-div h4 {
+  margin-bottom: 10px;
+}
+
+.past-orders-div p:last-child {
+  margin-bottom: 0px;
+}
+
+.past-orders-div a:hover {
+  text-decoration: none;
+  color: #555555;
+  background-color: #fff;
+}
+
 
 
 
