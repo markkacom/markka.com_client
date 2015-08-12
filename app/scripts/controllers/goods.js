@@ -44,8 +44,10 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
 			var args = {
         requestType: 'dgsListing'
       }
-	    var a =plugins.get('transaction').get('dgsListing').execute($scope.id_rs, args)
-      // console.log(a);
+	    plugins.get('transaction').get('dgsListing').execute($scope.id_rs, args).then(function(addedGoods) {
+        $scope.isAdded = addedGoods;
+        $scope.priceNQT = nxt.util.convertToNQT(addedGoods.priceNXT);
+      })
 		}
 
 	  $scope.showGoods = new GoodsProvider(api, $scope, $scope.id_rs);
