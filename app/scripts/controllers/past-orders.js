@@ -22,6 +22,7 @@ module.controller('PastOrdersCtrl', function($location, $q, $scope, modals, $rou
 		}
 
 		api.engine.socket().callAPIFunction(past_orders_args).then(function(data) {
+			$scope.pastOrders = data;
 			console.log(data);
 		})
 
