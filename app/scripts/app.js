@@ -22,6 +22,14 @@ var module = angular.module('fim.base', [
   'ngClipboard'
 ]);
 
+module.config(function($routeProvider) {
+  $routeProvider
+    .when('/accounts/:id_rs/goods', {
+      templateUrl: 'partials/goods.html',
+      controller: 'GoodsCtrl'
+    })
+});
+
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {
   $log.log('fim.base application started');
   if (isNodeJS) {
