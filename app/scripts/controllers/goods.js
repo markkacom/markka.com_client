@@ -27,13 +27,13 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
 			console.log($scope.allGoods.goods);
 		})
 
-		// $scope.deleteGood = function(good) {
-		// 	var deleteGoodArgs = {
-		// 		requestType: 'dgsDelisting',
-		// 		goods: good.goods
-		// 	}
-    //     plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs);
-		// }
+		$scope.deleteGood = function(good) {
+			var deleteGoodArgs = {
+				requestType: 'dgsDelisting',
+				goods: good.goods
+			}
+        plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs);
+		}
 
 		// $scope.details = function(goodsDetails) {
 		// 	console.log(goodsDetails);
