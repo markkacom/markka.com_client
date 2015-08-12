@@ -1,0 +1,38 @@
+  <div class="row">
+    <div class="col-md-12">
+      <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-primary pull-right" style= "height: 39px; padding-top: 8px;">Goods</a>
+      <a href="#/accounts/{{id_rs}}/goods/viewcart" class= "cart-count pull-right">Cart ({{shoppingCart.length}})</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div>
+        <form ng:submit class= "search-form">
+          <input type= "text" placeholder= "Search for Goods" ng-model= "query" class= "form-control">
+          <button ng-click="search(query)" class= "btn btn-default">Search</button>
+        </form>
+        <!-- <div class= "filter-by-tags">
+          <label>Filter by Tags</label>
+          <select ng-model= "selectedTags">
+            <option ng-repeat= "value in uniqueTags">{{value}}</option>
+          </select> 
+        </div> -->
+      </div>
+      <div ng-if= "searchedGoods.length == 0">
+        <label>No Results</label>
+      </div>
+      <div class="list-group search-result-div" ng-repeat= "goods in searchedGoods" ng-if= "searchedGoods.length > 0" ng-click= "details(goods)">
+          <img src="images/imac.jpg" style= "width: 185px; float: left; z-index: 1000000;">
+        <a class="list-group-item" style= "border: none; z-index: -1;">
+          <div style= "display: inline-block; margin-left: 15px;">
+            <h4 class="list-group-item-heading">{{goods.name}}</h4>
+            <p class="list-group-item-text" ng-if= "goods.description">{{goods.description}}</p>
+            <p class="list-group-item-text" ng-if= "goods.tags"> <b>Tags:</b> {{goods.tags}}</p>
+            <p class="list-group-item-text"><b>Quantity:</b> {{goods.quantity}}</p>
+            <p class="list-group-item-text"> <b>PriceNQT:</b> {{goods.priceNQT}}</p>
+          </div>
+        </a>
+        <button class= "btn btn-primary" style= "margin-left: 15px; margin-bottom: 10px;" ng-click= "addToCart(goods)">Add to Cart</button>
+      </div>
+    </div>
+  </div>
