@@ -21,6 +21,14 @@
                   </tr>
                 </thead>
                  <tbody>
+                  <tr style= "cursor: pointer;" ng-if= "isAdded">
+                    <td ng-click= "details(goods)">{{isAdded.name}}</td>
+                    <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
+                    <td ng-click= "details(goods)">{{isAdded.tags}}</td>
+                    <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
+                    <td ng-click= "details(goods)">{{priceNQT}}</td>
+                    <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
+                  </tr>
                   <tr ng-repeat= "goods in showGoods.allGoods" style= "cursor: pointer;">
                     <td ng-click= "details(goods)">{{goods.name}}</td>
                     <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
