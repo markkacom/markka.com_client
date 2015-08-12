@@ -196,6 +196,35 @@ fieldset {
   text-decoration: none;
 }
 
+.search-result-div {
+  cursor: pointer; 
+  border: 1px solid #dddddd;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.search-result-div a:hover {
+  text-decoration: none;
+  color: #555555;
+  background-color: #fff;
+}
+
+.search-form {
+  /*float: left;*/
+  width: 100%;
+}
+
+.search-form input {
+  margin-top: 20px; 
+  margin-bottom: 20px; 
+  display: inline-block; 
+  width: 95%;
+}
+
+.search-form button {
+  margin-top: -4px;
+}
+
 
 
 
