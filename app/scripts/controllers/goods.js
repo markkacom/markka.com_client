@@ -32,7 +32,9 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
 				requestType: 'dgsDelisting',
 				goods: good.goods
 			}
-        plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs);
+        plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs).then(function(deletedGood) {
+          $scope.showGoods.allGoods.splice(deletedGood, 1);
+        })
 		}
 
 		$scope.details = function(goodsDetails) {
