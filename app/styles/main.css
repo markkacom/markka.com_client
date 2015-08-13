@@ -173,14 +173,18 @@ fieldset {
 
 /*# sourceMappingURL=main.css.map */
 
-.goods-page .past-orders-button {
-  height: 39px; 
-  padding-top: 8px;
+.goods-page .goods-col1 {
+  text-align: right;
 }
 
-.goods-page .add-goods-button {
-  height: 39px; 
-  padding-top: 8px; 
+.goods-page .goods-col1 .past-orders-button {
+  /*height: 39px; */
+  /*padding-top: 8px;*/
+}
+
+.goods-page .goods-col1 .add-goods-button {
+  /*height: 39px; */
+  /*padding-top: 8px; */
   margin-right: 10px;
 }
 
@@ -424,6 +428,19 @@ fieldset {
   text-decoration: none;
   color: #555555;
   background-color: #fff;
+}
+
+@media screen and (max-width: 768px) {
+  .goods-page .goods-col1 {
+    text-align: left;
+  }
+
+  .goods-page .goods-col1 .add-goods-button {
+    /*height: 39px; */
+    /*padding-top: 8px; */
+    margin-right: 10px;
+    margin-top: 10px;
+  }
 }
 
 
