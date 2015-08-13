@@ -188,15 +188,19 @@ fieldset {
   margin-right: 10px;
 }
 
+.goods-details-page .goods-details-col1 {
+  text-align: right;
+}
+
 .goods-details-page .past-orders-button {
-  height: 39px; 
-  padding-top: 8px; 
+  /*height: 39px; */
+  /*padding-top: 8px; */
   margin-right: 10px;
 }
 
 .goods-details-page .goods-button {
-  height: 39px; 
-  padding-top: 8px;
+  /*height: 39px; */
+  /*padding-top: 8px;*/
 }
 
 .goods-details-page .goods-details1 {
@@ -232,7 +236,7 @@ fieldset {
 }
 
 .goods-details-page .goods-details3 .add-to-cart {
-  width: 9.5%; 
+  width: 140px; 
   border-radius: 4px;
 }
 
@@ -242,7 +246,7 @@ fieldset {
 }
 
 .goods-details-page .goods-details3 .cancel-button {
-  width: 9.5%; 
+  width: 140px; 
   border-radius: 4px;
 }
 
@@ -440,6 +444,26 @@ fieldset {
     /*padding-top: 8px; */
     margin-right: 10px;
     margin-top: 10px;
+  }
+
+  .goods-details-page .goods-details-col1 {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+  .goods-details-page .goods-details3 .add-to-cart {
+    width: 50%;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .goods-details-page .goods-details3 .cancel-button {
+    width: 50%;
+    border-radius: 4px;
+  }
+
+  .goods-details-page .goods-details2 {
+    padding-left: 0%; 
+    padding-right: 0%; 
   }
 }
 
