@@ -345,8 +345,8 @@ fieldset {
 }
 
 .past-orders-page .goods-button {
-  height: 39px; 
-  padding-top: 8px;
+  /*height: 39px; */
+  /*padding-top: 8px;*/
 }
 
 .cart-count {
@@ -413,6 +413,10 @@ fieldset {
   border-radius: 4px;
   margin-left: 10px;
   margin-top: 5px;
+}
+
+.past-orders-page .past-order-col1 {
+  text-align: right;
 }
 
 .past-orders-div {
@@ -506,6 +510,17 @@ fieldset {
   .cart-page .order-buttons .place-order {
     height: 37px;
   }
+
+  .past-orders-page .past-order-col1 {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .past-orders-div {
+    width: 100%;
+  }
+
+
 }
 
 
