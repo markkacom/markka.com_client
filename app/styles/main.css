@@ -250,14 +250,18 @@ fieldset {
   border-radius: 4px;
 }
 
+.cart-page .top-buttons {
+  text-align: right;
+}
+
 .cart-page .top-buttons .goods-button {
-  height: 39px; 
-  padding-top: 8px;
+  /*height: 39px; */
+  /*padding-top: 8px;*/
 }
 
 .cart-page .top-buttons .past-orders {
-  height: 39px; 
-  padding-top: 8px; 
+  /*height: 39px; */
+  /*padding-top: 8px; */
   margin-right: 10px;
 }
 
@@ -464,6 +468,43 @@ fieldset {
   .goods-details-page .goods-details2 {
     padding-left: 0%; 
     padding-right: 0%; 
+  }
+
+  .cart-page .top-buttons {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .cart-page .cart-table {
+    margin-top: 0%; 
+    margin-bottom: 0px;
+  }
+
+  .cart-page .cart-table .itemsRow .image {
+    width: auto; 
+    padding-left: 0px; 
+  }
+
+  .cart-page .cart-table .itemsRow .price {
+    padding-top: 40px;
+    font-size: 15px;
+  }
+
+  .cart-page .cart-table .itemsRow .item-desc {
+    width: auto; 
+    padding-top: 12px;
+    font-size: 15px;
+    padding-top: 40px;
+  }
+
+  .cart-page .cart-table .total-price {
+    padding-top: 40px;
+    font-size: 15px;
+    width: auto; 
+  }
+
+  .cart-page .order-buttons .place-order {
+    height: 37px;
   }
 }
 
