@@ -442,6 +442,31 @@ fieldset {
   background-color: #fff;
 }
 
+.search-goods-page .search-col1 {
+  text-align: right;
+}
+
+.search-result-div img {
+  width: 185px; 
+  float: left; 
+  z-index: 1000000;
+}
+
+.search-result-div a {
+  border: none; 
+  z-index: -1;
+}
+
+.search-result-div a div {
+  display: inline-block; 
+  margin-left: 15px;
+}
+
+.search-result-div button {
+  margin-left: 15px; 
+  margin-bottom: 10px;
+}
+
 @media screen and (max-width: 768px) {
   .goods-page .goods-col1 {
     text-align: left;
@@ -518,6 +543,55 @@ fieldset {
 
   .past-orders-div {
     width: 100%;
+  }
+
+  .search-goods-page .search-col1 {
+    text-align: left;
+  }
+
+  .search-form {
+    float: none; 
+    width: 100%;
+  }
+
+  .search-form input {
+    width: 70%;
+  }
+
+  .filter-by-tags {
+    padding-top: 0px;
+  }
+
+  .filter-by-tags select {
+    margin-left: 0px; 
+    width: 91%;
+  }
+
+  .search-result-div {
+    cursor: pointer;
+    border: 1px solid #dddddd;
+    padding-top: 10px;
+    padding-left: 0px; 
+    text-align: center;
+  }
+
+  .search-result-div img {
+    float: none;
+  }
+
+  .search-result-div a {
+    border: none; 
+    z-index: -1;
+  }
+
+  .search-result-div a div {
+    display: inline-block; 
+    margin-left: 0px;
+  }
+
+  .search-result-div button {
+    margin-left: 0px; 
+    margin-bottom: 10px;
   }
 
 
