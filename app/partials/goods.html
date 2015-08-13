@@ -1,44 +1,46 @@
   <div class="goods-page">
     <div class="row">
-      <div class="col-md-12" style= "margin-bottom: 20px;">
-        <a href="#/accounts/{{id_rs}}/goods/past/orders" class= "btn btn-default pull-right past-orders-button">Past Orders</a>
-        <a href="#/accounts/{{id_rs}}/goods/viewcart" class= "cart-count pull-right">Cart ({{shoppingCart.length}})</a>
-        <a href="#/accounts/{{id_rs}}/goods/search" class= "cart-count pull-right" style= "width: 145px;">Search Goods</a>
-        <a ng-click= "add()" class= "btn btn-primary pull-right add-goods-button">Add Goods</a>
+      <div class="col-md-12 goods-col1" style= "margin-bottom: 20px;">
+        <a href="#/accounts/{{id_rs}}/goods/past/orders" class= "btn btn-default past-orders-button">Past Orders</a>
+        <a href="#/accounts/{{id_rs}}/goods/viewcart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+        <a href="#/accounts/{{id_rs}}/goods/search" class= "btn btn-default" style= "width: 120px;">Search Goods</a>
+        <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Goods</a>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
-        <table class="table table-condensed goods-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <!-- <th>Description</th> -->
-                    <th>Tags</th>
-                    <th>Quantity</th>
-                    <th>PriceNQT</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                 <tbody>
-                  <tr style= "cursor: pointer;" ng-if= "isAdded">
-                    <td ng-click= "details(goods)">{{isAdded.name}}</td>
-                    <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
-                    <td ng-click= "details(goods)">{{isAdded.tags}}</td>
-                    <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
-                    <td ng-click= "details(goods)">{{priceNQT}}</td>
-                    <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
-                  </tr>
-                  <tr ng-repeat= "goods in showGoods.allGoods" style= "cursor: pointer;">
-                    <td ng-click= "details(goods)">{{goods.name}}</td>
-                    <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
-                    <td ng-click= "details(goods)">{{goods.tags}}</td>
-                    <td ng-click= "details(goods)">{{goods.quantity}}</td>
-                    <td ng-click= "details(goods)">{{goods.priceNQT}}</td>
-                    <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
-                  </tr>
-                </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table goods-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <!-- <th>Description</th> -->
+                      <th>Tags</th>
+                      <th>Quantity</th>
+                      <th>PriceNQT</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                   <tbody>
+                    <tr style= "cursor: pointer;" ng-if= "isAdded">
+                      <td ng-click= "details(goods)">{{isAdded.name}}</td>
+                      <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
+                      <td ng-click= "details(goods)">{{isAdded.tags}}</td>
+                      <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
+                      <td ng-click= "details(goods)">{{priceNQT}}</td>
+                      <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
+                    </tr>
+                    <tr ng-repeat= "goods in showGoods.allGoods" style= "cursor: pointer;">
+                      <td ng-click= "details(goods)">{{goods.name}}</td>
+                      <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
+                      <td ng-click= "details(goods)">{{goods.tags}}</td>
+                      <td ng-click= "details(goods)">{{goods.quantity}}</td>
+                      <td ng-click= "details(goods)">{{goods.priceNQT}}</td>
+                      <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
+                    </tr>
+                  </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
