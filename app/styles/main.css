@@ -280,6 +280,12 @@ fieldset {
   padding-left: 50px;
 }
 
+.cart-page .cart-table .itemsRow .no-image img {
+  padding: 0px;
+  width: 150px;
+  /*margin-left: -30px;*/
+}
+
 .cart-page .cart-table .itemsRow .image img {
   width: 100px; 
   padding-top: 40px;
@@ -447,7 +453,7 @@ fieldset {
 }
 
 .search-result-div img {
-  width: 185px; 
+  width: 150px; 
   float: left; 
   z-index: 1000000;
 }
@@ -512,6 +518,12 @@ fieldset {
   .cart-page .cart-table .itemsRow .image {
     width: auto; 
     padding-left: 0px; 
+  }
+
+  .cart-page .cart-table .itemsRow .no-image img {
+    padding: 0px;
+    width: 150px;
+    margin-left: -30px;
   }
 
   .cart-page .cart-table .itemsRow .price {

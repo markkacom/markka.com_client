@@ -53,7 +53,7 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
 		}
 
 	  $scope.showGoods = new GoodsProvider(api, $scope, $scope.id_rs);
-  	$scope.showGoods.reload();
+  	 $scope.showGoods.reload();
 
   	$scope.provider = new GoodsPostProvider(api, $scope, 5, $scope.id_rs);
     $scope.provider.reload();

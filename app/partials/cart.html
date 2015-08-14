@@ -24,7 +24,8 @@
                   </thead>
                    <tbody>
                   	<tr class= "itemsRow" ng-repeat= "items in shoppingCart">
-                      <td class= "image"> <img src="images/imac.jpg"> </td>
+                      <td class= "image" ng-if= "items.image"> <img src="{{items.image}}"> </td>
+                      <td class= "no-image" ng-if="!items.image"><img src="images/no-image.jpg"></td>
                   		<td class= "item-desc">
                         <p><b>Name: </b>{{items.name}}</p>
                         <p><b>Seller: </b>{{items.seller}}</p>

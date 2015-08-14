@@ -15,6 +15,19 @@ module.controller('CartCtrl', function($location, $q, $scope, modals, $routePara
 		$scope.shoppingCart = shoppingCartService.get();
 		console.log($scope.shoppingCart);
 
+		$scope.shoppingCart.forEach(function(good) {
+					try {
+					  	var data = JSON.parse(good.description);
+					} catch(ex) {
+					  	console.log("Unable to parse");
+					}
+					if(data) {
+					  	good.description = data.description;
+					  	good.image = data.image;
+						good.callback = data.callback;
+					}
+				});
+
 		$scope.placeOrder = function() {
 			processCart($scope.shoppingCart);
 			/*$scope.shoppingCart.forEach(function(abc) {
