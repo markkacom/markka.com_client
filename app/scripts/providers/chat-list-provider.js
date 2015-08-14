@@ -3,7 +3,7 @@
 var module = angular.module('fim.base');
 module.factory('ChatListProvider', function (nxt, $q, IndexedEntityProvider) {
   
-  function ChatListProvider(api, $scope, pageSize, account) {
+  function ChatListProvider(api, $scope, pageSize, account, gossip) {
     this.init(api, $scope, pageSize);
     this.account = account;
     this.nameFilter = null;
@@ -12,6 +12,7 @@ module.factory('ChatListProvider', function (nxt, $q, IndexedEntityProvider) {
     this.subscribe('removedUnConfirmedTransactions-'+account_id, this.delayedReload);
     this.subscribe('addedUnConfirmedTransactions-'+account_id, this.delayedReload);
     this.subscribe('addedConfirmedTransactions-'+account_id, this.delayedReload);
+    this.subscribe('ADDEDGOSSIP*'+account_id, this.delayedReload);
   }
   angular.extend(ChatListProvider.prototype, IndexedEntityProvider.prototype, {
 
@@ -41,16 +42,6 @@ module.factory('ChatListProvider', function (nxt, $q, IndexedEntityProvider) {
 
     dataIterator: function (data) {
       var chats = data.chats||[];
-
-      // /* TODO there is something wrong with SQL query on the server, it SHOULD return UNIQUE chats */
-      // chats.forEach(function (chat) {
-      //   if (duplicates[chat.accountRS] && duplicates[chat.accountRS].timestamp < chat.timestamp) {
-      //     duplicates[chat.accountRS].timestamp = chat.timestamp;
-      //   }
-      //   else {
-      //     duplicates[chat.accountRS] = chat;
-      //   }
-      // });
       for (var i=0; i<chats.length; i++) {
         this.translate(chats[i]);
       }
