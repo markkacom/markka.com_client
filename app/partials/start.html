@@ -16,7 +16,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-6 col-md-offset-3" style="padding-bottom: 15px">
+    <div class="col-md-6 col-md-offset-3" style="margin-bottom: 8px">
       <form ng-submit="doSearch()">
         <div class="input-group">
           <input type="text" class="form-control input-lg" placeholder="Search for..." ng-model="searchQuery">
@@ -30,7 +30,19 @@
   <div class="row">
     <div class="col-md-12">
       <center>
-        <div class="btn-group" dropdown>
+        <div class="btn-group" style="margin-bottom: 8px">
+          <a href="#/login-to" class="btn btn-primary"><b translate="translate.sign_in"></b></a>          
+        </div>
+        <div class="btn-group" style="margin-bottom: 8px">
+          <a href="#/login-to/create" class="btn btn-success"><b translate="translate.create_new_account"></b></a>          
+        </div>
+      </center>
+    </div>
+  </div>  
+  <div class="row">
+    <div class="col-md-12">
+      <center>
+        <div class="btn-group" dropdown  style="margin-bottom: 8px">
           <button type="button" class="btn btn-default"><b translate="translate.selected_theme_is"></b>&nbsp;<i>{{selectedTheme.label}}</i></button>
           <button type="button" class="btn btn-default" dropdown-toggle>
             <span class="caret"></span>
@@ -42,12 +54,13 @@
             </li>
           </ul>
         </div>
-        <div class="btn-group" ng-if="isNodeJS">
+        <div class="btn-group" ng-if="isNodeJS"  style="margin-bottom: 8px">
           <a href="#/server/fim/console" class="btn btn-default"><b translate="translate.run_local_server"></b></a>          
         </div>
       </center>
     </div>
   </div>
+
   <!-- <div class="row">
     <div class="col-md-6 col-md-offset-3">
       <div class="row">
