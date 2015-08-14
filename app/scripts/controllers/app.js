@@ -14,6 +14,7 @@ module.run(function ($rootScope) {
   $rootScope.multiLanguage = true;
   $rootScope.MONETARY_SYSTEM = false;
   $rootScope.TRADE_UI_ONLY = TRADE_UI_ONLY;
+  $rootScope.currentAccount = typeof CURRENT_ACCOUNT != "undefined" ? angular.copy(CURRENT_ACCOUNT) : null;
 });
 module.controller('AppController', function($rootScope, $scope, $modal, $q, $log,  
   $timeout, modals, $window, plugins, serverService, db, settings, $location, 
