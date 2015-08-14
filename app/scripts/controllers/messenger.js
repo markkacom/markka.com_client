@@ -23,26 +23,30 @@ function getCSS(clazz, property) {
 
 module.config(function($routeProvider) {
   $routeProvider
-    .when('/messenger/:id_rs', {
+    .when('/messenger/:id_rs/:type', {
       templateUrl: 'partials/messenger.html',
       controller: 'MessengerController'
     });
 });
 
 module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope, $routeParams, nxt, 
-  plugins, ChatListProvider, ChatMessagesProvider, Emoji, KeyService, $timeout, settings) {
+  plugins, ChatListProvider, ChatMessagesProvider, GossipChatMessagesProvider, Gossip, Emoji, KeyService, $timeout, settings) {
 
   $scope.id_rs          = $routeParams.id_rs;
+  $scope.paramType      = $routeParams.type;
   $scope.contactRS      = null;
   $scope.contactName    = null;
-  $scope.message        = { text: '', html: '' };
+  $scope.message        = { 
+    text: '', 
+    html: '',
+    recipient: '',
+    recipientPublicKey:''
+  };
   $scope.emoji          = { groups: Emoji.groups };
 
   $scope.ui             = {};
   $scope.ui.emojiCollapse  = true;
-  $scope.ui.replyCollapse  = true;
-  $scope.ui.transientReply = false;
-  $scope.ui.permanentReply = false;
+  $scope.ui.editRecipient  = false;
 
   $scope.breadcrumb     = [];
 
@@ -50,6 +54,10 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   if (!api || (!$rootScope.currentAccount || $scope.id_rs != $rootScope.currentAccount.id_rs)) {
     $location.path('/login-to');
     return;
+  }
+
+  if (['gossip', 'blockchain'].indexOf($scope.paramType) == -1) {
+    $scope.paramType = 'gossip';
   }
 
   $scope.feeCost        = api.engine.feeCost + ' ' + api.engine.symbol;;
@@ -79,7 +87,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   settings.resolve('themes.default.theme', function () {
     $timeout(function () {
       generateSpeechBubbleBootstrapCSS();
-    }, 1000);
+    });
   });
 
   /* Breadcrumbs */
@@ -110,6 +118,13 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     }
   });
 
+  function createMessageProvider(id_rs) {
+    if ($scope.paramType == "gossip") {
+      return new GossipChatMessagesProvider(api, $scope, 8, $scope.id_rs, id_rs);
+    }
+    return new ChatMessagesProvider(api, $scope, 8, $scope.id_rs, id_rs);
+  }
+
   $scope.reload = function () {
     if ($scope.chatListProvider) {
       $scope.chatListProvider.reload();
@@ -123,10 +138,17 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     $scope.$evalAsync(function () {
       $scope.slide.offCanvas = false;
       $scope.contactRS = id_rs;
+
+      $scope.ui.editRecipient  = false;
+      $scope.message.text = '';
+      $scope.message.html = '';
+      $scope.message.recipient = '';
+      $scope.message.recipientPublicKey = '';
+
       $scope.breadcrumb[3].label = id_rs;
       $scope.breadcrumb[3].href = "#/accounts/"+id_rs+"/activity/latest";
 
-      $scope.chatMessagesProvider = new ChatMessagesProvider(api, $scope, 8, $scope.id_rs, id_rs);
+      $scope.chatMessagesProvider = createMessageProvider(id_rs);
       $scope.chatMessagesProvider.reload().then(
         function () {
           $scope.$evalAsync(function () {
@@ -137,16 +159,6 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
         }
       );      
     });
-  }
-
-  $scope.toggleReply = function () {
-    $scope.ui.replyCollapse=!$scope.ui.replyCollapse;
-    $scope.ui.emojiCollapse=true;
-    $scope.ui.transientReply = false;
-    $scope.ui.permanentReply = false;
-    $scope.message.text = '';
-    $scope.message.html = '';
-    $scope.message.send = false;
   }
 
   $scope.messageChanged = function () {
@@ -173,7 +185,100 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     );
   }  
 
+  $scope.newMessage = function () {
+    switch ($scope.paramType) {
+      case "gossip":
+        $scope.ui.editRecipient = true;
+        $scope.slide.offCanvas  = false;
+        $scope.contactRS        = null;
+        $scope.contactName      = null;
+
+        $scope.chatMessagesProvider = null;
+        break;
+      default:
+        $scope.sendMessage();
+        break;
+    }
+  }
+
   $scope.sendDirectMessage = function () {
+    switch ($scope.paramType) {
+      case "gossip":
+        sendGossipMessage();
+        break;
+      default:
+        sendBlockchainMessage();
+        break;
+    }
+  };
+
+  function sendGossipMessage() {
+    var recipient, recipientPublicKey;
+    if ($scope.ui.editRecipient) {
+      recipient = $scope.message.recipient;
+      recipientPublicKey = $scope.message.recipientPublicKey;
+    }
+    else {
+      recipient = $scope.contactRS;
+      recipientPublicKey = null;
+    }
+
+    recipientPublicKey= null;
+
+    if (recipientPublicKey) {
+      Gossip.sendEncryptedGossip(api, 
+                                 $rootScope.currentAccount.secretPhrase, 
+                                 recipientPublicKey, 
+                                 $scope.message.text, 
+                                 "1").then(
+        function () {
+          $scope.$evalAsync(function () {
+            $scope.ui.emojiCollapse  = true;
+            $scope.message.text = '';
+            $scope.message.html = '';
+            $scope.message.recipient = '';
+            $scope.message.recipientPublicKey = '';
+            $scope.message.send = true;
+            $timeout(function () { $scope.message.send = false }, 5000);
+          });
+          $timeout(function () { $scope.chatListProvider.reload() }, 3000);
+        }
+      );
+    }
+    else {
+      Gossip.sendGossip(api, 
+                        $rootScope.currentAccount.secretPhrase, 
+                        recipient, 
+                        $scope.message.text, 
+                        "1").then(
+        function () {
+          $scope.$evalAsync(function () {
+            $scope.ui.emojiCollapse  = true;
+            $scope.message.text = '';
+            $scope.message.html = '';
+            $scope.message.recipient = '';
+            $scope.message.recipientPublicKey = '';
+            $scope.message.send = true;
+            $timeout(function () { $scope.message.send = false }, 5000);
+            $timeout(function () { $scope.chatListProvider.reload() }, 3000);
+          });
+        }
+      );
+    }
+  }
+
+  $scope.lookupPublicKey = function () {
+    var arg = { requestType: "getAccountPublicKey", account: $scope.message.recipient };
+    api.engine.socket().callAPIFunction(arg).then(
+      function (data) {
+        $scope.$evalAsync(function () {
+          $scope.message.recipientPublicKey = data.publicKey;
+        });
+      }
+    )
+  }
+
+  function sendBlockchainMessage() {
     plugins.get('transaction').get('sendMessage').execute($scope.id_rs, { 
       recipient: $scope.contactRS,
       message: $scope.message.text,
