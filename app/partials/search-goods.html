@@ -23,7 +23,8 @@
           <label>No Results</label>
         </div>
         <div class="list-group search-result-div" ng-repeat= "goods in searchedGoods | filter: selectedTags" ng-if= "searchedGoods.length > 0" ng-click= "details(goods)">
-            <img src="images/imac.jpg">
+            <img src="{{goods.image}}" ng-if= "goods.image">
+            <img src="images/no-image.jpg" ng-if= "!goods.image">
             <a class="list-group-item">
               <div>
                 <h4 class="list-group-item-heading">{{goods.name}}</h4>

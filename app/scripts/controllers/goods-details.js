@@ -23,7 +23,8 @@ module.controller('GoodsDetailsCtrl', function($location, $q, $scope, modals, $r
 
 		api.engine.socket().callAPIFunction(details_args).then(function(data){
 			$scope.goodsDetails = data;
-			// console.log(data);
+			console.log($scope.goodsDetails);
+			$scope.desc = JSON.parse($scope.goodsDetails.description);
 		})
 
 		$scope.addToCart = function(goodsDetails) {

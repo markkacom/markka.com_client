@@ -23,7 +23,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         createArguments: function (items) {
           return {
             name: items.name, 
-            description: items.description,
+            description: JSON.stringify({ description: items.description, image: items.image || '', callback: items.callback || '' }),
             tags: items.tags,
             quantity: String(items.quantity),
             priceNQT: nxt.util.convertToNQT(items.priceNXT)
@@ -39,6 +39,16 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'description',
           type: 'textarea',
           value: args.description||''
+        }, {
+          label: 'ImageURL',
+          name: 'image',
+          type: 'image',
+          value: args.image||''
+        }, {
+          label: 'Callback',
+          name: 'callback',
+          type: 'image',
+          value: args.callback||''
         }, {
           label: 'Tags',
           name: 'tags',

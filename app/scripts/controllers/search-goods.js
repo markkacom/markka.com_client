@@ -36,6 +36,18 @@ module.controller('SearchGoodsCtrl', function($location, $q, $scope, modals, $ro
 			api.engine.socket().callAPIFunction(search_args).then(function(searchData) {
 				$scope.searchedGoods = searchData.goods;
 				// console.log($scope.searchedGoods)
+				$scope.searchedGoods.forEach(function(good) {
+					try {
+					  	var data = JSON.parse(good.description);
+					} catch(ex) {
+					  	console.log("Unable to parse");
+					}
+					if(data) {
+					  	good.description = data.description;
+					  	good.image = data.image;
+						good.callback = data.callback;
+					}
+				});
 
 				$scope.searchedGoods.forEach(function(eachGoods) {
 					eachGoods.parsedTags.forEach(function(eachTags) {
