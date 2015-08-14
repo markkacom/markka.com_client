@@ -249,7 +249,10 @@
     "enter_price": "Įveskite kainą",
     "msg_must_save_secret": "<h3> <b>Labai svarbu!</b> </h3> Tai jūsų <b>paslaptis frazė.</b> <br> {{symbol}} tinklas yra decentralizuotas, tik <b>jūs</b> turite šį klavišą, norėdami pasiekti savo piniginę. <br> <b>Prašome užrašyti šiuos dvylika žodžių!</b>",
     "msg_confirm_secret_saved": "<b>Patvirtinti įrašėte savo slaptą frazę.</b> <br> Be tinkamo slaptą frazę jūs prarasite prieigą prie savo paskyros. <br> <b>Visi jūsų</b> {{symbol}} <b>bus prarasta.</b>",
-    "forward": "Pirmyn"
+    "forward": "Pirmyn",
+    "public_key": "Viešojo rakto",
+    "msg_sent_to": "Pranešimas išsiųstas {{recipient}}",
+    "gossip": "Paskalos"
   },
   "filter": {
     "filter": "Filtras",

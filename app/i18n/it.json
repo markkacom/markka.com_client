@@ -249,7 +249,10 @@
     "enter_price": "Inserisci il prezzo",
     "msg_must_save_secret": "<h3> <b>Estremamente importante!</b> </h3> Questa è la tua <b>frase segreta.</b> <br> Il {{symbol}} rete è decentralizzata, solo <b>tu hai</b> la chiave per accedere al proprio portafoglio. <br> <b>Annotare questi dodici parole!</b>",
     "msg_confirm_secret_saved": "<b>Conferma avete memorizzato la vostra frase segreta.</b> <br> Senza la corretta frase segreta si perde l'accesso al tuo account. <br> <b>Tutto tuo</b> {{symbol}} <b>andranno perduti.</b>",
-    "forward": "Avanti"
+    "forward": "Avanti",
+    "public_key": "Chiave pubblica",
+    "msg_sent_to": "Messaggio inviato al {{recipient}}",
+    "gossip": "Pettegolezzo"
   },
   "filter": {
     "filter": "Filtro",

@@ -249,7 +249,10 @@
     "enter_price": "Anote el precio",
     "msg_must_save_secret": "<h3> <b>Extremadamente importante!</b> </h3> Esta es tu <b>frase secreta.</b> <br> Los {{symbol}} red es descentralizada, sólo <b>usted</b> tiene esta tecla para acceder a tu presupuesto. <br> <b>Tome nota de estos doce palabras!</b>",
     "msg_confirm_secret_saved": "<b>Confirme que almacenó su frase secreta.</b> <br> Sin la frase secreta correcta se pierde el acceso a su cuenta. <br> <b>Todo tuyo</b> {{symbol}} <b>se perderá.</b>",
-    "forward": "Adelante"
+    "forward": "Adelante",
+    "public_key": "Clave pública",
+    "msg_sent_to": "Mensaje enviado a {{recipient}}",
+    "gossip": "Chisme"
   },
   "filter": {
     "filter": "Filtro",

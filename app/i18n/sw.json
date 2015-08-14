@@ -249,7 +249,10 @@
     "enter_price": "Kuingia bei",
     "msg_must_save_secret": "<h3> <b>Muhimu sana!</b> </h3> Hii ni <b>maneno</b> yako <b>ya siri.</b> <br> Ya {{symbol}} mtandao ni madaraka, tu <b>una</b> muhimu hii ya kupata mkoba wako. <br> <b>Tafadhali kuandika maneno haya kumi na mbili!</b>",
     "msg_confirm_secret_saved": "<b>Kuthibitisha wewe kuhifadhiwa maneno yako ya siri.</b> <br> Bila sahihi siri maneno kupoteza upatikanaji wa akaunti yako. <br> <b>Wote wako</b> {{symbol}} <b>itakuwa waliopotea.</b>",
-    "forward": "Mbele"
+    "forward": "Mbele",
+    "public_key": "Muhimu ya umma",
+    "msg_sent_to": "Ujumbe alimtuma {{recipient}}",
+    "gossip": "Uvumi"
   },
   "filter": {
     "filter": "Filter",

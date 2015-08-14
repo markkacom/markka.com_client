@@ -36,10 +36,10 @@
             <a class="btn btn-default elipses" ng-click="slide.offCanvas=!slide.offCanvas" style="padding-left:0 !important;">{{contactName||contactRS||"Menu"}}</a>
           </li>
           <li role="presentation" ng-class="{'active': paramType=='gossip'}">
-            <a href="#/messenger/{{id_rs}}/gossip"><i class="fa fa-refresh"></i><span ng-if="!IS_SMALL_DEVICE">&nbsp;&nbsp;Gossip</span></a>
+            <a href="#/messenger/{{id_rs}}/gossip"><i class="fa fa-refresh"></i><span ng-if="!IS_SMALL_DEVICE">&nbsp;&nbsp;<span translate="translate.blockchain"></span></span></a>
           </li>
           <li role="presentation" ng-class="{'active': paramType=='blockchain'}">
-            <a href="#/messenger/{{id_rs}}/blockchain"><i class="fa fa-floppy-o"></i><span ng-if="!IS_SMALL_DEVICE">&nbsp;&nbsp;Blockchain</span></a>
+            <a href="#/messenger/{{id_rs}}/blockchain"><i class="fa fa-floppy-o"></i><span ng-if="!IS_SMALL_DEVICE">&nbsp;&nbsp;<span translate="translate.blockchain"></span></span></a>
           </li>
         </ul>
       </div>
@@ -49,16 +49,16 @@
       <div class="col-md-12">
         <form>
           <div class="form-group">
-            <label for="accountIdentifier3">Account</label>
-            <input type="text" class="form-control" id="accountIdentifier3" placeholder="Account" 
+            <label for="accountIdentifier3" translate="translate.account"></label>
+            <input type="text" class="form-control" id="accountIdentifier3" placeholder="{{'translate.account'|translate}}" 
               ng-model="message.recipient" ng-model-options='{ debounce: 1000 }' ng-change="lookupPublicKey()">
           </div>
           <div class="form-group">
-            <label for="accountIdentifier4">Public key</label>
-            <input type="text" class="form-control" id="accountIdentifier4" placeholder="Public Key" ng-model="message.recipientPublicKey">
+            <label for="accountIdentifier4" translate="translate.public_key"></label>
+            <input type="text" class="form-control" id="accountIdentifier4" placeholder="{{'translate.public_key'|translate}}" ng-model="message.recipientPublicKey">
           </div>
           <div class="form-group">
-            <label>Message</label>
+            <label translate="translate.message"></label>
           </div>          
         </form>
       </div>
@@ -69,7 +69,7 @@
       <div class="col-md-12">
         <!-- <button class="btn btn-primary btn-lg">Reply to {{contactName||contactRS}}</button> -->
         <div class="alert alert-success" ng-show="!message.text && message.send">
-          <b><i class="fa fa-check"></i></b>&nbsp;&nbsp;Message sent to <b>{{contactName||contactRS}}</b>
+          <b><i class="fa fa-check"></i></b>&nbsp;&nbsp;<span translate="translate.msg_sent_to" translate-values="{recipient:contactName||contactRS}"></span>
         </div>
       </div>
     </div>
@@ -85,7 +85,7 @@
           <div class="input-group">
             <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
             <textarea class="form-control" rows="{{IS_SMALL_DEVICE?2:3}}" ng-model="message.text" ng-change="messageChanged()"></textarea>
-            <span ng-if="message.text" class="input-group-addon btn btn-default" ng-click="sendDirectMessage()">Send</span>
+            <span ng-if="message.text" class="input-group-addon btn btn-default" ng-click="sendDirectMessage()" translate="translate.send"></span>
           </div>
         </div>
       </div>

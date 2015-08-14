@@ -3,6 +3,7 @@
     "translate.must.exist"
   ],
   "translate": {
+    "public_key":           "Public key",
     "address":              "Address",
     "state":                "State",
     "weight":               "Weight",
@@ -31,6 +32,7 @@
     "previous":             "Previous",
     "next":                 "Next",
     "copy":                 "Copy",
+    "msg_sent_to":          "Message sent to <b>{{recipient}}</b>",
     "activate_account":     "Activate account",
     "msg_wallet_unlocked":  "Wallet is unlocked",
     "msg_choose_account":   "Choose account",
@@ -168,6 +170,7 @@
     "load_more_orders":     "Load more orders",
     "account":              "Account",
     "blockchain":           "Blockchain",
+    "gossip":               "Gossip",
     "forgers":              "Forgers",
     "average_block_time":   "Average block time (24H)",
     "seconds":              "seconds",

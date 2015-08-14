@@ -249,7 +249,10 @@
     "enter_price": "Zadajte cenu",
     "msg_must_save_secret": "<h3> <b>Veľmi dôležité!</b> </h3> Toto je vaša <b>tajomstvo frázy.</b> <br> {{symbol}} sieť je decentralizovaná, len <b>musíte</b> tento kľúč pre prístup k peňaženku. <br> <b>Prosím, napíšte si tieto slová dvanásť!</b>",
     "msg_confirm_secret_saved": "<b>Potvrďte ste uložili svoj ​​tajný frázu.</b> <br> Bez správneho tajnú frázu stratíte prístup k svojmu účtu. <br> <b>Všetky vaše</b> {{symbol}} <b>sa stratia.</b>",
-    "forward": "Vpred"
+    "forward": "Vpred",
+    "public_key": "Verejný kľúč",
+    "msg_sent_to": "Správa odoslaná {{recipient}}",
+    "gossip": "Klebety"
   },
   "filter": {
     "filter": "Filter",

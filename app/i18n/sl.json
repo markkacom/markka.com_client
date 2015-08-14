@@ -249,7 +249,10 @@
     "enter_price": "Vnesite ceno",
     "msg_must_save_secret": "<h3> <b>Zelo pomembno!</b> </h3> To je tvoja <b>skrivnost stavek.</b> <br> {{symbol}} Mreža je decentralizirana, samo <b>moraš</b> to tipko za dostop do vaše denarnice. <br> <b>Prosimo, napišite teh dvanajst besed!</b>",
     "msg_confirm_secret_saved": "<b>Potrdite ste shranili svoj ​​skrivni stavek.</b> <br> Brez pravilne tajnim frazo boste izgubili dostop do vašega računa. <br> <b>Vse vaše</b> {{symbol}} <b>bodo izgubljene.</b>",
-    "forward": "Naprej"
+    "forward": "Naprej",
+    "public_key": "Javni ključ",
+    "msg_sent_to": "Sporočilo je bilo poslano {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Filter",

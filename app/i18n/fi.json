@@ -249,7 +249,10 @@
     "run_local_server": "Käynnistä paikallinen palvelin",
     "msg_must_save_secret": "<h3> <b>Erittäin tärkeää!</b> </h3> Tämä on <b>salainen lause.</b> <br> {{symbol}} verkko on hajautettu, vain <b>sinulla</b> on tämä avain käyttää lompakon. <br> <b>Ole hyvä ja kirjoita nämä kaksitoista sanoja!</b>",
     "msg_confirm_secret_saved": "<b>Vahvista olet tallentanut salainen lause.</b> <br> Ilman oikea salainen lause menetät tilisi. <br> <b>Kaikki</b> {{symbol}} <b>menetetään.</b>",
-    "forward": "Eteenpäin"
+    "forward": "Eteenpäin",
+    "public_key": "Julkisen avaimen",
+    "msg_sent_to": "Viesti lähetetty {{recipient}}",
+    "gossip": "Juoru"
   },
   "filter": {
     "filter": "Suodatin",

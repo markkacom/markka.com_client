@@ -249,7 +249,10 @@
     "enter_price": "Eniri prezo",
     "msg_must_save_secret": "<h3> <b>Ekstreme gravaj!</b> </h3> Tiu estas via <b>sekreto frazo.</b> <br> La {{symbol}} reto malcentralizita, nur <b>vi</b> havas tiun ŝlosilon por aliri vian saketon. <br> <b>Bonvolu noti tiujn dekdu vortoj!</b>",
     "msg_confirm_secret_saved": "<b>Konfirmi vi stokitaj via sekreta frazo.</b> <br> Sen la ĝentila sekreta frazon vi perdos aliron al via konto. <br> <b>Ĉiuj viaj</b> {{symbol}} <b>perdiĝos.</b>",
-    "forward": "Antaŭen"
+    "forward": "Antaŭen",
+    "public_key": "Publika ŝlosilo",
+    "msg_sent_to": "Mesaĝo sendis al {{recipient}}",
+    "gossip": "Klaĉo"
   },
   "filter": {
     "filter": "Filtrilo",

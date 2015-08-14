@@ -249,7 +249,10 @@
     "enter_price": "Voer prijs",
     "msg_must_save_secret": "<h3> <b>Extreem belangrijk!</b> </h3> Dit is uw <b>geheime zin.</b> <br> De {{symbol}} netwerk is gedecentraliseerd, maar <b>je</b> moet deze toets om toegang te krijgen tot uw portemonnee. <br> <b>Noteer deze twaalf woorden!</b>",
     "msg_confirm_secret_saved": "<b>Bevestig je opgeslagen uw geheime zin.</b> <br> Zonder de juiste geheime zin verliest u toegang tot uw account. <br> <b>Al jouw</b> {{symbol}} <b>verloren.</b>",
-    "forward": "Vooruit"
+    "forward": "Vooruit",
+    "public_key": "Publieke sleutel",
+    "msg_sent_to": "Bericht verzonden naar {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Filter",

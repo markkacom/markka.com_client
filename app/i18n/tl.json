@@ -249,7 +249,10 @@
     "enter_price": "Ipasok presyo",
     "msg_must_save_secret": "<h3> <b>Lubos na mahalaga!</b> </h3> Ito ang iyong <b>lihim na parirala.</b> <br> Ang {{symbol}} network ay desentralisado, mayroon <b>ka</b> lamang ang key na ito upang ma-access ang iyong wallet. <br> <b>Mangyaring isulat ang mga labindalawang mga salita!</b>",
     "msg_confirm_secret_saved": "<b>Kumpirmahin ka na naka-imbak ang iyong lihim na parirala.</b> <br> Walang tamang lihim phrase mawalan ka ng access sa iyong account. <br> <b>Ang lahat ng iyong</b> {{symbol}} <b>ay mawawala.</b>",
-    "forward": "Pasulong"
+    "forward": "Pasulong",
+    "public_key": "Public key",
+    "msg_sent_to": "Naipadala ang mensahe sa {{recipient}}",
+    "gossip": "Tsismis"
   },
   "filter": {
     "filter": "Salain",

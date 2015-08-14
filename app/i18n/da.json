@@ -249,7 +249,10 @@
     "enter_price": "Indtast pris",
     "msg_must_save_secret": "<h3> <b>Ekstremt vigtigt!</b> </h3> Dette er dit <b>hemmelige sætning.</b> <br> Den {{symbol}} netværk er decentraliseret, kun <b>du</b> har denne nøgle til at få adgang til din tegnebog. <br> <b>Skriv venligst ned disse tolv ord!</b>",
     "msg_confirm_secret_saved": "<b>Bekræft, at du gemt din hemmelige sætning.</b> <br> Uden den korrekte hemmelige sætning, du mister adgang til din konto. <br> <b>Alle dine</b> {{symbol}} <b>vil gå tabt.</b>",
-    "forward": "Fremad"
+    "forward": "Fremad",
+    "public_key": "Offentlig nøgle",
+    "msg_sent_to": "Besked sendt til {{recipient}}",
+    "gossip": "Sladder"
   },
   "filter": {
     "filter": "Filter",

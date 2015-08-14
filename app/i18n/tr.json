@@ -249,7 +249,10 @@
     "enter_price": "Fiyatını girin",
     "msg_must_save_secret": "<h3> <b>Son derece önemli!</b> </h3> Bu <b>gizli ifade</b> olduğunu. <br> {{symbol}} ağ merkezi olmayan, sadece <b>sizin</b> cüzdanınızı erişmek için bu anahtara sahip. <br> <b>Bu oniki kelime yazınız!</b>",
     "msg_confirm_secret_saved": "<b>Eğer gizli ifade saklanan onaylayın.</b> <br> Doğru gizli ifade olmadan hesabınıza erişimi kaybedersiniz. <br> <b>Tüm senin</b> {{symbol}} <b>kaybolacaktır.</b>",
-    "forward": "Ileri"
+    "forward": "Ileri",
+    "public_key": "Genel anahtar",
+    "msg_sent_to": "Mesaj gönderilen {{recipient}}",
+    "gossip": "Dedikodu"
   },
   "filter": {
     "filter": "Filtre",

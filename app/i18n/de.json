@@ -249,7 +249,10 @@
     "enter_price": "Geben Sie Preis",
     "msg_must_save_secret": "<h3> <b>Extrem wichtig!</b> </h3> Das ist Ihre <b>geheime Phrase.</b> <br> Die {{symbol}} Netzwerk dezentral, haben nur <b>Sie</b> diese Taste, um den Geldbeutel greifen. <br> <b>Bitte notieren Sie sich diese zwölf Worte!</b>",
     "msg_confirm_secret_saved": "<b>Bestätigen Sie Ihre gespeicherten geheimen Ausdruck.</b> <br> Ohne die richtige geheime Phrase, die Sie verlieren den Zugriff auf Ihr Konto. <br> <b>All dein</b> {{symbol}} <b>verloren.</b>",
-    "forward": "Vorwärts"
+    "forward": "Vorwärts",
+    "public_key": "Public-Key-",
+    "msg_sent_to": "Nachricht gesendet {{recipient}}",
+    "gossip": "Klatsch"
   },
   "filter": {
     "filter": "Filter",

@@ -249,7 +249,10 @@
     "enter_price": "Ange pris",
     "msg_must_save_secret": "<h3> <b>Extremt viktigt!</b> </h3> Detta är ditt <b>hemliga fras.</b> <br> Den {{symbol}} nätverk är decentraliserad, bara <b>du</b> har på den här knappen för att komma åt din plånbok. <br> <b>Skriv ned dessa tolv ord!</b>",
     "msg_confirm_secret_saved": "<b>Bekräfta att du lagrat din hemliga fras.</b> <br> Utan rätt hemliga frasen du förlorar åtkomst till kontot. <br> <b>Alla dina</b> {{symbol}} <b>kommer att gå förlorade.</b>",
-    "forward": "Framåt"
+    "forward": "Framåt",
+    "public_key": "Publik nyckel",
+    "msg_sent_to": "Meddelande som skickas till {{recipient}}",
+    "gossip": "Skvaller"
   },
   "filter": {
     "filter": "Filtrera",

@@ -249,7 +249,10 @@
     "enter_price": "Entrez prix",
     "msg_must_save_secret": "<h3> <b>Extrêmement important!</b> </h3> Ceci est votre <b>phrase secrète.</b> <br> Le {{symbol}} réseau est décentralisé, que <b>vous</b> avez sur cette touche pour accéder à votre portefeuille. <br> <b>S'il vous plaît notez ces douze mots!</b>",
     "msg_confirm_secret_saved": "<b>Confirmez que vous avez enregistré votre phrase secrète.</b> <br> Sans la phrase secrète correcte, vous perdez l'accès à votre compte. <br> <b>Tout votre</b> {{symbol}} <b>sera perdu.</b>",
-    "forward": "Vers L'Avant"
+    "forward": "Vers L'Avant",
+    "public_key": "Clé publique",
+    "msg_sent_to": "Message envoyé à {{recipient}}",
+    "gossip": "Potins"
   },
   "filter": {
     "filter": "Filtre",

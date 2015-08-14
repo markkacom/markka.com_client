@@ -249,7 +249,10 @@
     "enter_price": "Introduceți preț",
     "msg_must_save_secret": "<h3> <b>Extrem de important!</b> </h3> Aceasta este <b>fraza secret.</b> <br> {{symbol}} rețea este descentralizată, doar <b>tu ai</b> această tastă pentru a accesa portofel. <br> <b>Vă rugăm să notați aceste douăsprezece cuvinte!</b>",
     "msg_confirm_secret_saved": "<b>Confirma că stocat fraza secretă.</b> <br> Fără fraza secretă corect pierzi accesul la cont. <br> <b>Toate dvs.</b> {{symbol}} <b>vor fi pierdute.</b>",
-    "forward": "Înainte"
+    "forward": "Înainte",
+    "public_key": "Cheie publică",
+    "msg_sent_to": "Mesajul a fost trimis la {{recipient}}",
+    "gossip": "Bârfă"
   },
   "filter": {
     "filter": "Filtru",

@@ -249,7 +249,10 @@
     "enter_price": "Masukkan harga",
     "msg_must_save_secret": "<h3> <b>Sangat penting!</b> </h3> Ini adalah <b>frase rahasia</b> Anda. <br> Itu {{symbol}} jaringan desentralisasi, hanya <b>Anda</b> memiliki kunci untuk mengakses dompet Anda. <br> <b>Tuliskan dua belas kata-kata ini!</b>",
     "msg_confirm_secret_saved": "<b>Konfirmasi Anda disimpan frase rahasia Anda.</b> <br> Tanpa frase rahasia yang benar Anda kehilangan akses ke akun Anda. <br> <b>Semua milik mu</b> {{symbol}} <b>akan hilang.</b>",
-    "forward": "Depan"
+    "forward": "Depan",
+    "public_key": "Kunci publik",
+    "msg_sent_to": "Pesan yang dikirim ke {{recipient}}",
+    "gossip": "Gosip"
   },
   "filter": {
     "filter": "Filter",

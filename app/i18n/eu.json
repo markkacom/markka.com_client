@@ -249,7 +249,10 @@
     "enter_price": "Idatzi prezioa",
     "msg_must_save_secret": "<h3> <b>Oso garrantzitsua da!</b> </h3> Hau zure <b>Esaldi sekretua.</b> <br> The {{symbol}} sare deszentralizatua da, gako hau zure zorro sartzeko besterik ez <b>duzu.</b> <br> <b>Mesedez, idatzi hamabi hitz horiek!</b>",
     "msg_confirm_secret_saved": "<b>Berretsi zure Esaldi sekretua gordetzen dituzula.</b> <br> Esaldi sekretua zuzena gabe zure kontu sarbidea galtzen duzu. <br> <b>Guztiak zure</b> {{symbol}} <b>galduko dira.</b>",
-    "forward": "Forward"
+    "forward": "Forward",
+    "public_key": "Gako publiko",
+    "msg_sent_to": "Mezua bidaltzen {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Filter",

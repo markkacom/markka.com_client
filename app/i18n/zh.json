@@ -249,7 +249,10 @@
     "enter_price": "输入价格",
     "msg_must_save_secret": "<h3> <b>极其重要的！</b> </h3>这是你的<b>秘密短语</b> 。 <br>该{{symbol}}网络是分散的，只有<b>你</b>有这个键来访问你的钱包。 <br> <b>请写下这十二个字！</b>",
     "msg_confirm_secret_saved": "<b>确认您存储你的秘密短语。</b> <br>如果没有正确的短语的秘密，你无法访问您的帐户。 <br> <b>所有</b> {{symbol}} <b>将丢失。</b>",
-    "forward": "前锋"
+    "forward": "前锋",
+    "public_key": "公钥",
+    "msg_sent_to": "消息发送到{{recipient}}",
+    "gossip": "流言"
   },
   "filter": {
     "filter": "过滤器",

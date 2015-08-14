@@ -249,7 +249,10 @@
     "enter_price": "Qiymət daxil edin",
     "msg_must_save_secret": "<h3> <b>Çox vacibdir!</b> </h3> Bu <b>gizli söz</b> deyil. <br> Müəyyən artikl {{symbol}} şəbəkə mərkəzləşdirilmiş deyil, yalnız <b>sizin</b> cüzdan daxil olmaq üçün bu əsas var. <br> <b>Bu on iki sözləri yazın!</b>",
     "msg_confirm_secret_saved": "<b>Siz gizli söz saxlanılır təsdiq edin.</b> <br> Düzgün gizli söz olmadan hesabınıza girmə imkanı itirirlər. <br> <b>Bütün</b> {{symbol}} <b>itirilmiş olacaq.</b>",
-    "forward": "Irəli"
+    "forward": "Irəli",
+    "public_key": "İctimai əsas",
+    "msg_sent_to": "Mesaj göndərildi {{recipient}}",
+    "gossip": "Qeybət"
   },
   "filter": {
     "filter": "Filtr",

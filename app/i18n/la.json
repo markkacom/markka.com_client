@@ -249,7 +249,10 @@
     "enter_price": "Enter price",
     "msg_must_save_secret": "<h3> <b>Momenti!</b> </h3> Hoc est <b>absconditas phrase.</b> <br> The {{symbol}} decentralized network tantum aditus clavem <b>habes</b> vidulum. <br> <b>Haec duodecim sequentia verba velim scribas!</b>",
     "msg_confirm_secret_saved": "<b>Confirmare quod condideris absconditas phrase.</b> <br> Sine rectam secretum phrase perdis accessum ratione vestra. <br> <b>Omnibus</b> {{symbol}} <b>perdentur.</b>",
-    "forward": "Deinceps"
+    "forward": "Deinceps",
+    "public_key": "Publicum key",
+    "msg_sent_to": "Nuntius missus {{recipient}}",
+    "gossip": "Rumoribus"
   },
   "filter": {
     "filter": "Filter",

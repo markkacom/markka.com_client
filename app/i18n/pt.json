@@ -249,7 +249,10 @@
     "enter_price": "Digite o preço",
     "msg_must_save_secret": "<h3> <b>Extremamente importante!</b> </h3> Esta é a sua <b>frase secreta.</b> <br> O {{symbol}} rede é descentralizada, só <b>você</b> tem esta tecla para acessar a sua carteira. <br> <b>Por favor, anote estas doze palavras!</b>",
     "msg_confirm_secret_saved": "<b>Confirmar que você armazenou sua frase secreta.</b> <br> Sem a frase secreta corretos você perder o acesso à sua conta. <br> <b>Todo seu</b> {{symbol}} <b>será perdido.</b>",
-    "forward": "Para a frente"
+    "forward": "Para a frente",
+    "public_key": "Chave pública",
+    "msg_sent_to": "Mensagem enviada para {{recipient}}",
+    "gossip": "Fofoca"
   },
   "filter": {
     "filter": "Filtro",

@@ -249,7 +249,10 @@
     "enter_price": "Anoteu el preu",
     "msg_must_save_secret": "<h3> <b>Extremadament important!</b> </h3> Aquesta és la teva <b>frase secreta.</b> <br> Els {{symbol}} xarxa és descentralitzada, només <b>vostè</b> té aquesta tecla per accedir al teu pressupost. <br> <b>Prengui nota d'aquests dotze paraules!</b>",
     "msg_confirm_secret_saved": "<b>Confirmeu que va emmagatzemar la seva frase secreta.</b> <br> Sense la frase secreta correcta es perd l'accés al seu compte. <br> <b>Tot teu</b> {{symbol}} <b>es perdrà.</b>",
-    "forward": "Endavant"
+    "forward": "Endavant",
+    "public_key": "Clau pública",
+    "msg_sent_to": "Missatge enviat a {{recipient}}",
+    "gossip": "Xafarderia"
   },
   "filter": {
     "filter": "Filtre",

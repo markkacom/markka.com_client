@@ -249,7 +249,10 @@
     "enter_price": "Ievadiet cena",
     "msg_must_save_secret": "<h3> <b>Ārkārtīgi svarīgi!</b> </h3> Šis ir jūsu <b>noslēpums frāze.</b> <br> {{symbol}} tīkls ir decentralizēta, tikai <b>jums</b> ir šo taustiņu, lai piekļūtu jūsu maku. <br> <b>Lūdzu pierakstīt šos divpadsmit vārdus!</b>",
     "msg_confirm_secret_saved": "<b>Apstiprināt jūs glabājas jūsu slepeno frāzi.</b> <br> Bez pareizās slepeno frāzi jūs zaudējat piekļuvi savam kontam. <br> <b>Visas jūsu</b> {{symbol}} <b>tiks zaudēta.</b>",
-    "forward": "Uz priekšu"
+    "forward": "Uz priekšu",
+    "public_key": "Publiskā atslēga",
+    "msg_sent_to": "Ziņa nosūtīta {{recipient}}",
+    "gossip": "Tenkas"
   },
   "filter": {
     "filter": "Filtrs",

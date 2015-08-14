@@ -249,7 +249,10 @@
     "enter_price": "Ikteb prezz",
     "msg_must_save_secret": "<h3> <b>Estremament importanti!</b> </h3> Dan huwa <b>frażi sigrieta</b> tiegħek. <br> L- {{symbol}} netwerk huwa deċentralizzata, biss <b>ikollok</b> dan ewlenin għall-aċċess kartiera tiegħek. <br> <b>Jekk jogħġbok ikteb l dawn il-kliem tnax!</b>",
     "msg_confirm_secret_saved": "<b>Ikkonferma inti maħżuna frażi sigrieta tiegħek.</b> <br> Mingħajr il-frażi sigrieta korretta inti titlef aċċess għall-kont tiegħek. <br> <b>Kollha tiegħek</b> {{symbol}} <b>se tintilef.</b>",
-    "forward": "Quddiem"
+    "forward": "Quddiem",
+    "public_key": "Ċavetta pubblika",
+    "msg_sent_to": "Messaġġ mibgħut lil {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Iffiltra",

@@ -249,7 +249,10 @@
     "enter_price": "Masukkan harga",
     "msg_must_save_secret": "<h3> <b>Amat penting!</b> </h3> Ini adalah <b>frasa rahsia</b> anda. <br> Yang {{symbol}} rangkaian berpusat, hanya <b>anda</b> mempunyai kekunci ini untuk mengakses dompet anda. <br> <b>Sila tulis perkataan ini dua belas!</b>",
     "msg_confirm_secret_saved": "<b>Mengesahkan anda disimpan frasa rahsia anda.</b> <br> Tanpa frasa rahsia yang betul anda kehilangan akses ke akaun anda. <br> <b>Semua anda</b> {{symbol}} <b>akan hilang.</b>",
-    "forward": "Ke hadapan"
+    "forward": "Ke hadapan",
+    "public_key": "Kunci awam",
+    "msg_sent_to": "Mesej dihantar kepada {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Penapis",

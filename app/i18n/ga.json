@@ -249,7 +249,10 @@
     "enter_price": "Iontráil ar phraghas",
     "msg_must_save_secret": "<h3> <b>Thar a bheith tábhachtach!</b> </h3> Is é seo do <b>frása rúnda.</b> <br> An {{symbol}} Tá líonra díláraithe, ach go bhfuil <b>tú</b> seo eochair chun rochtain do sparán. <br> <b>Scríobh síos na focail seo dhá cheann déag!</b>",
     "msg_confirm_secret_saved": "<b>Dearbhaigh stóráil tú do abairt rúnda.</b> <br> Gan an frása rúnda ceart chailleann tú rochtain a fháil ar do chuntas. <br> <b>Gach do</b> {{symbol}} <b>Beidh a bheith caillte.</b>",
-    "forward": "Ar aghaidh"
+    "forward": "Ar aghaidh",
+    "public_key": "Eochair phoiblí",
+    "msg_sent_to": "Teachtaireacht chuig {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Scagaire",

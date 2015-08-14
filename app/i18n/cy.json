@@ -249,7 +249,10 @@
     "enter_price": "Rhowch pris",
     "msg_must_save_secret": "<h3> <b>Eithriadol o bwysig!</b> </h3> Dyma eich <b>ymadrodd cyfrinachol.</b> <br> Y {{symbol}} rhwydwaith yn datganoledig, dim ond <b>i chi</b> gael yr allwedd hon i gael mynediad at eich waled. <br> <b>Ysgrifennwch i lawr y deuddeg o eiriau!</b>",
     "msg_confirm_secret_saved": "<b>Cadarnhau eich storio eich ymadrodd cyfrinachol.</b> <br> Heb yr ymadrodd gyfrinach cywir byddwch yn colli mynediad at eich cyfrif. <br> <b>All eich</b> {{symbol}} <b>Bydd yn cael ei golli.</b>",
-    "forward": "Ymlaen"
+    "forward": "Ymlaen",
+    "public_key": "Allwedd gyhoeddus",
+    "msg_sent_to": "Neges a roddir i {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Hidlo",

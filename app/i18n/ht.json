@@ -249,7 +249,10 @@
     "enter_price": "Antre nan pri",
     "msg_must_save_secret": "<h3> <b>Trè enpòtan!</b> </h3> Sa a se <b>fraz sekrè</b> ou. <br> Nan {{symbol}} rezo se desantralize, sèlman <b>ou</b> gen kle sa a jwenn aksè nan pòtfèy ou. <br> <b>Tanpri ekri douz pawòl sa yo!</b>",
     "msg_confirm_secret_saved": "<b>Konfime ou estoke fraz sekrè ou.</b> <br> San yo pa fraz la sekrè ki kòrèk ou pèdi aksè nan kont ou. <br> <b>Tout ou</b> {{symbol}} <b>pral pèdi.</b>",
-    "forward": "Forward"
+    "forward": "Forward",
+    "public_key": "Kle piblik",
+    "msg_sent_to": "Mesaj voye nan {{recipient}}",
+    "gossip": "Tripotaj"
   },
   "filter": {
     "filter": "Filter",

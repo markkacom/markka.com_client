@@ -249,7 +249,10 @@
     "enter_price": "Nhập giá",
     "msg_must_save_secret": "<h3> <b>Vô cùng quan trọng!</b> </h3> Đây là <b>cụm từ bí mật</b> của bạn. <br> Các {{symbol}} mạng là phi tập trung, chỉ có <b>bạn</b> có chìa khóa này để truy cập vào ví của bạn. <br> <b>Hãy viết ra những mười hai chữ!</b>",
     "msg_confirm_secret_saved": "<b>Xác nhận bạn lưu trữ cụm từ bí mật của bạn.</b> <br> Nếu không có các cụm từ bí mật chính xác bạn mất quyền truy cập vào tài khoản của bạn. <br> <b>Tất cả của bạn</b> {{symbol}} <b>sẽ bị mất.</b>",
-    "forward": "Phía trước"
+    "forward": "Phía trước",
+    "public_key": "Khóa công khai",
+    "msg_sent_to": "Tin nhắn gửi đến {{recipient}}",
+    "gossip": "Ngồi lê đôi mách"
   },
   "filter": {
     "filter": "Lọc",

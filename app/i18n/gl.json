@@ -249,7 +249,10 @@
     "enter_price": "Introduza o prezo",
     "msg_must_save_secret": "<h3> <b>Moi importante!</b> </h3> Esta é a súa <b>frase de paso.</b> <br> O {{symbol}} rede é descentralizada, só <b>tes</b> esta tecla para acceder á súa carteira. <br> <b>Por favor, anota estas doce palabras!</b>",
     "msg_confirm_secret_saved": "<b>Confirmar que almacenou súa frase de paso.</b> <br> Sen a frase de paso correctos perder o acceso á súa conta. <br> <b>Todo o seu</b> {{symbol}} <b>perderase.</b>",
-    "forward": "Á fronte"
+    "forward": "Á fronte",
+    "public_key": "Chave pública",
+    "msg_sent_to": "A mensaxe enviada {{recipient}}",
+    "gossip": "Fofoca"
   },
   "filter": {
     "filter": "Filtro",

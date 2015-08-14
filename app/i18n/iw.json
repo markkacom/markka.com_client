@@ -249,7 +249,10 @@
     "enter_price": "הזן מחיר",
     "msg_must_save_secret": "<h3 style=\";text-align:right;direction:rtl\"> <b>חשוב מאוד!</b> </h3> זה <b>הביטוי הסודי</b> שלך. <br> {{symbol}} הרשת היא מבוזר, רק <b>שיש לך</b> מפתח זה כדי לגשת לארנק שלך. <br> <b>אנא רשמו את עשר המילים האלה!</b>",
     "msg_confirm_secret_saved": "<b>אשר אחסנת הביטוי הסודי שלך.</b> <br> ללא ביטוי הסוד הנכון אתה תאבד את הגישה לחשבון שלך. <br> <b>כולך</b> {{symbol}} <b>יאבד.</b>",
-    "forward": "קדימה"
+    "forward": "קדימה",
+    "public_key": "מפתח ציבורי",
+    "msg_sent_to": "הודעה נשלחה ל {{recipient}}",
+    "gossip": "רכילות"
   },
   "filter": {
     "filter": "מסנן",

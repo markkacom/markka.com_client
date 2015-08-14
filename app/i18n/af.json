@@ -249,7 +249,10 @@
     "enter_price": "Tik prys",
     "msg_must_save_secret": "<h3> <b>Uiters belangrik is!</b> </h3> Dit is jou <b>geheime frase.</b> <br> Die {{symbol}} netwerk is gedesentraliseer, net <b>jy</b> het die sleutel om toegang tot jou beursie. <br> <b>Skryf asseblief hierdie twaalf woorde!</b>",
     "msg_confirm_secret_saved": "<b>Bevestig jou gestoor jou geheime frase.</b> <br> Sonder die korrekte geheime frase wat jy verloor toegang tot jou rekening. <br> <b>Al jou</b> {{symbol}} <b>verlore sal gaan.</b>",
-    "forward": "Vorentoe"
+    "forward": "Vorentoe",
+    "public_key": "Publieke sleutel",
+    "msg_sent_to": "Boodskap gestuur na {{recipient}}",
+    "gossip": "Gossip"
   },
   "filter": {
     "filter": "Filter",

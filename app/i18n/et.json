@@ -249,7 +249,10 @@
     "enter_price": "Sisesta hind",
     "msg_must_save_secret": "<h3> <b>Äärmiselt oluline!</b> </h3> See on su <b>salajane fraasi.</b> <br> {{symbol}} võrk on hajutatud, vaid <b>teil</b> on see võti juurdepääsu oma rahakoti. <br> <b>Palun kirjutage need kaksteist sõnu!</b>",
     "msg_confirm_secret_saved": "<b>Kinnita teil salvestada oma salajase fraasi.</b> <br> Ilma õige saladus fraasi pääse oma kontole. <br> <b>Kõik teie</b> {{symbol}} <b>kaduma.</b>",
-    "forward": "Edasi"
+    "forward": "Edasi",
+    "public_key": "Avalik võti",
+    "msg_sent_to": "Teade saadetakse {{recipient}}",
+    "gossip": "Lobamokk"
   },
   "filter": {
     "filter": "Filter",

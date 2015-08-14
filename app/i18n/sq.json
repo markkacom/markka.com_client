@@ -249,7 +249,10 @@
     "enter_price": "Shkruani çmimin",
     "msg_must_save_secret": "<h3> <b>Shumë e rëndësishme!</b> </h3> Kjo është <b>fraza</b> juaj <b>e fshehtë.</b> <br> {{symbol}} rrjeti është i decentralizuar, vetëm <b>ju</b> e keni këtë çelës për të hyrë në portofolin tuaj. <br> <b>Ju lutemi shkruani këto dymbëdhjetë fjalë!</b>",
     "msg_confirm_secret_saved": "<b>Konfirmoni ju ruajtur fraza tuaj sekret.</b> <br> Pa fraza e saktë të fshehtë që ju të humbni qasje në llogarinë tuaj. <br> <b>Të gjitha tuaj</b> {{symbol}} <b>do të jetë e humbur.</b>",
-    "forward": "Përpara"
+    "forward": "Përpara",
+    "public_key": "Kyç publik",
+    "msg_sent_to": "Mesazh dërguar në {{recipient}}",
+    "gossip": "Thashetheme"
   },
   "filter": {
     "filter": "Filtër",

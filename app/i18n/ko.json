@@ -249,7 +249,10 @@
     "enter_price": "가격을 입력",
     "msg_must_save_secret": "<h3> <b>매우 중요합니다!</b> </h3> 이것은 당신의 <b>비밀 문구입니다.</b> <br> {{symbol}} 네트워크가 분산되어, 단지 <b>당신은 당신의</b> 지갑에 액세스하려면이 키가 있습니다. <br> <b>이 열두 단어를 적어주세요!</b>",
     "msg_confirm_secret_saved": "<b>당신이 당신의 비밀 문구를 저장 확인합니다.</b> <br> 올바른 비밀 문구없이 당신은 당신의 계정에 대한 액세스 권한을 잃게됩니다. <br> <b>당신의 모든</b> {{symbol}} <b>손실됩니다.</b>",
-    "forward": "앞으로"
+    "forward": "앞으로",
+    "public_key": "공개 키",
+    "msg_sent_to": "메시지로 전송 {{recipient}}",
+    "gossip": "잡담"
   },
   "filter": {
     "filter": "필터",

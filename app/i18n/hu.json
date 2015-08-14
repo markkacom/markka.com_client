@@ -249,7 +249,10 @@
     "enter_price": "Adja ára",
     "msg_must_save_secret": "<h3> <b>Rendkívül fontos!</b> </h3> Ez a <b>titkos mondat.</b> <br> A {{symbol}} hálózat decentralizált, csak <b>van</b> ez a gombbal érheti el a pénztárca. <br> <b>Kérjük, írja le ezeket a tizenkét szavakat!</b>",
     "msg_confirm_secret_saved": "<b>Erősítse meg, hogy a tárolt a titkos mondat.</b> <br> Anélkül, hogy a helyes titkos kifejezést elveszíti a hozzáférést a fiókjához. <br> <b>Minden az Ön</b> {{symbol}} <b>elvész.</b>",
-    "forward": "Előre"
+    "forward": "Előre",
+    "public_key": "A nyilvános kulcs",
+    "msg_sent_to": "Üzenetet küldött {{recipient}}",
+    "gossip": "Pletyka"
   },
   "filter": {
     "filter": "Szűrő",
