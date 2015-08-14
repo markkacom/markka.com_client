@@ -336,7 +336,12 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       var listeners = this.topics[topic];
       if (listeners) {
         for (var i=0; i<listeners.length; i++) {
-          listeners[i].call(null, data);
+          if (typeof listeners[i] == 'function') {
+            listeners[i].call(null, data);
+          }
+          else {
+            console.log('Listener '+i+' of '+topic+' is not a function');
+          }
         }
       }
     },
