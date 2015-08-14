@@ -67,6 +67,7 @@ module.run(function ($log, $rootScope, $translate, plugins, serverService) {
 });
 
 module.config(function($translateProvider, $httpProvider) {
+  $translateProvider.useSanitizeValueStrategy(null);
   $translateProvider.useStaticFilesLoader({ prefix: './i18n/', suffix: '.json' });
   $translateProvider.preferredLanguage('en');
   $translateProvider.useLocalStorage();
