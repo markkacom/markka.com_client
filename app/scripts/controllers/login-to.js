@@ -39,7 +39,7 @@ function isValidHex(hex) {
 var module = angular.module('fim.base');
 module.config(function($routeProvider) {  
   $routeProvider
-    .when('/login-to', {
+    .when('/login-to/:action?', {
       templateUrl: 'partials/login-to.html',
       controller: 'LoginToController'
     });
@@ -49,7 +49,7 @@ module.run(function ($rootScope) {
     return $rootScope.currentAccount && $rootScope.currentAccount.id_rs == id_rs;
   };
 })
-module.controller('LoginToController', function($scope, $rootScope, KeyService, nxt, $location, $q, $timeout, db, timeagoService) {
+module.controller('LoginToController', function($scope, $rootScope, KeyService, nxt, $location, $q, $timeout, db, timeagoService, $routeParams) {
   
   $scope.walletExists = KeyService.walletExists();
   $scope.walletUnlocked = !!KeyService.wallet;
@@ -83,6 +83,50 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
   $scope.alerts.activated = false;
   $scope.alerts.activationBusy = false;
   $scope.alerts.fileError = false;
+
+  var initializers = {
+    2: function () {
+      if ($scope.input.account) {
+        $scope.input.secretPhrase = $scope.input.account.secretPhrase;
+      }
+    },
+    4: function () {
+      var api = nxt.get($scope.input.engine);
+      $scope.input.id_rs = api.crypto.getAccountId($scope.input.secretPhrase, true);
+      api.engine.socket().getAccount({ account:$scope.input.id_rs}).then(
+        function (data) {
+          $scope.$evalAsync(function () {
+            $scope.input.name = data.accountName;
+            $scope.input.description = data.description;
+          });
+        }
+      )
+    },
+    9: function () {
+      $scope.input.secretPhrase = generatePassphrase();
+    },
+    11: function () {
+      var api = nxt.get($scope.input.engine);
+      $scope.input.id_rs = api.crypto.getAccountId($scope.input.secretPhrase, true);
+    },
+    12: function () {
+
+    }
+  };
+
+  var forcedBack = {page:null};
+
+  $scope.goto = function (page, forcedBackPage) {
+    forcedBack.page = typeof forcedBackPage == 'number' ? forcedBackPage : null;
+    $scope.state.active = page;
+    if (initializers[page]) {
+      initializers[page].call();
+    }
+  }
+
+  if ($routeParams.action == "create") {
+    $scope.goto(9);
+  }
 
   $scope.walletTypeChanged = function () {
     if ($scope.input.wallet == 'internal') {
@@ -121,19 +165,22 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
     });
   }
 
-  var forcedBack = {page:null};
-
   function setCurrentAccount(account) {
     $rootScope.currentAccount = angular.copy(account);
-    return $rootScope.currentAccount
-  }
+    var api = nxt.get(account.id_rs);
+    api.engine.socket().getAccount({account:account.id_rs}).then(
+      function (a) {
+        $rootScope.$evalAsync(function () {
+          $rootScope.currentAccount.name = a.accountName;
+          $rootScope.currentAccount.balanceNXT = nxt.util.convertToNXT(a.balanceNQT);
 
-  $scope.goto = function (page, forcedBackPage) {
-    forcedBack.page = typeof forcedBackPage == 'number' ? forcedBackPage : null;
-    $scope.state.active = page;
-    if (initializers[page]) {
-      initializers[page].call();
-    }
+          var parts = ($rootScope.currentAccount.balanceNXT||"").split('.');
+          $rootScope.currentAccount.balanceNXTWhole = parts[0];
+          $rootScope.currentAccount.balanceNXTRemainder = parts[1];
+        });
+      }
+    );
+    return $rootScope.currentAccount
   }
 
   $scope.backupWallet = function () {
@@ -154,36 +201,6 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
       $scope.walletUnlocked = false;
     }
   }
-
-  var initializers = {
-    2: function () {
-      if ($scope.input.account) {
-        $scope.input.secretPhrase = $scope.input.account.secretPhrase;
-      }
-    },
-    4: function () {
-      var api = nxt.get($scope.input.engine);
-      $scope.input.id_rs = api.crypto.getAccountId($scope.input.secretPhrase, true);
-      api.engine.socket().getAccount({ account:$scope.input.id_rs}).then(
-        function (data) {
-          $scope.$evalAsync(function () {
-            $scope.input.name = data.accountName;
-            $scope.input.description = data.description;
-          });
-        }
-      )
-    },
-    9: function () {
-      $scope.input.secretPhrase = generatePassphrase();
-    },
-    11: function () {
-      var api = nxt.get($scope.input.engine);
-      $scope.input.id_rs = api.crypto.getAccountId($scope.input.secretPhrase, true);
-    },
-    12: function () {
-
-    }
-  };
 
   $scope.back = function (page) {
     if (forcedBack.page) {
