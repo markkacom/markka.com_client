@@ -5,6 +5,8 @@
   module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
+    $scope.paramSection = $routeParams.listing;
+    console.log($scope.paramSection);
 
     var api = nxt.get($scope.id_rs);
 
@@ -21,7 +23,7 @@
     }
 
     $scope.details = function(goodsDetails) {
-      $location.path('/goods/' + $scope.id_rs + '/' + goodsDetails.goods);
+      $location.path('/goods/' + $scope.id_rs+ '/' + goodsDetails.goods);
     }
 
     $scope.add = function() {
@@ -34,7 +36,31 @@
       })
     }
 
-    $scope.showGoods = new AllGoodsProvider(api, $scope, 10, $scope.id_rs);
-    $scope.showGoods.reload();
+    if($scope.paramSection == 'listing') {  
+      $scope.showGoods = new AllGoodsProvider(api, $scope, 10, $scope.id_rs);
+      $scope.showGoods.reload();
+      console.log($scope.showGoods);
+      console.log('listing');
+    }
+
+    else {
+      console.log('details');
+      var details_args = {
+        requestType: 'getDGSGood',
+        goods: $scope.paramSection
+      }
+
+      api.engine.socket().callAPIFunction(details_args).then(function(data) {
+        $scope.goodsDetails = data;
+        console.log($scope.goodsDetails);
+        $scope.desc = JSON.parse($scope.goodsDetails.description);
+      })
+
+      $scope.addToCart = function(goodsDetails) {
+        var cartDetails = shoppingCartService.add(goodsDetails);
+        console.log(cartDetails);
+        $location.path('/goods/' + $scope.id_rs + '/goods/viewcart');
+      }
+    }
   });
 })();
