@@ -24,13 +24,9 @@ var module = angular.module('fim.base', [
 
 module.config(function($routeProvider) {
   $routeProvider
-    .when('/goods/:id_rs/listing', {
+    .when('/goods/:id_rs/:listing', {
       templateUrl: 'partials/goods.html',
       controller: 'GoodsCtrl'
-    })
-    .when('/goods/:id_rs/:goods_id', {
-      templateUrl: 'partials/goods-details.html',
-      controller: 'GoodsDetailsCtrl'
     })
     .when('/goods/:id_rs/goods/viewcart', {
       templateUrl: 'partials/cart.html',
