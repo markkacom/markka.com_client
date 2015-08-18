@@ -1,9 +1,9 @@
 	<div class="goods-details-page">
     <div class="row">
   		<div class="col-md-12 goods-details-col1">
-        <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-primary goods-button">Goods</a>
-        <a href="#/accounts/{{id_rs}}/goods/viewcart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-        <a href="#/accounts/{{id_rs}}/goods/past/orders" class= "btn btn-default past-orders-button">Past Orders</a>
+        <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Goods</a>
+        <a href="#/goods/{{id_rs}}/goods/viewcart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+        <a href="#/goods/{{id_rs}}/past/orders" class= "btn btn-default past-orders-button">Past Orders</a>
   		</div>
   	</div>
     <div class="row">
@@ -28,7 +28,7 @@
         </div>
         <div class= "goods-details3">
           <a class= "btn btn-primary add-to-cart" ng-click= "addToCart(goodsDetails)"><i class="fa fa-shopping-cart"></i> Add To Cart</a>
-          <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-danger cancel-button">Cancel</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-danger cancel-button">Cancel</a>
         </div>
   		</div>
   	</div>

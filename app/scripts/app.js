@@ -24,23 +24,23 @@ var module = angular.module('fim.base', [
 
 module.config(function($routeProvider) {
   $routeProvider
-    .when('/accounts/:id_rs/goods', {
+    .when('/goods/:id_rs/listing', {
       templateUrl: 'partials/goods.html',
       controller: 'GoodsCtrl'
     })
-    .when('/accounts/:id_rs/goods/:goods_id/details', {
+    .when('/goods/:id_rs/:goods_id', {
       templateUrl: 'partials/goods-details.html',
       controller: 'GoodsDetailsCtrl'
     })
-    .when('/accounts/:id_rs/goods/viewcart', {
+    .when('/goods/:id_rs/goods/viewcart', {
       templateUrl: 'partials/cart.html',
       controller: 'CartCtrl'
     })
-    .when('/accounts/:id_rs/goods/search', {
+    .when('/goods/:id_rs/goods/search', {
       templateUrl: 'partials/search-goods.html',
       controller: 'SearchGoodsCtrl'
     })
-    .when('/accounts/:id_rs/goods/past/orders', {
+    .when('/goods/:id_rs/past/orders', {
       templateUrl: 'partials/past-orders.html',
       controller: 'PastOrdersCtrl'
     })

@@ -30,7 +30,7 @@ module.controller('GoodsDetailsCtrl', function($location, $q, $scope, modals, $r
 		$scope.addToCart = function(goodsDetails) {
 			var cartDetails = shoppingCartService.add(goodsDetails);
 			console.log(cartDetails);
-			$location.path('/accounts/'+$scope.id_rs+'/goods/viewcart');
+			$location.path('/goods/'+$scope.id_rs+'/goods/viewcart');
 		}
 
 	})

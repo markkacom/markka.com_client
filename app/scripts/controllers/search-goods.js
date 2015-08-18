@@ -80,13 +80,13 @@ module.controller('SearchGoodsCtrl', function($location, $q, $scope, modals, $ro
 
 		$scope.details = function(goodsDetails) {
 			// console.log(goodsDetails);
-			$location.path('/accounts/'+$scope.id_rs+'/goods/'+goodsDetails.goods+'/details');
+			$location.path('/goods/'+$scope.id_rs+'/'+goodsDetails.goods);
 		}
 
 		$scope.addToCart = function(goodsDetails) {
 			var cartDetails = shoppingCartService.add(goodsDetails);
 			// console.log(cartDetails);
-			$location.path('/accounts/'+$scope.id_rs+'/goods/viewcart');
+			$location.path('/goods/'+$scope.id_rs+'/goods/viewcart');
 		}
 
 	})
