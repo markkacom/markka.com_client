@@ -24,15 +24,13 @@
                    <tbody>
                     <tr style= "cursor: pointer;" ng-if= "isAdded">
                       <td ng-click= "details(goods)">{{isAdded.name}}</td>
-                      <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
                       <td ng-click= "details(goods)">{{isAdded.tags}}</td>
                       <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
                       <td ng-click= "details(goods)">{{priceNQT}}</td>
                       <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
                     </tr>
-                    <tr ng-repeat= "goods in showGoods.allGoods" style= "cursor: pointer;">
+                    <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
                       <td ng-click= "details(goods)">{{goods.name}}</td>
-                      <!-- <td ng-click= "details(goods)">{{goods.description}}</td> -->
                       <td ng-click= "details(goods)">{{goods.tags}}</td>
                       <td ng-click= "details(goods)">{{goods.quantity}}</td>
                       <td ng-click= "details(goods)">{{goods.priceNQT}}</td>
@@ -43,4 +41,10 @@
         </div>
       </div>
     </div>
+    <div class="load-more-button" ng-show="showGoods.hasMore">
+              <a href ng-click="showGoods.loadMore()" class="text-lowercase text-muted">
+                <span ng-show="showGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+                <span translate="translate.load_more_assets"></span>
+              </a>
+            </div> 
   </div>

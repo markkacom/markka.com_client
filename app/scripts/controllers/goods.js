@@ -2,7 +2,7 @@
   'use strict';
   var module = angular.module('fim.base');
 
-  module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, GoodsProvider, GoodsPostProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
 
@@ -16,7 +16,7 @@
         goods: good.goods
       }
       plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs).then(function(deletedGood) {
-        $scope.showGoods.allGoods.splice(deletedGood, 1);
+        $scope.showGoods.entities.splice(deletedGood, 1);
       })
     }
 
@@ -34,14 +34,7 @@
       })
     }
 
-    $scope.showGoods = new GoodsProvider(api, $scope, $scope.id_rs);
+    $scope.showGoods = new AllGoodsProvider(api, $scope, 10, $scope.id_rs);
     $scope.showGoods.reload();
-
-    $scope.provider = new GoodsPostProvider(api, $scope, 5, $scope.id_rs);
-    $scope.provider.reload();
-
-    $scope.$watch('showGoods', function(s, data) {
-      console.log("goods:", data);
-    });
   });
 })();
