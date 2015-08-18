@@ -2,28 +2,20 @@
 'use strict';
 var module = angular.module('fim.base');
 
-module.controller('SearchGoodsCtrl', function($location, $q, $scope, modals, $routeParams, nxt, db, plugins, requests, $timeout, 
-  ActivityProvider, MessagesProvider, BlocksProvider, AliasProvider, NamespacedAliasProvider, AssetsProvider, CurrencyProvider, AccountProvider, 
-  BuyOrderProvider, SellOrderProvider, AccountPostProvider, AccountForgerProvider, AccountLessorsProvider, 
-  dateParser, dateFilter, accountsService, PaymentsProvider, $rootScope, serverService, shoppingCartService) {
+module.controller('SearchGoodsCtrl', function($location, $scope, $routeParams, nxt, shoppingCartService) {
 
 		$scope.id_rs          = $routeParams.id_rs;
-		// $scope.tags = [];
 
 		var api = nxt.get($scope.id_rs);
-		// console.log(api);
 
 		$scope.shoppingCart = shoppingCartService.get();
-		// console.log($scope.shoppingCart);
 
 		var getAllGoodsargs = {
 			requestType: 'getDGSGoods',
 			seller: $scope.id_rs
 		}
 		api.engine.socket().callAPIFunction(getAllGoodsargs).then(function(data) {
-			// console.log(data);
 			$scope.allGoods = data.goods;
-			// console.log($scope.allGoods.goods);
 		})
 
 		$scope.search = function(query) {
@@ -35,7 +27,6 @@ module.controller('SearchGoodsCtrl', function($location, $q, $scope, modals, $ro
 
 			api.engine.socket().callAPIFunction(search_args).then(function(searchData) {
 				$scope.searchedGoods = searchData.goods;
-				// console.log($scope.searchedGoods)
 				$scope.searchedGoods.forEach(function(good) {
 					try {
 					  	var data = JSON.parse(good.description);
@@ -79,13 +70,11 @@ module.controller('SearchGoodsCtrl', function($location, $q, $scope, modals, $ro
 		}
 
 		$scope.details = function(goodsDetails) {
-			// console.log(goodsDetails);
 			$location.path('/goods/'+$scope.id_rs+'/'+goodsDetails.goods);
 		}
 
 		$scope.addToCart = function(goodsDetails) {
 			var cartDetails = shoppingCartService.add(goodsDetails);
-			// console.log(cartDetails);
 			$location.path('/goods/'+$scope.id_rs+'/goods/viewcart');
 		}
 
