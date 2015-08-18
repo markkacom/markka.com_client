@@ -3,7 +3,7 @@
   <div class="goods-page" ng-if= "paramSection == 'listing'">
     <div class="row">
       <div class="col-md-12 goods-col1" style= "margin-bottom: 20px;">
-        <a href="#/goods/{{id_rs}}/past/orders" class= "btn btn-default past-orders-button">Past Orders</a>
+        <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
         <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
         <!-- <a href="#/goods/{{id_rs}}/goods/search" class= "btn btn-default" style= "width: 120px;">Search Goods</a> -->
         <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Goods</a>
@@ -67,7 +67,7 @@
         <div class="col-md-12 goods-details-col1">
           <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Goods</a>
           <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-          <a href="#/goods/{{id_rs}}/past/orders" class= "btn btn-default past-orders-button">Past Orders</a>
+          <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
         </div>
       </div>
       <div class="row">
@@ -104,7 +104,7 @@
       <div class="row">
         <div class="col-md-12 top-buttons">
           <label class= "btn btn-default">Cart ({{shoppingCart.length}})</label>
-          <a href= "#/goods/{{id_rs}}/past/orders" class= "btn btn-default past-orders">Past Orders</a>
+          <a href= "#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders">Past Orders</a>
           <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Back to Goods</a>
         </div>
       </div>
@@ -164,6 +164,54 @@
           <br>
           <a href="#/goods/{{id_rs}}/listing" class= "btn btn-success">Continue Shopping</a>
         </div>
+      </div>
+  </div>
+
+  <!-- past orders page -->
+
+    <div class="past-orders-page" ng-if= "paramSection == 'pastorders'">
+      <div class="row">
+        <div class="col-md-12 past-order-col1">
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Goods</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" style= " padding-top: 20px;">
+          <div class="table-responsive">
+            <table class="table" style= "border: 1px solid #dddddd;">
+              <thead>
+                <tr>
+                  <th>Purchase ID</th>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>PriceNQT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat= "orders in pastOrders.purchases">
+                  <td>{{orders.purchase}}</td>
+                  <td>{{orders.name}}</td>
+                  <td>{{orders.quantity}}</td>
+                  <td>{{orders.priceNQT}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- <div class="col-md-12" style= "text-align: center;" ng-repeat= "orders in pastOrders.purchases">
+          <div class="list-group past-orders-div">
+              <img src="images/imac.jpg" style= "width: 185px;">
+              <a class="list-group-item" style= "border: none;">
+                <div style= "text-align: left;">
+                  <p><b>Purchase Id: </b>{{orders.purchase}}</p>
+                  <h4 class="list-group-item-heading">{{orders.name}}</h4>
+                  <p class="list-group-item-text"><b>Quantity:</b> {{orders.quantity}}</p>
+                  <p class="list-group-item-text"> <b>PriceNQT:</b> {{orders.priceNQT}}</p>
+                </div>
+              </a>
+          </div>
+        </div> -->
       </div>
   </div>
 
