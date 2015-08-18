@@ -28,18 +28,6 @@ module.config(function($routeProvider) {
       templateUrl: 'partials/goods.html',
       controller: 'GoodsCtrl'
     })
-    .when('/goods/:id_rs/goods/viewcart', {
-      templateUrl: 'partials/cart.html',
-      controller: 'CartCtrl'
-    })
-    .when('/goods/:id_rs/goods/search', {
-      templateUrl: 'partials/search-goods.html',
-      controller: 'SearchGoodsCtrl'
-    })
-    .when('/goods/:id_rs/past/orders', {
-      templateUrl: 'partials/past-orders.html',
-      controller: 'PastOrdersCtrl'
-    })
 });
 
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {

@@ -23,7 +23,7 @@
     }
 
     $scope.details = function(goodsDetails) {
-      $location.path('/goods/' + $scope.id_rs+ '/' + goodsDetails.goods);
+      $location.path('/goods/' + $scope.id_rs + '/' + goodsDetails.goods);
     }
 
     $scope.add = function() {
@@ -36,14 +36,12 @@
       })
     }
 
-    if($scope.paramSection == 'listing') {  
+    if ($scope.paramSection == 'listing') {
       $scope.showGoods = new AllGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.showGoods.reload();
       console.log($scope.showGoods);
       console.log('listing');
-    }
-
-    else if($scope.paramSection == 'cart') {
+    } else if ($scope.paramSection == 'cart') {
       $scope.shoppingCart = shoppingCartService.get();
       console.log($scope.shoppingCart);
 
@@ -85,9 +83,20 @@
         var abc = shoppingCartService.removeItem(index);
         $scope.shoppingCart.splice(index, 1);
       }
-    }
+    } else if ($scope.paramSection == "pastorders") {
 
-    else {
+      $scope.shoppingCart = shoppingCartService.get();
+
+      var past_orders_args = {
+        requestType: 'getDGSPurchases',
+        seller: $scope.id_rs
+      }
+
+      api.engine.socket().callAPIFunction(past_orders_args).then(function(data) {
+        $scope.pastOrders = data;
+        console.log(data);
+      })
+    } else {
       console.log('details');
       var details_args = {
         requestType: 'getDGSGood',
