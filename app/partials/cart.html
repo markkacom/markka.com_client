@@ -2,8 +2,8 @@
     <div class="row">
   		<div class="col-md-12 top-buttons">
         <label class= "btn btn-default">Cart ({{shoppingCart.length}})</label>
-        <a href= "#/accounts/{{id_rs}}/goods/past/orders" class= "btn btn-default past-orders">Past Orders</a>
-        <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-primary goods-button">Back to Goods</a>
+        <a href= "#/goods/{{id_rs}}/past/orders" class= "btn btn-default past-orders">Past Orders</a>
+        <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Back to Goods</a>
   		</div>
   	</div>
   	<div class="row" ng-if= "shoppingCart.length > 0">
@@ -49,7 +49,7 @@
       </div> -->
       <div class="col-md-12 order-buttons">
         <div>
-          <a href= "#/accounts/{{id_rs}}/goods" class= "btn btn-default back-to-goods">Back to Goods</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-default back-to-goods">Back to Goods</a>
           <button class= "btn btn-success place-order" ng-click= "placeOrder()">Place Order</button>
         </div>
           <hr>
@@ -60,7 +60,7 @@
       <div class="col-md-12 no-added-col">
         <label>No pending orders to place. Your Shopping Cart is empty.</label>
         <br>
-        <a href="#/accounts/{{id_rs}}/goods" class= "btn btn-success">Continue Shopping</a>
+        <a href="#/goods/{{id_rs}}/listing" class= "btn btn-success">Continue Shopping</a>
       </div>
     </div>
   </div>

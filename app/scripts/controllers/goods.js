@@ -39,7 +39,7 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
 
 		$scope.details = function(goodsDetails) {
 			// console.log(goodsDetails);
-			$location.path('/accounts/'+$scope.id_rs+'/goods/'+goodsDetails.goods+'/details');
+			$location.path('/goods/'+$scope.id_rs+'/'+goodsDetails.goods);
 		}
 
 		$scope.add = function() {
@@ -61,54 +61,6 @@ module.controller('GoodsCtrl', function($location, $q, $scope, modals, $routePar
     $scope.$watch('showGoods', function(s, data) {
       console.log("goods:", data);
     });
-
-    //     if ($scope.showTransactionFilter) {
-    //   $scope.filter.all = true;
-    //   $scope.filter.payments = true;
-    //   $scope.filter.messages = true;
-    //   $scope.filter.aliases = true;
-    //   $scope.filter.namespacedAliases = true;
-    //   $scope.filter.polls = true;
-    //   $scope.filter.accountInfo = true;
-    //   $scope.filter.announceHub = true;
-    //   $scope.filter.goodsStore = true;
-    //   $scope.filter.balanceLeasing = true;
-    //   $scope.filter.trades = true;
-    //   $scope.filter.assetIssued = true;
-    //   $scope.filter.assetTransfer = true;
-    //   $scope.filter.assetOrder = true;
-    //   $scope.filter.currencyIssued = true;
-    //   $scope.filter.currencyTransfer = true;
-    //   $scope.filter.currencyOther = true;
-
-    //   $scope.filterAllChanged = function () {
-    //     $scope.$evalAsync(function () {
-    //       var on = $scope.filter.all;
-    //       $scope.filter.payments = on;
-    //       $scope.filter.messages = on;
-    //       $scope.filter.aliases = on;
-    //       $scope.filter.namespacedAliases = on;
-    //       $scope.filter.polls = on;
-    //       $scope.filter.accountInfo = on;
-    //       $scope.filter.announceHub = on;
-    //       $scope.filter.goodsStore = on;
-    //       $scope.filter.balanceLeasing = on;
-    //       $scope.filter.trades = on;
-    //       $scope.filter.assetIssued = on;
-    //       $scope.filter.assetTransfer = on;
-    //       $scope.filter.assetOrder = on;
-    //       $scope.filter.currencyIssued = on;
-    //       $scope.filter.currencyTransfer = on;
-    //       $scope.filter.currencyOther = on;       
-
-    //       $scope.filterChanged();
-    //     });
-    //   }
-
-    //   $scope.filterChanged = function () {
-    //     $scope.provider.applyFilter($scope.filter);
-    //   }
-    // }
 
 	});
 })();
