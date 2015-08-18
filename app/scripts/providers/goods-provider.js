@@ -20,19 +20,19 @@
       getData: function(firstIndex) {
         var deferred = $q.defer();
         var args = {
-            firstIndex: firstIndex,
-            lastIndex: firstIndex + this.pageSize,
-            includeCounts: true,
-            requestType: 'getDGSGoods',
-            seller: this.account
+          firstIndex: firstIndex,
+          lastIndex: firstIndex + this.pageSize,
+          includeCounts: true,
+          requestType: 'getDGSGoods',
+          seller: this.account
+        }
+        if (this.filter) {
+          args.query = this.filter;
+          args.requestType = 'searchDGSGoods';
+          if (!/\*$/.test(args.query)) {
+            args.query += '*';
           }
-          // if (this.filter) {
-          //   args.query = this.filter;
-          //   args.requestType = 'searchAssets';
-          //   if (!/\*$/.test(args.query)) {
-          //     args.query += '*';
-          //   }
-          // }
+        }
         this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
         return deferred.promise;
       },

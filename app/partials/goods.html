@@ -7,44 +7,53 @@
         <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Goods</a>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="table-responsive">
-          <table class="table goods-table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <!-- <th>Description</th> -->
-                      <th>Tags</th>
-                      <th>Quantity</th>
-                      <th>PriceNQT</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                   <tbody>
-                    <tr style= "cursor: pointer;" ng-if= "isAdded">
-                      <td ng-click= "details(goods)">{{isAdded.name}}</td>
-                      <td ng-click= "details(goods)">{{isAdded.tags}}</td>
-                      <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
-                      <td ng-click= "details(goods)">{{priceNQT}}</td>
-                      <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
-                    </tr>
-                    <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
-                      <td ng-click= "details(goods)">{{goods.name}}</td>
-                      <td ng-click= "details(goods)">{{goods.tags}}</td>
-                      <td ng-click= "details(goods)">{{goods.quantity}}</td>
-                      <td ng-click= "details(goods)">{{goods.priceNQT}}</td>
-                      <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
-                    </tr>
-                  </tbody>
-          </table>
+    <div infinite-scroll="showGoods.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <form class="form-inline" style= "margin-bottom: 15px;">
+              <div class="form-group">
+                <span>Filter on goods name and description</span>&nbsp;&nbsp;
+                <input type="text" ng-model="showGoods.filter" ng-change="showGoods.reload()" class="form-control" placeholder="Filter">
+              </div>
+            </form>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table goods-table" style= "border: 1px solid #dddddd;">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <!-- <th>Description</th> -->
+                        <th>Tags</th>
+                        <th>Quantity</th>
+                        <th>PriceNQT</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                     <tbody>
+                      <tr style= "cursor: pointer;" ng-if= "isAdded">
+                        <td ng-click= "details(goods)">{{isAdded.name}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.tags}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
+                        <td ng-click= "details(goods)">{{priceNQT}}</td>
+                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
+                      </tr>
+                      <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
+                        <td ng-click= "details(goods)">{{goods.name}}</td>
+                        <td ng-click= "details(goods)">{{goods.tags}}</td>
+                        <td ng-click= "details(goods)">{{goods.quantity}}</td>
+                        <td ng-click= "details(goods)">{{goods.priceNQT}}</td>
+                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
+                      </tr>
+                    </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="load-more-button" ng-show="showGoods.hasMore">
-              <a href ng-click="showGoods.loadMore()" class="text-lowercase text-muted">
-                <span ng-show="showGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
-                <span translate="translate.load_more_assets"></span>
-              </a>
-            </div> 
+      <div class="load-more-button" ng-show="showGoods.hasMore">
+        <a href ng-click="showGoods.loadMore()" class="text-lowercase text-muted">
+          <span ng-show="showGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+          <span translate="translate.load_more_assets"></span>
+        </a>
+      </div>
+    </div> 
   </div>
