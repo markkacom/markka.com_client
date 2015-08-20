@@ -5,7 +5,6 @@
 
     function PastGoodsProvider(api, $scope, pageSize, account) {
       this.init(api, $scope, pageSize, account);
-      this.filter = null;
       this.account = account;
     }
     angular.extend(PastGoodsProvider.prototype, IndexedEntityProvider.prototype, {
@@ -31,7 +30,6 @@
       },
 
       dataIterator: function(data) {
-        console.log(data);
         var goods = data.purchases;
         var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
         for (var i = 0; i < goods.length; i++) {
