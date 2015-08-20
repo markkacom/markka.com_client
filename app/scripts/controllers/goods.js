@@ -2,7 +2,7 @@
   'use strict';
   var module = angular.module('fim.base');
 
-  module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -87,15 +87,8 @@
 
       $scope.shoppingCart = shoppingCartService.get();
 
-      var past_orders_args = {
-        requestType: 'getDGSPurchases',
-        seller: $scope.id_rs
-      }
-
-      api.engine.socket().callAPIFunction(past_orders_args).then(function(data) {
-        $scope.pastOrders = data;
-        console.log(data);
-      })
+      $scope.pastGoods = new PastGoodsProvider(api, $scope, 10, $scope.id_rs);
+      $scope.pastGoods.reload();
     } else {
       console.log('details');
       var details_args = {
