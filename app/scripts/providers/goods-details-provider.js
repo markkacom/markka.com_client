@@ -27,7 +27,6 @@
       },
 
       dataIterator: function(data) {
-        console.log(data);
         var goods = data;
         var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
         return new Iterator([goods]);
