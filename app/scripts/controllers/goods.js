@@ -2,11 +2,10 @@
   'use strict';
   var module = angular.module('fim.base');
 
-  module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
-    console.log($scope.paramSection);
 
     var api = nxt.get($scope.id_rs);
 
@@ -39,11 +38,8 @@
     if ($scope.paramSection == 'listing') {
       $scope.showGoods = new AllGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.showGoods.reload();
-      console.log($scope.showGoods);
-      console.log('listing');
     } else if ($scope.paramSection == 'cart') {
       $scope.shoppingCart = shoppingCartService.get();
-      console.log($scope.shoppingCart);
 
       $scope.shoppingCart.forEach(function(good) {
         try {
@@ -90,23 +86,25 @@
       $scope.pastGoods = new PastGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.pastGoods.reload();
     } else {
-      console.log('details');
-      var details_args = {
-        requestType: 'getDGSGood',
-        goods: $scope.paramSection
-      }
 
-      api.engine.socket().callAPIFunction(details_args).then(function(data) {
-        $scope.goodsDetails = data;
-        console.log($scope.goodsDetails);
-        $scope.desc = JSON.parse($scope.goodsDetails.description);
-      })
+      $scope.goodsDetails = new GoodsDetailsProvider(api, $scope, $scope.paramSection);
+      $scope.goodsDetails.reload();
+      $scope.good = $scope.goodsDetails.entities;
 
       $scope.addToCart = function(goodsDetails) {
         var cartDetails = shoppingCartService.add(goodsDetails);
-        console.log(cartDetails);
         $location.path('/goods/' + $scope.id_rs + '/cart');
       }
     }
-  });
+  }).filter('parseImage', function() {
+    return function(item) {
+      var data = JSON.parse(item);
+      return data.image;
+    }
+  }).filter('parseDescription', function() {
+    return function(item) {
+      var data = JSON.parse(item);
+      return data.description;
+    }
+  })
 })();
