@@ -1,6 +1,13 @@
 (function() {
   'use strict';
   var module = angular.module('fim.base');
+  module.config(function($routeProvider) {
+    $routeProvider
+      .when('/goods/:id_rs/:listing', {
+        templateUrl: 'partials/goods.html',
+        controller: 'GoodsCtrl'
+      })
+  });
 
   module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider) {
 
