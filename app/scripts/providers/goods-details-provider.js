@@ -1,37 +1,51 @@
 (function() {
   'use strict';
   var module = angular.module('fim.base');
-  module.factory('GoodsDetailsProvider', function(nxt, $q, IndexedEntityProvider) {
+  module.factory('GoodsDetailsProvider', function(nxt, $q) {
 
     function GoodsDetailsProvider(api, $scope, paramSection) {
-      this.init(api, $scope, paramSection);
       this.paramSection = paramSection;
+      this.api = api;
+      this.$scope = $scope;
+      this.isLoading = true;
+      this.entities = [];
     }
-    angular.extend(GoodsDetailsProvider.prototype, IndexedEntityProvider.prototype, {
-
-      uniqueKey: function(good) {
-        return good.goods;
-      },
-      sortFunction: function(a, b) {
-        return a.index - b.index;
+    GoodsDetailsProvider.prototype = {
+      reload: function() {
+        var deferred = $q.defer();
+        var self = this;
+        this.$scope.$evalAsync(function() {
+          self.isLoading = true;
+          self.getData().then(deferred.resolve, deferred.reject);
+        });
+        return deferred.promise;
       },
 
       getData: function() {
         var deferred = $q.defer();
+        var self = this;
         var args = {
           requestType: 'getDGSGood',
           goods: this.paramSection
         }
-        this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
+        this.api.engine.socket().callAPIFunction(args).then(function(data) {
+            self.$scope.$evalAsync(function() {
+              self.isLoading = false;
+              var goodsDetails = data || [];
+              self.entities.push(goodsDetails);
+              deferred.resolve();
+            });
+          },
+          function() {
+            self.$scope.$evalAsync(function() {
+              self.isLoading = false;
+              deferred.reject();
+            });
+          }
+        );
         return deferred.promise;
-      },
-
-      dataIterator: function(data) {
-        var goods = data;
-        var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
-        return new Iterator([goods]);
       }
-    });
+    };
     return GoodsDetailsProvider;
   });
 })();
