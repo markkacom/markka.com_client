@@ -39,9 +39,10 @@
 
       dataIterator: function(data) {
         var goods = data.goods;
-        var index = index;
+        var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
         for (var i = 0; i < goods.length; i++) {
           var a = goods[i];
+          a.index = index;
         }
         return new Iterator(goods);
       }
