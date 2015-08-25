@@ -1,8 +1,10 @@
   <!-- goods page -->
 
-  <div class="goods-page" ng-if= "paramSection == 'listing'">
+  <div class="goods-page" ng-if= "paramSection == 'listing' || paramSection == 'viewlisting'">
     <div class="row">
       <div class="col-md-12 goods-col1" style= "margin-bottom: 20px;">
+        <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View Listing</a>
+        <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">Show All Goods</a>
         <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
         <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
         <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Goods</a>
