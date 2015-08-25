@@ -1,14 +1,14 @@
 (function() {
   'use strict';
   var module = angular.module('fim.base');
-  module.factory('AllGoodsProvider', function(nxt, $q, IndexedEntityProvider) {
+  module.factory('UserGoodsProvider', function(nxt, $q, IndexedEntityProvider) {
 
-    function AllGoodsProvider(api, $scope, pageSize, account) {
+    function UserGoodsProvider(api, $scope, pageSize, account) {
       this.init(api, $scope, pageSize, account);
       this.filter = null;
       this.account = account;
     }
-    angular.extend(AllGoodsProvider.prototype, IndexedEntityProvider.prototype, {
+    angular.extend(UserGoodsProvider.prototype, IndexedEntityProvider.prototype, {
 
       uniqueKey: function(good) {
         return good.goods;
@@ -23,7 +23,8 @@
           firstIndex: firstIndex,
           lastIndex: firstIndex + this.pageSize,
           includeCounts: true,
-          requestType: 'getDGSGoods'
+          requestType: 'getDGSGoods',
+          seller: this.account
         }
         if (this.filter) {
           args.query = this.filter;
@@ -46,6 +47,6 @@
         return new Iterator(goods);
       }
     });
-    return AllGoodsProvider;
+    return UserGoodsProvider;
   });
 })();
