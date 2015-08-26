@@ -16,7 +16,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Devious Item',
-        message: 'Create a DGS item with no length restricted tags',
+        message: 'Create a Marketplace item with no length restricted tags',
         senderRS: senderRS,
         requestType: 'dgsListing',
         canHaveRecipient: false,
@@ -79,7 +79,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Devious Item',
-        message: 'Delete a DGS item with no length restricted tags',
+        message: 'Delete a Marketplace item with no length restricted tags',
         // senderRS: senderRS,
         requestType: 'dgsDelisting',
         // canHaveRecipient: false,
@@ -103,7 +103,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Devious Item',
-        message: 'Purchase a DGS item',
+        message: 'Purchase a Marketplace item',
         senderRS: senderRS,
         requestType: 'dgsPurchase',
         canHaveRecipient: false,
