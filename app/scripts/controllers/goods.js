@@ -38,7 +38,7 @@
       }
       plugins.get('transaction').get('dgsListing').execute($scope.id_rs, args).then(function(addedGoods) {
         $scope.isAdded = addedGoods;
-        $scope.priceNQT = nxt.util.convertToNQT(addedGoods.priceNXT);
+        // $scope.priceNQT = nxt.util.convertToNQT(addedGoods.priceNXT);
       })
     }
 
