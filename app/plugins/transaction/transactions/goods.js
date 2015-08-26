@@ -121,12 +121,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'quantity',
           type: 'text',
           value: args.quantity||''
-        }, 
-        {
-          label: 'deliveryDeadlineTimestamp',
-          name: 'deliveryDeadlineTimestamp',
-          type: 'text',
-          value: args.deliveryDeadlineTimestamp||''
         }]
       }));
     }
