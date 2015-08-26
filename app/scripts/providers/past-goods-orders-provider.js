@@ -34,6 +34,7 @@
         var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
         for (var i = 0; i < goods.length; i++) {
           var a = goods[i];
+          a.priceFIMK = nxt.util.convertNQT(a.priceNQT);
         }
         return new Iterator(goods);
       }
