@@ -117,6 +117,18 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           }
         },
         fields: [{
+          label: 'Name',
+          name: 'name',
+          type: 'text',
+          value: args.name||''
+        },
+        {
+          label: 'Price',
+          name: 'price',
+          type: 'text',
+          value: args.priceNQT||''
+        },
+        {
           label: 'Quantity',
           name: 'quantity',
           type: 'text',

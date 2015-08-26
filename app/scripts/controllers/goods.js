@@ -72,6 +72,7 @@
             requestType: "dgsPurchase",
             goods: shoppingCartGoods.goods,
             priceNQT: shoppingCartGoods.priceNQT,
+            name: shoppingCartGoods.name,
             deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
           }
           plugins.get('transaction').get('dgsPurchase').execute($scope.id_rs, order_args).then(function(data) {
