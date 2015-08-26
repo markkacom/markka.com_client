@@ -9,7 +9,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $scope, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -75,6 +75,15 @@
             deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
           }
           plugins.get('transaction').get('dgsPurchase').execute($scope.id_rs, order_args).then(function() {
+            $http({
+              url: shoppingCartGoods.callback,
+              data: shoppingCartGoods,
+              method: 'POST'
+            }).success(function(data) {
+              console.log(data);
+            }).error(function(err) {
+              console.log(err);
+            })
             shoppingCartService.removeItem(0);
             shoppingCart.splice(0, 1);
             processCart(shoppingCart);
