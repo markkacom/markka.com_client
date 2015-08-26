@@ -104,6 +104,12 @@
 
       $scope.pastGoods = new PastGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.pastGoods.reload();
+      $scope.msg = function(id) {
+        var recipient_args = {
+          recipient: id
+        }
+        plugins.get('transaction').get('sendMessage').execute($scope.id_rs, recipient_args);
+      }
     } else if ($scope.paramSection == "viewlisting") {
       $scope.showGoods = new UserGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.showGoods.reload();

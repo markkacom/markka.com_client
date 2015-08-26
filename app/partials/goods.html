@@ -179,6 +179,7 @@
                   <tr>
                     <th>Purchase ID</th>
                     <th>Name</th>
+                    <th>Seller</th>
                     <th>Quantity</th>
                     <th>Price FIMK</th>
                   </tr>
@@ -187,6 +188,7 @@
                   <tr ng-repeat= "orders in pastGoods.entities">
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
+                    <td>{{orders.sellerRS}}  <a ng-click= "msg(orders.sellerRS)">message</a></td>
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceNQT}}</td>
                   </tr>
