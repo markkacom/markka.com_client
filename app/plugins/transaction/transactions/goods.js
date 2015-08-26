@@ -103,7 +103,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Devious Item',
-        message: 'Purchase a Marketplace item',
+        message: 'Pay to complete Marketplace purchases',
         senderRS: senderRS,
         requestType: 'dgsPurchase',
         canHaveRecipient: false,
