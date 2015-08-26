@@ -4,17 +4,17 @@
     <div class="row">
       <div class="col-md-12 goods-col1" style= "margin-bottom: 20px;">
         <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View Listing</a>
-        <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">Show All Goods</a>
+        <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">Show All Items</a>
         <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
         <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-        <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Goods</a>
+        <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Item</a>
       </div>
     </div>
     <div infinite-scroll="showGoods.loadMore()" 
             infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
             <form class="form-inline" style= "margin-bottom: 15px;">
               <div class="form-group">
-                <span>Filter on goods name and description</span>&nbsp;&nbsp;
+                <span>Filter on items name and description</span>&nbsp;&nbsp;
                 <input type="text" ng-model="showGoods.filter" ng-change="showGoods.reload()" class="form-control" placeholder="Filter">
               </div>
             </form>
@@ -68,7 +68,7 @@
     <div class="goods-details-page" ng-if= "paramSection.length > '11'">
       <div class="row">
         <div class="col-md-12 goods-details-col1">
-          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Goods</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
           <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
           <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
         </div>
@@ -111,7 +111,7 @@
         <div class="col-md-12 top-buttons">
           <label class= "btn btn-default">Cart ({{shoppingCart.length}})</label>
           <a href= "#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders">Past Orders</a>
-          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Back to Goods</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Back to Items</a>
         </div>
       </div>
       <div class="row" ng-if= "shoppingCart.length > 0">
@@ -144,7 +144,7 @@
         </div>
         <div class="col-md-12 order-buttons">
           <div>
-            <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-default back-to-goods">Back to Goods</a>
+            <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-default back-to-goods">Back to Items</a>
             <button class= "btn btn-success place-order" ng-click= "placeOrder()">Place Order</button>
           </div>
             <hr>
@@ -166,7 +166,7 @@
       <div class="row">
         <div class="col-md-12 past-order-col1">
           <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Goods</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
         </div>
       </div>
       <div infinite-scroll="pastGoods.loadMore()" 

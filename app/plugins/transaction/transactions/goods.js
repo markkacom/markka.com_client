@@ -9,14 +9,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   // Add Goods
 
   plugin.add({
-    label: 'Devious Good',
+    label: 'Devious Item',
     id: 'dgsListing',
     exclude: true,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
-        title: 'Devious Good',
-        message: 'Create a DGS good with no length restricted tags',
+        title: 'Devious Item',
+        message: 'Create a DGS item with no length restricted tags',
         senderRS: senderRS,
         requestType: 'dgsListing',
         canHaveRecipient: false,
@@ -72,14 +72,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   // Delete Goods
 
   plugin.add({
-    label: 'Devious Good',
+    label: 'Devious Item',
     id: 'dgsDelisting',
     exclude: true,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
-        title: 'Devious Good',
-        message: 'Delete a DGS good with no length restricted tags',
+        title: 'Devious Item',
+        message: 'Delete a DGS item with no length restricted tags',
         // senderRS: senderRS,
         requestType: 'dgsDelisting',
         // canHaveRecipient: false,
@@ -95,15 +95,15 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   // Purchase Goods
 
   plugin.add({
-    label: 'Devious Good',
+    label: 'Devious Item',
     id: 'dgsPurchase',
     exclude: true,
     execute: function (senderRS, args) {
       console.log(args);
       args = args||{};
       return plugin.create(angular.extend(args, {
-        title: 'Devious Good',
-        message: 'Purchase a DGS good',
+        title: 'Devious Item',
+        message: 'Purchase a DGS item',
         senderRS: senderRS,
         requestType: 'dgsPurchase',
         canHaveRecipient: false,
