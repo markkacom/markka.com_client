@@ -25,22 +25,25 @@
                     <thead>
                       <tr>
                         <th>Name</th>
+                        <th>Seller</th>
                         <th>Tags</th>
                         <th>Quantity</th>
-                        <th>PriceNQT</th>
+                        <th>Price FIMK</th>
                         <th></th>
                       </tr>
                     </thead>
                      <tbody>
                       <tr style= "cursor: pointer;" ng-if= "isAdded">
                         <td ng-click= "details(goods)">{{isAdded.name}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.seller}}</td>
                         <td ng-click= "details(goods)">{{isAdded.tags}}</td>
                         <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
-                        <td ng-click= "details(goods)">{{priceNQT}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.priceNXT}}</td>
                         <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
                       </tr>
                       <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
                         <td ng-click= "details(goods)">{{goods.name}}</td>
+                        <td ng-click= "details(goods)">{{goods.seller}}</td>
                         <td ng-click= "details(goods)">{{goods.tags}}</td>
                         <td ng-click= "details(goods)">{{goods.quantity}}</td>
                         <td ng-click= "details(goods)">{{goods.priceNQT}}</td>
@@ -177,7 +180,7 @@
                     <th>Purchase ID</th>
                     <th>Name</th>
                     <th>Quantity</th>
-                    <th>PriceNQT</th>
+                    <th>Price FIMK</th>
                   </tr>
                 </thead>
                 <tbody>
