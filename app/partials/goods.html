@@ -46,7 +46,7 @@
                         <td ng-click= "details(goods)">{{goods.seller}}</td>
                         <td ng-click= "details(goods)">{{goods.tags}}</td>
                         <td ng-click= "details(goods)">{{goods.quantity}}</td>
-                        <td ng-click= "details(goods)">{{goods.priceNQT}}</td>
+                        <td ng-click= "details(goods)">{{goods.priceFIMK}}</td>
                         <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
                       </tr>
                     </tbody>
@@ -87,7 +87,7 @@
               <img src="images/no-image.jpg" style= "width: 225px;" ng-if= "!details.image" ng-hide= "details.description | parseImage">
             </div>
             <div class= "goods-details1">
-              <label class= "price"><b>Price: </b>{{details.priceNQT}}</label>
+              <label class= "price"><b>Price: </b>{{details.priceFIMK}}</label>
               <label class= "quantity"><b>Quantity: </b>{{details.quantity}}</label>
             </div>
             <div class= "goods-details2">
@@ -135,8 +135,8 @@
                           <p><b>Seller: </b>{{items.seller}}</p>
                           <p class= "remove-item" ng-click= "remove($index)">Remove Item</p>
                         </td>
-                        <td class= "price"><b>FIMK: </b>{{items.priceNQT}}</td>
-                        <td class= "total-price"><b>Total Price: {{items.priceNQT}}</b></td>
+                        <td class= "price"><b>FIMK: </b>{{items.priceFIMK}}</td>
+                        <td class= "total-price"><b>Total Price: {{items.priceFIMK}}</b></td>
                       </tr>
                     </tbody>
             </table>
@@ -188,9 +188,9 @@
                   <tr ng-repeat= "orders in pastGoods.entities">
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
-                    <td>{{orders.sellerRS}}  <a ng-click= "msg(orders.sellerRS)">message</a></td>
+                    <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNQT}}</td>
+                    <td>{{orders.priceFIMK}}</td>
                   </tr>
                 </tbody>
               </table>

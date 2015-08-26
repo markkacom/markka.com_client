@@ -32,6 +32,7 @@
             self.$scope.$evalAsync(function() {
               self.isLoading = false;
               var goodsDetails = data || [];
+              goodsDetails.priceFIMK = nxt.util.convertNQT(data.priceNQT);
               self.entities.push(goodsDetails);
               deferred.resolve();
             });
