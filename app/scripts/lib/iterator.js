@@ -10,5 +10,8 @@ Iterator.prototype = {
   },
   next: function () {
     return this.array[this.cursor++];
+  },
+  peek: function () {
+    return this.array[this.cursor];
   }
 };
