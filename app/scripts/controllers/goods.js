@@ -47,8 +47,9 @@
       $scope.showGoods.reload();
     } else if ($scope.paramSection == 'cart') {
       $scope.shoppingCart = shoppingCartService.get();
-
+      $scope.total = 0;
       $scope.shoppingCart.forEach(function(good) {
+        $scope.total += parseFloat(good.priceFIMK)
         try {
           var data = JSON.parse(good.description);
         } catch (ex) {
@@ -94,9 +95,10 @@
         }
       }
 
-      $scope.remove = function(index) {
+      $scope.remove = function(index, items) {
         var abc = shoppingCartService.removeItem(index);
         $scope.shoppingCart.splice(index, 1);
+        $scope.total -= parseFloat(items.priceFIMK);
       }
     } else if ($scope.paramSection == "pastorders") {
 
