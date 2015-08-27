@@ -1,0 +1,32 @@
+Preview release.
+
+Embeds FIMK 0.5.1 and NXT-PLUS based on NXT 1.5.13.
+
+Re-make of the chat functionality. Blockchain messages and locally stored 'gossip'
+messages are now displayed in a fluent timeline.
+
+Gossip messages are no longer stored in the DB in FIMK 0.5.1 only a light weight
+list of 'seen-before' gossip id's (java longs) is what is kept at each peer
+to prevent re-sending gossips that have been send before. This list is set to 
+delete everything over 2000 items which should be more then enough since gossip 
+messages have a built-in cryptographically secured timestamp that lets them expire,
+expired gossip messages are automatically ignored by the network.
+
+The chat functionality now shows the online status of your contacts. 
+
+Please note that in this experimental version when you login or visit the chat 
+section you are prompted to share your online status. Your status will be shared
+with the entire network any one who is actively 'listening' will see a gossip
+ping being sent over the network with your account as the 'sender address'.
+
+The gossip (or swarm) protocol works by relaying messages between peers just like
+transactions and blocks are relayed (but with a lower priority to not get in the 
+way of the blocks and transactions traveling over the network). Your IP address
+is not revealed when using the gossip protocol - that is you are as anonymous 
+as anyone sending transactions or blocks.
+
+The current real-time chat feature built on-top of the gossip protocol is just 
+one example of what can be built with this tech. 
+
+Chat messages are end-to-end encrypted with your secret phrase and have the same 
+level of encryption as NXT/FIMK blockchain messages have had all this time.

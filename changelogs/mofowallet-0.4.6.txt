@@ -1,0 +1,14 @@
+Preview release.
+
+Embeds FIMK 0.5 and NXT-PLUS based on NXT 1.5.13.
+
+Fixes a bug where secret phrases are automatically trimmed.
+
+Improved wallet/sign in handling. 
+
+Various changes to top main menu, shows logged in user and balance. Better
+responsive (mobile) support.
+
+Experimental support for new 'free' gossip protocol.
+
+
