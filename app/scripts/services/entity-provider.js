@@ -206,7 +206,7 @@ module.factory('EntityProvider', function (nxt, $timeout, $q) {
       return deferred.promise;
     },
 
-    processGetData: function (iterator, unshift) {      
+    processGetData: function (iterator, unshift) {
       this.hasMore = false;
       while (iterator.hasMore()) {
         var entity = iterator.next();
