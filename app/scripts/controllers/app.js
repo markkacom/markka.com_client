@@ -33,11 +33,11 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
 
   /* Only run when in NodeJS environment */
   if (isNodeJS) {
-    $scope.fimDownloadProvider = new BlockchainDownloadProvider(nxt.fim(), $scope);
-    $scope.fimDownloadProvider.load();
+    $rootScope.fimDownloadProvider = new BlockchainDownloadProvider(nxt.fim(), $scope);
+    $rootScope.fimDownloadProvider.load();
     if ($rootScope.enableDualEngines) {
-      $scope.nxtDownloadProvider = new BlockchainDownloadProvider(nxt.nxt(), $scope);
-      $scope.nxtDownloadProvider.load();
+      $rootScope.nxtDownloadProvider = new BlockchainDownloadProvider(nxt.nxt(), $scope);
+      $rootScope.nxtDownloadProvider.load();
     }
   }
 
