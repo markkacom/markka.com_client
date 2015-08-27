@@ -9,13 +9,14 @@
 
 module.exports = function (grunt) {
 
-  grunt.loadNpmTasks('grunt-karma');
+  //grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-node-webkit-builder');
-  //grunt.loadNpmTasks('grunt-nw-builder');
+  //grunt.loadNpmTasks('grunt-node-webkit-builder');
+  grunt.loadNpmTasks('grunt-nw-builder');
+  grunt.loadNpmTasks('grunt-ng-annotate');
   
   //grunt.loadNpmTasks('grunt-google-translate');
   grunt.loadTasks('vendor/grunt-google-translate/tasks');
@@ -108,9 +109,9 @@ module.exports = function (grunt) {
     // Project settings
     yeoman: appConfig,
 
-    nodewebkit: {
+    nwjs: {
       options: {
-        version: '0.11.6',
+        version: '0.12.3',
         // https://github.com/mllrsohn/node-webkit-builder#optionswinico
         // macIcns: './icon.icns',
         // winIco: './win-icon.ico',
@@ -457,7 +458,7 @@ module.exports = function (grunt) {
     // ngmin tries to make the code safe for minification automatically by
     // using the Angular long form for dependency injection. It doesn't work on
     // things like resolve or inject so those have to be done manually.
-    ngmin: {
+    ngAnnotate: {
       dist: {
         files: [{
           expand: true,
@@ -469,11 +470,11 @@ module.exports = function (grunt) {
     },
 
     // Replace Google CDN references
-    cdnify: {
+    /*cdnify: {
       dist: {
         html: ['<%= yeoman.dist %>/*.html']
       }
-    },
+    },*/
 
     // Copies remaining files to places other tasks can use
     copy: {
@@ -523,6 +524,12 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
+      },
+      images: {
+        expand: true,
+        cwd: '<%= yeoman.app %>/images',
+        src: '{,*/}*.{png,jpg,jpeg,gif}',
+        dest: '<%= yeoman.dist %>/images'
       },
       devDist: {
         files: [{
@@ -618,13 +625,21 @@ module.exports = function (grunt) {
     //'google_translate',
     'wiredep',
     'useminPrepare',
-    'concurrent:dist',
+    
+    // dont run concurrent do individual instead
+    // 'concurrent:dist',
+    'copy:styles',
+    'copy:images',
+    // 'imagemin',
+    // 'svgmin',
+    // dont run concurrent do individual instead
+
     'autoprefixer',
     'concat',
-    'ngmin',
+    'ngAnnotate',
     // 'nodewebkit',
     'copy:dist',
-    'cdnify',
+    // 'cdnify',
     'sass:dist',
     'less:dist',
     'cssmin',
@@ -643,7 +658,7 @@ module.exports = function (grunt) {
     'concurrent:dist',
     'autoprefixer',
     // 'concat',
-    //'ngmin',
+    //'ngAnotate',
     // 'nodewebkit',
     'copy:devDist',
     // 'cdnify',
