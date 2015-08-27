@@ -90,6 +90,8 @@
               shoppingCartService.removeItem(0);
               shoppingCart.splice(0, 1);
               processCart(shoppingCart);
+
+              $scope.successful = "Payment Completed";
             }
           });
         }
