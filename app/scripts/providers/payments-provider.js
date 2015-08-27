@@ -218,7 +218,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
               } 
               else {
                 var payload = self.api.verifyAndSignTransactionBytes(data.unsignedTransactionBytes, signature, 
-                                  args.requestType, args, self.api.type, self.api.engine.constants());
+                                  args.requestType, args, self.api.type);
                 if (!payload) {
                   var msg = i18n.format('error_signature_verification_server');
                   progress.setErrorMessage(msg);
