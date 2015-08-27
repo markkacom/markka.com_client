@@ -85,7 +85,7 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
    *
    * @param password
    * @param cipher_text_override
-   * @return Array of Object
+   * @return Wallet
    */
   function loadWallet(password, cipher_text_override) {
     var text = cipher_text_override || window.localStorage.getItem("mofo.key.service");
