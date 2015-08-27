@@ -113,49 +113,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     }
   };
   AbstractEngine.prototype = {
-    
-    /* Blockheight constants */
-    _constants: {
-      TYPE_FIM: {
-        test: {
-          DIGITAL_GOODS_STORE_BLOCK: 19530,
-          PUBLIC_KEY_ANNOUNCEMENT_BLOCK: 19530,
-          NAMESPACED_ALIAS_BLOCK: 19530
-        },
-        main: {
-          DIGITAL_GOODS_STORE_BLOCK: 200000,
-          PUBLIC_KEY_ANNOUNCEMENT_BLOCK: 200000,
-          NAMESPACED_ALIAS_BLOCK: 200000
-        }
-      },
-      TYPE_NXT: {
-        test: {
-        },
-        main: {
-          DIGITAL_GOODS_STORE_BLOCK: 213000,
-          PUBLIC_KEY_ANNOUNCEMENT_BLOCK: 215000          
-        }
-      }
-    },
-
-    getLocalHostNode: function () {
-      var deferred = $q.defer();
-      if (!this.localhostNode) {
-        this.localhostNode = {   
-          port: this.port,
-          url: this.localhost,
-        };
-      }
-      deferred.resolve(this.localhostNode);
-      return deferred.promise;
-    },
 
     serverIsRunning: function () {
       return serverService.isRunning(this.type);
-    },
-
-    constants: function () {
-      return this._constants[this.type][this.net];
     },
 
     getSocketNodeURL: function () {
@@ -165,6 +125,10 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     },
 
     socket: function () {
+      var downloader = this.type == TYPE_NXT ? $rootScope.nxtDownloadProvider : $rootScope.fimDownloadProvider;
+      if (downloader && downloader.server_running && !downloader.downloading) {
+        return this._localSocket || (this._localSocket = new MofoSocket(this, true));
+      }
       return this._socket || (this._socket = new MofoSocket(this));
     },
 
@@ -1111,7 +1075,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
   ServerAPI.prototype.verifyAndSignTransactionBytes = verifyAndSignTransactionBytes;
 
-  function verifyAndSignTransactionBytes(transactionBytes, signature, requestType, data, _type, constants) {
+  function verifyAndSignTransactionBytes(transactionBytes, signature, requestType, data, _type) {
     verifyEngineType(_type);
     var transaction   = {};
     var byteArray     = converters.hexStringToByteArray(transactionBytes);
