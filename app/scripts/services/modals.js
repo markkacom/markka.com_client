@@ -29,8 +29,6 @@ instance = {
   },
 
   open: function (name, extraOptions) {
-    // Go over all modals, if there is a modal opened we'll wait 2 seconds before opening
-    // the next modal. If no modal is open we'll open this modal after 50 ms.
     var modal = register[name];
     if (!modal) { throw new Error('Modal "'+ name +'" is not registered'); }
     if (modal.instance) { throw new Error('Modal "'+ name +'" is already opened'); }
