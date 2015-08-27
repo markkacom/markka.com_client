@@ -1,6 +1,11 @@
 (function () {
 'use strict';
 
+Dexie.Promise.on('error', function(err) {
+  // Log to console or show en error indicator somewhere in your GUI...
+  console.log("Uncaught error: ", err);
+});
+
 function update(src, config) {
   var store = angular.copy(src);
   if (config.update) {
@@ -46,6 +51,9 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
   var accounts = "id_rs,name";
   var nodes = "++id,port";
   var contacts = "++id,id_rs,name";
+  var gossips = "++primaryKey,id,topic,chatId,recipientRS,senderRS";
+  var chats = "++id,accountRS,otherRS"
+
   versions([{
     update: {
       masspay_payments: masspay_payments,
@@ -53,6 +61,11 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
       accounts: accounts,
       nodes: nodes,
       contacts: contacts
+    }
+  },{
+    update: {
+      gossips: gossips,
+      chats: chats
     }
   }], db);
 
@@ -110,6 +123,8 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
   $injector.get('Contact').initialize(db);
   $injector.get('Node').initialize(db);
   $injector.get('MasspayPluginPayment').initialize(db);
+  $injector.get('GossipModel').initialize(db);
+  $injector.get('ChatModel').initialize(db);
 
   function findFirstPropIndex(array, source, propertySource, propertyArray)  {
     propertyArray = propertyArray || propertySource;
