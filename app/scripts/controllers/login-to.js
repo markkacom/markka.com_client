@@ -166,7 +166,12 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
   }
 
   function setCurrentAccount(account) {
+    if ($rootScope.currentAccount) {
+      $rootScope.$emit('onCloseCurrentAccount', $rootScope.currentAccount);
+    }
     $rootScope.currentAccount = angular.copy(account);
+    $rootScope.$emit('onOpenCurrentAccount', $rootScope.currentAccount);
+
     var api = nxt.get(account.id_rs);
     api.engine.socket().getAccount({account:account.id_rs}).then(
       function (a) {
@@ -215,6 +220,9 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
   }
 
   $scope.logout = function () {
+    if ($rootScope.currentAccount) {
+      $rootScope.$emit('onCloseCurrentAccount', $rootScope.currentAccount);
+    }    
     $rootScope.currentAccount = null;
     KeyService.lock();
     nxt.fim().lock();
@@ -287,14 +295,28 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
 
   $scope.selectAccountFromWallet = function () {
     var account = setCurrentAccount($scope.input.account);
-    $location.path('/accounts/'+account.id_rs+'/activity/latest');
+    if ($rootScope.destURL) {
+      var url = $rootScope.destURL;
+      delete $rootScope.destURL;
+      $timeout(function () { $location.path(url) }, 0, false);
+    }
+    else {
+      $location.path('/accounts/'+account.id_rs+'/activity/latest');  
+    }
  }
 
   $scope.selectAccountFromSecretPhrase = function () {
     var api = nxt.get($scope.input.engine);
     var id_rs = api.crypto.getAccountId($scope.input.secretPhrase, true);
     var account = setCurrentAccount({ id_rs: id_rs, secretPhrase: $scope.input.secretPhrase});
-    $location.path('/accounts/'+account.id_rs+'/activity/latest');
+    if ($rootScope.destURL) {
+      var url = $rootScope.destURL;
+      delete $rootScope.destURL;
+      $timeout(function () { $location.path(url) }, 0, false);
+    }
+    else {
+      $location.path('/accounts/'+account.id_rs+'/activity/latest');
+    }
   }
 
   $scope.saveSecretToWallet = function () {
@@ -430,47 +452,5 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
       })
     }
   }  
-
-  //var api = nxt.get($scope.$parent.unlock.id_rs);
-
-  // $scope.continue = function (secretPhrase) {
-  //   KeyService.remember($scope.$parent.unlock.id_rs, secretPhrase);
-  //   $scope.$parent.unlock.unlocked(secretPhrase);
-  // }
-
-
-
-  // $scope.secretPhraseChanged = function () {
-  //   $scope.$evalAsync(function () {
-  //     var id_rs = api.crypto.getAccountId($scope.input.secretPhrase, true);
-  //     $scope.correctSecretPhrase = id_rs == $scope.$parent.unlock.id_rs;
-  //     $scope.wrongSecretPhrase = $scope.input.secretPhrase && !$scope.correctSecretPhrase;
-  //   });
-  // }
-
-  // $scope.createWallet = function () {
-  //   var wallet = KeyService.create($scope.input.password);
-  //   wallet.add($scope.$parent.unlock.id_rs, $scope.input.secretPhrase);
-  //   $scope.$parent.unlock.unlocked($scope.input.secretPhrase);
-  // }
-
-  // $scope.saveKeyToWallet = function () {
-  //   var wallet = KeyService.wallet;
-  //   wallet.add($scope.$parent.unlock.id_rs, $scope.input.secretPhrase);
-  //   $scope.$parent.unlock.unlocked($scope.input.secretPhrase);
-  // }
-
-  // $scope.unlockThenSaveKeyToWallet = function () {
-  //   $scope.wrongPassword = false;
-  //   var wallet = KeyService.unlock($scope.input.password);
-  //   if (wallet) {
-  //     wallet.add($scope.$parent.unlock.id_rs, $scope.input.secretPhrase);
-  //     $scope.$parent.unlock.unlocked($scope.input.secretPhrase);
-  //   }
-  //   else {
-  //     $scope.wrongPassword = true;
-  //   }
-  // }
-
 });
 })();
