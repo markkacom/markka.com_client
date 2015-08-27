@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('IndexedEntityProvider', function (nxt, $timeout, $q) {
+module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) {
 
   function IndexedEntityProvider() {
   }
@@ -89,6 +89,19 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q) {
       this.hasMore    = true;
       this.pageSize   = pageSize;
       this.account    = account;
+    },
+
+    /**
+     * Applies a function on each entity every N milliseconds.
+     * Implementers would use this function to define a function that updates 
+     * calculated date fields of the 'timeago' type.
+     *
+     * @param each_fn Function
+     * @param delay (optional)
+     */
+    interval: function (each_fn, delay) {
+      var interval = $interval(angular.bind(this, function () { this.forEach(each_fn) }), delay||15*1000);
+      this.$scope.$on('$destroy', function () { $interval.cancel(interval) });
     },
 
     reload: function () {
