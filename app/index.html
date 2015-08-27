@@ -64,6 +64,10 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
+    <!-- <script src="scripts/lib/Dexie.js"></script>
+    <script src="scripts/lib/Dexie.Observable.js"></script> -->
+
+
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="bower_components/angular/angular.js"></script>
     <script>
@@ -86,12 +90,13 @@
     <script src="bower_components/pako/dist/pako.min.js"></script>
     <script src="bower_components/ng-clip/dest/ng-clip.min.js"></script>
     <script src="bower_components/zeroclipboard/dist/ZeroClipboard.min.js"></script>
+
+    <script src="bower_components/dexie/dist/latest/Dexie.js"></script>
+    <script src="bower_components/dexie/addons/Dexie.Observable/Dexie.Observable.js"></script>
     
     <script src="scripts/lib/iterator.js"></script>
     <script src="scripts/lib/jsbn.js"></script>
     <script src="scripts/lib/jsbn2.js"></script>    
-    <script src="scripts/lib/Dexie.js"></script>
-    <script src="scripts/lib/Dexie.Observable.js"></script>
     <script src="scripts/lib/Dexie.TableObserver.js"></script>
     <script src="scripts/lib/nxt/utils/nxtaddress.js"></script>
     <script src="scripts/lib/nxt/utils/converters.js"></script>
@@ -113,7 +118,9 @@
     <script src="scripts/models/account.js"></script>
     <script src="scripts/models/contact.js"></script>
     <script src="scripts/models/node.js"></script>
-    <script src="scripts/models/masspayPluginPayment.js"></script>    
+    <script src="scripts/models/masspayPluginPayment.js"></script>
+    <script src="scripts/models/gossip.js"></script>
+    <script src="scripts/models/chat.js"></script>
 
     <script src="scripts/directives/money.js"></script>
     <script src="scripts/directives/dd-text-collapse.js"></script>
@@ -139,12 +146,11 @@
     <script src="scripts/providers/blockchain-download-provider.js"></script>
     <script src="scripts/providers/blocks-provider.js"></script>
     <script src="scripts/providers/buy-order-provider.js"></script>
-    <script src="scripts/providers/chat-list-provider.js"></script>
-    <script src="scripts/providers/chat-messages-provider.js"></script>
     <script src="scripts/providers/comment-provider.js"></script>
     <script src="scripts/providers/currency-provider.js"></script>
     <script src="scripts/providers/forgers-provider.js"></script>
     <script src="scripts/providers/gossip-chat-messages-provider.js"></script>
+    <script src="scripts/providers/gossip-chat-list-provider.js"></script>
     <script src="scripts/providers/messages-provider.js"></script>
     <script src="scripts/providers/namespaced-alias-provider.js"></script>
     <script src="scripts/providers/payments-provider.js"></script>
@@ -170,6 +176,7 @@
 
     <script src="scripts/services/timeago-service.js"></script>
     <script src="scripts/services/gossip-service.js"></script>
+    <script src="scripts/services/publickey-service.js"></script>
     <script src="scripts/services/wallet-service.js"></script>
     <script src="scripts/services/key-service.js"></script>
     <script src="scripts/services/entity-provider.js"></script>
@@ -327,7 +334,7 @@
             </a>
           </li> -->
           <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount">
-            <a href="#/messenger/{{currentAccount.id_rs}}/gossip">
+            <a href="#/messenger">
               <i class="fa fa-comment-o"></i><span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-md hidden-sm">&nbsp;&nbsp;<span translate="translate.messenger"/></span>
             </a>
           </li>
@@ -438,7 +445,8 @@
 
                   <!-- global network - always displays the height of the connected public node -->              
                   <a style="text-align: left;" class="btn btn-default navbar-btn" 
-                      href="#/activity/fim/activity/latest">
+                      href="#/activity/fim/activity/latest" 
+                      ng-hide="fimDownloadProvider.server_running && !fimDownloadProvider.downloading">
                     <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{fimDownloadProvider.remoteheight}}</span>
                   </a>
 
@@ -467,7 +475,8 @@
 
                   <!-- global network - always displays the height of the connected public node -->              
                   <a style="text-align: left;" class="btn btn-default navbar-btn" 
-                      href="#/activity/nxt/activity/latest">
+                      href="#/activity/nxt/activity/latest"
+                      ng-hide="nxtDownloadProvider.server_running && !nxtDownloadProvider.downloading">
                     <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{nxtDownloadProvider.remoteheight}}</span>
                   </a>
 
