@@ -14,7 +14,7 @@
 #   1. Compiled FIMK jar files (run compile.sh first)
 #   2. Unpacked NXT jar files in dist/nxt
 #   2. Installed grunt
-#   3. Installed grunt nodewebkit
+#   3. Installed grunt nwjs
 #
 # Usage:
 #
@@ -48,7 +48,7 @@ EOF
 orig=#VERSION#
 sed -i "s/${orig}/${VERSION}/g" $MODE_JS_FILE
 
-grunt nodewebkit
+grunt nwjs
 
 # This compiles NXT
 # if [ "$WITH_NEXT" = "true" ]; then
