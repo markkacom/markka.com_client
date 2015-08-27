@@ -50,6 +50,10 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       'getAssetPrivateAccounts'
     ],
 
+    dump: function () {
+      console.log('MofoSocket topics', this.topics);
+    },
+
     createIsOpenPromise: function () {
       var self = this;
       if (this.is_open) {
