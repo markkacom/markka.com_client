@@ -78,9 +78,12 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
         sender:   $scope.items.senderRS
       };
       args = angular.extend(args, $scope.items.createArguments($scope.items));
+      /*
+      -- DISABLED FOR NOW --
+
       if ($scope.items.transient) {
         args.referencedTransactionFullHash = converters.stringToHexString('00000000000000000000000000000000');
-      }
+      }*/
 
       var message = null, type = null;
       if ($scope.show.message) {
@@ -196,7 +199,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
                 } 
                 else {
                   var payload = api.verifyAndSignTransactionBytes(data.unsignedTransactionBytes, signature, 
-                                    args.requestType, args, api.type, api.engine.constants());
+                                    args.requestType, args, api.type);
                   if (!payload) {
                     var msg = i18n.format('error_signature_verification_server');
                     progress.setErrorMessage(msg);
