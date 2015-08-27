@@ -12,7 +12,7 @@ module.factory('AccountPostProvider', function (nxt, $q, IndexedEntityProvider, 
     this.subscribe('addedConfirmedTransactions-'+account_id, this.addedConfirmedTransactions);
     
     this.subscribe('blockPoppedNew', this.blockPopped);
-    this.subscribe('blockPushedNew', this.blockPushed);
+    this.subscribe('blockPushedNew', this.blockPushed);    
   }
   angular.extend(AccountPostProvider.prototype, IndexedEntityProvider.prototype, {
 
