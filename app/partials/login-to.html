@@ -147,41 +147,49 @@
         <b translate="translate.msg_choose_account"></b>
       </div>
       <div class="alert alert-info" style="margin-bottom: 8px" ng-show="alerts.clipped" translate="translate.msg_secret_copied"></div>
-      <form>
-        <!-- <div class="form-group" ng-repeat="a in input.accounts" ng-if="!IS_SMALL_DEVICE">
-          <div class="input-group" ng-class="{'font-bold':a==input.account}">
-            <span class="form-control">
-              <a href ng-click="input.account=a;selectedAccountChanged()" ng-class="{'text-success':a==input.account}">{{a.label}}</a>
-            </span>
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-class="{'btn-primary':a==input.account}">Remove</button>
-            </span>
-          </div>
-        </div> -->
-        <div class="form-group">
-          <select class="form-control monospace" ng-model="input.account" 
-            ng-options="a.label for a in input.accounts" ng-change="selectedAccountChanged()"></select>
+      <!-- <form>
+        <div class="form-group" ng-repeat="a in input.accounts">
+          <span class="form-control">
+            <a href class="elipses" ng-click="input.account=a;selectedAccountChanged();selectAccountFromWallet()">{{a.label}}</a>
+          </span>
         </div>
-        <div class="form-group">
-          <a href ng-click="hideSecretphrase=!hideSecretphrase">reveal secret phrase</a>
+      </form> -->
+      <div class="row" ng-repeat="a in input.accounts">
+        <div class="col-md-6 col-xs-12" style="margin-top: 8px">
+          <button class="btn btn-primary btn-lg btn-block elipses" 
+            ng-click="input.account=a;selectedAccountChanged();selectAccountFromWallet()">{{a.label}}</button>
         </div>
-        <div class="form-group" collapse="hideSecretphrase">
-          <div class="input-group">
-            <input type="text" class="form-control input-lg" rows="4" ng-model="input.secretPhrase" readonly>
-            <span class="input-group-btn">
-              <button class="btn btn-default btn-lg" type="button" 
-                clip-copy="input.secretPhrase" clip-click="alerts.clipped=true;">
-                <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
-            </span>
-          </div>
-        </div>
-      </form>      
+      </div>      
       <div class="row">
         <div class="col-md-3 col-xs-12" style="margin-top: 8px">
-          <button class="btn btn-primary btn-lg btn-block" ng-click="selectAccountFromWallet()" ng-disabled="!input.account" translate="translate.continue"></button>
-        </div>
-        <div class="col-md-3 col-xs-12" style="margin-top: 8px">
           <button class="btn btn-default btn-lg btn-block" ng-click="back()" translate="translate.back"></button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-xs-12" style="margin-top: 8px">
+          <button class="btn btn-default btn-lg btn-block" ng-click="hideSecretphrase=!hideSecretphrase">Reveal secret phrase</button>
+        </div>
+      </div>      
+      <div class="row">
+        <div class="col-md-12" style="margin-top: 8px">
+          <form>
+            <div  collapse="hideSecretphrase">
+              <div class="form-group">
+                <select class="form-control monospace" ng-model="input.account" 
+                  ng-options="a.label for a in input.accounts" ng-change="selectedAccountChanged()"></select>
+              </div>
+              <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control input-lg" rows="4" ng-model="input.secretPhrase" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default btn-lg" type="button" 
+                      clip-copy="input.secretPhrase" clip-click="alerts.clipped=true;">
+                      <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
