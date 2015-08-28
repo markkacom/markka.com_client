@@ -55,7 +55,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           type: 'textarea',
           value: args.tags||''
         }, {
-          label: 'Price',
+          label: 'Price FIMK',
           name: 'priceNXT',
           type: 'money',
           value: args.priceNXT||''
@@ -123,7 +123,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           value: args.name||''
         },
         {
-          label: 'Price',
+          label: 'Price FIMK',
           name: 'price',
           type: 'text',
           value: args.priceNQT||''
