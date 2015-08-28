@@ -95,14 +95,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   // Purchase Goods
 
   plugin.add({
-    label: 'Devious Item',
+    label: 'Purchase Item',
     id: 'dgsPurchase',
     exclude: true,
     execute: function (senderRS, args) {
       console.log(args);
       args = args||{};
       return plugin.create(angular.extend(args, {
-        title: 'Devious Item',
+        title: 'Purchase Item',
         message: 'Pay to complete Marketplace purchases',
         senderRS: senderRS,
         requestType: 'dgsPurchase',
