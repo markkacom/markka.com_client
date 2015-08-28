@@ -480,6 +480,10 @@ fieldset {
   font-size: 18px;
 }
 
+.balanceError {
+  text-align: center;
+}
+
 @media screen and (max-width: 768px) {
   .goods-page .goods-col1 {
     text-align: left;

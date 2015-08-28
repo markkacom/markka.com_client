@@ -9,7 +9,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -62,8 +62,18 @@
         }
       });
 
+      $scope.accountBalance = new AccountBalanceProvider(api, $scope, $scope.id_rs);
+      $scope.accountBalance.reload();
       $scope.placeOrder = function() {
-        processCart($scope.shoppingCart);
+        $scope.balance = $scope.accountBalance.entities;
+        $scope.balance.forEach(function(balanceData) {
+          if($scope.total >= balanceData.effectiveBalanceNXT){
+            $scope.balanceError = "You don't have enough balance to place these orders.";
+          } else {
+            $scope.balanceError = ' ';
+            processCart($scope.shoppingCart);
+          }
+        })
       }
 
       function processCart(shoppingCart) {
