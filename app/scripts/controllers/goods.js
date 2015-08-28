@@ -72,7 +72,7 @@
           var order_args = {
             requestType: "dgsPurchase",
             goods: shoppingCartGoods.goods,
-            priceNQT: shoppingCartGoods.priceNQT,
+            priceNQT: shoppingCartGoods.priceFIMK,
             name: shoppingCartGoods.name,
             deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
           }

@@ -108,12 +108,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         requestType: 'dgsPurchase',
         canHaveRecipient: false,
         createArguments: function (items) {
+          console.log(items)
           return {
             goods: items.goods, 
-            priceNQT: items.priceNQT,
+            // priceNQT: items.priceNQT,
             quantity: String(items.quantity),
-            deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp
-            // priceNQT: nxt.util.convertToNQT(items.priceNXT)
+            deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
+            priceNQT: nxt.util.convertToNQT(items.priceNQT)
           }
         },
         fields: [{
