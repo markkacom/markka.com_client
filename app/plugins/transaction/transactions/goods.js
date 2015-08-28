@@ -108,7 +108,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         requestType: 'dgsPurchase',
         canHaveRecipient: false,
         createArguments: function (items) {
-          console.log(items)
           return {
             goods: items.goods, 
             // priceNQT: items.priceNQT,
