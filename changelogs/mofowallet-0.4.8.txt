@@ -1,0 +1,16 @@
+Preview release.
+
+Embeds FIMK 0.5.1 and NXT-PLUS based on NXT 1.5.13.
+
+Did a major refactoring of the initial gossip client code. Reason being that 
+we are in need of adding support for more message types.
+
+Improvements to the chat section, no longer does the online/offline status
+of contacts 'flicker' when coming and going online.
+
+Added support to see if a contact successfully received a message.
+Added support to see that a contact "starts typing".
+
+Did away with the Send button in the chat section. Send button still available
+but only on mobile on large screens you must hit the ENTER key to send the 
+message. Use SHIFT+ENTER to add a new line.
