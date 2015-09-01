@@ -226,7 +226,7 @@ module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db) {
                 }
               }
               /* there is no local chat object */
-              else {
+              else if (remote_chat.accountRS != $rootScope.currentAccount.id_rs) {
                 /* create local copy and move on */
                 Gossip.getChatService().add(remote_chat.accountRS).then(
                   function (local_chat) {
