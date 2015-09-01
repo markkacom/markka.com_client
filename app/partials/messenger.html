@@ -42,10 +42,6 @@
 
     <div class="row" ng-hide="ui.editRecipient">
       <div class="col-md-12">
-        <div class="alert alert-success" ng-show="!message.text && message.send" style="margin-bottom: 8px;">
-          <b><i class="fa fa-check"></i></b>&nbsp;&nbsp;<span translate="translate.msg_sent_to" 
-          translate-values="{recipient:contactName||id_rs}"></span>
-        </div>
         <div class="alert alert-danger" ng-show="ui.sendOffline" style="margin-bottom: 8px;">
           <button type="button" class="close" aria-label="Close"
             ng-click="ui.sendOffline=false"><span aria-hidden="true">Cancel</span></button>          
@@ -97,14 +93,15 @@
         <div class="col-md-12">
           <div class="input-group">
             <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
-            <textarea class="form-control" rows="{{IS_SMALL_DEVICE?2:3}}" ng-model="message.text" ng-change="messageChanged()"
-              ng-disabled="ui.editRecipient&&!message.recipientPublicKey"></textarea>
-            <span ng-if="message.text" class="input-group-addon btn btn-default" ng-click="sendDirectMessage()" translate="translate.send"></span>
+            <textarea class="form-control" rows="{{IS_SMALL_DEVICE?1:2}}" ng-model="message.text" ng-change="messageChanged()"
+              ng-disabled="ui.editRecipient&&!message.recipientPublicKey" enter-submit="sendDirectMessage()"></textarea>
+            <span ng-if="message.text" class="visible-xs input-group-addon btn btn-default" ng-click="sendDirectMessage()" translate="translate.send"></span>
           </div>
           <a href ng-click="ui.sendOffline=true" style="margin-bottom: 8px;"
             ng-show="(ui.chat && ui.chat.provider && ui.chat.provider.online) && !ui.sendOffline">
             Send <b>Offline</b> Message
           </a>
+          <a class="pull-right" href style="margin-bottom: 8px;" ng-show="ui.isTyping">.. is typing ..</a>          
         </div>
       </div>
       <div class="row" collapse="ui.emojiCollapse" style="margin-top: 8px">
@@ -136,6 +133,15 @@
         </div>
       </div> 
 
+      <!-- <div class="row" style="margin-top: 8px" ng-show="!message.text && message.send" style="margin-bottom: 8px;">
+        <div class="col-md-12">
+          <div class="alert alert-success">
+            <b><i class="fa fa-check"></i></b>&nbsp;&nbsp;<span translate="translate.msg_sent_to" 
+            translate-values="{recipient:contactName||id_rs}"></span>
+          </div>
+        </div>
+      </div> -->
+
       <!-- ***************************************************
        *   Chat messages
        * ***************************************************** -->
@@ -146,7 +152,18 @@
 
             <!-- <div ng-show="ui.chat && ui.chat.provider.online" class="alert alert-success">{{contactRS}} is <b>ONLINE</b></div> -->            
 
-            <div infinite-scroll="chatMessagesProvider.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <div infinite-scroll="chatMessagesProvider.loadMore()" infinite-scroll-distance="0" 
+                infinite-scroll-immediate-check="false">
+
+              <!-- <div ng-show="ui.isTyping">
+                <div class="fromThem" style="margin-bottom: 10px;">
+                  <span style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                    ... is typing ...
+                  </span>
+                </div>
+                <div class="clear"></div>
+              </div> -->
+
               <div ng-show="message.text">
                 <div class="fromMe" style="margin-bottom: 10px;">
                   <span><i class="fa fa-pencil-square-o"></i>&nbsp;</span>
@@ -160,21 +177,18 @@
 
                   <span ng-show="e.remover" ng-click="e.remover(e)"
                         class="pull-right" style="cursor:pointer"><i class="fa fa-times"></i></span>
+                  <span ng-show="e.received == true"
+                        class="pull-right"><i class="fa fa-check"></i></span>                        
 
-                  <span ng-if="e.transient">
-                    <i class="fa fa-clock-o"></i>
+                  <span ng-if="e.confirmations <= 0">
+                    <i class="fa fa-spinner fa-spin"></i>
                   </span>
-                  <span ng-if="!e.transient">
-                    <span ng-if="e.confirmations <= 0">
-                      <i class="fa fa-spinner fa-spin"></i>
-                    </span>
-                    <span ng-if="e.confirmations > 0 && e.confirmations <= 10">
-                      <b>{{e.confirmations}}</b>
-                    </span>
-                    <span ng-if="e.confirmations > 10" tooltip="{{e.confirmations}} confirmations">
-                      <i class="fa fa-check"></i>
-                    </span>
-                  </span>                
+                  <span ng-if="e.confirmations > 0 && e.confirmations <= 10">
+                    <b>{{e.confirmations}}</b>
+                  </span>
+                  <span ng-if="e.confirmations > 10" tooltip="{{e.confirmations}} confirmations">
+                    <i class="fa fa-check"></i>
+                  </span>
                   <span><i class="fa" ng-class="{'fa-key':e.encrypted}"></i>&nbsp;</span>
                   <span ng-bind-html="e.text || '[encrypted]'" 
                         style="word-wrap: break-word; word-break: break-all; white-space: normal;"></span><br>
