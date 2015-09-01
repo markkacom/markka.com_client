@@ -129,6 +129,7 @@ module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db) {
               if (self.entities[i].id === chat.id) {
                 angular.extend(self.entities[i], chat);
                 self.entities[i].label = emptyToNull(chat.name) || chat.otherRS;
+                self.translate(self.entities[i]);
                 must_update = true;
                 break;
               }
@@ -149,15 +150,15 @@ module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db) {
 
     reload: function () {
       var deferred = $q.defer();
-      var self = this;
       Gossip.getChatService().list().then(
         function (entities) {
-          self.$scope.$evalAsync(function () {
-            self.entities.length = 0;
+          this.$scope.$evalAsync(function () {
+            this.entities.length = 0;
             entities.forEach(function (chat) {
-              self.translate(chat);
-              self.entities.push(chat);
-            });
+              this.translate(chat);
+              this.entities.push(chat);
+            }.bind(this));
+            this.sort();
             deferred.resolve();
 
             /**
@@ -166,20 +167,29 @@ module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db) {
              * a db entry. The db observer should be taking care of propagating it to the UI.
              */
             var repeat = function () {
-              self.advance().then(repeat);
-            };
+              this.advance().then(repeat);
+            }.bind(this);
             repeat();
-          });
-        }
+
+          }.bind(this));
+        }.bind(this)
       );      
       return deferred.promise;
+    },
+
+    sort: function () {
+      this.entities.sort(this.sortFunction);
+    },
+
+    sortFunction: function (a,b) {
+      return b.timestamp - a.timestamp;
     },
 
     translate: function (chat) {
       chat.label = emptyToNull(chat.name) || chat.otherRS;
       chat.date  = emptyToNull(chat.timestamp) ? nxt.util.formatTimestamp(chat.timestamp, true) : 'never';
       if (!chat.provider) {
-        chat.provider = Gossip.getChatStatusProvider(this.api, this.$scope, chat.otherRS);
+        chat.provider = Gossip.getChatStatusProvider(this.$scope, chat.otherRS);
       }
     },
 
@@ -219,8 +229,14 @@ module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db) {
               else {
                 /* create local copy and move on */
                 Gossip.getChatService().add(remote_chat.accountRS).then(
-                  function () {
-                    self.provider.next().then(deferred.resolve);
+                  function (local_chat) {
+                    local_chat.timestamp2 = remote_chat.timestamp;
+                    local_chat.timestamp  = remote_chat.timestamp;
+                    local_chat.save().then(
+                      function () {
+                        self.provider.next().then(deferred.resolve);
+                      }
+                    );
                   }
                 );
               }
