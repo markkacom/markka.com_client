@@ -12,5 +12,5 @@ Added support to see if a contact successfully received a message.
 Added support to see that a contact "starts typing".
 
 Did away with the Send button in the chat section. Send button still available
-but only on mobile on large screens you must hit the ENTER key to send the 
+but only on mobile, on large screens you must hit the ENTER key to send the 
 message. Use SHIFT+ENTER to add a new line.
