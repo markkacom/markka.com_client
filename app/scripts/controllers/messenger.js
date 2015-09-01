@@ -77,6 +77,9 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   $scope.ui.editRecipient = false;
   $scope.ui.chat          = null;
   $scope.ui.sendOffline   = false;
+  $scope.ui.isTyping      = false;
+
+  var typing_timeout = null;
 
   /* have to login first */
   if (!$rootScope.currentAccount) {
@@ -133,7 +136,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
               var chat = $scope.ui.chat = provider.entities[i];
               /* sends a ping if user is offline */
               if (chat.provider && !chat.provider.online) {
-                Gossip.ping(api, $rootScope.currentAccount.secretPhrase, chat.otherRS);
+                Gossip.ping(chat.otherRS);
               }
               /* create the messages provider */ 
               $scope.chatMessagesProvider = new GossipChatMessagesProvider(api, $scope, 8, $rootScope.currentAccount.id_rs, $scope.id_rs);
@@ -158,6 +161,22 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     );
   }
 
+  var unregister = Gossip.addListener(
+                      Gossip.IS_TYPING_TOPIC, 
+                      $scope.id_rs, 
+                      $rootScope.currentAccount.id_rs, 
+  function (gossip) {
+    $scope.$evalAsync(
+      function () {
+        $scope.ui.isTyping = true;
+        $timeout(function () {
+          $scope.ui.isTyping = false;
+        }, 10*1000);
+      }
+    );
+  });
+  $scope.$on('$destroy', unregister);
+
   $scope.reload = function () {
     if ($scope.chatListProvider) {
       $scope.chatListProvider.reload();
@@ -168,6 +187,11 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   }
 
   $scope.messageChanged = function () {
+    /* notifies that the user is typing a message */
+    if (!typing_timeout) {
+      typing_timeout = $timeout(function () { typing_timeout = null }, 15*1000, false);
+      Gossip.sendGossip($scope.id_rs, "typing", Gossip.IS_TYPING_TOPIC);
+    }
     $scope.message.html = Emoji.emojifi($scope.message.text);
   }
 
@@ -219,7 +243,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   /* Handler for the Send Message button. 
    * Based on message type (gossip or blockchain) this action has a different effect */ 
   $scope.sendDirectMessage = function () {
-    Gossip.message(api, $rootScope.currentAccount.secretPhrase, $scope.id_rs, $scope.message.text).then(
+    Gossip.message($scope.id_rs, $scope.message.text).then(
       function () {
         $scope.$evalAsync(function () {
           $scope.ui.emojiCollapse  = true;
@@ -232,6 +256,8 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
         });
         // TODO - update the chat in GossipChatListProvider last timestamp!
         // $timeout(function () { $scope.chatListProvider.reload() }, 3000);
+        $timeout.cancel(typing_timeout);
+        typing_timeout = null;
       }
     );
   };
