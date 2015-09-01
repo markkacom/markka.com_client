@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('InspectorPluginInspectModalController', function (items, $modalInstance, $scope, $sce, $timeout, $location, $rootScope) {
+module.controller('InspectorPluginInspectModalController', function (items, $modalInstance, $scope, $timeout, $location, $rootScope) {
 
   $rootScope.$on("$routeChangeStart", function (event, next, current) {  
     $timeout(function () { $scope.close(); }, 1000, false);
@@ -83,6 +83,6 @@ module.controller('InspectorPluginInspectModalController', function (items, $mod
     }    
   }
 
-  $scope.tableHTML = $sce.getTrustedHtml(renderTable(items.object));
+  $scope.tableHTML = renderTable(items.object);
 });
 })();
