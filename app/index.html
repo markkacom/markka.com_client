@@ -94,6 +94,7 @@
     <script src="bower_components/dexie/dist/latest/Dexie.js"></script>
     <script src="bower_components/dexie/addons/Dexie.Observable/Dexie.Observable.js"></script>
     
+    <script src="scripts/lib/es5.js"></script>
     <script src="scripts/lib/iterator.js"></script>
     <script src="scripts/lib/jsbn.js"></script>
     <script src="scripts/lib/jsbn2.js"></script>    
@@ -130,6 +131,7 @@
     <script src="scripts/directives/price-chart.js"></script>
     <script src="scripts/directives/menu-close.js"></script>
     <script src="scripts/directives/scrollglue.js"></script>
+    <script src="scripts/directives/enter-submit.js"></script>
 
     <script src="scripts/providers/account-forger-provider.js"></script>
     <script src="scripts/providers/account-lessors-provider.js"></script>
@@ -285,6 +287,11 @@
           <!-- <strong ng-bind="WALLET_NAME"></strong><span class="text-danger"><b>{{isTestnet? ' TEST' : ''}}</b></span> -->
           <img alt="Brand" style="max-height:none; min-height:5px !important; height:100%" src="images/lompsa.png">
         </a>
+
+        <a ng-hide="!currentAccount" class="navbar-brand visible-xs" ng-href="#/messenger" style="padding:5px 10px 0px 8px">
+          <i class="fa fa-comment-o fa-2x" style="max-height:none; min-height:5px !important; height:100%"></i>
+        </a>
+
         <a ng-show="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/activity/fim/assets/latest"><strong ng-bind="WALLET_NAME"></strong>Wallet&nbsp;<span class="text-danger"><b>{{isTestnet? 'TEST' : 'BETA'}}</b></span>
         </a>
       </div>
