@@ -291,7 +291,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
           models.forEach(function (gossip) {
             /* note that when having multiple tabs open you could potentially get
                duplicate reports.
-               make sure you filter for the chatId */            
+               make sure you filter for the chatId */
             if (gossip.chatId == self.chatId) {
               for (var i=0; i<self.entities.length; i++) {
                 if (self.entities[i].primaryKey === gossip.primaryKey) {
@@ -302,7 +302,20 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
               }
             }
           });
-        }, 
+        },
+        update: function (models) {
+          models.forEach(function (gossip) {
+            if (gossip.chatId == self.chatId) {
+              for (var i=0; i<self.entities.length; i++) {
+                if (self.entities[i].primaryKey === gossip.primaryKey) {
+                  must_update = true;
+                  angular.extend(self.entities[i], gossip);
+                  break;
+                }
+              }
+            }
+          });
+        },
         finally: function () {
           if (must_update) {
             must_update = false;
@@ -509,8 +522,6 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
       return {
         encrypted:true, 
         text: Gossip.decryptMessage(
-          this.api, 
-          $rootScope.currentAccount.secretPhrase, 
           this.accountTwoPublicKey, 
           json.nonce, 
           json.message
