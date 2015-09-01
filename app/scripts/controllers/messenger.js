@@ -188,9 +188,11 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
 
   $scope.messageChanged = function () {
     /* notifies that the user is typing a message */
-    if (!typing_timeout) {
-      typing_timeout = $timeout(function () { typing_timeout = null }, 15*1000, false);
-      Gossip.sendGossip($scope.id_rs, "typing", Gossip.IS_TYPING_TOPIC);
+    if ($scope.ui.sendOffline) {
+      if (!typing_timeout) {
+        typing_timeout = $timeout(function () { typing_timeout = null }, 15*1000, false);
+        Gossip.sendGossip($scope.id_rs, "typing", Gossip.IS_TYPING_TOPIC);
+      }
     }
     $scope.message.html = Emoji.emojifi($scope.message.text);
   }
@@ -243,23 +245,44 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   /* Handler for the Send Message button. 
    * Based on message type (gossip or blockchain) this action has a different effect */ 
   $scope.sendDirectMessage = function () {
-    Gossip.message($scope.id_rs, $scope.message.text).then(
-      function () {
+    if ($scope.ui.sendOffline) {
+      plugins.get('transaction').get('sendMessage').execute($rootScope.currentAccount.id_rs, { 
+        recipient: $scope.id_rs,
+        message: $scope.message.text,
+        autoSubmit: true,
+      }).then(function (items) {
         $scope.$evalAsync(function () {
-          $scope.ui.emojiCollapse  = true;
-          $scope.message.text = '';
-          $scope.message.html = '';
-          $scope.message.recipient = '';
-          $scope.message.recipientPublicKey = '';
-          $scope.message.send = true;
-          $timeout(function () { $scope.message.send = false }, 5000);
+          if (items != null) {
+            $scope.ui.emojiCollapse  = true;
+            $scope.message.text = '';
+            $scope.message.html = '';
+            $scope.message.recipient = '';
+            $scope.message.recipientPublicKey = '';
+            $scope.message.send = true;
+            $timeout(function () { $scope.message.send = false }, 5000);
+          }
         });
-        // TODO - update the chat in GossipChatListProvider last timestamp!
-        // $timeout(function () { $scope.chatListProvider.reload() }, 3000);
-        $timeout.cancel(typing_timeout);
-        typing_timeout = null;
-      }
-    );
+      });
+    }
+    else {
+      Gossip.message($scope.id_rs, $scope.message.text).then(
+        function () {
+          $scope.$evalAsync(function () {
+            $scope.ui.emojiCollapse  = true;
+            $scope.message.text = '';
+            $scope.message.html = '';
+            $scope.message.recipient = '';
+            $scope.message.recipientPublicKey = '';
+            $scope.message.send = true;
+            $timeout(function () { $scope.message.send = false }, 5000);
+          });
+          // TODO - update the chat in GossipChatListProvider last timestamp!
+          // $timeout(function () { $scope.chatListProvider.reload() }, 3000);
+          $timeout.cancel(typing_timeout);
+          typing_timeout = null;
+        }
+      );
+    }
   };
 
   $scope.addContact = function (id_rs) {
