@@ -23,7 +23,10 @@ module.factory('GossipModel', function() {
         /* properties calculated and added client side */
         recipientRS: String,
         chatId: Number,           // ID of the db chat object
-        localTimestamp: Number    // Timestamp received/send in local time
+        localTimestamp: Number,   // Timestamp received/send in local time
+
+        /* indicates the message was received or not */
+        received: Boolean
       });
 
       GossipModel.prototype.save = function () {
