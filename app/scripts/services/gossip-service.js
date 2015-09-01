@@ -1,12 +1,78 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (Gossip, $rootScope) {
-  $rootScope.$on('onOpenCurrentAccount', function (e, currentAccount) {
-    Gossip.onOpenCurrentAccount(currentAccount);
+module.run(function (Gossip, $rootScope, db) {
+  $rootScope.$on('onOpenCurrentAccount', Gossip.onOpenCurrentAccount.bind(Gossip));
+  $rootScope.$on('onCloseCurrentAccount', Gossip.onCloseCurrentAccount.bind(Gossip));
+  $rootScope.$on('onAddChatContact', Gossip.onAddChatContact.bind(Gossip));
+
+  Gossip.addTopic(Gossip.PING_TOPIC, function (gossip) {
+    var message = converters.hexStringToString(gossip.message);
+    if (message.indexOf("ping") == 0) {
+      this.getSenderIsWhitelisted(gossip.senderRS).then(
+        function (allowed) {
+          if (allowed) {
+            this.ping(gossip.senderRS, "pong");
+          }
+        }.bind(this)
+      );
+    }
+    else if (message.indexOf("pong") == 0) {
+      /* all handled at lower generic level */
+    }
   });
-  $rootScope.$on('onCloseCurrentAccount', function (e, currentAccount) {
-    Gossip.onCloseCurrentAccount(currentAccount);
+
+  Gossip.addTopic(Gossip.MESSAGE_TOPIC, function (gossip) {
+
+    /* let the sender know we have received the message */
+    function onMessageStored() {
+      new Audio('images/beep.wav').play();
+      this.sendGossip(gossip.senderRS, gossip.id, this.MESSAGE_RECEIVED_TOPIC);
+    }
+
+    this.getSenderIsWhitelisted(gossip.senderRS).then(
+      function (allowed) {
+        if (!allowed) return;
+        this.getChatService().get(gossip.senderRS).then(
+          function (chat) {
+            /* message received from known contact */
+            if (chat) {
+              gossip.chatId = chat.id;
+              this.persistGossip(gossip).then(onMessageStored.bind(this));
+            }
+            /* message from unknown contact - create new chat object and store message */
+            else {
+              this.getChatService().add(gossip.senderRS).then(
+                function (chat) {
+                  gossip.chatId = chat.id;
+                  this.persistGossip(gossip).then(onMessageStored.bind(this));
+                }.bind(this)
+              );
+            }
+          }.bind(this)
+        );
+      }.bind(this)
+    );    
+  });
+
+  Gossip.addTopic(Gossip.MESSAGE_RECEIVED_TOPIC, function (raw_gossip) {
+    var message = converters.hexStringToString(raw_gossip.message);
+    db.transaction('rw', db.gossips, function () {
+      db.gossips.where('id').
+                 equals(message).
+                 first().
+                 then(
+      function (gossip) {
+        if (gossip) {
+          gossip.received = true;
+          gossip.save();
+        }
+      });
+    });
+  });
+
+  Gossip.addTopic(Gossip.IS_TYPING_TOPIC, function (gossip) {
+
   });
 });
 module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyService, plugins) {
@@ -14,122 +80,293 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
   var MS_TIMEOUT_INACTIVE  = 60*1000;
   var MS_TIMEOUT_HANDSHAKE = 5*1000;
 
-  function playsound() {
-    new Audio('images/beep.wav').play();
-  }
-
-  var GossipAllowed = {
-    promise: null,
-    allowed: {},
-    getIsAllowed: function (id_rs) {
-      if (this.promise) {
-        return this.promise;
-      }
-      var deferred = $q.defer(), self = this;
-      if (angular.isDefined(this.allowed[id_rs])) {
-        deferred.resolve(this.allowed[id_rs]);
-      }
-      else {
-        plugins.get('alerts').confirm({
-          title: 'Share online status',
-          message: 'Do you want to share your online status so others can send you messages?'
-        }).then(function (allowed) {
-          self.allowed[id_rs] = allowed;
-          deferred.resolve(allowed);
-        });
-      }
-      var promise = this.promise = deferred.promise;
-      promise.then(function () { self.promise = null });
-      return promise;
-    }
-  };
-
   var Gossip = {
 
-    DEBUG: false,
-    PING_TOPIC: "1",
-    MESSAGE_TOPIC: "2",
-    __providers: {},
+    DEBUG: true,
+    providers: {},
     isActive: false,
+    topics: {},
+    currentAccount: null,
+    api: null,
+    subscriptions: [],
+    chatService: null,
+    listeners: [],
     ui: {
       isDisabled: false
     },
+    allowed: {
+      promise: null,
+      allowed: {},
+      getIsAllowed: function (id_rs) {
+        if (this.promise) {
+          return this.promise;
+        }
+        var deferred = $q.defer();
+        if (angular.isDefined(this.allowed[id_rs])) {
+          deferred.resolve(this.allowed[id_rs]);
+        }
+        else {
+          plugins.get('alerts').confirm({
+            title: 'Share online status',
+            message: 'Do you want to share your online status so others can send you messages?'
+          }).then(
+            function (allowed) {
+              this.allowed[id_rs] = allowed;
+              deferred.resolve(allowed);
+            }.bind(this)
+          );
+        }
+        var promise = this.promise = deferred.promise;
+        promise.then(function () { this.promise = null }.bind(this));
+        return promise;
+      }
+    },
+
+    /* available topics */
+    PING_TOPIC: "1",
+    MESSAGE_TOPIC: "2",
+    MESSAGE_RECEIVED_TOPIC: "3",
+    IS_TYPING_TOPIC: "4",
+
+    /**
+     * Adds a topic handler. Whenever a gossip message is received that matches this
+     * topic this handler will be called.
+     *
+     * @param topic String (unsigned long)
+     * @param handler Function (api, currentAccount, gossip)
+     */
+    addTopic: function (topic, handler) {
+      this.topics[topic] = handler;
+    },
+
+    /**
+     * Adds an external listener. 
+     * The returned function removes the listener.
+     *
+     * @param topic String one of the supported gossip types
+     * @param senderRS String
+     * @param recipientRS String
+     * @param listener Function
+     */
+    addListener: function (topic, senderRS, recipientRS, fn) {
+      var conf = {
+        topic: topic,
+        senderRS: senderRS,
+        recipientRS: recipientRS,
+        fn: fn
+      };
+      this.listeners.push(conf);
+      return function () {
+        var index = this.listeners.indexOf(conf);
+        if (index !== -1) {
+          this.listeners[index] = null;
+          this.listeners.splice(index, 1);
+        }
+      }.bind(this);
+    },
+
+    /**
+     * Adds a subscription to a websocket topic.
+     * Subscribe as many times as you like, all messages matching the topic
+     * you provide will be handled by the topic handler you registered 
+     * through addTopic.
+     *
+     * @param topic String
+     * @param senderRS String
+     * @param recipientRS String
+     */
+    subscribe: function (topic, senderRS, recipientRS) {
+      var conf = {
+        topic: this.createWebsocketTopic(senderRS, recipientRS, topic),
+        handler: this.genericGossipHandler.bind(this)
+      };
+      this.subscriptions.push(conf);
+      this.api.engine.socket().subscribe(conf.topic, conf.handler);
+      return function () {
+        var index = this.subscriptions.indexOf(conf);
+        if (index !== -1) {
+          this.subscriptions[i] = null;
+          this.subscriptions.splice(index, 1);
+          this.api.engine.socket().unsubscribe(conf.topic, conf.handler);
+        }
+      }.bind(this);
+    },
+
+    /* handles all gossip messages and forwards to topic handlers */
+    genericGossipHandler: function (gossip) {
+      if (this.DEBUG) {
+        console.log('RECEIVED GOSSIP FROM '+gossip.senderRS+' '+Date.now(), gossip);
+      }
+      if (!this.topics[gossip.topic]) {
+        console.log('Unsupported gossip topic '+gossip.topic, gossip);
+        return;
+      }
+      if (this.currentAccount.id_rs == gossip.senderRS) {
+        console.log('RECEIVED MESSAGE FROM SELF - STOP LISTENING !!!'+' '+Date.now());
+        return;
+      }
+      if (!this.verify(gossip)) {
+        console.log('Gossip could not be verified', gossip);
+        return;
+      }
+      if (this.getIsFloodAttack(gossip.senderRS)) {
+        return;
+      }
+      if (this.getSenderIsBlacklisted(gossip.senderRS)) {
+        return;
+      }
+
+      var address = this.api.createAddress();
+      gossip.recipientRS = address.set(gossip.recipient) ? address.toString() : '';
+
+      publicKeyService.set(gossip.senderRS, gossip.senderPublicKey);
+      this.updateOnlineStatus(gossip.senderRS, gossip.senderPublicKey);
+      this.topics[gossip.topic].call(this, gossip);
+
+      this.listeners.forEach(function (conf) {
+        if  ((conf.topic &&conf.topic == gossip.topic) &&
+             (conf.senderRS && conf.senderRS == gossip.senderRS) &&
+             (conf.recipientRS && conf.recipientRS == gossip.recipientRS)) {
+          conf.fn.call(null, gossip);
+        }
+      });
+    },
+
+    getIsFloodAttack: function (senderRS) {
+      return false;
+    },
+
+    getSenderIsBlacklisted: function (senderRS) {
+      return false;
+    },
+
+    /* determine if we auto-respond */
+    getSenderIsWhitelisted: function (senderRS) {
+      var deferred = $q.defer();
+      deferred.resolve(true);
+      return deferred.promise;
+    },
 
     /* @event-listener - account unlocked */
-    onOpenCurrentAccount: function (currentAccount) {
-      GossipAllowed.getIsAllowed(currentAccount.id_rs).then(
+    onOpenCurrentAccount: function (e, currentAccount) {
+      this.api = nxt.get(currentAccount.id_rs);
+      this.currentAccount = currentAccount;
+      this.chatService = new ChatService();
+
+      this.allowed.getIsAllowed(currentAccount.id_rs).then(
         function (allowed) {
-          $rootScope.$evalAsync(function () {
-            Gossip.ui.isDisabled = !allowed;
-          });
-          if (allowed && !Gossip.isActive) {
-            Gossip.isActive = true;
-            GossipPingServer.start(currentAccount);
-            GossipMessageServer.start(currentAccount);
+          $rootScope.$evalAsync(function () { this.ui.isDisabled = !allowed }.bind(this));
+          if (allowed && !this.isActive) {
+            this.isActive = true;
+            this.subscribe(Gossip.MESSAGE_TOPIC, null, currentAccount.id_rs);
+            this.subscribe(Gossip.PING_TOPIC, null, currentAccount.id_rs);
+            this.subscribe(Gossip.MESSAGE_RECEIVED_TOPIC, null, currentAccount.id_rs);
+            this.subscribe(Gossip.IS_TYPING_TOPIC, null, currentAccount.id_rs);
+
+
+            /* read all account contacts */
+            this.getChatService().each(
+              function (chat) {
+                this.onAddChatContact(null, chat, true); // pass true to not send a ping
+              }.bind(this)
+            ).then(
+              function () {
+                this.ping(this.currentAccount.id_rs);
+              }.bind(this)
+            );
           }
-        }
+        }.bind(this)
       );
     },
 
     /* @event-listener - account locked */
-    onCloseCurrentAccount: function (currentAccount) {
-      if (Gossip.isActive) {
-        $rootScope.$evalAsync(function () {
-          Gossip.ui.isDisabled = false;
-        });
+    onCloseCurrentAccount: function (e, currentAccount) {
+      if (this.isActive) {
+        $rootScope.$evalAsync(function () { this.ui.isDisabled = false }.bind(this));
+        
+        this.subscriptions.forEach(function (conf) {
+          this.api.engine.socket().unsubscribe(conf.topic, conf.handler);
+        }.bind(this));
+        
+        this.subscriptions.length = 0;
+        this.isActive = false;
 
-        GossipPingServer.stop(currentAccount);
-        GossipMessageServer.stop(currentAccount);
-        Gossip.isActive = false;
+        Object.getOwnPropertyNames(this.providers||{}).forEach(function (id_rs) {
+          this.providers[id_rs].destroy();
+          delete this.providers[id_rs];
+        }.bind(this));
 
-        var self = this;
-        Object.getOwnPropertyNames(this.__providers||{}).forEach(function (id_rs) {
-          self.__providers[id_rs].destroy();
-          delete self.__providers[id_rs];
-        });
+        this.api = null;
+        this.currentAccount = null;
+      }
+    },
+
+    /**
+     * @event-listener - new chat contact added
+     *
+     * start listening to pings send from this contact
+     * upon closing the currentAccount these are removed 
+     * if this is called on construction we pass the dont_ping=true argument to
+     * indicate we dont need to send a targetted ping to this contact.
+     * instead we rely on the I_AM_ALIVE initial ping and see if the contact responds to that
+     * 
+     * @param e Event (angular)
+     * @param chat ChatModel
+     * @param dont_ping Boolean
+     */
+    onAddChatContact: function (e, chat, dont_ping) {
+      this.subscribe(Gossip.PING_TOPIC, chat.otherRS, null);
+
+      // pre-create the provider
+      var provider = this.getChatStatusProvider(null, chat.otherRS, chat.id); 
+      if (dont_ping) { 
+        provider.startWaitingForInitialPongReply();
+      }
+      else { /* send a directed ping to the new contact */
+        this.ping(chat.otherRS);        
       }
     },
 
     /* called when the chat UI is activated */
     onActivated: function () {
       if (!this.isActive && $rootScope.currentAccount) {
-        this.onOpenCurrentAccount($rootScope.currentAccount);
+        this.onOpenCurrentAccount(null, $rootScope.currentAccount);
       }
-    },
+    },    
 
-    /* make a previously non-allowed */
+    /* enable the gossip feature when it was disabled */
     setEnabled: function () {
-      if (Gossip.ui.isDisabled && $rootScope.currentAccount) {
-        Gossip.ui.isDisabled = false;
-        delete GossipAllowed.allowed[$rootScope.currentAccount.id_rs];
-        this.onOpenCurrentAccount($rootScope.currentAccount);
+      if (this.ui.isDisabled && $rootScope.currentAccount) {
+        this.ui.isDisabled = false;
+        delete this.allowed.allowed[$rootScope.currentAccount.id_rs];
+        this.onOpenCurrentAccount(null, $rootScope.currentAccount);
       }
     },
 
     getChatService: function () {
-      return chatService;
+      return this.chatService;
     },
 
     /* Removes a contact from the db.chats collection and all gossips stored in db.gossips */
     removeContact: function (id_rs) {
       var deferred = $q.defer();
       db.transaction("rw", db.chats, db.gossips, function() {
-        chatService.get(id_rs).then(
+        this.getChatService().get(id_rs).then(
           function (chat) {
             if (chat) {
               chat.delete().then(
                 function () {
-                  if (Gossip.__providers[id_rs]) {
-                    Gossip.__providers[id_rs].destroy();
-                    delete Gossip.__providers[id_rs];
+                  if (this.providers[id_rs]) {
+                    this.providers[id_rs].destroy();
+                    delete this.providers[id_rs];
                   }
                   db.gossips.where('chatId').equals(chat.id).delete();
-                }
+                }.bind(this)
               );
             }
-          }
+          }.bind(this)
         );
-      }).then(deferred);
+      }.bind(this)).then(deferred);
       return deferred.promise;
     },
 
@@ -164,131 +401,126 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     /**
      * Sends a ping (or pong)
      *
-     * @param api Object nxt or fim
-     * @param secretPhrase String
      * @param recipientRS String
      * @param message String (empty or put "pong" here)
      * @returns String
      */
-    ping: function (api, secretPhrase, recipientRS, message) {
+    ping: function (recipientRS, message) {
       if (this.DEBUG) {
-        var publicKey = api.crypto.secretPhraseToPublicKey(secretPhrase);
-        var id_rs = api.crypto.getAccountIdFromPublicKey(publicKey, true);
+        var secretPhrase = this.currentAccount.secretPhrase;
+        var publicKey = this.api.crypto.secretPhraseToPublicKey(secretPhrase);
+        var id_rs = this.api.crypto.getAccountIdFromPublicKey(publicKey, true);
         var msg = ['### SEND '+(message||'PING')+' SENDER='+id_rs+' RECIPIENT='+recipientRS];
         console.log(msg.join('')+' '+Date.now());
       }
       var data = (message||"ping")+'-'+Date.now();
-      return this.sendGossip(api, secretPhrase, recipientRS, data, this.PING_TOPIC);
+      return this.sendGossip(recipientRS, data, this.PING_TOPIC);
     },
 
     /**
      * Sends a message to a contact
      *
-     * @param api Object nxt or fim
-     * @param secretPhrase String
      * @param recipientRS String
      * @param message String clear un-encrypted text
      */
-    message: function (api, secretPhrase, recipientRS, message) {
+    message: function (recipientRS, message) {
       if (this.DEBUG) {
-        var publicKey = api.crypto.secretPhraseToPublicKey(secretPhrase);
-        var id_rs = api.crypto.getAccountIdFromPublicKey(publicKey, true);
+        var secretPhrase = this.currentAccount.secretPhrase;
+        var publicKey = this.api.crypto.secretPhraseToPublicKey(secretPhrase);
+        var id_rs = this.api.crypto.getAccountIdFromPublicKey(publicKey, true);
         var msg = ['### SEND MESSAGE SENDER='+id_rs+' RECIPIENT='+recipientRS];
         console.log(msg.join('')+' '+Date.now());
       }
-      var provider = this.__providers[recipientRS];
+      var provider = this.providers[recipientRS];
       var recipientPublicKey = provider.publicKey;
-      if (recipientRS != api.crypto.getAccountIdFromPublicKey(recipientPublicKey, true)) {
+      if (recipientRS != this.api.crypto.getAccountIdFromPublicKey(recipientPublicKey, true)) {
         throw "WTF !! public key and account dont match"
       }
 
       var deferred = $q.defer();
-      this.sendEncryptedGossip(api, secretPhrase, recipientPublicKey, message, this.MESSAGE_TOPIC).then(
+      this.sendEncryptedGossip(recipientPublicKey, message, this.MESSAGE_TOPIC).then(
         function (gossip) {
-          chatService.get(recipientRS).then(
+          this.getChatService().get(recipientRS).then(
             function (chat) {
               gossip.chatId = chat.id;
-              Gossip.db.add(api, gossip);
+              this.persistGossip(gossip);
               deferred.resolve(gossip);
-            }
+            }.bind(this)
           );
-        }
+        }.bind(this)
       );
       return deferred.promise;
     },
 
     /* @param id_rs String */
     updateOnlineStatus: function (id_rs, publicKey) {
-      if (this.__providers[id_rs]) {
-        this.__providers[id_rs].updateOnlineStatus(publicKey);
+      if (this.providers[id_rs]) {
+        this.providers[id_rs].updateOnlineStatus(publicKey);
       }
     },
 
-    getChatStatusProvider: function (api, $scope, id_rs, chatId) {
-      if (!this.__providers[id_rs]) {
-        this.__providers[id_rs] = new ChatStatusProvider(api, id_rs, chatId);
+    getChatStatusProvider: function ($scope, id_rs, chatId) {
+      if (!this.providers[id_rs]) {
+        this.providers[id_rs] = new ChatStatusProvider(this.api, id_rs, chatId);
       }
       if ($scope) {
-        this.__providers[id_rs].set_$scope($scope);
+        this.providers[id_rs].set_$scope($scope);
       }
-      return this.__providers[id_rs];
+      return this.providers[id_rs];
     },
 
     /**
      * @public 
      *
-     * @param api Object nxt or fim
-     * @param secretPhrase String
      * @param recipientPublicKey String
      * @param message String
      * @param topic String numeric unsigned long
      * @returns Promise
      */
-    sendEncryptedGossip: function (api, secretPhrase, recipientPublicKey, message, topic) {
+    sendEncryptedGossip: function (recipientPublicKey, message, topic) {
       var deferred = $q.defer();
-      var encrypted_message = this.encryptMessage(api, secretPhrase, recipientPublicKey, message);
+      var encrypted_message = this.encryptMessage(recipientPublicKey, message);
       var data = converters.stringToHexString(encrypted_message);
-      var recipient = api.crypto.getAccountIdFromPublicKey(recipientPublicKey, false); /* false means numeric */
-      this.sendGossipData(api, secretPhrase, recipient, data, topic).then(deferred.resolve, deferred.reject);
+      var recipient = this.api.crypto.getAccountIdFromPublicKey(recipientPublicKey, false); /* false means numeric */
+      this.sendGossipData(recipient, data, topic).then(deferred.resolve, deferred.reject);
       return deferred.promise;
     },
 
     /**
      * @public 
      *
-     * @param api Object nxt or fim
-     * @param secretPhrase String
      * @param recipient String numeric account id
      * @param message String
      * @param topic String numeric unsigned long
      * @returns Promise
      */
-    sendGossip: function (api, secretPhrase, recipient, message, topic) {
+    sendGossip: function (recipient, message, topic) {
       var deferred = $q.defer();
       var data = converters.stringToHexString(message);
       var numeric = /^\d+$/.test(recipient) ? recipient : nxt.util.convertRSAddress(recipient);
-      this.sendGossipData(api, secretPhrase, numeric, data, topic).then(deferred.resolve, deferred.reject);
+      this.sendGossipData(numeric, data, topic).then(deferred.resolve, deferred.reject);
       return deferred.promise;
     },
 
-    sendGossipData: function (api, secretPhrase, recipient, message, topic) {
+    sendGossipData: function (recipient, message, topic) {
       var deferred = $q.defer();
+      var secretPhrase = this.currentAccount.secretPhrase;
       var arg = {
         requestType:'sendGossip',
-        senderPublicKey: api.crypto.secretPhraseToPublicKey(secretPhrase),
+        senderPublicKey: this.api.crypto.secretPhraseToPublicKey(secretPhrase),
         recipient: recipient,
         message: message,
         timestamp: nxt.util.convertToEpochTimestamp(Date.now()),
         topic: topic||"0"
       };
-      var signatureseed = Gossip.createSignatureSeed(arg);
+      var signatureseed = this.createSignatureSeed(arg);
       arg.signature = nxt.util.sign(signatureseed, secretPhrase);
-      arg.id = api.crypto.getAccountIdFromPublicKey(arg.signature);
+      arg.id = this.api.crypto.getAccountIdFromPublicKey(arg.signature);
 
       /* generate the gossip locally so it can be returned and stored in the db */
       var gossip = {
         senderPublicKey: arg.senderPublicKey,
-        senderRS: api.crypto.getAccountIdFromPublicKey(arg.senderPublicKey, true),
+        senderRS: this.api.crypto.getAccountIdFromPublicKey(arg.senderPublicKey, true),
         recipient: arg.recipient,
         message: arg.message,
         timestamp: arg.timestamp,
@@ -296,8 +528,8 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
         signature: arg.signature,
         id: arg.id
       };
-      if (Gossip.verify(api, gossip)) {
-        api.engine.socket().callAPIFunction(arg).then(
+      if (this.verify(gossip)) {
+        this.api.engine.socket().callAPIFunction(arg).then(
           function () {
             deferred.resolve(gossip);
           }, 
@@ -310,8 +542,12 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
       return deferred.promise;
     },
 
-    encryptMessage: function (api, secretPhrase, recipientPublicKey, message) {
-      var encrypted_json = encrypt(api, secretPhrase, recipientPublicKey, message);
+    encryptMessage: function (recipientPublicKey, message) {
+      var options = {
+        account: this.api.crypto.getAccountIdFromPublicKey(recipientPublicKey, false),
+        publicKey: recipientPublicKey
+      };
+      var encrypted_json = this.api.crypto.encryptNote(message, options, this.currentAccount.secretPhrase);
       return JSON.stringify(encrypted_json);
     },
 
@@ -323,18 +559,18 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
      * @param message
      * @return String
      */
-    decryptMessage: function (api, secretPhrase, publicKey, nonce, message) {
+    decryptMessage: function (publicKey, nonce, message) {
       var data    = converters.hexStringToByteArray(message);
       var options = {
-        privateKey: converters.hexStringToByteArray(api.crypto.getPrivateKey(secretPhrase)),
+        privateKey: converters.hexStringToByteArray(this.api.crypto.getPrivateKey(this.currentAccount.secretPhrase)),
         publicKey:  converters.hexStringToByteArray(publicKey),
         nonce:      converters.hexStringToByteArray(nonce)
       }
-      return api.crypto.decryptData(data, options);
+      return this.api.crypto.decryptData(data, options);
     },
 
-    verify: function (api, gossip) {
-      if (gossip.senderRS != api.crypto.getAccountIdFromPublicKey(gossip.senderPublicKey, true)) {
+    verify: function (gossip) {
+      if (gossip.senderRS != this.api.crypto.getAccountIdFromPublicKey(gossip.senderPublicKey, true)) {
         console.log('Sender - public key dont match');
         return false;
       }
@@ -345,57 +581,50 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
       }
       var signatureseed = this.createSignatureSeed(gossip);
       var signatureseedHex = converters.stringToHexString(signatureseed);
-      var signatureseedBytes = converters.hexStringToByteArray(signatureseedHex);
-      return api.crypto.verifyBytes(gossip.signature, signatureseedHex, gossip.senderPublicKey);
+      var verified = this.api.crypto.verifyBytes(gossip.signature, signatureseedHex, gossip.senderPublicKey);
+      if (!verified && this.DEBUG) {
+        console.log('Could not verify gossip', gossip);
+        return false;
+      }
+      return verified;
     },
 
     createSignatureSeed: function (gossip) {
       return gossip.timestamp+gossip.recipient+gossip.message+gossip.topic;
     },    
 
-    db: {
-      /* adds a MESSAGE_TOPIC gossip to the db */
-      add: function (api, gossip) {
-        /* watch out not to introduce duplicates */
-        return db.transaction("rw", db.gossips, function() {
-          db.gossips.where('id').
-                     equals(gossip.id).
-                     toArray().
-                     then(
-          function (existing_gossips) {
-            /* same ID'd gossips can exist - but their chatId should always differ */
-            for (var i=0; i<existing_gossips.length; i++) {
-              if (existing_gossips[i].chatId == gossip.chatId) {
-                return;
-              }
+    /* adds a MESSAGE_TOPIC gossip to the db */
+    persistGossip: function (gossip) {
+      /* watch out not to introduce duplicates */
+      return db.transaction("rw", db.gossips, db.chats, function() {
+        db.gossips.where('id').
+                   equals(gossip.id).
+                   toArray().
+                   then(
+        function (existing_gossips) {
+          /* same ID'd gossips can exist - but their chatId should always differ */
+          for (var i=0; i<existing_gossips.length; i++) {
+            if (existing_gossips[i].chatId == gossip.chatId) {
+              return;
             }
-            var address = api.createAddress();
-            gossip.recipientRS = address.set(gossip.recipient) ? address.toString() : '';
-            gossip.localTimestamp = nxt.util.convertToEpochTimestamp(Date.now());
-            if (Gossip.DEBUG) {
-              console.log('db.add', gossip);
+          }
+          gossip.localTimestamp = nxt.util.convertToEpochTimestamp(Date.now());
+          if (this.DEBUG) {
+            console.log('db.add', gossip);
+          }
+          db.gossips.put(gossip);
+
+          /* update timestamp*/
+          Gossip.getChatService().get(gossip.senderRS).then(
+            function (chat) {
+              chat.timestamp = gossip.timestamp;
+              chat.save();
             }
-            db.gossips.put(gossip);
-          });
-        });
-      }
+          );
+        }.bind(this));
+      }.bind(this));
     }
   };
-
-  /**
-   * @param api
-   * @param secretPhrase
-   * @param recipientPublicKey
-   * @param message
-   * @return { nonce: '', message: '' }
-   */
-  function encrypt(api, secretPhrase, recipientPublicKey, message) {
-    var options = {
-      account: api.crypto.getAccountIdFromPublicKey(recipientPublicKey, false),
-      publicKey: recipientPublicKey
-    };
-    return api.crypto.encryptNote(message, options, secretPhrase);
-  }
 
   function ChatStatusProvider(api, account, chatId) {
     this.api       = api;
@@ -420,13 +649,11 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
       });
     },
 
-    reload: function () {
+    reload: function (timeout_inactive) {
       this.safeAsync(function () {
-        if (this.online == false) {
-          this.loading = true;
-          Gossip.ping(this.api, $rootScope.currentAccount.secretPhrase, this.account);
-          this.setTimeout(this._onTimeoutHandshake, MS_TIMEOUT_HANDSHAKE);
-        }
+        this.loading = true;
+        Gossip.ping(this.account);
+        this.setTimeout(this._onTimeoutHandshake, MS_TIMEOUT_HANDSHAKE);
       });
     },
 
@@ -462,10 +689,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
 
     /* account inactive for too long */
     onTimeoutInactive: function () {
-      this.safeAsync(function () {
-        this.online  = false;
-        this.reload();
-      });
+      this.reload();
     },
 
     set_$scope: function ($scope) {
@@ -486,283 +710,6 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
   };
 
   /**
-   * The message server listens for messages that where send TO the
-   * currently logged in account.
-   *
-   * When a message is received the server decides if it should store the 
-   * message or discard it (spam).
-   *
-   * Consult the GossipPingServer.getSenderIsWhitelisted(id_rs) if an account
-   * is allowed to send messages.
-   */
-
-  var DDOS_DELAY_MS = 500;
-
-  var GossipMessageServer = {
-    DEBUG: false,
-    __running: false,
-
-    start: function (currentAccount) {
-      this.__running = true;
-      this.onOpenCurrentAccount(currentAccount);
-    },
-
-    stop: function (currentAccount) {
-      if (this.__running) {
-        this.__running = false;
-        this.onCloseCurrentAccount(currentAccount);
-      }
-    },
-
-    /* start listening for pings send to us */
-    onOpenCurrentAccount: function (currentAccount) {
-      this.id_rs   = currentAccount.id_rs;
-      this.api     = nxt.get(currentAccount.id_rs);
-      this.handler = angular.bind(this, this.onMessageReceived);
-      this.topic   = Gossip.createWebsocketTopic(null, currentAccount.id_rs, Gossip.MESSAGE_TOPIC);
-      if (this.DEBUG) {
-        console.log('SUBSCRIBE TO RECIPIENT='+currentAccount.id_rs+' TOPIC=MESSAGE'+' '+Date.now());
-      }
-      this.api.engine.socket().subscribe(this.topic, this.handler);
-    },
-
-    /* stop listening for pings send to us */
-    onCloseCurrentAccount: function (currentAccount) {
-      if (this.DEBUG) {
-        console.log('UN-SUBSCRIBE RECIPIENT='+currentAccount.id_rs+' TOPIC=MESSAGE'+' '+Date.now());
-      }      
-      this.api.engine.socket().unsubscribe(this.topic, this.handler);
-      this.handler = null;
-      this.topic   = null;
-      this.api     = null;
-      this.id_rs   = null;
-    },
-
-    onMessageReceived: function (gossip) {
-      //console.log('onMessageReceived', gossip);
-      if (this.id_rs == gossip.senderRS) {
-        console.log('RECEIVED MESSAGE FROM SELF - STOP LISTENING !!!'+' '+Date.now());
-        return;
-      }
-
-      console.log('RECEIVED MESSAGE FROM '+gossip.senderRS+' '+Date.now());
-      var self = this;
-      GossipPingServer.getSenderIsWhitelisted(gossip.senderRS).then(
-        function (allowed) {
-          if (allowed) {
-            if (Gossip.verify(self.api, gossip)) {
-              console.log('VALID MESSAGE');
-
-              publicKeyService.set(gossip.senderRS, gossip.senderPublicKey);
-              chatService.get(gossip.senderRS).then(
-                function (chat) {
-                  /* message received from known contact */
-                  if (chat) {
-                    gossip.chatId = chat.id;
-                    Gossip.db.add(self.api, gossip).then(playsound);
-                  }
-                  /* message from unknown contact - create new chat object and store message */
-                  else {
-                    chatService.add(gossip.senderRS).then(
-                      function (chat) {
-                        gossip.chatId = chat.id;
-                        Gossip.db.add(self.api, gossip).then(playsound);
-                      }
-                    );
-                  }
-                }
-              );
-            }
-            else {
-              console.log('IN-VALID MESSAGE');
-            }
-          }
-        }
-      );
-    }
-  };
-
-  /**
-   * The ping server listens for ping messages that where send TO the
-   * currently logged in account and to ping messages that where 
-   * send FROM one of our contacts.
-   *
-   * When a ping is received the server decides if it should send a 
-   * reply ping. 
-   *
-   * When an unknown account sends a ping the user is prompted if he/she
-   * wishes to share his online status. When a known account sends a ping
-   * we automatically reply with a ping.
-   */
-
-  var DDOS_DELAY_MS = 500;
-
-  var GossipPingServer = {
-    DEBUG: false,
-    _unregister: null,
-    __running: true,
-
-    start: function (currentAccount) {
-      this.__running = true;
-      this._unregister = $rootScope.$on('onAddChatContact', angular.bind(this, this.onAddChatContact));
-      this.onOpenCurrentAccount(currentAccount);
-    },
-
-    stop: function (currentAccount) {
-      if (this.__running) {
-        this.__running = false;
-        this._unregister();
-        this._unregister = null;
-        this.onCloseCurrentAccount(currentAccount);
-      }
-    },
-
-    /* start listening for pings send to us */
-    onOpenCurrentAccount: function (currentAccount) {
-      this.id_rs   = currentAccount.id_rs;
-      this.api     = nxt.get(currentAccount.id_rs);
-      this.handler = angular.bind(this, this.onPingReceived);
-      this.topic   = Gossip.createWebsocketTopic(null, currentAccount.id_rs, Gossip.PING_TOPIC);
-      if (this.DEBUG) {
-        console.log('SUBSCRIBE TO RECIPIENT='+currentAccount.id_rs+' TOPIC=PING'+' '+Date.now());
-      }
-      this.api.engine.socket().subscribe(this.topic, this.handler);
-
-      /* read all account contacts */
-      var self = this;
-      chatService.each(
-        function (chat) {
-          GossipPingServer.onAddChatContact(null, chat, true); // pass true to not send a ping
-        }
-      ).then(
-        function () {
-          self._last_ping_send = Date.now();
-          Gossip.ping(self.api, $rootScope.currentAccount.secretPhrase, self.id_rs);
-        }
-      );
-    },
-
-    /* stop listening for pings send to us */
-    onCloseCurrentAccount: function (currentAccount) {
-      var self = this;
-      Object.getOwnPropertyNames(this.contacts||{}).forEach(function (id_rs) {
-        var topic   = self.contacts[id_rs].topic;
-        var handler = self.contacts[id_rs].handler;
-        self.api.engine.socket().unsubscribe(topic, handler);
-        delete self.contacts[id_rs];
-      });
-      this.api.engine.socket().unsubscribe(this.topic, this.handler);
-      this.handler = null;
-      this.topic   = null;
-      this.api     = null;
-      this.id_rs   = null;
-    },
-
-    /**
-     * start listening to pings send from this contact
-     * upon closing the currentAccount these are removed 
-     * if this is called on construction we pass the dont_ping=true argument to
-     * indicate we dont need to send a targetted ping to this contact.
-     * instead we rely on the I_AM_ALIVE initial ping and see if the contact responds to that
-     * 
-     * @param e Event (angular)
-     * @param chat ChatModel
-     * @param dont_ping Boolean
-     */
-    onAddChatContact: function (e, chat, dont_ping) {
-      var id_rs = chat.otherRS;
-      this.contacts = this.contacts||{};
-      if (this.contacts[id_rs]) {
-        throw "Duplicate contact";
-      }
-      this.contacts[id_rs] = {
-        handler:  angular.bind(this, this.onPingReceived),
-        topic:    Gossip.createWebsocketTopic(id_rs, null, Gossip.PING_TOPIC)
-      };
-
-      if (this.DEBUG) {
-        console.log('SUBSCRIBE TO SENDER='+id_rs+' TOPIC=PING'+' '+Date.now());
-      }
-      this.api.engine.socket().subscribe(this.contacts[id_rs].topic, this.contacts[id_rs].handler);
-
-      // // pre-create the provider
-      var provider = Gossip.getChatStatusProvider(this.api, null, chat.otherRS, chat.id); 
-      if (dont_ping) { 
-        provider.startWaitingForInitialPongReply();
-      }
-      else {
-        /* send a directed ping to the new contact */
-        Gossip.ping(this.api, $rootScope.currentAccount.secretPhrase, id_rs);        
-      }
-    },
-
-    onPingReceived: function (gossip) {
-      //console.log('onPingReceived', gossip);
-      if (this.id_rs == gossip.senderRS) {
-        console.log('RECEIVED PING FROM SELF - STOP LISTENING !!!'+' '+Date.now());
-        return;
-      }
-      var message = converters.hexStringToString(gossip.message);
-      if (message.indexOf("ping") == 0) {
-        if (this.DEBUG) {
-          console.log('RECEIVED PING SENDER='+gossip.senderRS+' RECIPIENT='+gossip.recipientRS+' '+Date.now());
-        }
-        if (this.getIsPingFloodAttack(gossip.senderRS)) {
-          return;
-        }
-        if (this.getSenderIsBlacklisted(gossip.senderRS)) {
-          return;
-        }
-        publicKeyService.set(gossip.senderRS, gossip.senderPublicKey);
-        Gossip.updateOnlineStatus(gossip.senderRS, gossip.senderPublicKey);
-        var self = this;
-        this.getSenderIsWhitelisted(gossip.senderRS).then(
-          function (allowed) {
-            if (allowed) {
-              self._last_ping_send = Date.now();
-              Gossip.ping(self.api, $rootScope.currentAccount.secretPhrase, gossip.senderRS, "pong");
-            }
-          }
-        );
-      }
-      else if (message.indexOf("pong") == 0) {
-        if (this.DEBUG) {
-          console.log('RECEIVED PONG SENDER='+gossip.senderRS+' RECIPIENT='+gossip.recipientRS+' '+Date.now());
-        }
-        publicKeyService.set(gossip.senderRS, gossip.senderPublicKey);
-        Gossip.updateOnlineStatus(gossip.senderRS, gossip.senderPublicKey);
-      }
-      else {
-        if (this.DEBUG) {
-          console.log('RECEIVED INVALID SENDER='+gossip.senderRS+' RECIPIENT='+gossip.recipientRS+' '+Date.now());
-        }
-      }
-    },
-
-    getIsPingFloodAttack: function (id_rs) {
-      // this._last_ping_send = this._last_ping_send||0;
-      // var delay = Date.now() - this._last_ping_send;
-      // if (delay < DDOS_DELAY_MS) {
-      //   console.log('Ping flood attack: '+id_rs+' ('+delay+')');
-      //   return true;
-      // }
-      return false;
-    },
-
-    /* @returns Boolean - comes from db */
-    getSenderIsBlacklisted: function (id_rs) {
-      return false;
-    },
-
-    /* @returns Promise(boolean) */
-    getSenderIsWhitelisted: function (id_rs) {
-      var deferred = $q.defer();
-      deferred.resolve(true);
-      return deferred.promise;
-    }
-  };
-  
-  /**
    * A Chat is a description of a conversation between two accounts.
    *
    * There always is the 'accountRS' which is the currently logged in
@@ -779,15 +726,10 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     }
   }
 
-  function clearCache() {
-    chatService.cached = {};
+  function ChatService() {
+    this.cached = {};
   }
-
-  $rootScope.$on('onOpenCurrentAccount', clearCache);
-  $rootScope.$on('onCloseCurrentAccount', clearCache);
-
-  var chatService = {
-    cached: {},
+  ChatService.prototype = {
     add: function (otherRS) {
       if (!$rootScope.currentAccount) {
         throw new Error("Must log in first");
@@ -873,7 +815,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
         throw "Must log in first";
       }
       var deferred = $q.defer();
-      if (chatService.cached[otherRS]) {
+      if (this.cached[otherRS]) {
         deferred.resolve(this.cached[otherRS]);
       }
       else {
@@ -883,13 +825,13 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
                  first(
         function (chat) {
           if (chat) {
-            chatService.cached[otherRS] = chat;
+            this.cached[otherRS] = chat;
             deferred.resolve(chat);
           }
           else {
             deferred.resolve(null);
           }
-        });
+        }.bind(this));
       }
       return deferred.promise;
     }
