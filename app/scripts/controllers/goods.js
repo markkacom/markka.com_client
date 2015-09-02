@@ -1,5 +1,4 @@
 (function() {
-  'use strict';
   var module = angular.module('fim.base');
   module.config(function($routeProvider) {
     $routeProvider

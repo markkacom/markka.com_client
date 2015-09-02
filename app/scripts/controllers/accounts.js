@@ -40,6 +40,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
   $scope.symbol = api.engine.symbol;
   $scope.symbol_lower = api.engine.symbol_lower;
 
+
   $scope.showFilter            = ['activity', 'messages', 'blocks', 'pulse'].indexOf($scope.paramSection) != -1;;
   $scope.showTransactionFilter = ['activity'].indexOf($scope.paramSection) != -1;
 
