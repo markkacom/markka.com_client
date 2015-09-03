@@ -29,7 +29,7 @@
                         <th>Tags</th>
                         <th>Quantity</th>
                         <th>Price FIMK</th>
-                        <th></th>
+                        <th ng-if= "paramSection == 'viewlisting'"></th>
                       </tr>
                     </thead>
                      <tbody>
@@ -39,7 +39,7 @@
                         <td ng-click= "details(goods)">{{isAdded.tags}}</td>
                         <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
                         <td ng-click= "details(goods)">{{isAdded.priceNXT}}</td>
-                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
+                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
                       </tr>
                       <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
                         <td ng-click= "details(goods)">{{goods.name}}</td>
@@ -47,7 +47,7 @@
                         <td ng-click= "details(goods)">{{goods.tags}}</td>
                         <td ng-click= "details(goods)">{{goods.quantity}}</td>
                         <td ng-click= "details(goods)">{{goods.priceFIMK}}</td>
-                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f">Delete</td>
+                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
                       </tr>
                     </tbody>
             </table>
