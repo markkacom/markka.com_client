@@ -72,14 +72,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   // Delete Goods
 
   plugin.add({
-    label: 'Devious Item',
+    label: 'Delete Item',
     id: 'dgsDelisting',
     exclude: true,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
-        title: 'Devious Item',
-        message: 'Delete a Marketplace item with no length restricted tags',
+        title: 'Delete Item',
+        message: 'Delete a Marketplace item having id '+args.goods+' with no length restricted tags',
         // senderRS: senderRS,
         requestType: 'dgsDelisting',
         // canHaveRecipient: false,
