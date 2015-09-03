@@ -47,7 +47,7 @@
                         <td ng-click= "details(goods)">{{goods.tags}}</td>
                         <td ng-click= "details(goods)">{{goods.quantity}}</td>
                         <td ng-click= "details(goods)">{{goods.priceFIMK}}</td>
-                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
+                        <td ng-click= "deleteGood(goods, $index)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
                       </tr>
                     </tbody>
             </table>
