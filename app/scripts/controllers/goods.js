@@ -17,13 +17,15 @@
 
     $scope.shoppingCart = shoppingCartService.get();
 
-    $scope.deleteGood = function(good) {
+    $scope.deleteGood = function(good, index) {
       var deleteGoodArgs = {
         requestType: 'dgsDelisting',
         goods: good.goods
       }
       plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs).then(function(deletedGood) {
-        $scope.showGoods.entities.splice(deletedGood, 1);
+        if(deletedGood) {
+          $scope.showGoods.entities.splice(index, 1);
+        }
       })
     }
 
