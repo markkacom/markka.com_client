@@ -10,6 +10,7 @@ var PRIVATE_ENABLED=false;
 var WALLET_NAME='FIMKrypto';
 var TRADE_UI_ONLY=false;
 var DEBUG=false;
+var BUILD_TIMESTAMP=#TIMESTAMP#;
 END_HEREDOC
 )
 cat > $MODE_JS_FILE <<EOF
@@ -17,6 +18,9 @@ $MODE_JS
 EOF
 orig=#VERSION#
 sed -i "s/${orig}/${VERSION}/g" $MODE_JS_FILE
+orig=#TIMESTAMP#
+timestamp=$(date +%s)
+sed -i "s/${orig}/${timestamp}/g" $MODE_JS_FILE
 
 rm -r -f dist
 grunt build

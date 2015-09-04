@@ -17,6 +17,7 @@ var PRIVATE_ENABLED=false;
 var WALLET_NAME='Lompsa.com';
 var TRADE_UI_ONLY=false;
 var DEBUG=false;
+var BUILD_TIMESTAMP=#TIMESTAMP#;
 END_HEREDOC
 )
 cat > $MODE_JS_FILE <<EOF
@@ -24,6 +25,10 @@ $MODE_JS
 EOF
 orig=#VERSION#
 sed -i "s/${orig}/${VERSION}/g" $MODE_JS_FILE
+orig=#TIMESTAMP#
+timestamp=$(date +%s)
+sed -i "s/${orig}/${timestamp}/g" $MODE_JS_FILE
+
 grunt build
 echo "successfully built mofowallet"
 
@@ -35,6 +40,7 @@ cp dist/index.html ~/git/mofo/launch.html
 DATE=`date`
 echo "<!--$DATE-->" >> ~/git/mofo/launch.html
 echo "successfully copied mofo files to jekyll repo"
+
 
 cd ~/git/mofo
 echo "start jekyll build"
