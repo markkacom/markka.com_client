@@ -366,7 +366,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
             }
           }.bind(this)
         );
-      }.bind(this)).then(deferred);
+      }.bind(this)).then(deferred.resolve);
       return deferred.promise;
     },
 
@@ -403,7 +403,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
      *
      * @param recipientRS String
      * @param message String (empty or put "pong" here)
-     * @returns String
+     * @returns Promise
      */
     ping: function (recipientRS, message) {
       if (this.DEBUG) {
@@ -422,6 +422,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
      *
      * @param recipientRS String
      * @param message String clear un-encrypted text
+     * @returns Promise     
      */
     message: function (recipientRS, message) {
       if (this.DEBUG) {
