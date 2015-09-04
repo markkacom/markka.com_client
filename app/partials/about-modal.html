@@ -1,0 +1,32 @@
+<div class="panel panel-primary language-select">
+  <div class="panel-body">
+    <div>
+      <h2 translate="translate.about"></h2>
+    </div>
+    <table class="table">
+      <tr>
+        <td translate="translate.date"></td>
+        <td>{{date}}</td>
+      </tr>
+      <tr>
+        <td translate="translate.client_version"></td>
+        <td>{{client_ver}}</td>
+      </tr>
+      <tr>
+        <td translate="translate.server_version"></td>
+        <td>{{server_ver}}</td>
+      </tr>
+      <tr>
+        <td translate="translate.discuss"></td>
+        <td colspan="2"><a href="http://forum.fimk.fi/" target="_blank">forum.fimk.fi</a></td>
+      </tr>      
+    </table>
+    <br>
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+      <button class="btn btn-default btn-block" ng-click="close()">
+        <b><span translate="translate.close"></span></b>
+      </button>
+    </div>
+  </div>
+</div>
+
