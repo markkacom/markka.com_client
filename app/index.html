@@ -163,6 +163,7 @@
     <script src="scripts/providers/server-config-provider.js"></script>
     <script src="scripts/providers/server-console-provider.js"></script>
     <script src="scripts/providers/statistics-provider.js"></script>
+    <script src="scripts/providers/user-data-provider.js"></script>
     <script src="scripts/providers/ae/ask-order-provider.js"></script>
     <script src="scripts/providers/ae/asset-info-provider.js"></script>
     <script src="scripts/providers/ae/bid-order-provider.js"></script>
@@ -196,6 +197,7 @@
     <script src="scripts/services/emoji-service.js"></script>
     
     <script src="scripts/controllers/app.js"></script>
+    <script src="scripts/controllers/about-modal.js"></script>
     <script src="scripts/controllers/login.js"></script>
     <script src="scripts/controllers/login-to.js"></script>
     <script src="scripts/controllers/wallet.js"></script>
@@ -300,8 +302,8 @@
         <ul class="nav navbar-nav" nav-menu="active">
           <li route-active="accounts/{{currentAccount.id_rs}}/" ng-if="currentAccount && !IS_SMALL_DEVICE">
             <a ng-href="#/accounts/{{currentAccount.id_rs}}/activity/latest">
-              <strong>{{currentAccount.name||currentAccount.id_rs}}</strong>
-              <span ng-show="currentAccount.balanceNXT">&nbsp;&nbsp;<b>{{currentAccount.balanceNXTWhole}}</b><small ng-show="currentAccount.balanceNXTRemainder">.{{currentAccount.balanceNXTRemainder}}</small></span>
+              <strong>{{userData.label}}</strong>
+              <span ng-bind-html="userData.html"></span>
             </a>
           </li>
           <li ng-if="IS_SMALL_DEVICE">
@@ -414,6 +416,11 @@
               <li>
                 <a href="#/translation/en"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{'translate.translator' | translate}}</a> 
               </li>
+              <li>
+                <a href ng-click="showAboutModal()">
+                  <i class="fa fa-question-circle"></i>&nbsp;&nbsp;{{'translate.about' | translate}}&nbsp;Lompsa
+                </a> 
+              </li>              
             </ul>
           </li>
           <li ng-if="multiLanguage">
