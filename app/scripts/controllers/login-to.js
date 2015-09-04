@@ -177,11 +177,6 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
       function (a) {
         $rootScope.$evalAsync(function () {
           $rootScope.currentAccount.name = a.accountName;
-          $rootScope.currentAccount.balanceNXT = nxt.util.convertToNXT(a.balanceNQT);
-
-          var parts = ($rootScope.currentAccount.balanceNXT||"").split('.');
-          $rootScope.currentAccount.balanceNXTWhole = parts[0];
-          $rootScope.currentAccount.balanceNXTRemainder = parts[1];
         });
       }
     );
