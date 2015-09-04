@@ -8,7 +8,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -128,6 +128,9 @@
     } else if ($scope.paramSection == "viewlisting") {
       $scope.showGoods = new UserGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.showGoods.reload();
+    } else if ($scope.paramSection == 'solditems') {
+      $scope.soldGoods = new SoldGoodsProvider(api, $scope, 10, $scope.id_rs);
+      $scope.soldGoods.reload();
     } else {
 
       $scope.goodsDetails = new GoodsDetailsProvider(api, $scope, $scope.paramSection);
