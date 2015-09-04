@@ -252,7 +252,11 @@
     "forward": "Áfram",
     "public_key": "Dreifilykill",
     "msg_sent_to": "Skilaboð send til {{recipient}}",
-    "gossip": "Gossip"
+    "gossip": "Gossip",
+    "about": "Um",
+    "client_version": "Viðskiptavinur Version",
+    "server_version": "Server Version",
+    "discuss": "Ræddu"
   },
   "filter": {
     "filter": "Sía",

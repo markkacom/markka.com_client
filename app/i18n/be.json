@@ -252,7 +252,11 @@
     "forward": "Наперад",
     "public_key": "Адкрыты ключ",
     "msg_sent_to": "Паведамленне адпраўлена {{recipient}}",
-    "gossip": "Плёткі"
+    "gossip": "Плёткі",
+    "about": "Аб",
+    "client_version": "Версія кліента",
+    "server_version": "Серверная версія",
+    "discuss": "Абмяркоўваць"
   },
   "filter": {
     "filter": "Фільтр",

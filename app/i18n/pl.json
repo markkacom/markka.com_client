@@ -252,7 +252,11 @@
     "forward": "Naprzód",
     "public_key": "Klucz publiczny",
     "msg_sent_to": "Wiadomość wysłana do {{recipient}}",
-    "gossip": "Plotka"
+    "gossip": "Plotka",
+    "about": "O",
+    "client_version": "Wersja klienta",
+    "server_version": "Wersja serwera",
+    "discuss": "Dyskutować"
   },
   "filter": {
     "filter": "Filtr",

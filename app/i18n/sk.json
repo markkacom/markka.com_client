@@ -252,7 +252,11 @@
     "forward": "Vpred",
     "public_key": "Verejný kľúč",
     "msg_sent_to": "Správa odoslaná {{recipient}}",
-    "gossip": "Klebety"
+    "gossip": "Klebety",
+    "about": "O",
+    "client_version": "Client Version",
+    "server_version": "Server verzie",
+    "discuss": "Prediskutovať"
   },
   "filter": {
     "filter": "Filter",

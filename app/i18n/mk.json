@@ -252,7 +252,11 @@
     "forward": "Напред",
     "public_key": "Јавен клуч",
     "msg_sent_to": "Порака испратена до {{recipient}}",
-    "gossip": "Славна"
+    "gossip": "Славна",
+    "about": "За",
+    "client_version": "Верзијата на клиентот",
+    "server_version": "Серверот за печатење",
+    "discuss": "Разговараат"
   },
   "filter": {
     "filter": "Филтер",

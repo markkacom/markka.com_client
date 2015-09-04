@@ -252,7 +252,11 @@
     "forward": "Depan",
     "public_key": "Kunci publik",
     "msg_sent_to": "Pesan yang dikirim ke {{recipient}}",
-    "gossip": "Gosip"
+    "gossip": "Gosip",
+    "about": "Tentang",
+    "client_version": "Klien Versi",
+    "server_version": "Server Versi",
+    "discuss": "Membahas"
   },
   "filter": {
     "filter": "Filter",

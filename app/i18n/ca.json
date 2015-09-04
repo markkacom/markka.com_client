@@ -252,7 +252,11 @@
     "forward": "Endavant",
     "public_key": "Clau pública",
     "msg_sent_to": "Missatge enviat a {{recipient}}",
-    "gossip": "Xafarderia"
+    "gossip": "Xafarderia",
+    "about": "Sobre",
+    "client_version": "Versió client",
+    "server_version": "Server Versió",
+    "discuss": "Discutir"
   },
   "filter": {
     "filter": "Filtre",

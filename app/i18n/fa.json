@@ -252,7 +252,11 @@
     "forward": "به جلو",
     "public_key": "کلید عمومی",
     "msg_sent_to": "پیام های ارسال شده به {{recipient}}",
-    "gossip": "شایعات بی اساس"
+    "gossip": "شایعات بی اساس",
+    "about": "در باره",
+    "client_version": "نسخه مشتری",
+    "server_version": "نسخه سرور",
+    "discuss": "بحث و گفتگو"
   },
   "filter": {
     "filter": "صافی",

@@ -252,7 +252,11 @@
     "forward": "Pasulong",
     "public_key": "Public key",
     "msg_sent_to": "Naipadala ang mensahe sa {{recipient}}",
-    "gossip": "Tsismis"
+    "gossip": "Tsismis",
+    "about": "Tungkol sa",
+    "client_version": "Bersyon Client",
+    "server_version": "Bersyon Server",
+    "discuss": "Talakayin"
   },
   "filter": {
     "filter": "Salain",

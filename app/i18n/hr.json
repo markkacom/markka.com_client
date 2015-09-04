@@ -252,7 +252,11 @@
     "forward": "Naprijed",
     "public_key": "Javni ključ",
     "msg_sent_to": "Poruka poslana {{recipient}}",
-    "gossip": "Trač"
+    "gossip": "Trač",
+    "about": "Oko",
+    "client_version": "Klijent verzija",
+    "server_version": "Server Version",
+    "discuss": "Raspravite"
   },
   "filter": {
     "filter": "Filter",

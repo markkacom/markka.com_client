@@ -252,7 +252,11 @@
     "forward": "অগ্রবর্তী",
     "public_key": "পাবলিক কী",
     "msg_sent_to": "বার্তা পাঠানো {{recipient}}",
-    "gossip": "পরচর্চা"
+    "gossip": "পরচর্চা",
+    "about": "প্রায়",
+    "client_version": "ক্লায়েন্ট সংস্করণ",
+    "server_version": "সার্ভার সংস্করণ",
+    "discuss": "আলোচনা করা"
   },
   "filter": {
     "filter": "ফিল্টার",

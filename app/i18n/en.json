@@ -3,6 +3,10 @@
     "translate.must.exist"
   ],
   "translate": {
+    "about":                "About",
+    "client_version":       "Client Version",
+    "server_version":       "Server Version",
+    "discuss":              "Discuss",
     "public_key":           "Public key",
     "address":              "Address",
     "state":                "State",

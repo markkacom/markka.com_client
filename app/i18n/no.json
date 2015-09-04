@@ -252,7 +252,11 @@
     "forward": "Forward",
     "public_key": "Offentlig nøkkel",
     "msg_sent_to": "Melding sendt til {{recipient}}",
-    "gossip": "Gossip"
+    "gossip": "Gossip",
+    "about": "Omtrent",
+    "client_version": "Client versjon",
+    "server_version": "Server versjon",
+    "discuss": "Diskuter"
   },
   "filter": {
     "filter": "Filter",

@@ -252,7 +252,11 @@
     "forward": "Înainte",
     "public_key": "Cheie publică",
     "msg_sent_to": "Mesajul a fost trimis la {{recipient}}",
-    "gossip": "Bârfă"
+    "gossip": "Bârfă",
+    "about": "Despre",
+    "client_version": "Client Versiunea",
+    "server_version": "Server Versiunea",
+    "discuss": "Discuta"
   },
   "filter": {
     "filter": "Filtru",

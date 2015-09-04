@@ -252,7 +252,11 @@
     "forward": "Vooruit",
     "public_key": "Publieke sleutel",
     "msg_sent_to": "Bericht verzonden naar {{recipient}}",
-    "gossip": "Gossip"
+    "gossip": "Gossip",
+    "about": "Over",
+    "client_version": "Client Version",
+    "server_version": "Server versie",
+    "discuss": "Bespreken"
   },
   "filter": {
     "filter": "Filter",

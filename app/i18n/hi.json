@@ -252,7 +252,11 @@
     "forward": "आगे",
     "public_key": "सार्वजनिक कुंजी",
     "msg_sent_to": "संदेश भेजा {{recipient}}",
-    "gossip": "गपशप"
+    "gossip": "गपशप",
+    "about": "के बारे में",
+    "client_version": "ग्राहक संस्करण",
+    "server_version": "सर्वर संस्करण",
+    "discuss": "पर चर्चा"
   },
   "filter": {
     "filter": "फ़िल्टर",

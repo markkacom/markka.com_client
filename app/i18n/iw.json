@@ -252,7 +252,11 @@
     "forward": "קדימה",
     "public_key": "מפתח ציבורי",
     "msg_sent_to": "הודעה נשלחה ל {{recipient}}",
-    "gossip": "רכילות"
+    "gossip": "רכילות",
+    "about": "אודות",
+    "client_version": "גרסת הלקוח",
+    "server_version": "גרסת שרת",
+    "discuss": "דונו"
   },
   "filter": {
     "filter": "מסנן",

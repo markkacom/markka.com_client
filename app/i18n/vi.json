@@ -252,7 +252,11 @@
     "forward": "Phía trước",
     "public_key": "Khóa công khai",
     "msg_sent_to": "Tin nhắn gửi đến {{recipient}}",
-    "gossip": "Ngồi lê đôi mách"
+    "gossip": "Ngồi lê đôi mách",
+    "about": "Về",
+    "client_version": "Khách hàng Version",
+    "server_version": "Server phiên bản",
+    "discuss": "Bàn luận"
   },
   "filter": {
     "filter": "Lọc",

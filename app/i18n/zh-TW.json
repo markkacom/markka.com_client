@@ -252,7 +252,11 @@
     "forward": "前鋒",
     "public_key": "公鑰",
     "msg_sent_to": "消息發送到{{recipient}}",
-    "gossip": "流言"
+    "gossip": "流言",
+    "about": "左右",
+    "client_version": "客戶端版本",
+    "server_version": "服務器版本",
+    "discuss": "商討"
   },
   "filter": {
     "filter": "過濾器",

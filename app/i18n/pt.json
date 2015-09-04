@@ -252,7 +252,11 @@
     "forward": "Para a frente",
     "public_key": "Chave pública",
     "msg_sent_to": "Mensagem enviada para {{recipient}}",
-    "gossip": "Fofoca"
+    "gossip": "Fofoca",
+    "about": "Cerca de",
+    "client_version": "Versão Cliente",
+    "server_version": "Versão Servidor",
+    "discuss": "Discutir"
   },
   "filter": {
     "filter": "Filtro",

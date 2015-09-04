@@ -252,7 +252,11 @@
     "forward": "ข้างหน้า",
     "public_key": "คีย์สาธารณะ",
     "msg_sent_to": "ข้อความที่ส่งไปยัง {{recipient}}",
-    "gossip": "การนินทา"
+    "gossip": "การนินทา",
+    "about": "เกี่ยวกับ",
+    "client_version": "รุ่นของไคลเอ็นต์",
+    "server_version": "เซิร์ฟเวอร์รุ่น",
+    "discuss": "พูดคุย"
   },
   "filter": {
     "filter": "กรอง",

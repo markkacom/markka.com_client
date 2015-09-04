@@ -252,7 +252,11 @@
     "forward": "إلى الأمام",
     "public_key": "المفتاح العمومي",
     "msg_sent_to": "الرسالة المرسلة إلى {{recipient}}",
-    "gossip": "نميمة"
+    "gossip": "نميمة",
+    "about": "حول",
+    "client_version": "صفحة العميل",
+    "server_version": "صفحة الخادم",
+    "discuss": "تناقش"
   },
   "filter": {
     "filter": "فلتر",

@@ -252,7 +252,11 @@
     "forward": "ఫార్వర్డ్",
     "public_key": "పబ్లిక్ కీ",
     "msg_sent_to": "సందేశం పంపారు {{recipient}}",
-    "gossip": "గాసిప్"
+    "gossip": "గాసిప్",
+    "about": "గురించి",
+    "client_version": "క్లయింట్ వెర్షన్",
+    "server_version": "సర్వర్ వెర్షన్",
+    "discuss": "చర్చించండి"
   },
   "filter": {
     "filter": "వడపోత",

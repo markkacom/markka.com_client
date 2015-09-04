@@ -252,7 +252,11 @@
     "forward": "முன்னோக்கி",
     "public_key": "பொது முக்கிய",
     "msg_sent_to": "செய்தி அனுப்பப்படும் {{recipient}}",
-    "gossip": "வம்பு"
+    "gossip": "வம்பு",
+    "about": "பற்றி",
+    "client_version": "கிளையண்ட் பதிப்பு",
+    "server_version": "சர்வர் பதிப்பு",
+    "discuss": "ஆலோசிக்க"
   },
   "filter": {
     "filter": "வடிகட்டி",

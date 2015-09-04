@@ -252,7 +252,11 @@
     "forward": "Ar aghaidh",
     "public_key": "Eochair phoiblí",
     "msg_sent_to": "Teachtaireacht chuig {{recipient}}",
-    "gossip": "Gossip"
+    "gossip": "Gossip",
+    "about": "Maidir",
+    "client_version": "Cliant Leagan",
+    "server_version": "Freastalaí Leagan",
+    "discuss": "Pléigh"
   },
   "filter": {
     "filter": "Scagaire",

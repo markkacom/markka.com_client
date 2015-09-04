@@ -252,7 +252,11 @@
     "forward": "Eteenpäin",
     "public_key": "Julkisen avaimen",
     "msg_sent_to": "Viesti lähetetty {{recipient}}",
-    "gossip": "Juoru"
+    "gossip": "Juoru",
+    "about": "Noin",
+    "client_version": "Client versio",
+    "server_version": "Palvelinversio",
+    "discuss": "Pohtia"
   },
   "filter": {
     "filter": "Suodatin",

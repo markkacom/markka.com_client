@@ -252,7 +252,11 @@
     "forward": "פאָרויס",
     "public_key": "ציבור שליסל",
     "msg_sent_to": "אָנזאָג געשיקט צו {{recipient}}",
-    "gossip": "יענטע"
+    "gossip": "יענטע",
+    "about": "אַרום",
+    "client_version": "קליענט ווערסיע",
+    "server_version": "סערווער ווערסיע",
+    "discuss": "דיסקוטירן"
   },
   "filter": {
     "filter": "פילטער",
