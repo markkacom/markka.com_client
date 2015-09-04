@@ -6,6 +6,7 @@
         <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View Listing</a>
         <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">Show All Items</a>
         <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
+        <a href="#/goods/{{id_rs}}/solditems" class= "btn btn-default past-orders-button">Sold Items</a>
         <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
         <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Item</a>
       </div>
@@ -207,6 +208,58 @@
           </a>
         </div>
     </div>
+  </div>
+
+  <!-- Sold Items page -->
+
+    <div class="past-orders-page" ng-if= "paramSection == 'solditems'">
+      <div class="row">
+        <div class="col-md-12 past-order-col1">
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
+        </div>
+      </div>
+      <!-- <div infinite-scroll="pastGoods.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false"> -->
+        <div class="row">
+          <div class="col-md-12" style= " padding-top: 20px;">
+            <div class="table-responsive">
+              <table class="table" style= "border: 1px solid #dddddd;">
+                <thead>
+                  <tr>
+                    <th>Purchase ID</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price FIMK</th>
+                    <th>Delivery Deadline (in hrs)</th>
+                    <th>Pending Status</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat= "orders in soldGoods.entities">
+                    <td>{{orders.purchase}}</td>
+                    <td>{{orders.name}}</td>
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.priceFIMK}}</td>
+                    <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
+                    <td>{{orders.pending}}</td>
+                    <td>Confirm Delivery</td>
+                    <td>Rebate</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="load-more-button" ng-show="pastGoods.hasMore">
+          <a href ng-click="pastGoods.loadMore()" class="text-lowercase text-muted">
+            <span ng-show="pastGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+            <span>load more products</span>
+          </a>
+        </div> -->
+    <!-- </div> -->
   </div>
 
 
