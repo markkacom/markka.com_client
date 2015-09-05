@@ -8,7 +8,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -119,6 +119,7 @@
 
       $scope.pastGoods = new PastGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.pastGoods.reload();
+      console.log($scope.pastGoods);
       $scope.msg = function(id) {
         var recipient_args = {
           recipient: id
@@ -129,18 +130,23 @@
       $scope.showGoods = new UserGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.showGoods.reload();
     } else if ($scope.paramSection == 'solditems') {
+      // for pending
       $scope.soldGoods = new SoldGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.soldGoods.reload();
-      // $scope.rebate = function(rebateOrder) {
-      //   var rebate_args = {
-      //     requestType: "dgsRefund",
-      //     purchase: rebateOrder.purchase,
-      //     refundNQT: rebateOrder.priceFIMK
-      //   }
-      //   plugins.get('transaction').get('dgsRefund').execute($scope.id_rs, rebate_args).then(function(data) {
-      //     console.log(data);
-      //   })
-      // }
+
+      // for Completed
+      $scope.DeliveryConfirmedGoods = new DeliveryConfirmedGoodsProvider(api, $scope, $scope.id_rs);
+      $scope.DeliveryConfirmedGoods.reload();
+      $scope.rebate = function(rebateOrder) {
+        var rebate_args = {
+          requestType: "dgsRefund",
+          purchase: rebateOrder.purchase,
+          refundNQT: rebateOrder.priceFIMK
+        }
+        plugins.get('transaction').get('dgsRefund').execute($scope.id_rs, rebate_args).then(function(data) {
+          console.log(data);
+        })
+      }
       $scope.confirmDelivery = function(deliveryItem) {
         var confirmDelivery_args = {
           requestType: "dgsDelivery",

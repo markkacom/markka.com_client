@@ -1,13 +1,13 @@
 (function() {
   'use strict';
   var module = angular.module('fim.base');
-  module.factory('PastGoodsProvider', function(nxt, $q, IndexedEntityProvider) {
+  module.factory('DeliveryConfirmedGoodsProvider', function(nxt, $q, IndexedEntityProvider) {
 
-    function PastGoodsProvider(api, $scope, pageSize, account) {
+    function DeliveryConfirmedGoodsProvider(api, $scope, pageSize, account) {
       this.init(api, $scope, pageSize, account);
       this.account = account;
     }
-    angular.extend(PastGoodsProvider.prototype, IndexedEntityProvider.prototype, {
+    angular.extend(DeliveryConfirmedGoodsProvider.prototype, IndexedEntityProvider.prototype, {
 
       uniqueKey: function(good) {
         return good.goods;
@@ -19,11 +19,12 @@
       getData: function(firstIndex) {
         var deferred = $q.defer();
         var args = {
-          // firstIndex: firstIndex,
-          // lastIndex: firstIndex + this.pageSize,
-          // includeCounts: true,
+          firstIndex: firstIndex,
+          lastIndex: firstIndex + this.pageSize,
+          includeCounts: true,
           requestType: 'getDGSPurchases',
-          buyer: this.account
+          seller: this.account,
+          completed: true
         }
         this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
         return deferred.promise;
@@ -39,6 +40,6 @@
         return new Iterator(goods);
       }
     });
-    return PastGoodsProvider;
+    return DeliveryConfirmedGoodsProvider;
   });
 })();
