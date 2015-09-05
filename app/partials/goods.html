@@ -219,8 +219,8 @@
           <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
         </div>
       </div>
-      <!-- <div infinite-scroll="pastGoods.loadMore()" 
-            infinite-scroll-distance="0" infinite-scroll-immediate-check="false"> -->
+      <div infinite-scroll="soldGoods.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
         <div class="row">
           <div class="col-md-12" style= " padding-top: 20px;">
             <div class="table-responsive">
@@ -245,21 +245,21 @@
                     <td>{{orders.priceFIMK}}</td>
                     <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
                     <td>{{orders.pending}}</td>
-                    <td>Confirm Delivery</td>
-                    <td>Rebate</td>
+                    <td><button ng-click= "confirmDelivery(orders)">Confirm Delivery</button></td>
+                    <td><button>Rebate</button></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        <!-- <div class="load-more-button" ng-show="pastGoods.hasMore">
-          <a href ng-click="pastGoods.loadMore()" class="text-lowercase text-muted">
-            <span ng-show="pastGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+        <div class="load-more-button" ng-show="soldGoods.hasMore">
+          <a href ng-click="soldGoods.loadMore()" class="text-lowercase text-muted">
+            <span ng-show="soldGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
             <span>load more products</span>
           </a>
-        </div> -->
-    <!-- </div> -->
+        </div>
+    </div>
   </div>
 
 

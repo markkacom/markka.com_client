@@ -137,5 +137,72 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
+
+  // // Rebate Goods
+
+  // plugin.add({
+  //   label: 'Rebate Item',
+  //   id: 'dgsRefund',
+  //   exclude: true,
+  //   execute: function (senderRS, args) {
+  //     args = args||{};
+  //     return plugin.create(angular.extend(args, {
+  //       title: 'Rebate Item',
+  //       message: 'Pay to complete Marketplace purchases',
+  //       senderRS: senderRS,
+  //       requestType: 'dgsRefund',
+  //       canHaveRecipient: false,
+  //       createArguments: function (items) {
+  //         return {
+  //           purchase: items.purchase,
+  //           refundNQT: nxt.util.convertToNQT(items.refundNQT)
+  //         }
+  //       },
+  //       fields: [{
+  //         label: 'Purchase',
+  //         name: 'purchase',
+  //         type: 'text',
+  //         value: args.purchase||''
+  //       },
+  //       {
+  //         label: 'Price FIMK',
+  //         name: 'price',
+  //         type: 'text',
+  //         value: args.refundNQT||''
+  //       }]
+  //     }));
+  //   }
+  // });
+
+  // Confirm Delivery Goods
+
+  plugin.add({
+    label: 'Confirm Item',
+    id: 'dgsDelivery',
+    exclude: true,
+    execute: function (senderRS, args) {
+      args = args||{};
+      return plugin.create(angular.extend(args, {
+        title: 'Confirm Item',
+        message: 'Pay to complete Marketplace purchases',
+        senderRS: senderRS,
+        requestType: 'dgsDelivery',
+        canHaveRecipient: false,
+        createArguments: function (items) {
+          return {
+            purchase: items.purchase,
+            secretPhrase: items.secretPhrase,
+            goodsToEncrypt: items.purchase
+          }
+        },
+        fields: [{
+          label: 'Purchase',
+          name: 'purchase',
+          type: 'text',
+          value: args.purchase||''
+        }]
+      }));
+    }
+  });
 });
 })();
