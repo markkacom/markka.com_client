@@ -131,6 +131,25 @@
     } else if ($scope.paramSection == 'solditems') {
       $scope.soldGoods = new SoldGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.soldGoods.reload();
+      // $scope.rebate = function(rebateOrder) {
+      //   var rebate_args = {
+      //     requestType: "dgsRefund",
+      //     purchase: rebateOrder.purchase,
+      //     refundNQT: rebateOrder.priceFIMK
+      //   }
+      //   plugins.get('transaction').get('dgsRefund').execute($scope.id_rs, rebate_args).then(function(data) {
+      //     console.log(data);
+      //   })
+      // }
+      $scope.confirmDelivery = function(deliveryItem) {
+        var confirmDelivery_args = {
+          requestType: "dgsDelivery",
+          purchase: deliveryItem.purchase
+        }
+        plugins.get('transaction').get('dgsDelivery').execute($scope.id_rs, confirmDelivery_args).then(function(data) {
+          console.log(data);
+        })
+      }
     } else {
 
       $scope.goodsDetails = new GoodsDetailsProvider(api, $scope, $scope.paramSection);
