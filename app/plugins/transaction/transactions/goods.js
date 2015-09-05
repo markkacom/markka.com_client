@@ -138,41 +138,41 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     }
   });
 
-  // // Rebate Goods
+  // Rebate Goods
 
-  // plugin.add({
-  //   label: 'Rebate Item',
-  //   id: 'dgsRefund',
-  //   exclude: true,
-  //   execute: function (senderRS, args) {
-  //     args = args||{};
-  //     return plugin.create(angular.extend(args, {
-  //       title: 'Rebate Item',
-  //       message: 'Pay to complete Marketplace purchases',
-  //       senderRS: senderRS,
-  //       requestType: 'dgsRefund',
-  //       canHaveRecipient: false,
-  //       createArguments: function (items) {
-  //         return {
-  //           purchase: items.purchase,
-  //           refundNQT: nxt.util.convertToNQT(items.refundNQT)
-  //         }
-  //       },
-  //       fields: [{
-  //         label: 'Purchase',
-  //         name: 'purchase',
-  //         type: 'text',
-  //         value: args.purchase||''
-  //       },
-  //       {
-  //         label: 'Price FIMK',
-  //         name: 'price',
-  //         type: 'text',
-  //         value: args.refundNQT||''
-  //       }]
-  //     }));
-  //   }
-  // });
+  plugin.add({
+    label: 'Rebate Item',
+    id: 'dgsRefund',
+    exclude: true,
+    execute: function (senderRS, args) {
+      args = args||{};
+      return plugin.create(angular.extend(args, {
+        title: 'Rebate Item',
+        message: 'Pay to complete Marketplace purchases',
+        senderRS: senderRS,
+        requestType: 'dgsRefund',
+        canHaveRecipient: false,
+        createArguments: function (items) {
+          return {
+            purchase: items.purchase,
+            refundNQT: nxt.util.convertToNQT(items.refundNQT)
+          }
+        },
+        fields: [{
+          label: 'Purchase',
+          name: 'purchase',
+          type: 'text',
+          value: args.purchase||''
+        },
+        {
+          label: 'Price FIMK',
+          name: 'price',
+          type: 'text',
+          value: args.refundNQT||''
+        }]
+      }));
+    }
+  });
 
   // Confirm Delivery Goods
 
