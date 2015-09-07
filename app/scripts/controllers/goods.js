@@ -88,21 +88,26 @@
             deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
           }
           plugins.get('transaction').get('dgsPurchase').execute($scope.id_rs, order_args).then(function(data) {
-            if(data) {  
-              $http({
-                url: shoppingCartGoods.callback,
-                data: shoppingCartGoods,
-                method: 'POST'
-              }).success(function(data) {
-                console.log(data);
-              }).error(function(err) {
-                console.log(err);
-              })
-              shoppingCartService.removeItem(0);
-              shoppingCart.splice(0, 1);
-              processCart(shoppingCart);
+            if(data) { 
+              var recipient_args = {
+                recipient: shoppingCartGoods.sellerRS 
+              }
+              plugins.get('transaction').get('sendMessage').execute($scope.id_rs, recipient_args).then(function() {
+                $http({
+                  url: shoppingCartGoods.callback,
+                  data: shoppingCartGoods,
+                  method: 'POST'
+                }).success(function(data) {
+                  console.log(data);
+                }).error(function(err) {
+                  console.log(err);
+                })
+                shoppingCartService.removeItem(0);
+                shoppingCart.splice(0, 1);
+                processCart(shoppingCart);
 
-              $scope.successful = "Payment Completed";
+                $scope.successful = "Payment Completed";
+              })
             }
           });
         }
