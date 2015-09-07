@@ -11,7 +11,7 @@
     angular.extend(SoldGoodsProvider.prototype, IndexedEntityProvider.prototype, {
 
       uniqueKey: function(good) {
-        return good.goods;
+        return good.purchase;
       },
       sortFunction: function(a, b) {
         return a.index - b.index;
