@@ -10,7 +10,7 @@
     angular.extend(PastGoodsProvider.prototype, IndexedEntityProvider.prototype, {
 
       uniqueKey: function(good) {
-        return good.goods;
+        return good.purchase;
       },
       sortFunction: function(a, b) {
         return a.index - b.index;
@@ -19,9 +19,9 @@
       getData: function(firstIndex) {
         var deferred = $q.defer();
         var args = {
-          // firstIndex: firstIndex,
-          // lastIndex: firstIndex + this.pageSize,
-          // includeCounts: true,
+          firstIndex: firstIndex,
+          lastIndex: firstIndex + this.pageSize,
+          includeCounts: true,
           requestType: 'getDGSPurchases',
           buyer: this.account
         }
