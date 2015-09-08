@@ -104,8 +104,11 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       return plugin.create(angular.extend(args, {
         title: 'Purchase Item',
         message: 'Pay to complete Marketplace purchases',
-        senderRS: senderRS,
         requestType: 'dgsPurchase',
+        // hideMessage: true,
+        senderRS: senderRS,
+        // editRecipient: (args.editRecipient===false) ? false : true,
+        recipient: args.recipient||'',
         canHaveRecipient: false,
         createArguments: function (items) {
           return {
@@ -113,7 +116,8 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             // priceNQT: items.priceNQT,
             quantity: String(items.quantity),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
-            priceNQT: nxt.util.convertToNQT(items.priceNQT)
+            priceNQT: nxt.util.convertToNQT(items.priceNQT),
+            recipient: items.recipient
           }
         },
         fields: [{
@@ -133,6 +137,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'quantity',
           type: 'text',
           value: args.quantity||''
+        },
+        {
+          label: 'Recipient',
+          name: 'recipient',
+          type: 'text',
+          value: args.recipient||''
         }]
       }));
     }
