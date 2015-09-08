@@ -107,6 +107,9 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
         else if (type == "public") {
           args.public_message = true;
         }
+        else if (type == "note") {
+          args.encrypt_message = true;
+        }
         else {
           throw new Error('Not reached');
         }

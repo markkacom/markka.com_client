@@ -80,19 +80,17 @@
       function processCart(shoppingCart) {
         if (shoppingCart.length > 0) {
           var shoppingCartGoods = shoppingCart[0];
+          console.log(shoppingCartGoods);
           var order_args = {
             requestType: "dgsPurchase",
             goods: shoppingCartGoods.goods,
             priceNQT: shoppingCartGoods.priceFIMK,
             name: shoppingCartGoods.name,
-            deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
+            deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
+            recipient: shoppingCartGoods.seller
           }
           plugins.get('transaction').get('dgsPurchase').execute($scope.id_rs, order_args).then(function(data) {
             if(data) { 
-              var recipient_args = {
-                recipient: shoppingCartGoods.sellerRS 
-              }
-              plugins.get('transaction').get('sendMessage').execute($scope.id_rs, recipient_args).then(function() {
                 $http({
                   url: shoppingCartGoods.callback,
                   data: shoppingCartGoods,
@@ -107,7 +105,6 @@
                 processCart(shoppingCart);
 
                 $scope.successful = "Payment Completed";
-              })
             }
           });
         }
