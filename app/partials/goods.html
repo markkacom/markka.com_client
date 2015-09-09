@@ -200,9 +200,28 @@
                 </thead>
                 <tbody>
                   <tr ng-repeat= "orders in pastGoods.entities">
-                    <td>{{orders.purchase}}</td>
+                    <td>
+                      <a class= "past-order-tooltip">
+                        {{orders.purchase}}
+                        <span>
+                          <p>
+                            <b>Buyer FIMK Account: </b><h5>{{orders.buyerRS}}</h5>
+                          </p>
+                          <p ng-if= "orders.buyerName">
+                            <b>Buyer Name: </b><h5>{{orders.buyerName}}</h5>
+                          </p>
+                          <p>
+                            <b>Seller FIMK Account: </b><h5>{{orders.sellerRS}}</h5>
+                          </p>
+                          <p ng-if= "orders.sellerName">
+                            <b>Seller Name: </b><h5>{{orders.sellerName}}</h5>
+                          </p>
+                        </span>
+                      </a>
+                    </td>
                     <td>{{orders.name}}</td>
-                    <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
+                    <td ng-if= "!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
+                    <td ng-if= "orders.sellerName">{{orders.sellerName}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
                   </tr>
