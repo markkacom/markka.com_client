@@ -238,24 +238,24 @@
               <table class="table" style= "border: 1px solid #dddddd; border-collapse: inherit;">
                 <thead>
                   <tr>
+                    <th>Purchase time</th>
                     <th>Purchase ID</th>
                     <th>Name</th>
                     <th>Quantity</th>
                     <th>Price FIMK</th>
                     <th>Delivery Deadline (in hrs)</th>
-                    <th>Pending Status</th>
                     <th></th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr ng-repeat= "orders in soldGoods.entities">
+                    <td>{{orders.timestamp}}</td>
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
                     <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
-                    <td>{{orders.pending}}</td>
                     <td><button class= "btn btn-primary" ng-click= "confirmDelivery(orders)">Confirm Delivery</button></td>
                     <!-- <td><button ng-click= "rebate(orders)">Rebate</button></td> -->
                   </tr>
@@ -265,24 +265,24 @@
               <table class="table" style= "border: 1px solid #dddddd; border-collapse: inherit;">
                 <thead>
                   <tr>
+                    <th>Purchase time</th>
                     <th>Purchase ID</th>
                     <th>Name</th>
                     <!-- <th>Seller</th> -->
                     <th>Quantity</th>
                     <th>Price FIMK</th>
-                    <th>Pending Status</th>
                     <th></th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr ng-repeat= "orders in DeliveryConfirmedGoods.entities">
+                    <td>{{orders.timestamp}}</td>
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
-                    <td>{{orders.pending}}</td>
                     <!-- <td><button ng-click= "confirmDelivery(orders)">Confirm Delivery</button></td> -->
                     <td><button class= "btn btn-primary" ng-click= "rebate(orders)">Rebate</button></td>
                   </tr>
