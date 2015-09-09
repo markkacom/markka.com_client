@@ -131,6 +131,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           label: 'Price FIMK',
           name: 'price',
           type: 'text',
+          readonly: true,
           value: args.priceNQT||''
         },
         {
