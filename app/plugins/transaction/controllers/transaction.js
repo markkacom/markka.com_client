@@ -18,7 +18,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
   $scope.items.secretPhrase   = $rootScope.currentAccount.secretPhrase;
 
   $scope.items.title          = items.title || 'Create Transaction';
-  $scope.items.txnMessageType = items.txnMessageType || ($scope.items.canHaveRecipient ? 'to_recipient' : 'to_self');
+  $scope.items.txnMessageType = items.txnMessageType || ($scope.items.canHaveRecipient ? 'to_recipient' : 'note');
   $scope.items.txnMessage     = items.txnMessage || '';  
   $scope.items.symbol         = items.symbol || api.engine.symbol;
   $scope.items.deadline       = items.deadline || '1440';

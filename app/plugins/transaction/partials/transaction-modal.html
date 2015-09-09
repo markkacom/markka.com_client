@@ -231,6 +231,10 @@
           </tabset>
         </div>          
         <div class="radio">
+          <label>
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="note" 
+              ng-disabled="sendSuccess">Private Note&nbsp;
+          </label>
           <label ng-if="items.canHaveRecipient">
             <input type="radio" name="type" ng-model="items.txnMessageType" value="to_recipient" 
               ng-disabled="sendSuccess">Message to recipient&nbsp;
@@ -242,10 +246,6 @@
           <label>
             <input type="radio" name="type" ng-model="items.txnMessageType" value="public" 
               ng-disabled="sendSuccess">Public message
-          </label>
-          <label>
-            <input type="radio" name="type" ng-model="items.txnMessageType" value="note" 
-              ng-disabled="sendSuccess">Note
           </label>
         </div>
       </div>
