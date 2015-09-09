@@ -8,7 +8,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider) {
+  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, DecryptedMessageProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -138,6 +138,21 @@
       // for Completed
       $scope.DeliveryConfirmedGoods = new DeliveryConfirmedGoodsProvider(api, $scope, $scope.id_rs);
       $scope.DeliveryConfirmedGoods.reload();
+
+      $scope.decrypt = function(encryptedMessage) {
+        $scope.DecryptedMessage = new DecryptedMessageProvider(api, $scope, encryptedMessage.data, encryptedMessage.nonce, $scope.id_rs);
+        $scope.DecryptedMessage.reload();
+        // var decrypt_args = {
+        //   requestType: "decryptFrom",
+        //   account: $scope.id_rs,
+        //   data: encryptedMessage.data,
+        //   nonce: encryptedMessage.nonce
+        // }
+        //  plugins.get('transaction').get('decryptFrom').execute($scope.id_rs, decrypt_args).then(function(data) {
+        //   console.log(data);
+        // })
+
+      }
       $scope.rebate = function(rebateOrder) {
         var rebate_args = {
           requestType: "dgsRefund",

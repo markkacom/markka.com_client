@@ -3,8 +3,8 @@
   var module = angular.module('fim.base');
   module.factory('DeliveryConfirmedGoodsProvider', function(nxt, $q, IndexedEntityProvider) {
 
-    function DeliveryConfirmedGoodsProvider(api, $scope, pageSize, account) {
-      this.init(api, $scope, pageSize, account);
+    function DeliveryConfirmedGoodsProvider(api, $scope, account) {
+      this.init(api, $scope, account);
       this.account = account;
     }
     angular.extend(DeliveryConfirmedGoodsProvider.prototype, IndexedEntityProvider.prototype, {
@@ -16,11 +16,9 @@
         return a.index - b.index;
       },
 
-      getData: function(firstIndex) {
+      getData: function() {
         var deferred = $q.defer();
         var args = {
-          firstIndex: firstIndex,
-          lastIndex: firstIndex + this.pageSize,
           includeCounts: true,
           requestType: 'getDGSPurchases',
           seller: this.account,
