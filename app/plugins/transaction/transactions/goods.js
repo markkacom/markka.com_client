@@ -110,6 +110,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         // editRecipient: (args.editRecipient===false) ? false : true,
         recipient: args.recipient||'',
         canHaveRecipient: false,
+        abc: true,
         createArguments: function (items) {
           return {
             goods: items.goods, 
@@ -117,7 +118,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             quantity: String(items.quantity),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
             priceNQT: nxt.util.convertToNQT(items.priceNQT),
-            recipient: items.recipient
+            recipient: items.recipient,
           }
         },
         fields: [{
@@ -151,14 +152,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   // Rebate Goods
 
   plugin.add({
-    label: 'Rebate Item',
+    label: 'Give Rebate',
     id: 'dgsRefund',
     exclude: true,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
-        title: 'Rebate Item',
-        message: 'Pay to complete Marketplace purchases',
+        title: 'Give Rebate',
+        message: 'Return some FIMK to buyer',
         senderRS: senderRS,
         requestType: 'dgsRefund',
         canHaveRecipient: false,

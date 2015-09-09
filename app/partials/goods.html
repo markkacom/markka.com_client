@@ -3,7 +3,7 @@
   <div class="goods-page" ng-if= "paramSection == 'listing' || paramSection == 'viewlisting'">
     <div class="row">
       <div class="col-md-12 goods-col1" style= "margin-bottom: 20px;">
-        <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View Listing</a>
+        <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View own listing</a>
         <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">Show All Items</a>
         <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
         <a href="#/goods/{{id_rs}}/solditems" class= "btn btn-default past-orders-button">Sold Items</a>
@@ -77,8 +77,18 @@
       <div ng-repeat= "details in goodsDetails.entities">
         <div class="row">
           <div class="col-md-12">
-            <h4><b>Name: </b>{{details.name}}</h4>
-            <p><b>Id: </b>{{details.goods}}</p>
+            <h4>
+              <b>Name: </b><span>{{details.name}}</span>
+              <span style= "float: right;">
+                <b>Seller: </b><span>{{details.sellerRS}}</span>
+              </span>
+            </h4>
+            <p>
+              <b>Id: </b><span>{{details.goods}}</span>
+              <span style= "float: right;">
+                <b ng-if= "details.sellerName">Seller Name: </b><span ng-if= "details.sellerName">{{details.sellerName}}</span>
+              </span>
+            </p>
           </div>
         </div>
         <div class="row">

@@ -231,7 +231,7 @@
           </tabset>
         </div>          
         <div class="radio">
-          <label>
+          <label ng-if= "items.abc">
             <input type="radio" name="type" ng-model="items.txnMessageType" value="note" 
               ng-disabled="sendSuccess">Private Note&nbsp;
           </label>
