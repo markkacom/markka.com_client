@@ -1,8 +1,5 @@
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
  /$$$$$$$$ /$$$$$$ /$$      /$$          Release : 0.4.8          
-| $$_____/|_  $$_/| $$$    /$$$          Date    : 2015-09-01          
+| $$_____/|_  $$_/| $$$    /$$$          Date    : 2015-09-02          
 | $$        | $$  | $$$$  /$$$$                  
 | $$$$$     | $$  | $$ $$/$$ $$          http://fimk.fi       
 | $$__/     | $$  | $$  $$$| $$          http://mofowallet.com
@@ -68,31 +65,34 @@ message. Use SHIFT+ENTER to add a new line.
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.4.8/mofowallet.win32-0.4.8.zip
  
-SHA256 35d2487fd2ee8a4bd96c47afb5c7cd45cdcfb62f8dac262f979397bf5cd314ab 
-MD5    ff7603082638665a20daacbd3553f7b3 
+SHA256 
+MD5    
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.4.8/mofowallet.win64-0.4.8.zip
  
-SHA256 4a87d2a83e658a370e2b2595841c478e09c80036af702abeef3db1d0edad879e 
-MD5    2e75ff28e270f0640370d0bbbc9f99d9 
+SHA256 
+MD5    
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.4.8/mofowallet.osx32-0.4.8.zip
  
-SHA256 5302bcf0fbdd2285b6d804e67cf9b142d49efc975f60fc7f25a28b662893ac59 
-MD5    8c24d9a6ac674b4d18938752f9960388 
+SHA256 
+MD5    
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.4.8/mofowallet.osx64-0.4.8.zip
  
-SHA256 ff8c1c5660f788cefa385da5b91587ec88f74e0ee252f53b045ce060bbc65bc7 
-MD5    1253f7632cab84778742acad265803ee 
+SHA256 
+MD5    
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.4.8/mofowallet.linux32-0.4.8.zip
  
-SHA256 c58cfa8783574c8c8f4750a11e4a197086b44b72acf1a55d7858bea026029098 
-MD5    054aee93679c5d54339a129db47afe51 
+SHA256 
+MD5    
 
 https://github.com/fimkrypto/mofowallet/releases/download/v0.4.8/mofowallet.linux64-0.4.8.zip
  
+SHA256 
+MD5    
+
 SHA256 22da5c1211cb69b9b3733e73a1d2cfeb585458768840b7dbf5c295b73b5c541e 
 MD5    49026268b52a38cf2c1f8b8c11182cf6 
 
