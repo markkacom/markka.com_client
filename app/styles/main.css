@@ -640,6 +640,14 @@ a.past-order-tooltip span
     box-shadow: 5px 5px 8px #CCC;
 }
 
+.hide-message {
+  display: none;
+}
+
+.show-message {
+  display: inline-block;
+}
+
 
 
 

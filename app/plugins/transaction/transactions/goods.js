@@ -216,51 +216,5 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
-
-  // Decrypt Message
-
-  // plugin.add({
-  //   label: 'Confirm Item',
-  //   id: 'decryptFrom',
-  //   exclude: true,
-  //   execute: function (senderRS, args) {
-  //     args = args||{};
-  //     return plugin.create(angular.extend(args, {
-  //       title: 'Confirm Item',
-  //       message: 'Pay to complete Marketplace purchases',
-  //       senderRS: senderRS,
-  //       requestType: 'decryptFrom',
-  //       canHaveRecipient: false,
-  //       createArguments: function (items) {
-  //         console.log(items);
-  //         return {
-  //           account: items.account,
-  //           secretPhrase: items.secretPhrase,
-  //           data: items.data,
-  //           nonce: items.nonce
-  //           // goodsToEncrypt: items.purchase
-  //         }
-  //       },
-  //       fields: [{
-  //         label: 'Encrypted Data',
-  //         name: 'encryptedata',
-  //         type: 'text',
-  //         value: args.data||''
-  //       },
-  //       {
-  //         label: 'Encrypted Nonce',
-  //         name: 'encryptenonce',
-  //         type: 'text',
-  //         value: args.nonce||''
-  //       },
-  //       {
-  //         label: 'Account',
-  //         name: 'account',
-  //         type: 'text',
-  //         value: args.account||''
-  //       }]
-  //     }));
-  //   }
-  // });
 });
 })();

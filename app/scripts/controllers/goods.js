@@ -8,7 +8,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, DecryptedMessageProvider) {
+  module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, DecryptedMessageProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -139,19 +139,12 @@
       $scope.DeliveryConfirmedGoods = new DeliveryConfirmedGoodsProvider(api, $scope, $scope.id_rs);
       $scope.DeliveryConfirmedGoods.reload();
 
-      $scope.decrypt = function(encryptedMessage) {
-        $scope.DecryptedMessage = new DecryptedMessageProvider(api, $scope, encryptedMessage.data, encryptedMessage.nonce, $scope.id_rs);
-        $scope.DecryptedMessage.reload();
-        // var decrypt_args = {
-        //   requestType: "decryptFrom",
-        //   account: $scope.id_rs,
-        //   data: encryptedMessage.data,
-        //   nonce: encryptedMessage.nonce
-        // }
-        //  plugins.get('transaction').get('decryptFrom').execute($scope.id_rs, decrypt_args).then(function(data) {
-        //   console.log(data);
-        // })
-
+      $scope.decrypt = function(encryptedMessage, index) {
+        if(encryptedMessage) {
+          $scope.textMessage = index;
+          $scope.DecryptedMessage = new DecryptedMessageProvider(api, $scope, encryptedMessage.data, encryptedMessage.nonce, $scope.id_rs, $rootScope.currentAccount.secretPhrase);
+          $scope.DecryptedMessage.reload();
+        }
       }
       $scope.rebate = function(rebateOrder) {
         var rebate_args = {
@@ -160,7 +153,6 @@
           refundNQT: rebateOrder.priceFIMK
         }
         plugins.get('transaction').get('dgsRefund').execute($scope.id_rs, rebate_args).then(function(data) {
-          console.log(data);
         })
       }
       $scope.confirmDelivery = function(deliveryItem) {
@@ -169,7 +161,6 @@
           purchase: deliveryItem.purchase
         }
         plugins.get('transaction').get('dgsDelivery').execute($scope.id_rs, confirmDelivery_args).then(function(data) {
-          console.log(data);
         })
       }
     } else {

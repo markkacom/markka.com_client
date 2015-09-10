@@ -3,11 +3,12 @@
   var module = angular.module('fim.base');
   module.factory('DecryptedMessageProvider', function(nxt, $q, IndexedEntityProvider) {
 
-    function DecryptedMessageProvider(api, $scope, decryptedData, decryptedNonce, account) {
-      this.init(api, $scope, decryptedData, decryptedNonce, account);
+    function DecryptedMessageProvider(api, $scope, decryptedData, decryptedNonce, account, secretPhrase) {
+      this.init(api, $scope, decryptedData, decryptedNonce, account, secretPhrase);
       this.account = account;
       this.decryptedData = decryptedData;
       this.decryptedNonce = decryptedNonce;
+      this.secretPhrase = secretPhrase;
     }
     angular.extend(DecryptedMessageProvider.prototype, IndexedEntityProvider.prototype, {
 
@@ -25,8 +26,8 @@
           requestType: 'decryptFrom',
           account: this.account,
           data: this.decryptedData,
-          nonce: this.decryptedNonce
-          // secretPhrase: "I won't tell you"
+          nonce: this.decryptedNonce,
+          secretPhrase: this.secretPhrase
         }
         this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
         return deferred.promise;

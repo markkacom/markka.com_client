@@ -292,6 +292,7 @@
                     <th>Price FIMK</th>
                     <th></th>
                     <th></th>
+                    <th ng-if= "DecryptedMessage">Message</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -302,9 +303,12 @@
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
-                    <!-- <td><button ng-click= "confirmDelivery(orders)">Confirm Delivery</button></td> -->
                     <td><button class= "btn btn-primary" ng-click= "rebate(orders)">Rebate</button></td>
-                    <td><button class= "btn btn-primary" ng-click= "decrypt(orders.note)">Decrypt Message</button></td>
+                    <td>
+                      <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">Decrypt Message</button>
+                      <label ng-if= "!orders.note">No Messages to Decrypt</label>
+                    </td>
+                    <td ng-if= "DecryptedMessage"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage.entities[0].decryptedMessage}}</span></td>
                   </tr>
                 </tbody>
               </table>
