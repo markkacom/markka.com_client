@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en" ng-app="fim.base" ng-controller="AppController">
+  <head>
+    <meta charset="utf-8" />
+    <title ng-bind="TITLE"></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>.ng-cloak { display:none; }</style>
+    <script src="mode.js"></script>    
+    <script type="text/javascript">
+    try {
+      isNodeJS = typeof require == 'function' && require('child_process');
+    } catch (e) {
+      isNodeJS = false;
+    }
+    DEBUG = false;
+
+    if (IS_TEST_NET === false) {
+      if (("www.mofowallet.com" == window.location.host || 
+           "mofowallet.com" == window.location.host) && (window.location.protocol != "https:")) {
+        window.location.protocol = "https";
+      }
+      else if ("fimkrypto.github.io" == window.location.host) {
+        window.location = "https://www.mofowallet.com/launch.html" + window.location.hash;
+      }
+    }
+
+    var entityMap = {"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":'&#39;',"/":'&#x2F;',"\n":'<br>'};
+    function escapeHtml(string) {
+      return String(string).replace(/[&<>"'\/]|[\n]/g, function (s) {
+        return entityMap[s];
+      });
+    }
+    </script>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="shortcut icon" href="/favicon.ico?v=6" />
+
+    <!-- Bootswatch theme switcher -->
+    <link type="text/css" rel="stylesheet" href="plugins/themes/css/spacelab.bootstrap.min.css" id="bootswatch.style" />
+
+    <!-- build:css({.tmp,app}) styles/main.css -->
+    <link type="text/css" rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css" />
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap-social.css">
+    <link type="text/css" rel="stylesheet" href="styles/main.css"> <!-- main.sass -->
+    <link type="text/css" rel="stylesheet" href="styles/main-less.css"> <!-- main.less -->
+    <link type="text/css" rel="stylesheet" href="styles/landing-page.css"> 
+    <link type="text/css" rel="stylesheet" href="styles/price-chart-style.css">
+    <link type="text/css" rel="stylesheet" href="styles/emojis.css">
+    <!-- endbuild -->
+
+    <!--<link type="text/css" rel="stylesheet" href="/amstockchart/amcharts/style.css"> 
+    <style>
+      a[title="JavaScript charts"] {
+        display: none !important;
+      }
+    </style>
+    <script src="amstockchart/amcharts/amcharts.js"></script> 
+    <script src="amstockchart/amcharts/serial.js"></script> 
+    <script src="amstockchart/amcharts/amstock.js"></script>-->
+
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+
+    <!-- <script src="scripts/lib/Dexie.js"></script>
+    <script src="scripts/lib/Dexie.Observable.js"></script> -->
+
+
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script>
+    window.jQuery = window.$ = angular.element;
+    </script>
+    <script src="scripts/lib/nw-edit-menu.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>    
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-translate/angular-translate.js"></script>
+    <script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+    <script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+    <script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.js"></script>
+    <script src="bower_components/ng-table/dist/ng-table.js"></script><!-- depracated - dont use-->
+    <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/pako/dist/pako.min.js"></script>
+    <script src="bower_components/ng-clip/dest/ng-clip.min.js"></script>
+    <script src="bower_components/zeroclipboard/dist/ZeroClipboard.min.js"></script>
+
+    <script src="bower_components/dexie/dist/latest/Dexie.js"></script>
+    <script src="bower_components/dexie/addons/Dexie.Observable/Dexie.Observable.js"></script>
+    
+    <script src="scripts/lib/es5.js"></script>
+    <script src="scripts/lib/iterator.js"></script>
+    <script src="scripts/lib/jsbn.js"></script>
+    <script src="scripts/lib/jsbn2.js"></script>    
+    <script src="scripts/lib/Dexie.TableObserver.js"></script>
+    <script src="scripts/lib/nxt/utils/nxtaddress.js"></script>
+    <script src="scripts/lib/nxt/utils/converters.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/jssha256.js"></script>
+    <script src="scripts/lib/nxt/crypto/curve25519.js"></script>
+    <script src="scripts/lib/nxt/crypto/curve25519_.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/cryptojs/aes.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/cryptojs/sha256.js"></script>
+    <script src="scripts/lib/nxt/crypto/3rdparty/seedrandom.js"></script>
+    <script src="scripts/lib/validate.js"></script>
+    <script src="scripts/lib/Blob.js"></script>
+    <script src="scripts/lib/FileSaver.js"></script>
+    <script src="scripts/lib/ng-infinite-scroll.js"></script>
+    <script src="scripts/lib/techan.js"></script>
+    
+    <script src="scripts/app.js"></script>
+
+    <script src="scripts/models/setting.js"></script>
+    <script src="scripts/models/account.js"></script>
+    <script src="scripts/models/contact.js"></script>
+    <script src="scripts/models/node.js"></script>
+    <script src="scripts/models/masspayPluginPayment.js"></script>
+    <script src="scripts/models/gossip.js"></script>
+    <script src="scripts/models/chat.js"></script>
+
+    <script src="scripts/directives/money.js"></script>
+    <script src="scripts/directives/dd-text-collapse.js"></script>
+    <script src="scripts/directives/route-active.js"></script>
+    <script src="scripts/directives/select-on-click.js"></script>
+    <script src="scripts/directives/file-select.js"></script>
+    <script src="scripts/directives/price-chart.js"></script>
+    <script src="scripts/directives/menu-close.js"></script>
+    <script src="scripts/directives/scrollglue.js"></script>
+    <script src="scripts/directives/enter-submit.js"></script>
+
+    <script src="scripts/providers/account-forger-provider.js"></script>
+    <script src="scripts/providers/account-lessors-provider.js"></script>
+    <script src="scripts/providers/account-provider.js"></script>
+    <script src="scripts/providers/account-post-provider.js"></script>
+    <script src="scripts/providers/account-pulse-provider.js"></script>
+    <script src="scripts/providers/activity-provider.js"></script>
+    <script src="scripts/providers/alias-provider.js"></script>
+    <script src="scripts/providers/all-assets-provider.js"></script>
+    <script src="scripts/providers/asset-post-provider.js"></script>
+    <script src="scripts/providers/assets-provider.js"></script>
+    <script src="scripts/providers/balance-provider.js"></script>
+    <script src="scripts/providers/block-state-provider.js"></script>
+    <script src="scripts/providers/blockchain-download-provider.js"></script>
+    <script src="scripts/providers/blocks-provider.js"></script>
+    <script src="scripts/providers/buy-order-provider.js"></script>
+    <script src="scripts/providers/comment-provider.js"></script>
+    <script src="scripts/providers/currency-provider.js"></script>
+    <script src="scripts/providers/forgers-provider.js"></script>
+    <script src="scripts/providers/gossip-chat-messages-provider.js"></script>
+    <script src="scripts/providers/gossip-chat-list-provider.js"></script>
+    <script src="scripts/providers/messages-provider.js"></script>
+    <script src="scripts/providers/namespaced-alias-provider.js"></script>
+    <script src="scripts/providers/payments-provider.js"></script>
+    <script src="scripts/providers/peer-provider.js"></script>
+    <script src="scripts/providers/recent-transactions-provider.js"></script>
+    <script src="scripts/providers/search-provider.js"></script>
+    <script src="scripts/providers/sell-order-provider.js"></script>
+    <script src="scripts/providers/server-config-provider.js"></script>
+    <script src="scripts/providers/server-console-provider.js"></script>
+    <script src="scripts/providers/statistics-provider.js"></script>
+    <script src="scripts/providers/user-data-provider.js"></script>
+    <script src="scripts/providers/ae/ask-order-provider.js"></script>
+    <script src="scripts/providers/ae/asset-info-provider.js"></script>
+    <script src="scripts/providers/ae/bid-order-provider.js"></script>
+    <script src="scripts/providers/ae/chart-data-provider.js"></script>
+    <script src="scripts/providers/ae/charts-provider.js"></script>
+    <script src="scripts/providers/ae/my-order-provider.js"></script>
+    <script src="scripts/providers/ae/private-accounts-provider.js"></script>
+    <script src="scripts/providers/ae/trades-provider.js"></script>
+    <script src="scripts/providers/ae/my-bid-order-provider.js"></script>
+    <script src="scripts/providers/ae/my-ask-order-provider.js"></script>
+    <script src="scripts/providers/ae/asset-detail-provider.js"></script>
+    <script src="scripts/providers/ae/order-entry-provider.js"></script>
+    <script src="scripts/providers/goods-provider.js"></script>
+    <script src="scripts/providers/past-goods-orders-provider.js"></script>
+    <script src="scripts/providers/goods-details-provider.js"></script>
+    <script src="scripts/providers/user-goods-provider.js"></script>
+    <script src="scripts/providers/account-balance-provider.js"></script>
+    <script src="scripts/providers/sold-goods-provider.js"></script>
+    <script src="scripts/providers/delivery-confirmed-goods-provider.js"></script>
+<<<<<<< HEAD
+    <script src="scripts/providers/decrypted-message-provider.js"></script>
+=======
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+
+    <script src="scripts/services/timeago-service.js"></script>
+    <script src="scripts/services/gossip-service.js"></script>
+    <script src="scripts/services/publickey-service.js"></script>
+    <script src="scripts/services/wallet-service.js"></script>
+    <script src="scripts/services/key-service.js"></script>
+    <script src="scripts/services/entity-provider.js"></script>
+    <script src="scripts/services/indexed-entity-provider.js"></script>
+    <script src="scripts/services/accounts-service.js"></script>
+    <script src="scripts/services/server-service.js"></script>
+    <script src="scripts/services/nxt.js"></script>
+    <script src="scripts/services/nxt.util.js"></script>
+    <script src="scripts/services/modals.js"></script>
+    <script src="scripts/services/db.js"></script>
+    <script src="scripts/services/plugin-service.js"></script>
+    <script src="scripts/services/i18n.js"></script>
+    <script src="scripts/services/setting-service.js"></script>
+    <script src="scripts/services/mofo-socket.js"></script>
+    <script src="scripts/services/emoji-service.js"></script>
+    <script src="scripts/services/shopping-cart.js"></script>
+    
+    <script src="scripts/controllers/app.js"></script>
+    <script src="scripts/controllers/about-modal.js"></script>
+    <script src="scripts/controllers/login.js"></script>
+    <script src="scripts/controllers/login-to.js"></script>
+    <script src="scripts/controllers/wallet.js"></script>
+    <script src="scripts/controllers/start.js"></script>
+    <script src="scripts/controllers/search.js"></script>
+    <script src="scripts/controllers/language-modal.js"></script>
+    <script src="scripts/controllers/welcome-modal.js"></script>
+    <script src="scripts/controllers/start-server-modal.js"></script>
+    <script src="scripts/controllers/home.js"></script>
+    <script src="scripts/controllers/secretphrase-modal.js"></script>
+    <script src="scripts/controllers/select-decryption-account.js"></script>
+    <script src="scripts/controllers/server.js"></script>
+    <script src="scripts/controllers/merchant-terminal.js"></script>
+    <script src="scripts/controllers/translation.js"></script>
+    <script src="scripts/controllers/activity.js"></script>
+    <script src="scripts/controllers/accounts.js"></script>
+    <script src="scripts/controllers/assets.js"></script>
+    <script src="scripts/controllers/messenger.js"></script>
+    <script src="scripts/controllers/goods.js"></script>
+
+    <!-- Transaction plugin -->
+    <script src="plugins/transaction/config.js"></script>
+    <script src="plugins/transaction/controllers/transaction.js"></script>
+    <script src="plugins/transaction/transactions/payment.js"></script>
+    <script src="plugins/transaction/transactions/message.js"></script>    
+    <script src="plugins/transaction/transactions/account-info.js"></script>
+    <script src="plugins/transaction/transactions/alias.js"></script>
+    <script src="plugins/transaction/transactions/namespaced-alias.js"></script>
+    <script src="plugins/transaction/transactions/assets.js"></script>
+    <script src="plugins/transaction/transactions/currency.js"></script>
+    <script src="plugins/transaction/transactions/forging.js"></script>
+    <script src="plugins/transaction/transactions/lease-balance.js"></script>
+    <script src="plugins/transaction/transactions/poll.js"></script>
+    <script src="plugins/transaction/transactions/goods.js"></script>
+
+    <script src="plugins/inspector/config.js"></script>
+    <script src="plugins/inspector/controllers/inspect.js"></script>
+    <script src="plugins/namespaced-alias/config.js"></script>
+    <script src="plugins/namespaced-alias/controllers/namespaced-alias-create-modal.js"></script>
+    <script src="plugins/themes/config.js"></script>
+    <script src="plugins/themes/controllers/themes.js"></script>
+    <script src="plugins/wallet/config.js"></script>
+    <script src="plugins/wallet/controllers/wallet-manager.js"></script>
+    <script src="plugins/wallet/controllers/wallet-open-modal.js"></script>
+    <script src="plugins/wallet/controllers/wallet-password-modal.js"></script>
+    <script src="plugins/wallet/controllers/wallet-save-modal.js"></script>    
+    <script src="plugins/contacts/config.js"></script>
+    <script src="plugins/contacts/controllers/contacts.js"></script>
+    <script src="plugins/contacts/controllers/contacts-select-modal.js"></script>
+    <script src="plugins/contacts/controllers/contacts-add-modal.js"></script>
+    <script src="plugins/settings-db/config.js"></script>
+    <script src="plugins/settings-db/controllers/settings-db.js"></script>
+    <script src="plugins/settings/config.js"></script>
+    <script src="plugins/settings/controllers/settings.js"></script>
+    <script src="plugins/alerts/config.js"></script>
+    <script src="plugins/alerts/controllers/alert-modal.js"></script>    
+    <script src="plugins/alerts/controllers/alert-confirm-modal.js"></script>
+    <script src="plugins/alerts/controllers/alert-prompt-modal.js"></script>
+    <script src="plugins/alerts/controllers/alert-wait-modal.js"></script>
+    <script src="plugins/alerts/controllers/alert-progress-modal.js"></script>
+
+    <!-- Authenticator plugin -->
+    <script src="plugins/authenticate/config.js"></script>
+    <script src="plugins/authenticate/controllers/authenticate.js"></script>
+    <script src="plugins/authenticate/controllers/progress.js"></script>
+
+    <!-- endbuild -->
+
+  </head>
+  <body ng-class="{'showing-landing-page': showingLandingPage}">
+
+    <div id="smallScreenTest" class="visible-xs"></div>
+
+    <audio preload="auto"><source src="images/beep.wav"></audio>
+
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed"
+            ng-click="mainMenuCollapsed=!mainMenuCollapsed">
+          <span class="sr-only" translate="translate.toggle_navigation"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a ng-hide="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/start" style="padding:9px 10px 9px 15px">
+          <!-- <strong ng-bind="WALLET_NAME"></strong><span class="text-danger"><b>{{isTestnet? ' TEST' : ''}}</b></span> -->
+          <img alt="Brand" style="max-height:none; min-height:5px !important; height:100%" src="images/lompsa.png">
+        </a>
+
+        <a ng-hide="!currentAccount" class="navbar-brand visible-xs" ng-href="#/messenger" style="padding:5px 10px 0px 8px">
+          <i class="fa fa-comment-o fa-2x" style="max-height:none; min-height:5px !important; height:100%"></i>
+        </a>
+
+        <a ng-show="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/activity/fim/assets/latest"><strong ng-bind="WALLET_NAME"></strong>Wallet&nbsp;<span class="text-danger"><b>{{isTestnet? 'TEST' : 'BETA'}}</b></span>
+        </a>
+      </div>
+
+      <div class="collapse navbar-collapse navbar-default" collapse="mainMenuCollapsed" menu-close="mainMenuCollapsed=true">
+        <ul class="nav navbar-nav" nav-menu="active">
+          <li route-active="accounts/{{currentAccount.id_rs}}/" ng-if="currentAccount && !IS_SMALL_DEVICE">
+            <a ng-href="#/accounts/{{currentAccount.id_rs}}/activity/latest">
+              <strong>{{userData.label}}</strong>
+              <span ng-bind-html="userData.html"></span>
+            </a>
+          </li>
+          <li ng-if="IS_SMALL_DEVICE">
+            <div class="btn-group btn-group-justified">
+              <div class="btn-group" role="group" ng-if="currentAccount">
+                <a href="#/accounts/{{currentAccount.id_rs}}/activity/latest" class="btn btn-default">
+                  <i class="fa fa-home text-danger"></i>&nbsp;<span translate="translate.home"></span>
+                </a>
+              </div>
+              <div class="btn-group" role="group">
+                <a href="javascript:window.history.back()" class="btn btn-default">
+                  <i class="fa fa-arrow-left"></i>&nbsp;<span translate="translate.back"></span>
+                </a>
+              </div>
+              <div class="btn-group" role="group">
+                <a href="javascript:window.history.forward()" class="btn btn-default">
+                  <span translate="translate.forward"></span>&nbsp;<i class="fa fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li ng-if="isNodeJS && !IS_SMALL_DEVICE">
+            <a href="javascript:window.history.back()"><i class="fa fa-arrow-left"></i></a>
+          </li>
+          <li ng-if="isNodeJS && !IS_SMALL_DEVICE">
+            <a href="javascript:window.history.forward()"><i class="fa fa-arrow-right"></i></a>
+          </li>
+
+          <!-- <li route-active="start/">
+            <a ng-href="#/start"><i class="fa fa-home text-success"></i>&nbsp;&nbsp;{{'translate.home' | translate}}</a>
+          </li> -->
+
+          <!-- <li route-active="accounts/{{currentAccount.id_rs}}/" ng-show="currentAccount && !IS_SMALL_DEVICE">
+            <a ng-href="#/accounts/{{currentAccount.id_rs}}/activity/latest">
+              <b><i class="fa fa-home text-danger"></i></b>
+            </a>
+          </li> -->
+          <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount">
+            <a href="#/messenger">
+              <i class="fa fa-comment-o"></i><span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-md hidden-sm">&nbsp;&nbsp;<span translate="translate.messenger"/></span>
+            </a>
+          </li>
+       
+          <li route-active="home/" ng-hide="TRADE_UI_ONLY">
+            <a ng-href="#/home/{{paramEngine}}/activity/latest">
+              <i class="fa fa-users"></i><span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.dashboard' | translate}}</span>
+            </a>
+          </li>          
+          
+          <li route-active="activity/" ng-hide="TRADE_UI_ONLY">
+            <a ng-href="#/activity/{{paramEngine}}/activity/latest"><i class="fa fa-cloud"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.explorer' | translate}}</span></a>
+          </li>
+
+          <li>
+            <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span></a>
+          </li> 
+
+          <li ng-show="TRADE_UI_ONLY && selectedAccount">
+            <!-- <span>Account:&nbsp;<b>{{selectedAccount.name || selectedAccount.id_rs}}</b></span>&nbsp;&nbsp; -->            
+            <a href>
+              <span>Trading balance:&nbsp;<b>{{selectedAccount.unconfirmedBalanceNXT}}</b>
+                <span class="text-muted" ng-show="selectedAccount.unconfirmedBalanceNXT!=selectedAccount.balanceNXT">({{selectedAccount.balanceNXT}})</span> {{selectedAccount.symbol}}
+              </span>
+            </a>
+          </li>      
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right" nav-menu="active">
+          <li ng-hide="TRADE_UI_ONLY">
+            <a href="#/search/fim/accounts/">
+              <i class="fa fa-search"></i><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.search' | translate}}</span>
+            </a>
+          </li>          
+
+          <li route-active="settings" dropdown>
+            <a href class="dropdown-toggle" dropdown-toggle>
+              <span class="glyphicon glyphicon-wrench"></span><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.settings' | translate}}</span>&nbsp;<span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li route-active>
+                <a ng-href="#/settings/themes"><span class="glyphicon glyphicon-fire"></span>&nbsp;&nbsp;{{'translate.themes' | translate}}</a>
+              </li>
+              <!-- only displayed when running as front end for FIMK server package-->
+              <li route-active ng-if="forceLocalHost && !enableDualEngines" ng-hide="TRADE_UI_ONLY">
+                <a ng-href="#/server/fim/peers"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{'translate.peers' | translate}}</a> 
+              </li>
+              <li route-active ng-if="isNodeJS" ng-hide="TRADE_UI_ONLY">
+                <a ng-href="#/server/fim/console"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;{{'translate.fim_server' | translate}}</a> 
+              </li>
+              <li route-active ng-if="isNodeJS && enableDualEngines" ng-hide="TRADE_UI_ONLY">
+                <a ng-href="#/server/nxt/console"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;{{'translate.nxt_server' | translate}}</a>
+              </li>
+              <li route-active ng-hide="TRADE_UI_ONLY">
+                <a ng-href="#/settings/contacts"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;{{'translate.contacts' | translate}}</a> 
+              </li>
+              <li route-active ng-hide="TRADE_UI_ONLY">
+                <a ng-href="#/settings/database"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;{{'translate.database' | translate}}</a> 
+              </li>
+              <li ng-if="isNodeJS">
+                <a href ng-click="openDevTools()">
+                  <span class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;{{'translate.dev_tools' | translate}}
+                </a> 
+              </li>
+              <li ng-if="isNodeJS">
+                <a href ng-click="reloadMofoWallet()"><span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;{{'translate.reload_application' | translate}}</a> 
+              </li>
+              <li>
+                <a href="#/translation/en"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{'translate.translator' | translate}}</a> 
+              </li>
+              <li>
+                <a href ng-click="showAboutModal()">
+                  <i class="fa fa-question-circle"></i>&nbsp;&nbsp;{{'translate.about' | translate}}&nbsp;Lompsa
+                </a> 
+              </li>              
+            </ul>
+          </li>
+          <li ng-if="multiLanguage">
+            <a href ng-click="showLanguageModal()">
+              <i class="fa fa-globe"></i><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.language'|translate}}</span>
+            </a>
+          </li>
+          <li style="margin-right: 10px">
+            <a href="#/login-to">
+              <span ng-show="!currentAccount">
+                <i class="fa fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span>
+              </span>
+              <span ng-show="currentAccount">
+                <i class="fa fa-sign-out"></i>&nbsp;&nbsp;<span translate="translate.sign_out"></span>
+              </span>
+            </a>
+          </li>           
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="padding-bottom: 50px">
+      <div ng-view></div>
+    </div>
+
+    <nav ng-if="isNodeJS" class="navbar navbar-default navbar-fixed-bottom">
+      <div class="container-fluid">
+        <div>
+          <span>
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
+              <li>&nbsp;</li>
+              <li style="padding-top: 2px">
+                <div class="btn-group dropup">
+
+                  <a href class="btn btn-default navbar-btn">FIMK</a>
+
+                  <!-- global network - always displays the height of the connected public node -->              
+                  <a style="text-align: left;" class="btn btn-default navbar-btn" 
+                      href="#/activity/fim/activity/latest" 
+                      ng-hide="fimDownloadProvider.server_running && !fimDownloadProvider.downloading">
+                    <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{fimDownloadProvider.remoteheight}}</span>
+                  </a>
+
+                  <!-- local network - when server is off it displays -->
+                  <a style="text-align: left; padding-left:10px" class="btn btn-default navbar-btn" 
+                      href="#/server/fim/console">
+                    <i class="fa fa-desktop"></i><span ng-show="fimDownloadProvider.server_running">&nbsp;&nbsp;{{fimDownloadProvider.blockheight}}</span>
+                    <div style="position: absolute; width: 100%; left: 5px; top: 2px; padding-right: 10px;">
+                      <progressbar ng-if="fimDownloadProvider.downloading" style="max-height:5px; padding: 0px; border: 0px;" class="progress-striped active" 
+                      type="default" max="100" value="fimDownloadProvider.progress" >&nbsp;</progressbar>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </span>
+        </div>
+        <div ng-if="enableDualEngines">
+          <span>
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
+              <li>&nbsp;</li>
+              <li style="padding-top: 2px">
+                <div class="btn-group dropup">
+
+                  <a href class="btn btn-default navbar-btn">NXT</a>
+
+                  <!-- global network - always displays the height of the connected public node -->              
+                  <a style="text-align: left;" class="btn btn-default navbar-btn" 
+                      href="#/activity/nxt/activity/latest"
+                      ng-hide="nxtDownloadProvider.server_running && !nxtDownloadProvider.downloading">
+                    <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{nxtDownloadProvider.remoteheight}}</span>
+                  </a>
+
+                  <!-- local network - when server is off it displays -->
+                  <a style="text-align: left; padding-left:10px" class="btn btn-default navbar-btn" 
+                      href="#/server/nxt/console">
+                    <i class="fa fa-desktop"></i><span ng-show="nxtDownloadProvider.server_running">&nbsp;&nbsp;{{nxtDownloadProvider.blockheight}}</span>
+                    <div style="position: absolute; width: 100%; left: 5px; top: 2px; padding-right: 10px;">
+                      <progressbar ng-if="nxtDownloadProvider.downloading" style="max-height:5px; padding: 0px; border: 0px;" class="progress-striped active" 
+                      type="default" max="100" value="nxtDownloadProvider.progress" >&nbsp;</progressbar>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </span>
+        </div>
+      </div>
+    </nav>
+  </body> 
+</html>
