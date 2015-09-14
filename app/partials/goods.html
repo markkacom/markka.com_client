@@ -216,6 +216,12 @@
                           <p ng-if= "orders.sellerName">
                             <b>Seller Name: </b><h5>{{orders.sellerName}}</h5>
                           </p>
+                          <p ng-if= "orders.pending == false">
+                            <b>Order is Delivered</b>
+                          </p>
+                          <p ng-if= "orders.pending == true">
+                            <b>Orders is Pending</b>
+                          </p>
                         </span>
                       </a>
                     </td>
