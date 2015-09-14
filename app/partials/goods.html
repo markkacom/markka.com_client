@@ -303,7 +303,7 @@
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
-                    <td><button class= "btn btn-primary" ng-click= "rebate(orders)">Rebate</button></td>
+                    <td><button class= "btn btn-primary" ng-click= "rebate(orders)">Refund</button></td>
                     <td>
                       <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">Decrypt Message</button>
                       <label ng-if= "!orders.note">No Messages to Decrypt</label>
