@@ -121,6 +121,7 @@
 
       $scope.pastGoods = new PastGoodsProvider(api, $scope, 10, $scope.id_rs);
       $scope.pastGoods.reload();
+      console.log($scope.pastGoods);
       $scope.msg = function(id) {
         var recipient_args = {
           recipient: id
