@@ -295,7 +295,16 @@
     "seller_fimk_account":  "Seller FIMK Account",
     "order_is_delivered":   "Order is Delivered",
     "order_is_pending":     "Order is Pending",
-    "message_to_seller":    "message"           
+    "message_to_seller":    "message",
+    "pending_items":        "Pending Items",
+    "purchase_time":        "Purchase Time",
+    "delivery_deadline":    "Delivery Dealine (in hrs)",
+    "completed_orders":     "Completed Orders",
+    "message_from_buyer":   "Message",
+    "refund":               "Refund",
+    "decrypt_message":      "Decrypt Message",
+    "no_messages":          "No Messages to Decrypt",
+    "confirm_delivery":     "Confirm Delivery"           
   },
 
   "time": {

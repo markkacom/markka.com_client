@@ -250,8 +250,8 @@
     <div class="past-orders-page" ng-if= "paramSection == 'solditems'">
       <div class="row">
         <div class="col-md-12 past-order-col1">
-          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
         </div>
       </div>
       <div infinite-scroll="soldGoods.loadMore()" 
@@ -259,16 +259,16 @@
         <div class="row">
           <div class="col-md-12" style= " padding-top: 20px;">
             <div class="table-responsive">
-              <h3>Pending Items</h3>
+              <h3>{{'translate.pending_items' | translate}}</h3>
               <table class="table" style= "border: 1px solid #dddddd; border-collapse: inherit;">
                 <thead>
                   <tr>
-                    <th>Purchase time</th>
-                    <th>Purchase ID</th>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Price FIMK</th>
-                    <th>Delivery Deadline (in hrs)</th>
+                    <th>{{'translate.purchase_time' | translate}}</th>
+                    <th>{{'translate.purchase_id' | translate}}</th>
+                    <th>{{'translate.goods_name' | translate}}</th>
+                    <th>{{'translate.goods_quantity' | translate}}</th>
+                    <th>{{'translate.goods_price' | translate}}</th>
+                    <th>{{'translate.delivery_deadline' | translate}}</th>
                     <th></th>
                     <th></th>
                   </tr>
@@ -281,24 +281,24 @@
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
                     <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
-                    <td><button class= "btn btn-primary" ng-click= "confirmDelivery(orders)">Confirm Delivery</button></td>
+                    <td><button class= "btn btn-primary" ng-click= "confirmDelivery(orders)">{{'translate.confirm_delivery' | translate}}</button></td>
                     <!-- <td><button ng-click= "rebate(orders)">Rebate</button></td> -->
                   </tr>
                 </tbody>
               </table>
-              <h3>Confirmed Items</h3>
+              <h3>{{'translate.completed_orders' | translate}}</h3>
               <table class="table" style= "border: 1px solid #dddddd; border-collapse: inherit;">
                 <thead>
                   <tr>
-                    <th>Purchase time</th>
-                    <th>Purchase ID</th>
-                    <th>Name</th>
+                    <th>{{'translate.purchase_time' | translate}}</th>
+                    <th>{{'translate.purchase_id' | translate}}</th>
+                    <th>{{'translate.goods_name' | translate}}</th>
                     <!-- <th>Seller</th> -->
-                    <th>Quantity</th>
-                    <th>Price FIMK</th>
+                    <th>{{'translate.goods_quantity' | translate}}</th>
+                    <th>{{'translate.goods_price' | translate}}</th>
                     <th></th>
                     <th></th>
-                    <th ng-if= "DecryptedMessage">Message</th>
+                    <th ng-if= "DecryptedMessage">{{'translate.message_from_buyer' | translate}}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -309,10 +309,10 @@
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
-                    <td><button class= "btn btn-primary" ng-click= "rebate(orders)">Refund</button></td>
+                    <td><button class= "btn btn-primary" ng-click= "rebate(orders)">{{'translate.refund' | translate}}</button></td>
                     <td>
-                      <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">Decrypt Message</button>
-                      <label ng-if= "!orders.note">No Messages to Decrypt</label>
+                      <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
+                      <label ng-if= "!orders.note">{{'translate.no_messages' | translate}}</label>
                     </td>
                     <td ng-if= "DecryptedMessage"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage.entities[0].decryptedMessage}}</span></td>
                   </tr>
@@ -324,7 +324,7 @@
         <div class="load-more-button" ng-show="soldGoods.hasMore">
           <a href ng-click="soldGoods.loadMore()" class="text-lowercase text-muted">
             <span ng-show="soldGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
-            <span>load more products</span>
+            <span>{{'translate.load_more_products' | translate}}</span>
           </a>
         </div>
     </div>
