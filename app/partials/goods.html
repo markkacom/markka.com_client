@@ -3,20 +3,20 @@
   <div class="goods-page" ng-if= "paramSection == 'listing' || paramSection == 'viewlisting'">
     <div class="row">
       <div class="col-md-12 goods-col1" style= "margin-bottom: 20px;">
-        <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View own listing</a>
-        <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">Show All Items</a>
-        <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
-        <a href="#/goods/{{id_rs}}/solditems" class= "btn btn-default past-orders-button">Sold Items</a>
-        <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-        <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Item</a>
+        <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">{{'translate.view_own_listing' | translate}}</a>
+        <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">{{'translate.show_all_items' | translate}}</a>
+        <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">{{'translate.past_orders' | translate}}</a>
+        <a href="#/goods/{{id_rs}}/solditems" class= "btn btn-default past-orders-button">{{'translate.sold_items' | translate}}</a>
+        <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+        <a ng-click= "add()" class= "btn btn-primary add-goods-button">{{'translate.add_item' | translate}}</a>
       </div>
     </div>
     <div infinite-scroll="showGoods.loadMore()" 
             infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
             <form class="form-inline" style= "margin-bottom: 15px;">
               <div class="form-group">
-                <span>Filter on items name and description</span>&nbsp;&nbsp;
-                <input type="text" ng-model="showGoods.filter" ng-change="showGoods.reload()" class="form-control" placeholder="Filter">
+                <span>{{'translate.filter_item_label' | translate}}</span>&nbsp;&nbsp;
+                <input type="text" ng-model="showGoods.filter" ng-change="showGoods.reload()" class="form-control" placeholder="{{'translate.filter_placeholder' | translate}}">
               </div>
             </form>
       <div class="row">
@@ -25,11 +25,11 @@
             <table class="table goods-table" style= "border: 1px solid #dddddd;">
                     <thead>
                       <tr>
-                        <th>Name</th>
-                        <th>Seller</th>
-                        <th>Tags</th>
-                        <th>Quantity</th>
-                        <th>Price FIMK</th>
+                        <th>{{'translate.goods_name' | translate}}</th>
+                        <th>{{'translate.goods_seller' | translate}}</th>
+                        <th>{{'translate.goods_tags' | translate}}</th>
+                        <th>{{'translate.goods_quantity' | translate}}</th>
+                        <th>{{'translate.goods_price' | translate}}</th>
                         <th ng-if= "paramSection == 'viewlisting'"></th>
                       </tr>
                     </thead>
@@ -40,7 +40,7 @@
                         <td ng-click= "details(goods)">{{isAdded.tags}}</td>
                         <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
                         <td ng-click= "details(goods)">{{isAdded.priceNXT}}</td>
-                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
+                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">{{'translate.delete_good' | translate}}</td>
                       </tr>
                       <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
                         <td ng-click= "details(goods)">{{goods.name}}</td>
@@ -48,7 +48,7 @@
                         <td ng-click= "details(goods)">{{goods.tags}}</td>
                         <td ng-click= "details(goods)">{{goods.quantity}}</td>
                         <td ng-click= "details(goods)">{{goods.priceFIMK}}</td>
-                        <td ng-click= "deleteGood(goods, $index)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
+                        <td ng-click= "deleteGood(goods, $index)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">{{'translate.delete_good' | translate}}</td>
                       </tr>
                     </tbody>
             </table>
@@ -58,7 +58,7 @@
       <div class="load-more-button" ng-show="showGoods.hasMore">
         <a href ng-click="showGoods.loadMore()" class="text-lowercase text-muted">
           <span ng-show="showGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
-          <span>load more products</span>
+          <span>{{'translate.load_more_products' | translate}}</span>
         </a>
       </div>
     </div> 
@@ -69,24 +69,24 @@
     <div class="goods-details-page" ng-if= "paramSection.length > '11'">
       <div class="row">
         <div class="col-md-12 goods-details-col1">
-          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
-          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-          <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+          <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">{{'translate.past_orders' | translate}}</a>
         </div>
       </div>
       <div ng-repeat= "details in goodsDetails.entities">
         <div class="row">
           <div class="col-md-12">
             <h4>
-              <b>Name: </b><span>{{details.name}}</span>
+              <b>{{'translate.goods_name' | translate}}: </b><span>{{details.name}}</span>
               <span style= "float: right;">
-                <b>Seller: </b><span>{{details.sellerRS}}</span>
+                <b>{{'translate.goods_seller' | translate}}: </b><span>{{details.sellerRS}}</span>
               </span>
             </h4>
             <p>
-              <b>Id: </b><span>{{details.goods}}</span>
+              <b>{{'translate.goods_id' | translate}}: </b><span>{{details.goods}}</span>
               <span style= "float: right;">
-                <b ng-if= "details.sellerName">Seller Name: </b><span ng-if= "details.sellerName">{{details.sellerName}}</span>
+                <b ng-if= "details.sellerName">{{'translate.seller_name' | translate}} </b><span ng-if= "details.sellerName">{{details.sellerName}}</span>
               </span>
             </p>
           </div>
@@ -98,17 +98,17 @@
               <img src="images/no-image.jpg" style= "width: 225px;" ng-if= "!details.image" ng-hide= "details.description | parseImage">
             </div>
             <div class= "goods-details1">
-              <label class= "price"><b>Price FIMK: </b>{{details.priceFIMK}}</label>
-              <label class= "quantity"><b>Quantity: </b>{{details.quantity}}</label>
+              <label class= "price"><b>{{'translate.goods_price' | translate}}: </b>{{details.priceFIMK}}</label>
+              <label class= "quantity"><b>{{'translate.goods_quantity' | translate}}: </b>{{details.quantity}}</label>
             </div>
             <div class= "goods-details2">
               <p class= "description" ng-if= "details.description | parseDescription">{{details.description | parseDescription}}</p>
               <p class= "description" ng-hide= "details.description | parseDescription">{{details.description}}</p>
-              <p><b>Tags:</b> {{details.tags}}</p>
+              <p><b>{{'translate.goods_tags' | translate}}:</b> {{details.tags}}</p>
             </div>
             <div class= "goods-details3">
-              <a class= "btn btn-primary add-to-cart" ng-click= "addToCart(details)"><i class="fa fa-shopping-cart"></i> Add To Cart</a>
-              <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-danger cancel-button">Cancel</a>
+              <a class= "btn btn-primary add-to-cart" ng-click= "addToCart(details)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
+              <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
             </div>
           </div>
         </div>
@@ -120,9 +120,9 @@
     <div class="cart-page" ng-if= "paramSection == 'cart'">
       <div class="row">
         <div class="col-md-12 top-buttons">
-          <label class= "btn btn-default">Cart ({{shoppingCart.length}})</label>
-          <a href= "#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders">Past Orders</a>
-          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Back to Items</a>
+          <label class= "btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</label>
+          <a href= "#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders">{{'translate.past_orders' | translate}}</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">{{'translate.back_to_items' | translate}}</a>
         </div>
       </div>
       <div class="row" ng-if= "shoppingCart.length > 0">
@@ -132,10 +132,10 @@
             <table class="table cart-table">
                     <thead>
                       <tr>
-                        <th style= "text-align: center;">Name</th>
+                        <th style= "text-align: center;">{{'translate.goods_name' | translate}}</th>
                         <th></th>
-                        <th>Price FIMK</th>
-                        <th>Total</th>
+                        <th>{{'translate.goods_price' | translate}}</th>
+                        <th>{{'translate.goods_total_price' | translate}}</th>
                       </tr>
                     </thead>
                      <tbody>
@@ -143,22 +143,22 @@
                         <td class= "image" ng-if= "items.image"> <img src="{{items.image}}"> </td>
                         <td class= "no-image" ng-if="!items.image"><img src="images/no-image.jpg"></td>
                         <td class= "item-desc">
-                          <p><b>Name: </b>{{items.name}}</p>
-                          <p><b>Seller: </b>{{items.seller}}</p>
-                          <p class= "remove-item" ng-click= "remove($index, items)">Remove Item</p>
+                          <p><b>{{'translate.goods_name' | translate}}: </b>{{items.name}}</p>
+                          <p><b>{{'translate.goods_seller' | translate}}: </b>{{items.seller}}</p>
+                          <p class= "remove-item" ng-click= "remove($index, items)">{{'translate.remove_from_cart' | translate}}</p>
                         </td>
-                        <td class= "price"><b>FIMK: </b>{{items.priceFIMK}}</td>
-                        <td class= "total-price"><b>Total Price: {{items.priceFIMK}}</b></td>
+                        <td class= "price"><b>{{'translate.price_FIMK' | translate}}: </b>{{items.priceFIMK}}</td>
+                        <td class= "total-price"><b>{{'translate.goods_total_price' | translate}}: {{items.priceFIMK}}</b></td>
                       </tr>
                     </tbody>
             </table>
-            <div class= "estPrice">Estimated Price: {{total}}</div>
+            <div class= "estPrice">{{'translate.estimated_price' | translate}}: {{total}}</div>
           </div>
         </div>
         <div class="col-md-12 order-buttons">
           <div>
-            <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-default back-to-goods">Back to Items</a>
-            <button class= "btn btn-success place-order" ng-click= "placeOrder()">Place Order</button>
+            <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
+            <button class= "btn btn-success place-order" ng-click= "placeOrder()">{{'translate.place_order' | translate}}</button>
           </div>
             <hr>
         </div>
@@ -167,9 +167,9 @@
       <p style= "text-align: center; font-size: 18px; margin: 0;">{{successful}}</p>
       <div class="row no-added" ng-if= "shoppingCart.length == 0">
         <div class="col-md-12 no-added-col">
-          <label>No pending orders to place. Your Shopping Cart is empty.</label>
+          <label>{{'translate.no_pending' | translate}}</label>
           <br>
-          <a href="#/goods/{{id_rs}}/listing" class= "btn btn-success">Continue Shopping</a>
+          <a href="#/goods/{{id_rs}}/listing" class= "btn btn-success">{{'translate.continue_shopping' | translate}}</a>
         </div>
       </div>
   </div>
