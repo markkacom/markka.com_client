@@ -179,8 +179,8 @@
     <div class="past-orders-page" ng-if= "paramSection == 'pastorders'">
       <div class="row">
         <div class="col-md-12 past-order-col1">
-          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
         </div>
       </div>
       <div infinite-scroll="pastGoods.loadMore()" 
@@ -191,11 +191,11 @@
               <table class="table" style= "border: 1px solid #dddddd;">
                 <thead>
                   <tr>
-                    <th>Purchase ID</th>
-                    <th>Name</th>
-                    <th>Seller</th>
-                    <th>Quantity</th>
-                    <th>Price FIMK</th>
+                    <th>{{'translate.purchase_id' | translate}}</th>
+                    <th>{{'translate.goods_name' | translate}}</th>
+                    <th>{{'translate.goods_seller' | translate}}</th>
+                    <th>{{'translate.goods_quantity' | translate}}</th>
+                    <th>{{'translate.goods_price' | translate}}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -205,29 +205,29 @@
                         {{orders.purchase}}
                         <span>
                           <p>
-                            <b>Buyer FIMK Account: </b><h5>{{orders.buyerRS}}</h5>
+                            <b>{{'translate.buyer_fimk_account' | translate}}: </b><h5>{{orders.buyerRS}}</h5>
                           </p>
                           <p ng-if= "orders.buyerName">
-                            <b>Buyer Name: </b><h5>{{orders.buyerName}}</h5>
+                            <b>{{'translate.buyer_name' | translate}}: </b><h5>{{orders.buyerName}}</h5>
                           </p>
                           <p>
-                            <b>Seller FIMK Account: </b><h5>{{orders.sellerRS}}</h5>
+                            <b>{{'translate.seller_fimk_account' | translate}}: </b><h5>{{orders.sellerRS}}</h5>
                           </p>
                           <p ng-if= "orders.sellerName">
-                            <b>Seller Name: </b><h5>{{orders.sellerName}}</h5>
+                            <b>{{'translate.seller_name' | translate}}: </b><h5>{{orders.sellerName}}</h5>
                           </p>
                           <p ng-if= "orders.pending == false">
-                            <b>Order is Delivered</b>
+                            <b>{{'translate.order_is_delivered' | translate}}</b>
                           </p>
                           <p ng-if= "orders.pending == true">
-                            <b>Orders is Pending</b>
+                            <b>{{'translate.order_is_pending' | translate}}</b>
                           </p>
                         </span>
                       </a>
                     </td>
                     <td>{{orders.name}}</td>
-                    <td ng-if= "!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
-                    <td ng-if= "orders.sellerName">{{orders.sellerName}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
+                    <td ng-if= "!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click= "msg(orders.sellerRS)">{{'translate.message_to_seller' | translate}}</a></td>
+                    <td ng-if= "orders.sellerName">{{orders.sellerName}}  <a href="" ng-click= "msg(orders.sellerRS)">{{'translate.message_to_seller' | translate}}</a></td>
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
                   </tr>
@@ -239,7 +239,7 @@
         <div class="load-more-button" ng-show="pastGoods.hasMore">
           <a href ng-click="pastGoods.loadMore()" class="text-lowercase text-muted">
             <span ng-show="pastGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
-            <span>load more products</span>
+            <span>{{'translate.load_more_products' | translate}}</span>
           </a>
         </div>
     </div>
