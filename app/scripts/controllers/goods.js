@@ -14,6 +14,7 @@
     $scope.paramSection = $routeParams.listing;
 
     var api = nxt.get($scope.id_rs);
+    $scope.symbol= api.engine.symbol
 
     $scope.shoppingCart = shoppingCartService.get();
 

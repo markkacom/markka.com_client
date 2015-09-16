@@ -30,7 +30,8 @@
                         <th>{{'translate.goods_seller' | translate}}</th>
                         <th>{{'translate.goods_tags' | translate}}</th>
                         <th>{{'translate.goods_quantity' | translate}}</th>
-                        <th>{{'translate.goods_price' | translate}}</th>
+                        <th ng-if= "symbol == 'FIM'">{{'translate.goods_price' | translate}}</th>
+                        <th ng-if= "symbol == 'NXT'">{{'translate.goods_price_nxt' | translate}}</th>
                         <th ng-if= "paramSection == 'viewlisting' && currentAccount.secretPhrase.length > 0"></th>
                       </tr>
                     </thead>
@@ -99,7 +100,8 @@
               <img src="images/no-image.jpg" style= "width: 225px;" ng-if= "!details.image" ng-hide= "details.description | parseImage">
             </div>
             <div class= "goods-details1">
-              <label class= "price"><b>{{'translate.goods_price' | translate}}: </b>{{details.priceFIMK}}</label>
+              <label class= "price" ng-if= "symbol == 'FIM'"><b>{{'translate.goods_price' | translate}}: </b>{{details.priceFIMK}}</label>
+              <label class= "price" ng-if= "symbol == 'NXT'"><b>{{'translate.goods_price_nxt' | translate}}: </b>{{details.priceFIMK}}</label>
               <label class= "quantity"><b>{{'translate.goods_quantity' | translate}}: </b>{{details.quantity}}</label>
             </div>
             <div class= "goods-details2">
@@ -135,7 +137,8 @@
                       <tr>
                         <th style= "text-align: center;">{{'translate.goods_name' | translate}}</th>
                         <th></th>
-                        <th>{{'translate.goods_price' | translate}}</th>
+                        <th ng-if= "symbol == 'FIM'">{{'translate.goods_price' | translate}}</th>
+                        <th ng-if= "symbol == 'NXT'">{{'translate.goods_price_nxt' | translate}}</th>
                         <th>{{'translate.goods_total_price' | translate}}</th>
                       </tr>
                     </thead>
@@ -148,7 +151,8 @@
                           <p><b>{{'translate.goods_seller' | translate}}: </b>{{items.seller}}</p>
                           <p class= "remove-item" ng-click= "remove($index, items)">{{'translate.remove_from_cart' | translate}}</p>
                         </td>
-                        <td class= "price"><b>{{'translate.price_FIMK' | translate}}: </b>{{items.priceFIMK}}</td>
+                        <td class= "price" ng-if= "symbol == 'FIM'"><b>{{'translate.price_FIMK' | translate}}: </b>{{items.priceFIMK}}</td>
+                        <td class= "price" ng-if= "symbol == 'NXT'"><b>{{'translate.price_NXT' | translate}}: </b>{{items.priceFIMK}}</td>
                         <td class= "total-price"><b>{{'translate.goods_total_price' | translate}}: {{items.priceFIMK}}</b></td>
                       </tr>
                     </tbody>
@@ -197,7 +201,8 @@
                     <th>{{'translate.goods_name' | translate}}</th>
                     <th>{{'translate.goods_seller' | translate}}</th>
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th>{{'translate.goods_price' | translate}}</th>
+                    <th ng-if= "symbol == 'FIM'">{{'translate.goods_price' | translate}}</th>
+                    <th ng-if= "symbol == 'NXT'">{{'translate.goods_price_nxt' | translate}}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -269,7 +274,8 @@
                     <th>{{'translate.purchase_id' | translate}}</th>
                     <th>{{'translate.goods_name' | translate}}</th>
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th>{{'translate.goods_price' | translate}}</th>
+                    <th ng-if= "symbol == 'FIM'">{{'translate.goods_price' | translate}}</th>
+                    <th ng-if= "symbol == 'NXT'">{{'translate.goods_price_nxt' | translate}}</th>
                     <th>{{'translate.delivery_deadline' | translate}}</th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                   </tr>
@@ -296,7 +302,8 @@
                     <th>{{'translate.goods_name' | translate}}</th>
                     <!-- <th>Seller</th> -->
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th>{{'translate.goods_price' | translate}}</th>
+                    <th ng-if= "symbol == 'FIM'">{{'translate.goods_price' | translate}}</th>
+                    <th ng-if= "symbol == 'NXT'">{{'translate.goods_price_nxt' | translate}}</th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                     <th ng-if= "DecryptedMessage && currentAccount.secretPhrase.length > 0">{{'translate.message_from_buyer' | translate}}</th>
