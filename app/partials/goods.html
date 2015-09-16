@@ -8,7 +8,8 @@
         <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">{{'translate.past_orders' | translate}}</a>
         <a href="#/goods/{{id_rs}}/solditems" class= "btn btn-default past-orders-button">{{'translate.sold_items' | translate}}</a>
         <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
-        <a ng-click= "add()" class= "btn btn-primary add-goods-button">{{'translate.add_item' | translate}}</a>
+        <a ng-click= "add()" class= "btn btn-primary add-goods-button" ng-if= "currentAccount.secretPhrase.length > 0">{{'translate.add_item' | translate}}</a>
+        <a href= "#/login-to" class= "btn btn-primary add-goods-button" ng-if= "currentAccount.secretPhrase.length == null">{{'translate.sign_in' | translate}}</a>
       </div>
     </div>
     <div infinite-scroll="showGoods.loadMore()" 
@@ -30,7 +31,7 @@
                         <th>{{'translate.goods_tags' | translate}}</th>
                         <th>{{'translate.goods_quantity' | translate}}</th>
                         <th>{{'translate.goods_price' | translate}}</th>
-                        <th ng-if= "paramSection == 'viewlisting'"></th>
+                        <th ng-if= "paramSection == 'viewlisting' && currentAccount.secretPhrase.length > 0"></th>
                       </tr>
                     </thead>
                      <tbody>
@@ -40,7 +41,7 @@
                         <td ng-click= "details(goods)">{{isAdded.tags}}</td>
                         <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
                         <td ng-click= "details(goods)">{{isAdded.priceNXT}}</td>
-                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">{{'translate.delete_good' | translate}}</td>
+                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting' && currentAccount.secretPhrase.length > 0">{{'translate.delete_good' | translate}}</td>
                       </tr>
                       <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
                         <td ng-click= "details(goods)">{{goods.name}}</td>
@@ -48,7 +49,7 @@
                         <td ng-click= "details(goods)">{{goods.tags}}</td>
                         <td ng-click= "details(goods)">{{goods.quantity}}</td>
                         <td ng-click= "details(goods)">{{goods.priceFIMK}}</td>
-                        <td ng-click= "deleteGood(goods, $index)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">{{'translate.delete_good' | translate}}</td>
+                        <td ng-click= "deleteGood(goods, $index)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting' && currentAccount.secretPhrase.length > 0">{{'translate.delete_good' | translate}}</td>
                       </tr>
                     </tbody>
             </table>
@@ -158,7 +159,8 @@
         <div class="col-md-12 order-buttons">
           <div>
             <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
-            <button class= "btn btn-success place-order" ng-click= "placeOrder()">{{'translate.place_order' | translate}}</button>
+            <button class= "btn btn-success place-order" ng-click= "placeOrder()" ng-if= "currentAccount.secretPhrase.length > 0">{{'translate.place_order' | translate}}</button>
+            <a href= "#/login-to" class= "btn btn-success place-order" ng-if= "currentAccount.secretPhrase.length == null">{{'translate.sign_in' | translate}}</a>
           </div>
             <hr>
         </div>
@@ -226,8 +228,8 @@
                       </a>
                     </td>
                     <td>{{orders.name}}</td>
-                    <td ng-if= "!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click= "msg(orders.sellerRS)">{{'translate.message_to_seller' | translate}}</a></td>
-                    <td ng-if= "orders.sellerName">{{orders.sellerName}}  <a href="" ng-click= "msg(orders.sellerRS)">{{'translate.message_to_seller' | translate}}</a></td>
+                    <td ng-if= "!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click= "msg(orders.sellerRS)" ng-if= "currentAccount.secretPhrase.length > 0">{{'translate.message_to_seller' | translate}}</a></td>
+                    <td ng-if= "orders.sellerName">{{orders.sellerName}}  <a href="" ng-click= "msg(orders.sellerRS)" ng-if= "currentAccount.secretPhrase.length > 0">{{'translate.message_to_seller' | translate}}</a></td>
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
                   </tr>
@@ -269,8 +271,7 @@
                     <th>{{'translate.goods_quantity' | translate}}</th>
                     <th>{{'translate.goods_price' | translate}}</th>
                     <th>{{'translate.delivery_deadline' | translate}}</th>
-                    <th></th>
-                    <th></th>
+                    <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -281,7 +282,7 @@
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
                     <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
-                    <td><button class= "btn btn-primary" ng-click= "confirmDelivery(orders)">{{'translate.confirm_delivery' | translate}}</button></td>
+                    <td ng-if= "currentAccount.secretPhrase.length > 0"><button class= "btn btn-primary" ng-click= "confirmDelivery(orders)">{{'translate.confirm_delivery' | translate}}</button></td>
                     <!-- <td><button ng-click= "rebate(orders)">Rebate</button></td> -->
                   </tr>
                 </tbody>
@@ -296,9 +297,9 @@
                     <!-- <th>Seller</th> -->
                     <th>{{'translate.goods_quantity' | translate}}</th>
                     <th>{{'translate.goods_price' | translate}}</th>
-                    <th></th>
-                    <th></th>
-                    <th ng-if= "DecryptedMessage">{{'translate.message_from_buyer' | translate}}</th>
+                    <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
+                    <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
+                    <th ng-if= "DecryptedMessage && currentAccount.secretPhrase.length > 0">{{'translate.message_from_buyer' | translate}}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -309,12 +310,12 @@
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceFIMK}}</td>
-                    <td><button class= "btn btn-primary" ng-click= "rebate(orders)">{{'translate.refund' | translate}}</button></td>
-                    <td>
+                    <td ng-if= "currentAccount.secretPhrase.length > 0"><button class= "btn btn-primary" ng-click= "rebate(orders)">{{'translate.refund' | translate}}</button></td>
+                    <td ng-if= "currentAccount.secretPhrase.length > 0">
                       <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
                       <label ng-if= "!orders.note">{{'translate.no_messages' | translate}}</label>
                     </td>
-                    <td ng-if= "DecryptedMessage"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage.entities[0].decryptedMessage}}</span></td>
+                    <td ng-if= "DecryptedMessage && currentAccount.secretPhrase.length > 0"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage.entities[0].decryptedMessage}}</span></td>
                   </tr>
                 </tbody>
               </table>
