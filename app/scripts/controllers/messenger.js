@@ -34,10 +34,10 @@ function generateSpeechBubbleBootstrapCSS() {
     document.head.appendChild(styleElement);
   }
   var html = [
-    '.chat .fromMe { color:',fromMe[1],' !important; background:',fromMe[0],' !important; }\n',
+    '.chat .fromMe { color:',fromMe[1],' !important; margin-left:30px; background:',fromMe[0],' !important; }\n',
     '.chat .fromMe:before { border-right:20px solid ',fromMe[0],' !important;}\n',
     '.chat .fromMe:after { background:',background,' !important;}\n',
-    '.chat .fromThem { color:',fromThem[1],' !important; background:',fromThem[0],' !important;}\n',
+    '.chat .fromThem { color:',fromThem[1],' !important; margin-right:30px; background:',fromThem[0],' !important;}\n',
     '.chat .fromThem:before { border-left:20px solid ',fromThem[0],' !important;}\n',
     '.chat .fromThem:after { background:',background,' !important;}\n',
   ].join('');
