@@ -484,6 +484,13 @@ fieldset {
   text-align: center;
 }
 
+.unread {
+  position: absolute;
+  top: 15px;
+  left: 23px;
+  color: red;
+}
+
 @media screen and (max-width: 768px) {
   .goods-page .goods-col1 {
     text-align: left;

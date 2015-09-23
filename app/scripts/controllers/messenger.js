@@ -58,6 +58,8 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji, 
   KeyService, $timeout, settings, publicKeyService, GossipChatListProvider) {
 
+  $rootScope.unread = false;
+
   /* might not have been started */
   Gossip.onActivated();
   $scope.gossipUI = Gossip.ui;
@@ -326,6 +328,10 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
 
   $scope.goOnlineAgain = function () {
     Gossip.setEnabled();
+  }
+
+  $scope.activateTextbox = function() {
+    $rootScope.unread = false;
   }
 });
 })();

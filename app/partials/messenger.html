@@ -94,7 +94,7 @@
           <div class="input-group">
             <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
             <textarea class="form-control" rows="{{IS_SMALL_DEVICE?1:2}}" ng-model="message.text" ng-change="messageChanged()"
-              ng-disabled="ui.editRecipient&&!message.recipientPublicKey" enter-submit="sendDirectMessage()"></textarea>
+              ng-disabled="ui.editRecipient&&!message.recipientPublicKey" enter-submit="sendDirectMessage()" ng-click= "activateTextbox()"></textarea>
             <span ng-if="message.text" class="visible-xs input-group-addon btn btn-default" ng-click="sendDirectMessage()" translate="translate.send"></span>
           </div>
           <a href ng-click="ui.sendOffline=true" style="margin-bottom: 8px;"

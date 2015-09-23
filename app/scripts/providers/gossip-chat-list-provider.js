@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db, $rootScope) {
+module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db) {
 
   function emptyToNull(val) {
     if (typeof val == 'string') {
