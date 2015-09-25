@@ -37,6 +37,7 @@ module.factory('ChartDataProvider', function (nxt, $q, $timeout) {
     this.asset     = asset;
     this.decimals  = decimals;
     this.$scope    = $scope;
+    this.window    = DAY;
     this.isLoading = true;
     this.data      = [];
 
@@ -54,19 +55,27 @@ module.factory('ChartDataProvider', function (nxt, $q, $timeout) {
       });
     },
 
+    setWindow: function (_window) {
+      this.window = _window;
+      this.reload();
+    },
+
     translate: function (d) {
-      d.date  = nxt.util.timestampToDate(d.timestamp);
-      d.open  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(d.open, this.decimals));
-      d.close = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(d.close, this.decimals));
-      d.high  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(d.high, this.decimals));
-      d.low    = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(d.low, this.decimals));
-      d.volume = parseFloat(nxt.util.convertToQNTf(d.vol, this.decimals));
-      d.value  = d.open;
+      var timestamp = d[0], avg = d[1], low = d[2], high = d[3], vol = d[4], open = d[5], close = d[6];
+
+      d.timestamp = timestamp;
+      d.date  = nxt.util.timestampToDate(timestamp);
+      d.open  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(open, this.decimals));
+      d.close = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(close, this.decimals));
+      d.high  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(high, this.decimals));
+      d.low    = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(low, this.decimals));
+      d.volume = parseFloat(nxt.util.convertToQNTf(vol, this.decimals));
+      d.value  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(avg, this.decimals));
     },
 
     getNetworkData: function () {
       var self = this;
-      this.api.engine.socket().getAssetChartData({ asset: this.asset, window: HOUR }).then(
+      this.api.engine.socket().getAssetChartData({ asset: this.asset, window: this.window }).then(
         function (data) {
           self.$scope.$evalAsync(function () {
             self.isLoading = false;
