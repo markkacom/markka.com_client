@@ -16,20 +16,20 @@ function chart(element, name, symbol, fullWidth, fullHeight, scope) {
   var zoom = d3.behavior.zoom()
           .on("zoom", draw);
 
-  var zoomPercent = d3.behavior.zoom();
-
   var x = techan.scale.financetime()
           .range([0, width]);
 
   var y = d3.scale.linear()
           .range([height, 0]);
 
-  var yPercent = y.copy();   // Same as y at this stage, will get a different domain later
-
   var yVolume = d3.scale.linear()
           .range([height, height - volumeHeight]);
 
   var candlestick = techan.plot.candlestick()
+          .xScale(x)
+          .yScale(y);
+
+  var close = techan.plot.close()
           .xScale(x)
           .yScale(y);
 
@@ -52,19 +52,13 @@ function chart(element, name, symbol, fullWidth, fullHeight, scope) {
 
   var xAxis = d3.svg.axis()
           .scale(x)
-          .ticks(4)
+          .ticks(8)
           .orient("top");
 
   var yAxis = d3.svg.axis()
           .scale(y)
           .ticks(4)
           .orient("left");
-
-  var percentAxis = d3.svg.axis()
-          .scale(yPercent)
-          .orient("right")
-          .ticks(4)
-          .tickFormat(d3.format('+.1%'));
 
   var volumeAxis = d3.svg.axis()
           .scale(yVolume)
@@ -123,13 +117,13 @@ function chart(element, name, symbol, fullWidth, fullHeight, scope) {
           .attr("class", "indicator sma ma-0")
           .attr("clip-path", "url(#clip)");
 
-  svg.append("g")
-          .attr("class", "indicator sma ma-1")
-          .attr("clip-path", "url(#clip)");
+  // svg.append("g")
+  //         .attr("class", "indicator sma ma-1")
+  //         .attr("clip-path", "url(#clip)");
 
-  svg.append("g")
-          .attr("class", "indicator ema ma-2")
-          .attr("clip-path", "url(#clip)");
+  // svg.append("g")
+  //         .attr("class", "indicator ema ma-2")
+  //         .attr("clip-path", "url(#clip)");
 
   svg.append("g")
           .attr("class", "x axis")
@@ -138,9 +132,6 @@ function chart(element, name, symbol, fullWidth, fullHeight, scope) {
   svg.append("g")
           .attr("class", "y axis")
           .attr("transform", "translate(" + width + ",0)");
-
-  svg.append("g")
-          .attr("class", "percent axis");
 
   svg.append("g")
           .attr("class", "volume axis");
@@ -179,14 +170,14 @@ function chart(element, name, symbol, fullWidth, fullHeight, scope) {
 
     x.domain(techan.scale.plot.time(data, accessor).domain());
     y.domain(techan.scale.plot.ohlc(data, accessor).domain());
-    yPercent.domain(techan.scale.plot.percent(y, accessor(data[0])).domain());
     yVolume.domain(techan.scale.plot.volume(data, accessor.v).domain());
 
     svg.select("g.candlestick").datum(data).call(candlestick);
     svg.select("g.volume").datum(data).call(volume);
-    svg.select("g.sma.ma-0").datum(techan.indicator.sma().period(10)(data)).call(sma0);
+    svg.select("g.sma.ma-0").datum(techan.indicator.sma().period(1)(data)).call(sma0);
     svg.select("g.sma.ma-1").datum(techan.indicator.sma().period(20)(data)).call(sma1);
     svg.select("g.ema.ma-2").datum(techan.indicator.ema().period(50)(data)).call(ema2);
+
     svg.select("g.crosshair").call(crosshair).call(zoom);
 
     var zoomable = x.zoomable();
@@ -196,48 +187,7 @@ function chart(element, name, symbol, fullWidth, fullHeight, scope) {
 
     // Associate the zoom with the scale after a domain has been applied
     zoom.x(zoomable).y(y);
-    zoomPercent.y(yPercent);
   }
-
-
-  // d3.csv("data.csv", function (error, data) {
-  //     var accessor = candlestick.accessor(),
-  //         indicatorPreRoll = 33;  // Don't show where indicators don't have data
-
-  //     data = data.map(function (d) {
-  //         return {
-  //             date: parseDate(d.Date),
-  //             open: +d.Open,
-  //             high: +d.High,
-  //             low: +d.Low,
-  //             close: +d.Close,
-  //             volume: +d.Volume
-  //         };
-  //     }).sort(function (a, b) {
-  //         return d3.ascending(accessor.d(a), accessor.d(b));
-  //     });
-
-  //     x.domain(techan.scale.plot.time(data, accessor).domain());
-  //     y.domain(techan.scale.plot.ohlc(data.slice(indicatorPreRoll), accessor).domain());
-  //     yPercent.domain(techan.scale.plot.percent(y, accessor(data[indicatorPreRoll])).domain());
-  //     yVolume.domain(techan.scale.plot.volume(data, accessor.v).domain());
-
-  //     svg.select("g.candlestick").datum(data).call(candlestick);
-  //     svg.select("g.volume").datum(data).call(volume);
-  //     svg.select("g.sma.ma-0").datum(techan.indicator.sma().period(10)(data)).call(sma0);
-  //     svg.select("g.sma.ma-1").datum(techan.indicator.sma().period(20)(data)).call(sma1);
-  //     svg.select("g.ema.ma-2").datum(techan.indicator.ema().period(50)(data)).call(ema2);
-  //     svg.select("g.crosshair").call(crosshair).call(zoom);
-
-  //     var zoomable = x.zoomable();
-  //     zoomable.domain([indicatorPreRoll, data.length]); // Zoom in a little to hide indicator preroll
-
-  //     draw();
-
-  //     // Associate the zoom with the scale after a domain has been applied
-  //     zoom.x(zoomable).y(y);
-  //     zoomPercent.y(yPercent);
-  // });
 
   function reset() {
       zoom.scale(1);
@@ -246,13 +196,10 @@ function chart(element, name, symbol, fullWidth, fullHeight, scope) {
   }
 
   function draw() {
-      zoomPercent.translate(zoom.translate());
-      zoomPercent.scale(zoom.scale());
 
       svg.select("g.x.axis").call(xAxis);
       svg.select("g.y.axis").call(yAxis);
       svg.select("g.volume.axis").call(volumeAxis);
-      svg.select("g.percent.axis").call(percentAxis);
 
       // We know the data does not change, a simple refresh that does not perform data joins will suffice.
       svg.select("g.candlestick").call(candlestick.refresh);
