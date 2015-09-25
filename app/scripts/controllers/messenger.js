@@ -54,11 +54,38 @@ module.config(function($routeProvider) {
     });
 });
 
+// module.run(function($rootScope, $location, $interval) {
+//   $rootScope.$watch(function() {
+
+//     if($location.path().indexOf("/messenger/") > -1) {
+//       $interval(function() {
+//         $rootScope.unread = false;
+//       }, 5000);
+//       console.log("called")
+//     } else {
+//       $interval.cancel();
+//       console.log("cancelled");
+//     }
+//   })
+// })
+
 module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope, 
   $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji, 
-  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider) {
+  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval) {
   
   $rootScope.unread = false;
+
+  var unreadIcon = $interval(function() {
+    $rootScope.unread = false;
+  }, 5000);
+
+  $scope.$on( "$routeChangeStart", function(event, next, current) {
+    if(next.loadedTemplateUrl != "partials/messenger.html") {
+       $scope.$on('$destroy', function () { 
+        $interval.cancel(unreadIcon); 
+      });
+    }
+  })
 
   /* might not have been started */
   Gossip.onActivated();
