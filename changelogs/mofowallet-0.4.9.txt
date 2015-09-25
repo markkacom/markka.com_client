@@ -2,12 +2,16 @@ Preview release.
 
 Embeds FIMK 0.5.1 and NXT-PLUS based on NXT 1.5.13.
 
-Create an about dialog, accessible from the settings menu. This dialog
+Added about dialog, accessible from the settings menu. The dialog
 displays the client version and build time and the server version when
 running the embedded server.
 
-Fixed the balance display for the logged in user, this balance now 
-updates in real-time the moment you send or receive any type of transaction.
+Fixed the balance display for the logged in user in the top bar, balance now 
+updates in real-time when you send or receive any type of transaction.
 
 The build scripts now add the build time to the global auto-generated mode.js
 settings file.
+
+Changed the price chart to use the new server chart backend. This fixes 
+the pricechart bugs for low volume assets. Chart now has access to proper 
+OHLC data.
