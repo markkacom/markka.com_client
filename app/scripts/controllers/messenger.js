@@ -57,7 +57,7 @@ module.config(function($routeProvider) {
 module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope, 
   $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji, 
   KeyService, $timeout, settings, publicKeyService, GossipChatListProvider) {
-
+  
   $rootScope.unread = false;
 
   /* might not have been started */
@@ -268,7 +268,8 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     }
     else {
       Gossip.message($scope.id_rs, $scope.message.text).then(
-        function () {
+        function (data) {
+          console.log(data);
           $scope.$evalAsync(function () {
             $scope.ui.emojiCollapse  = true;
             $scope.message.text = '';
