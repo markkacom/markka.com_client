@@ -45,7 +45,7 @@ rect.pane {
 
 .indicator path.line {
   fill: none;
-  stroke-width: 1;
+  stroke-width: 2;
 }
 
 .ma-0 path.line {
