@@ -27,11 +27,6 @@ module.run(function (modals, settings) {
     controller: 'LanguageModalController' 
   });
 
-  modals.register('welcome', { 
-    templateUrl: 'partials/welcome-modal.html', 
-    controller: 'WelcomeModalController' 
-  });
-
   modals.register('startServer', { 
     templateUrl: 'partials/start-server-modal.html', 
     controller: 'StartServerModalController' 
@@ -100,28 +95,6 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
     settings.update('themes.default.theme', theme.id);
   }
 
-  /*settings.resolve('initialization.user_selected_language', function (value) {
-    if (!$rootScope.multiLanguage || value) {
-      maybeStartFIMKServer();
-    }
-    else {
-      letUserSelectLanguage();
-    }
-  }, $scope);*/
-
-  /*function letUserSelectLanguage() {
-    modals.open('language', {
-      resolve: {
-        items: function () { return {}; }
-      },
-      close: function () {
-        maybeStartFIMKServer();
-      }
-    });
-  }*/  
-
-  //maybeStartFIMKServer();
-
   function maybeStartFIMKServer() {
     if (isNodeJS && 
         !settings.get('initialization.never_start_fimk') && 
@@ -162,34 +135,10 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
               symbol: 'NXT'
             } 
           }
-        },
-        close: function () {
-          maybeShowWelcomeScreen();
         }
       });
     }
-    else {
-      maybeShowWelcomeScreen();
-    }
   }
-
-  function maybeShowWelcomeScreen() {
-    /*db.accounts.count(function (count) {
-      if (count == 0) {
-        $rootScope.showNewAccountModal();
-      }
-    });*/
-  }
-
-  /*$rootScope.showNewAccountModal = function () {
-    modals.open('welcome', {
-      resolve: {
-        items: function () { 
-          return {}; 
-        }
-      }
-    });    
-  }*/
 
   $scope.doSearch = function () {
     $location.path('/search/fim/accounts/'+$scope.searchQuery);
