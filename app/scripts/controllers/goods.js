@@ -8,7 +8,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AccountBalanceProvider, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, DecryptedMessageProvider) {
+  module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, DecryptedMessageProvider) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -63,19 +63,14 @@
           good.callback = data.callback;
         }
       });
-
-      $scope.accountBalance = new AccountBalanceProvider(api, $scope, $scope.id_rs);
-      $scope.accountBalance.reload();
       $scope.placeOrder = function() {
-        $scope.balance = $scope.accountBalance.entities;
-        $scope.balance.forEach(function(balanceData) {
-          if($scope.total >= balanceData.effectiveBalanceNXT){
+        $scope.balance = $rootScope.userData.balanceNXT;
+          if($scope.total >= $scope.balance){
             $scope.balanceError = "You don't have enough balance to place these orders.";
           } else {
             $scope.balanceError = ' ';
             processCart($scope.shoppingCart);
           }
-        })
       }
 
       function processCart(shoppingCart) {
