@@ -105,7 +105,7 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
         $scope.trades = new TradesProvider(api, $scope, 10, $scope.paramAsset,$scope.assetDecimals);
         $scope.trades.reload();
 
-        var id_rs = $rootScope.selectedAccount ? $rootScope.selectedAccount.id_rs : null;
+        var id_rs = $rootScope.currentAccount ? $rootScope.currentAccount.id_rs : null;
 
         if (id_rs) {
           $scope.myAskOrders = new MyAskOrderProvider(api, $scope, 10, $scope.paramAsset, $scope.assetDecimals, id_rs);
@@ -124,8 +124,6 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
     }
   }
 
-  $scope.$on('$destroy', $rootScope.$watch('selectedAccount', $scope.reload));
-
   AssetInfoProvider.getInfo(api, $scope.paramAsset).then(
     function (asset) {
       $scope.$evalAsync(function () {
@@ -140,7 +138,7 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
         $scope.assetAccounts    = asset.numberOfAccounts;
         $scope.assetTransfers   = asset.numberOfTransfers;
         $scope.isPrivate        = asset.type == 1;
-        $scope.showPrivate      = $rootScope.selectedAccount ? asset.issuerRS == $rootScope.selectedAccount.id_rs : false;
+        $scope.showPrivate      = $rootScope.currentAccount ? asset.issuerRS == $rootScope.currentAccount.id_rs : false;
 
         if ($scope.isPrivate) {
           $scope.privateAsset = {
@@ -154,34 +152,6 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
       });
     }
   );
-
-  function setSelectedAccount(account) {
-    $scope.$evalAsync(function () {
-      $scope.showPrivate = $scope.assetIssuerRS == account.id_rs;
-    });
-    var args = {
-      requestType: 'getAccountAssets',
-      account: account.id_rs,
-      asset: $scope.asset
-    }
-    api.engine.socket().callAPIFunction(args).then(
-      function (data) {
-        $scope.$evalAsync(function () {
-          $scope.unconfirmedAssetBalance = nxt.util.commaFormat(nxt.util.convertToQNTf(data.unconfirmedQuantityQNT, $scope.assetDecimals));
-          $scope.assetBalance = nxt.util.commaFormat(nxt.util.convertToQNTf(data.quantityQNT, $scope.assetDecimals));
-        });
-      }
-    );
-  }
-
-  $rootScope.$watch('selectedAccount', function () {
-    if ($rootScope.selectedAccount) {
-      setSelectedAccount($rootScope.selectedAccount);
-    }
-  });
-  if ($rootScope.selectedAccount) {
-    setSelectedAccount($rootScope.selectedAccount);
-  }
 
   $scope.buyAsset = function () {
     var args = {
@@ -197,12 +167,7 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
     if ($scope.privateAsset) {
       args.orderFeeNQT = $scope.order.orderFeeNQT;
     }
-    var promise = plugins.get('transaction').get('buyAsset').execute($rootScope.selectedAccount.id_rs, args);
-    promise.then(function () {
-      if ($rootScope.selectedAccount) {
-        $rootScope.setSelectedAccount($rootScope.selectedAccount);
-      }
-    });
+    plugins.get('transaction').get('buyAsset').execute($rootScope.currentAccount.id_rs, args);
   }
 
   $scope.sellAsset = function () {
@@ -219,12 +184,7 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
     if ($scope.privateAsset) {
       args.orderFeeQNT = $scope.order.orderFeeQNT;
     }
-    var promise = plugins.get('transaction').get('sellAsset').execute($rootScope.selectedAccount.id_rs, args);
-    promise.then(function () {
-      if ($rootScope.selectedAccount) {
-        $rootScope.setSelectedAccount($rootScope.selectedAccount);
-      }
-    });    
+    plugins.get('transaction').get('sellAsset').execute($rootScope.currentAccount.id_rs, args);
   }
 
   $scope.writePost = function () {
@@ -247,12 +207,7 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
       args.autoSubmit = true;
     }    
     var op = order.type == 'ask' ? 'cancelAskOrder' : 'cancelBidOrder';
-    var promise = plugins.get('transaction').get(op).execute(order.accountRS, args);
-    promise.then(function () {
-      if ($rootScope.selectedAccount) {
-        $rootScope.setSelectedAccount($rootScope.selectedAccount);
-      }
-    });    
+    plugins.get('transaction').get(op).execute(order.accountRS, args);
   }
 
   $scope.addPrivateAssetAccount = function (id_rs) {
