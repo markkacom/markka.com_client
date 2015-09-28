@@ -2,16 +2,8 @@
 'use strict';
 var module = angular.module('fim.base');
 module.factory('modals', function ($modal) {
-var instance;
-
-function init() {
-  instance.register('secretPhrase', { templateUrl: 'partials/secretphrase-modal.html', controller: 'secretPhraseModalController' });
-  instance.register('selectDecryptionAccount', { templateUrl: 'partials/select-decryption-account.html', controller: 'selectDecryptionAccountController' });
-}
-
 var register = {};
-
-instance = {
+var instance = {
 
   /**
    * Registers a modal with the modal service.
@@ -87,7 +79,6 @@ instance = {
     return register[name] ? register[name].instance : null;
   }
 };
-init();
 return instance;
 
 });
