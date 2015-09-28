@@ -29,10 +29,6 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     }, 1000);
   }
 
-  $rootScope.selectedAccount = null;
-  $rootScope.selectedAccountUnlocked = false;
-  $rootScope.selectableAccounts = [];
-
   /* Only run when in NodeJS environment */
   if (isNodeJS) {
     $rootScope.fimDownloadProvider = new BlockchainDownloadProvider(nxt.fim(), $scope);
@@ -76,54 +72,6 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   // $rootScope.$on('$translatePartialLoaderStructureChanged', function () {
   //   $translate.refresh();
   // });
-
-  function loadAccounts() {
-    accountsService.getAll().then(function (accounts) {
-      $scope.$evalAsync(function () {
-        $rootScope.selectableAccounts = accounts;
-        if (!$rootScope.selectedAccount) {
-          var previous_id_rs = window.localStorage.getItem('mofowallet.selected.account');
-          if (previous_id_rs) {
-            for (var i=0;i<accounts.length; i++) {
-              if (accounts[i].id_rs == previous_id_rs) {
-                $rootScope.setSelectedAccount(accounts[i], true);  
-                break;
-              }
-            }
-          }
-          else if ($rootScope.selectableAccounts[0]) {
-            $rootScope.setSelectedAccount($rootScope.selectableAccounts[0], true);  
-          }
-        }
-      });
-    });
-  }
-  accountsService.onChange($rootScope, loadAccounts);
-  loadAccounts();
-
-  $rootScope.setSelectedAccount = function (account, dont_save) {
-    window.localStorage.setItem('mofowallet.selected.account', account.id_rs);
-    $rootScope.$evalAsync(function () {
-      $rootScope.selectedAccount = account;
-      $rootScope.selectedAccountUnlocked = plugins.get('wallet').hasKey(account.id_rs);
-    });
-    var api = nxt.get(account.id_rs);
-    if (api) {
-      api.engine.socket().getAccount({account:account.id_rs}).then(
-        function (data) {
-          $rootScope.$evalAsync(function () {
-            $rootScope.selectedAccount.symbol = api.engine.symbol;
-            $rootScope.selectedAccount.balanceNXT = nxt.util.convertToNXT(data.balanceNQT);
-            $rootScope.selectedAccount.unconfirmedBalanceNXT = nxt.util.convertToNXT(data.unconfirmedBalanceNQT);
-            $rootScope.selectedAccount.name = data.accountName;
-            if (!dont_save) {
-              $rootScope.selectedAccount.save();
-            }
-          });
-        }
-      );
-    }
-  }
 
   $rootScope.loginAddAccount = function () {
     modals.open('welcome', {
