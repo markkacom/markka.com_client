@@ -8,7 +8,7 @@
       })
   });
 
-  module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, DecryptedMessageProvider) {
+  module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins, shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip) {
 
     $scope.id_rs = $routeParams.id_rs;
     $scope.paramSection = $routeParams.listing;
@@ -138,9 +138,9 @@
 
       $scope.decrypt = function(encryptedMessage, index) {
         if(encryptedMessage) {
+          var publicKey = api.crypto.secretPhraseToPublicKey($rootScope.currentAccount.secretPhrase);
           $scope.textMessage = index;
-          $scope.DecryptedMessage = new DecryptedMessageProvider(api, $scope, encryptedMessage.data, encryptedMessage.nonce, $scope.id_rs, $rootScope.currentAccount.secretPhrase);
-          $scope.DecryptedMessage.reload();
+          $scope.DecryptedMessage = Gossip.decryptMessage(publicKey, encryptedMessage.nonce, encryptedMessage.data)
         }
       }
       $scope.rebate = function(rebateOrder) {

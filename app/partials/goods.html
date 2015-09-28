@@ -322,7 +322,7 @@
                       <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
                       <label ng-if= "!orders.note">{{'translate.no_messages' | translate}}</label>
                     </td>
-                    <td ng-if= "DecryptedMessage && currentAccount.secretPhrase.length > 0"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage.entities[0].decryptedMessage}}</span></td>
+                    <td ng-if= "DecryptedMessage && currentAccount.secretPhrase.length > 0"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage}}</span></td>
                   </tr>
                 </tbody>
               </table>
