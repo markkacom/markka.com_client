@@ -66,9 +66,9 @@
       $scope.placeOrder = function() {
         $scope.balance = $rootScope.userData.balanceNXT;
           if($scope.total >= $scope.balance){
-            processCart($scope.shoppingCart);
             $scope.balanceError = "You don't have enough balance to place these orders.";
           } else {
+            processCart($scope.shoppingCart);
             $scope.balanceError = ' ';
           }
       }
