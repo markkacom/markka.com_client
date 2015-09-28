@@ -54,6 +54,11 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
+
+    <!-- This depends on the WalletService which was removed, instead make it use the
+         key-service and enable it afterwards.
+         <script src="scripts/controllers/login.js"></script> -->
+
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="bower_components/angular/angular.js"></script>
     <script>
@@ -76,7 +81,6 @@
     <script src="bower_components/pako/dist/pako.min.js"></script>
     <script src="bower_components/ng-clip/dest/ng-clip.min.js"></script>
     <script src="bower_components/zeroclipboard/dist/ZeroClipboard.min.js"></script>
-
     <script src="bower_components/dexie/dist/latest/Dexie.js"></script>
     <script src="bower_components/dexie/addons/Dexie.Observable/Dexie.Observable.js"></script>
     
@@ -166,7 +170,6 @@
     <script src="scripts/services/timeago-service.js"></script>
     <script src="scripts/services/gossip-service.js"></script>
     <script src="scripts/services/publickey-service.js"></script>
-    <script src="scripts/services/wallet-service.js"></script>
     <script src="scripts/services/key-service.js"></script>
     <script src="scripts/services/entity-provider.js"></script>
     <script src="scripts/services/indexed-entity-provider.js"></script>
@@ -185,16 +188,12 @@
     
     <script src="scripts/controllers/app.js"></script>
     <script src="scripts/controllers/about-modal.js"></script>
-    <script src="scripts/controllers/login.js"></script>
     <script src="scripts/controllers/login-to.js"></script>
-    <script src="scripts/controllers/wallet.js"></script>
     <script src="scripts/controllers/start.js"></script>
     <script src="scripts/controllers/search.js"></script>
     <script src="scripts/controllers/language-modal.js"></script>
     <script src="scripts/controllers/start-server-modal.js"></script>
     <script src="scripts/controllers/home.js"></script>
-    <script src="scripts/controllers/secretphrase-modal.js"></script>
-    <script src="scripts/controllers/select-decryption-account.js"></script>
     <script src="scripts/controllers/server.js"></script>
     <script src="scripts/controllers/merchant-terminal.js"></script>
     <script src="scripts/controllers/translation.js"></script>
@@ -224,11 +223,6 @@
     <script src="plugins/namespaced-alias/controllers/namespaced-alias-create-modal.js"></script>
     <script src="plugins/themes/config.js"></script>
     <script src="plugins/themes/controllers/themes.js"></script>
-    <script src="plugins/wallet/config.js"></script>
-    <script src="plugins/wallet/controllers/wallet-manager.js"></script>
-    <script src="plugins/wallet/controllers/wallet-open-modal.js"></script>
-    <script src="plugins/wallet/controllers/wallet-password-modal.js"></script>
-    <script src="plugins/wallet/controllers/wallet-save-modal.js"></script>    
     <script src="plugins/contacts/config.js"></script>
     <script src="plugins/contacts/controllers/contacts.js"></script>
     <script src="plugins/contacts/controllers/contacts-select-modal.js"></script>
@@ -349,15 +343,6 @@
             <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart"></i>
               <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span></a>
           </li> 
-
-          <li ng-show="TRADE_UI_ONLY && selectedAccount">
-            <!-- <span>Account:&nbsp;<b>{{selectedAccount.name || selectedAccount.id_rs}}</b></span>&nbsp;&nbsp; -->            
-            <a href>
-              <span>Trading balance:&nbsp;<b>{{selectedAccount.unconfirmedBalanceNXT}}</b>
-                <span class="text-muted" ng-show="selectedAccount.unconfirmedBalanceNXT!=selectedAccount.balanceNXT">({{selectedAccount.balanceNXT}})</span> {{selectedAccount.symbol}}
-              </span>
-            </a>
-          </li>      
         </ul>
 
         <ul class="nav navbar-nav navbar-right" nav-menu="active">
