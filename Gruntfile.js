@@ -449,7 +449,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.dist %>',
-          src: ['*.html', 'views/{,*/}*.html','partials/{,*/}*.html','plugins/{,*/}*.html'],
+          src: ['*.html', 'views/{,*/}*.html','partials/{,*/}*.html','plugins/{,*/}*.html','dice-words/*.txt'],
           dest: '<%= yeoman.dist %>'
         }]
       }
@@ -496,7 +496,8 @@ module.exports = function (grunt) {
             'amstockchart/**/*',
             'JSON/{,*/}*.json',
             'images/{,*/}*.{webp,wav}',
-            'fonts/*'
+            'fonts/*',
+            'dice-words/*.txt'
           ]
         }, {
           expand: true,
@@ -550,7 +551,8 @@ module.exports = function (grunt) {
             'fonts/*',
             'bower_components/**/*',
             'scripts/**/*',
-            'styles/**/*'
+            'styles/**/*',
+            'dice-words/*.txt'
           ]
         }, {
           expand: true,
