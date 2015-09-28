@@ -212,13 +212,13 @@
                         {{orders.purchase}}
                         <span>
                           <p>
-                            <b>{{'translate.buyer_fimk_account' | translate}}: </b><h5>{{orders.buyerRS}}</h5>
+                            <b translate= "translate.buyer_fimk_account" translate-values="{symbol:symbol}"></b><h5>{{orders.buyerRS}}</h5>
                           </p>
                           <p ng-if= "orders.buyerName">
                             <b>{{'translate.buyer_name' | translate}}: </b><h5>{{orders.buyerName}}</h5>
                           </p>
                           <p>
-                            <b>{{'translate.seller_fimk_account' | translate}}: </b><h5>{{orders.sellerRS}}</h5>
+                            <b translate= "translate.seller_fimk_account" translate-values="{symbol:symbol}"></b><h5>{{orders.sellerRS}}</h5>
                           </p>
                           <p ng-if= "orders.sellerName">
                             <b>{{'translate.seller_name' | translate}}: </b><h5>{{orders.sellerName}}</h5>
