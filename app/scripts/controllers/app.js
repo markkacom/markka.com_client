@@ -21,6 +21,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   nxt, $route, $translate, accountsService, BlockchainDownloadProvider, UserDataProvider) {
 
   $scope.userData = new UserDataProvider($scope);
+  console.log($scope.userData);
 
   $scope.mainMenuCollapsed=true;
   $scope.collapseMainMenu = function () {
