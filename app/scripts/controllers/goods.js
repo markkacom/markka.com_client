@@ -51,7 +51,7 @@
       $scope.shoppingCart = shoppingCartService.get();
       $scope.total = 0;
       $scope.shoppingCart.forEach(function(good) {
-        $scope.total += parseFloat(good.priceFIMK)
+        $scope.total += parseFloat(good.priceNQT)
         try {
           var data = JSON.parse(good.description);
         } catch (ex) {
@@ -66,10 +66,10 @@
       $scope.placeOrder = function() {
         $scope.balance = $rootScope.userData.balanceNXT;
           if($scope.total >= $scope.balance){
+            processCart($scope.shoppingCart);
             $scope.balanceError = "You don't have enough balance to place these orders.";
           } else {
             $scope.balanceError = ' ';
-            processCart($scope.shoppingCart);
           }
       }
 
@@ -80,7 +80,7 @@
           var order_args = {
             requestType: "dgsPurchase",
             goods: shoppingCartGoods.goods,
-            priceNQT: shoppingCartGoods.priceFIMK,
+            priceNQT: shoppingCartGoods.priceNQT,
             name: shoppingCartGoods.name,
             deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
             recipient: shoppingCartGoods.seller
@@ -109,7 +109,7 @@
       $scope.remove = function(index, items) {
         var abc = shoppingCartService.removeItem(index);
         $scope.shoppingCart.splice(index, 1);
-        $scope.total -= parseFloat(items.priceFIMK);
+        $scope.total -= parseFloat(items.priceNQT);
       }
     } else if ($scope.paramSection == "pastorders") {
 
@@ -147,7 +147,7 @@
         var rebate_args = {
           requestType: "dgsRefund",
           purchase: rebateOrder.purchase,
-          refundNQT: rebateOrder.priceFIMK
+          refundNQT: rebateOrder.priceNQT
         }
         plugins.get('transaction').get('dgsRefund').execute($scope.id_rs, rebate_args).then(function(data) {
         })
