@@ -15,3 +15,6 @@ settings file.
 Changed the price chart to use the new server chart backend. This fixes 
 the pricechart bugs for low volume assets. Chart now has access to proper 
 OHLC data.
+
+Improved Bulgarian translations thanks to:
+Improved Polish translations thanks to:
