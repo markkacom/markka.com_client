@@ -20,7 +20,7 @@
 
     $scope.deleteGood = function(good, index) {
       var deleteGoodArgs = {
-        requestType: 'dgsDelisting',
+        // requestType: 'dgsDelisting',
         goods: good.goods
       }
       plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs).then(function(deletedGood) {
@@ -35,10 +35,10 @@
     }
 
     $scope.add = function() {
-      var args = {
-        requestType: 'dgsListing'
-      }
-      plugins.get('transaction').get('dgsListing').execute($scope.id_rs, args).then(function(addedGoods) {
+      // var args = {
+      //   requestType: 'dgsListing'
+      // }
+      plugins.get('transaction').get('dgsListing').execute().then(function(addedGoods) {
         $scope.isAdded = addedGoods;
         // $scope.priceNQT = nxt.util.convertToNQT(addedGoods.priceNXT);
       })
@@ -78,7 +78,7 @@
           var shoppingCartGoods = shoppingCart[0];
           console.log(shoppingCartGoods);
           var order_args = {
-            requestType: "dgsPurchase",
+            // requestType: "dgsPurchase",
             goods: shoppingCartGoods.goods,
             priceNQT: shoppingCartGoods.priceNQT,
             name: shoppingCartGoods.name,
@@ -145,7 +145,7 @@
       }
       $scope.rebate = function(rebateOrder) {
         var rebate_args = {
-          requestType: "dgsRefund",
+          // requestType: "dgsRefund",
           purchase: rebateOrder.purchase,
           refundNQT: rebateOrder.priceNQT
         }
@@ -154,7 +154,7 @@
       }
       $scope.confirmDelivery = function(deliveryItem) {
         var confirmDelivery_args = {
-          requestType: "dgsDelivery",
+          // requestType: "dgsDelivery",
           purchase: deliveryItem.purchase
         }
         plugins.get('transaction').get('dgsDelivery').execute($scope.id_rs, confirmDelivery_args).then(function(data) {

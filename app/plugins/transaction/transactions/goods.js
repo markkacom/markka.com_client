@@ -12,12 +12,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     label: 'Devious Item',
     id: 'dgsListing',
     exclude: true,
-    execute: function (senderRS, args) {
-      args = args||{};
-      return plugin.create(angular.extend(args, {
+    execute: function () {
+      // args = args||{};
+      return plugin.create(angular.extend({
         title: 'Devious Item',
         message: 'Create a Marketplace item with no length restricted tags',
-        senderRS: senderRS,
+        senderRS: $rootScope.currentAccount.id_rs,
         requestType: 'dgsListing',
         canHaveRecipient: false,
         createArguments: function (items) {
@@ -33,37 +33,37 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           label: 'Name',
           name: 'name',
           type: 'text',
-          value: args.name||''
+          value: ''
         }, {
           label: 'Description',
           name: 'description',
           type: 'textarea',
-          value: args.description||''
+          value: ''
         }, {
           label: 'ImageURL',
           name: 'image',
           type: 'image',
-          value: args.image||''
+          value: ''
         }, {
           label: 'Callback',
           name: 'callback',
           type: 'image',
-          value: args.callback||''
+          value: ''
         }, {
           label: 'Tags',
           name: 'tags',
           type: 'textarea',
-          value: args.tags||''
+          value: ''
         }, {
           label: 'Price FIMK',
           name: 'priceNXT',
           type: 'money',
-          value: args.priceNXT||''
+          value: ''
         }, {
           label: 'Quantity',
           name: 'quantity',
           type: 'text',
-          value: args.quantity||''
+          value: ''
         }]
       }));
     }
