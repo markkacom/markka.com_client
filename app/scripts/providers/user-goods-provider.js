@@ -7,14 +7,44 @@
       this.init(api, $scope, pageSize, account);
       this.filter = null;
       this.account = account;
+      var account_id = nxt.util.convertRSAddress(this.account);
+      this.subscribe('addedUnConfirmedTransactions-'+account_id, this.addedTransactions);
     }
     angular.extend(UserGoodsProvider.prototype, IndexedEntityProvider.prototype, {
 
+      remove: function(data) {
+        for(var a=0; a< this.entities.length; a++) {
+          if(this.entities[a].goods == data.attachment.goods){
+            this.entities.splice(a, 1);
+          }
+        }
+      },
+
       uniqueKey: function(good) {
-        return good.goods;
+        return good.goods || good.transaction;;
       },
       sortFunction: function(a, b) {
         return a.index - b.index;
+      },
+
+      addedTransactions: function (transactions) {
+        console.log(transactions);
+        var changed = false;
+        transactions.forEach(function (transaction) {
+           if (transaction.type == 3 && transaction.subtype == 0) {
+             /* replace x and y with proper types for LISTING */
+             changed = true;
+             this.add(transaction);
+           }
+           else {
+              /* replace x and y with proper types for DE-LISTING */
+             changed = true;
+             this.remove(transaction);
+           }
+        }.bind(this));
+        if (changed) {        
+         this.$scope.$evalAsync(this.sort.bind(this));
+       }
       },
 
       getData: function(firstIndex) {

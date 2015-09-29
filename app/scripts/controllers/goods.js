@@ -23,11 +23,7 @@
         // requestType: 'dgsDelisting',
         goods: good.goods
       }
-      plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs).then(function(deletedGood) {
-        if(deletedGood) {
-          $scope.showGoods.entities.splice(index, 1);
-        }
-      })
+      plugins.get('transaction').get('dgsDelisting').execute($scope.id_rs, deleteGoodArgs)        
     }
 
     $scope.details = function(goodsDetails) {
@@ -38,10 +34,7 @@
       // var args = {
       //   requestType: 'dgsListing'
       // }
-      plugins.get('transaction').get('dgsListing').execute().then(function(addedGoods) {
-        $scope.isAdded = addedGoods;
-        // $scope.priceNQT = nxt.util.convertToNQT(addedGoods.priceNXT);
-      })
+      plugins.get('transaction').get('dgsListing').execute();
     }
 
     if ($scope.paramSection == 'listing') {
