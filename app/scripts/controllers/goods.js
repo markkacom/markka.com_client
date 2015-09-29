@@ -133,14 +133,14 @@
       $scope.soldGoods.reload();
 
       // for Completed
-      $scope.DeliveryConfirmedGoods = new DeliveryConfirmedGoodsProvider(api, $scope, $scope.id_rs);
-      $scope.DeliveryConfirmedGoods.reload();
+      $scope.deliveryConfirmedGoods = new DeliveryConfirmedGoodsProvider(api, $scope, $scope.id_rs);
+      $scope.deliveryConfirmedGoods.reload();
 
       $scope.decrypt = function(encryptedMessage, index) {
         if(encryptedMessage) {
           var publicKey = api.crypto.secretPhraseToPublicKey($rootScope.currentAccount.secretPhrase);
           $scope.textMessage = index;
-          $scope.DecryptedMessage = Gossip.decryptMessage(publicKey, encryptedMessage.nonce, encryptedMessage.data)
+          $scope.decryptedMessage = Gossip.decryptMessage(publicKey, encryptedMessage.nonce, encryptedMessage.data)
         }
       }
       $scope.rebate = function(rebateOrder) {

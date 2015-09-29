@@ -306,11 +306,11 @@
                     <th ng-if= "symbol == 'NXT'" translate= "translate.goods_price_nxt" translate-values="{symbol:symbol}"></th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
-                    <th ng-if= "DecryptedMessage && currentAccount.secretPhrase.length > 0">{{'translate.message_from_buyer' | translate}}</th>
+                    <th ng-if= "decryptedMessage && currentAccount.secretPhrase.length > 0">{{'translate.message_from_buyer' | translate}}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat= "orders in DeliveryConfirmedGoods.entities">
+                  <tr ng-repeat= "orders in deliveryConfirmedGoods.entities">
                     <td>{{orders.timestamp}}</td>
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
@@ -322,7 +322,7 @@
                       <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
                       <label ng-if= "!orders.note">{{'translate.no_messages' | translate}}</label>
                     </td>
-                    <td ng-if= "DecryptedMessage && currentAccount.secretPhrase.length > 0"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage}}</span></td>
+                    <td ng-if= "decryptedMessage && currentAccount.secretPhrase.length > 0"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{decryptedMessage}}</span></td>
                   </tr>
                 </tbody>
               </table>
