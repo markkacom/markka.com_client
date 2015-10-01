@@ -107,7 +107,7 @@ if (isNodeJS) {
 }
 
 var module = angular.module('fim.base');
-module.factory('serverService', function ($timeout) {
+module.factory('serverService', function ($timeout, $rootScope) {
 
 function notifyListeners(listeners, data) {
   for (var i=0; i<listeners.length; i++) {
@@ -179,8 +179,10 @@ return {
         this.kill("SIGTERM");
       } 
       finally {
-        engine[id].server  = null;
-        engine[id].isReady = false;
+        $rootScope.$evalAsync(function () {
+          engine[id].server  = null;
+          engine[id].isReady = false;
+        });
       }
     }
 
@@ -213,9 +215,10 @@ return {
       // Helper function added to the child process to manage shutdown.
       console.log("Child process terminated with code: " + code);
       // process.exit(1);
-      engine[id].isReady = false;
-      engine[id].server  = null;
-      $rootScope.$apply();
+      $rootScope.$evalAsync(function () {
+        engine[id].isReady = false;
+        engine[id].server  = null;
+      });
     }
 
     child.stdout.on('data', child.onstdout);
