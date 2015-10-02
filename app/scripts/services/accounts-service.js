@@ -14,29 +14,6 @@ module.factory('accountsService', function ($q, db, plugins) {
     promise.then(
       function (accounts) {
         accounts = accounts || [];
-        var wallet = plugins.get('wallet').getWallet();
-        if (angular.isObject(wallet)) {
-          var id_rs, names = Object.getOwnPropertyNames(wallet);
-          for (var i=0; i<names.length; i++) {
-            id_rs = names[i];
-            if (filter) {
-              if (filter({id_rs: id_rs})) {
-                accounts.push({ id_rs: id_rs, name: wallet[id_rs].name });
-              }
-            }
-            else {
-              accounts.push({ id_rs: id_rs, name: wallet[id_rs].name });
-            }
-          }
-          var duplicate = {};
-          accounts = accounts.filter(function (account) {
-            if (duplicate[account.id_rs]) {
-              return false;
-            }
-            duplicate[account.id_rs] = account;
-            return true;
-          });
-        }
         deferred.resolve(accounts);
       },
       deferred.reject
