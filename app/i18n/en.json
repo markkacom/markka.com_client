@@ -284,8 +284,6 @@
     "back_to_items":        "Back to Items",
     "goods_total_price":    "Total Price",
     "remove_from_cart":     "Remove Item",
-    "price_FIMK":           "{{symbol}}",
-    "price_NXT":            "{{symbol}}",
     "estimated_price":      "Estimated Price",
     "place_order":          "Place Order",
     "continue_shopping":    "Continue Shopping",
