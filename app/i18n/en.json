@@ -303,7 +303,8 @@
     "refund":               "Refund",
     "decrypt_message":      "Decrypt Message",
     "no_messages":          "No Messages to Decrypt",
-    "confirm_delivery":     "Confirm Delivery"           
+    "confirm_delivery":     "Confirm Delivery",
+    "marketplace":          "Marketplace"
   },
 
   "time": {
