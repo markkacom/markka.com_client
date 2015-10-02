@@ -93,17 +93,3 @@ https://github.com/fimkrypto/mofowallet/releases/download/v0.4.8/mofowallet.linu
 SHA256 
 MD5    
 
-SHA256 22da5c1211cb69b9b3733e73a1d2cfeb585458768840b7dbf5c295b73b5c541e 
-MD5    49026268b52a38cf2c1f8b8c11182cf6 
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJV5YFXAAoJEP9gzPcARnvnyCMIAM9h+oVxqaXlMA2KItrHcW8U
-zjUXByRFPQcguVx5isibsWfRDTotUVxrbJvjGeRvSeFYM4HIB0aVEBDMpLi4fw+B
-jeLcXLFhBz5+0zzx+RTbANhMD4/UwWDj5G+EXzxnyEa/8XQK6J9nPDKNa3tBwgcW
-zly6CC9oW8VObkzsCI3YHnVvn3BKOFUs86OwxF5K3tE/+5ETtINCJoBJRjqqmQeq
-YfSZEXY3l+QBgQQbv303jRf3X1bBp5qjwkFUQEtyxRZn7ByBahcCd2B41qERypBT
-gq1oVndKrM7LvwbHe0sx6OkRiQiqwYSqDuGmSZ1hfQYfCiTHQTaU+PbtFzpbFy0=
-=0VqB
------END PGP SIGNATURE-----

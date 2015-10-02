@@ -1,0 +1,374 @@
+  <!-- goods page -->
+
+  <div class="goods-page" ng-if= "paramSection == 'listing' || paramSection == 'viewlisting'">
+    <div class="row">
+      <div class="col-md-12 goods-col1" style= "margin-bottom: 20px;">
+<<<<<<< HEAD
+        <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View own listing</a>
+=======
+        <a href="#/goods/{{id_rs}}/viewlisting" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'listing'">View Listing</a>
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+        <a href="#/goods/{{id_rs}}/listing" class= "btn btn-default past-orders-button" ng-if= "paramSection == 'viewlisting'">Show All Items</a>
+        <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
+        <a href="#/goods/{{id_rs}}/solditems" class= "btn btn-default past-orders-button">Sold Items</a>
+        <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+        <a ng-click= "add()" class= "btn btn-primary add-goods-button">Add Item</a>
+      </div>
+    </div>
+    <div infinite-scroll="showGoods.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+            <form class="form-inline" style= "margin-bottom: 15px;">
+              <div class="form-group">
+                <span>Filter on items name and description</span>&nbsp;&nbsp;
+                <input type="text" ng-model="showGoods.filter" ng-change="showGoods.reload()" class="form-control" placeholder="Filter">
+              </div>
+            </form>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table goods-table" style= "border: 1px solid #dddddd;">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Seller</th>
+                        <th>Tags</th>
+                        <th>Quantity</th>
+                        <th>Price FIMK</th>
+                        <th ng-if= "paramSection == 'viewlisting'"></th>
+                      </tr>
+                    </thead>
+                     <tbody>
+                      <tr style= "cursor: pointer;" ng-if= "isAdded">
+                        <td ng-click= "details(goods)">{{isAdded.name}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.seller}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.tags}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.quantity}}</td>
+                        <td ng-click= "details(goods)">{{isAdded.priceNXT}}</td>
+                        <td ng-click= "deleteGood(goods)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
+                      </tr>
+                      <tr ng-repeat= "goods in showGoods.entities" style= "cursor: pointer;">
+                        <td ng-click= "details(goods)">{{goods.name}}</td>
+                        <td ng-click= "details(goods)">{{goods.seller}}</td>
+                        <td ng-click= "details(goods)">{{goods.tags}}</td>
+                        <td ng-click= "details(goods)">{{goods.quantity}}</td>
+                        <td ng-click= "details(goods)">{{goods.priceFIMK}}</td>
+                        <td ng-click= "deleteGood(goods, $index)" style= "color: #d9534f" ng-if= "paramSection == 'viewlisting'">Delete</td>
+                      </tr>
+                    </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="load-more-button" ng-show="showGoods.hasMore">
+        <a href ng-click="showGoods.loadMore()" class="text-lowercase text-muted">
+          <span ng-show="showGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+          <span>load more products</span>
+        </a>
+      </div>
+    </div> 
+  </div>
+
+  <!-- goods details page -->
+
+    <div class="goods-details-page" ng-if= "paramSection.length > '11'">
+      <div class="row">
+        <div class="col-md-12 goods-details-col1">
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+          <a href="#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders-button">Past Orders</a>
+        </div>
+      </div>
+      <div ng-repeat= "details in goodsDetails.entities">
+        <div class="row">
+          <div class="col-md-12">
+<<<<<<< HEAD
+            <h4>
+              <b>Name: </b><span>{{details.name}}</span>
+              <span style= "float: right;">
+                <b>Seller: </b><span>{{details.sellerRS}}</span>
+              </span>
+            </h4>
+            <p>
+              <b>Id: </b><span>{{details.goods}}</span>
+              <span style= "float: right;">
+                <b ng-if= "details.sellerName">Seller Name: </b><span ng-if= "details.sellerName">{{details.sellerName}}</span>
+              </span>
+            </p>
+=======
+            <h4><b>Name: </b>{{details.name}}</h4>
+            <p><b>Id: </b>{{details.goods}}</p>
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div style= "text-align: center;">
+              <img src="{{details.description | parseImage }}" style= "width: 300px;" ng-if= "details.description | parseImage">
+              <img src="images/no-image.jpg" style= "width: 225px;" ng-if= "!details.image" ng-hide= "details.description | parseImage">
+            </div>
+            <div class= "goods-details1">
+              <label class= "price"><b>Price FIMK: </b>{{details.priceFIMK}}</label>
+              <label class= "quantity"><b>Quantity: </b>{{details.quantity}}</label>
+            </div>
+            <div class= "goods-details2">
+              <p class= "description" ng-if= "details.description | parseDescription">{{details.description | parseDescription}}</p>
+              <p class= "description" ng-hide= "details.description | parseDescription">{{details.description}}</p>
+              <p><b>Tags:</b> {{details.tags}}</p>
+            </div>
+            <div class= "goods-details3">
+              <a class= "btn btn-primary add-to-cart" ng-click= "addToCart(details)"><i class="fa fa-shopping-cart"></i> Add To Cart</a>
+              <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-danger cancel-button">Cancel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <!-- cart page -->
+
+    <div class="cart-page" ng-if= "paramSection == 'cart'">
+      <div class="row">
+        <div class="col-md-12 top-buttons">
+          <label class= "btn btn-default">Cart ({{shoppingCart.length}})</label>
+          <a href= "#/goods/{{id_rs}}/pastorders" class= "btn btn-default past-orders">Past Orders</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Back to Items</a>
+        </div>
+      </div>
+      <div class="row" ng-if= "shoppingCart.length > 0">
+        <div class="col-md-12" style= "padding: 0px;">
+          <h4 class= "balanceError">{{balanceError}}</h4>
+          <div class="table-responsive">
+            <table class="table cart-table">
+                    <thead>
+                      <tr>
+                        <th style= "text-align: center;">Name</th>
+                        <th></th>
+                        <th>Price FIMK</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                     <tbody>
+                      <tr class= "itemsRow" ng-repeat= "items in shoppingCart">
+                        <td class= "image" ng-if= "items.image"> <img src="{{items.image}}"> </td>
+                        <td class= "no-image" ng-if="!items.image"><img src="images/no-image.jpg"></td>
+                        <td class= "item-desc">
+                          <p><b>Name: </b>{{items.name}}</p>
+                          <p><b>Seller: </b>{{items.seller}}</p>
+                          <p class= "remove-item" ng-click= "remove($index, items)">Remove Item</p>
+                        </td>
+                        <td class= "price"><b>FIMK: </b>{{items.priceFIMK}}</td>
+                        <td class= "total-price"><b>Total Price: {{items.priceFIMK}}</b></td>
+                      </tr>
+                    </tbody>
+            </table>
+            <div class= "estPrice">Estimated Price: {{total}}</div>
+          </div>
+        </div>
+        <div class="col-md-12 order-buttons">
+          <div>
+            <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-default back-to-goods">Back to Items</a>
+            <button class= "btn btn-success place-order" ng-click= "placeOrder()">Place Order</button>
+          </div>
+            <hr>
+        </div>
+      </div>
+
+      <p style= "text-align: center; font-size: 18px; margin: 0;">{{successful}}</p>
+      <div class="row no-added" ng-if= "shoppingCart.length == 0">
+        <div class="col-md-12 no-added-col">
+          <label>No pending orders to place. Your Shopping Cart is empty.</label>
+          <br>
+          <a href="#/goods/{{id_rs}}/listing" class= "btn btn-success">Continue Shopping</a>
+        </div>
+      </div>
+  </div>
+
+  <!-- past orders page -->
+
+    <div class="past-orders-page" ng-if= "paramSection == 'pastorders'">
+      <div class="row">
+        <div class="col-md-12 past-order-col1">
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
+        </div>
+      </div>
+      <div infinite-scroll="pastGoods.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+        <div class="row">
+          <div class="col-md-12" style= " padding-top: 20px;">
+            <div class="table-responsive">
+              <table class="table" style= "border: 1px solid #dddddd;">
+                <thead>
+                  <tr>
+                    <th>Purchase ID</th>
+                    <th>Name</th>
+                    <th>Seller</th>
+                    <th>Quantity</th>
+                    <th>Price FIMK</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat= "orders in pastGoods.entities">
+<<<<<<< HEAD
+                    <td>
+                      <a class= "past-order-tooltip">
+                        {{orders.purchase}}
+                        <span>
+                          <p>
+                            <b>Buyer FIMK Account: </b><h5>{{orders.buyerRS}}</h5>
+                          </p>
+                          <p ng-if= "orders.buyerName">
+                            <b>Buyer Name: </b><h5>{{orders.buyerName}}</h5>
+                          </p>
+                          <p>
+                            <b>Seller FIMK Account: </b><h5>{{orders.sellerRS}}</h5>
+                          </p>
+                          <p ng-if= "orders.sellerName">
+                            <b>Seller Name: </b><h5>{{orders.sellerName}}</h5>
+                          </p>
+                        </span>
+                      </a>
+                    </td>
+                    <td>{{orders.name}}</td>
+                    <td ng-if= "!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
+                    <td ng-if= "orders.sellerName">{{orders.sellerName}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
+=======
+                    <td>{{orders.purchase}}</td>
+                    <td>{{orders.name}}</td>
+                    <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td>
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.priceFIMK}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="load-more-button" ng-show="pastGoods.hasMore">
+          <a href ng-click="pastGoods.loadMore()" class="text-lowercase text-muted">
+            <span ng-show="pastGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+            <span>load more products</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+  <!-- Sold Items page -->
+
+    <div class="past-orders-page" ng-if= "paramSection == 'solditems'">
+      <div class="row">
+        <div class="col-md-12 past-order-col1">
+          <a href="#/goods/{{id_rs}}/cart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+          <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary goods-button">Items</a>
+        </div>
+      </div>
+      <div infinite-scroll="soldGoods.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+        <div class="row">
+          <div class="col-md-12" style= " padding-top: 20px;">
+            <div class="table-responsive">
+              <h3>Pending Items</h3>
+              <table class="table" style= "border: 1px solid #dddddd; border-collapse: inherit;">
+                <thead>
+                  <tr>
+<<<<<<< HEAD
+                    <th>Purchase time</th>
+=======
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                    <th>Purchase ID</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price FIMK</th>
+                    <th>Delivery Deadline (in hrs)</th>
+<<<<<<< HEAD
+=======
+                    <th>Pending Status</th>
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat= "orders in soldGoods.entities">
+<<<<<<< HEAD
+                    <td>{{orders.timestamp}}</td>
+=======
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                    <td>{{orders.purchase}}</td>
+                    <td>{{orders.name}}</td>
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.priceFIMK}}</td>
+                    <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
+<<<<<<< HEAD
+=======
+                    <td>{{orders.pending}}</td>
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                    <td><button class= "btn btn-primary" ng-click= "confirmDelivery(orders)">Confirm Delivery</button></td>
+                    <!-- <td><button ng-click= "rebate(orders)">Rebate</button></td> -->
+                  </tr>
+                </tbody>
+              </table>
+              <h3>Confirmed Items</h3>
+              <table class="table" style= "border: 1px solid #dddddd; border-collapse: inherit;">
+                <thead>
+                  <tr>
+<<<<<<< HEAD
+                    <th>Purchase time</th>
+=======
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                    <th>Purchase ID</th>
+                    <th>Name</th>
+                    <!-- <th>Seller</th> -->
+                    <th>Quantity</th>
+                    <th>Price FIMK</th>
+<<<<<<< HEAD
+                    <th></th>
+                    <th></th>
+                    <th ng-if= "DecryptedMessage">Message</th>
+=======
+                    <th>Pending Status</th>
+                    <th></th>
+                    <th></th>
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat= "orders in DeliveryConfirmedGoods.entities">
+<<<<<<< HEAD
+                    <td>{{orders.timestamp}}</td>
+=======
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                    <td>{{orders.purchase}}</td>
+                    <td>{{orders.name}}</td>
+                    <!-- <td>{{orders.sellerRS}}  <a href="" ng-click= "msg(orders.sellerRS)">message</a></td> -->
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.priceFIMK}}</td>
+<<<<<<< HEAD
+                    <td><button class= "btn btn-primary" ng-click= "rebate(orders)">Rebate</button></td>
+                    <td>
+                      <button class= "btn btn-primary" ng-if= "orders.note" ng-click= "decrypt(orders.note, $index)">Decrypt Message</button>
+                      <label ng-if= "!orders.note">No Messages to Decrypt</label>
+                    </td>
+                    <td ng-if= "DecryptedMessage"><span class= "hide-message" ng-class= "{'show-message': $index == textMessage}">{{DecryptedMessage.entities[0].decryptedMessage}}</span></td>
+=======
+                    <td>{{orders.pending}}</td>
+                    <!-- <td><button ng-click= "confirmDelivery(orders)">Confirm Delivery</button></td> -->
+                    <td><button class= "btn btn-primary" ng-click= "rebate(orders)">Rebate</button></td>
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="load-more-button" ng-show="soldGoods.hasMore">
+          <a href ng-click="soldGoods.loadMore()" class="text-lowercase text-muted">
+            <span ng-show="soldGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+            <span>load more products</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+

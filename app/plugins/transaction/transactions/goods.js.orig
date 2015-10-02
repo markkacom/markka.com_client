@@ -12,12 +12,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     label: 'Devious Item',
     id: 'dgsListing',
     exclude: true,
-    execute: function () {
-      // args = args||{};
-      return plugin.create(angular.extend({
+    execute: function (senderRS, args) {
+      args = args||{};
+      return plugin.create(angular.extend(args, {
         title: 'Devious Item',
         message: 'Create a Marketplace item with no length restricted tags',
-        senderRS: $rootScope.currentAccount.id_rs,
+        senderRS: senderRS,
         requestType: 'dgsListing',
         canHaveRecipient: false,
         createArguments: function (items) {
@@ -33,37 +33,37 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           label: 'Name',
           name: 'name',
           type: 'text',
-          value: ''
+          value: args.name||''
         }, {
           label: 'Description',
           name: 'description',
           type: 'textarea',
-          value: ''
+          value: args.description||''
         }, {
           label: 'ImageURL',
           name: 'image',
           type: 'image',
-          value: ''
+          value: args.image||''
         }, {
           label: 'Callback',
           name: 'callback',
           type: 'image',
-          value: ''
+          value: args.callback||''
         }, {
           label: 'Tags',
           name: 'tags',
           type: 'textarea',
-          value: ''
+          value: args.tags||''
         }, {
           label: 'Price FIMK',
           name: 'priceNXT',
           type: 'money',
-          value: ''
+          value: args.priceNXT||''
         }, {
           label: 'Quantity',
           name: 'quantity',
           type: 'text',
-          value: ''
+          value: args.quantity||''
         }]
       }));
     }
@@ -110,7 +110,10 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         // editRecipient: (args.editRecipient===false) ? false : true,
         recipient: args.recipient||'',
         canHaveRecipient: false,
+<<<<<<< HEAD
         abc: true,
+=======
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
         createArguments: function (items) {
           return {
             goods: items.goods, 
@@ -118,7 +121,11 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             quantity: String(items.quantity),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
             priceNQT: nxt.util.convertToNQT(items.priceNQT),
+<<<<<<< HEAD
             recipient: items.recipient,
+=======
+            recipient: items.recipient
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
           }
         },
         fields: [{
@@ -131,7 +138,10 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           label: 'Price FIMK',
           name: 'price',
           type: 'text',
+<<<<<<< HEAD
           readonly: true,
+=======
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
           value: args.priceNQT||''
         },
         {
@@ -153,14 +163,23 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   // Rebate Goods
 
   plugin.add({
+<<<<<<< HEAD
     label: 'Give Rebate',
+=======
+    label: 'Rebate Item',
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
     id: 'dgsRefund',
     exclude: true,
     execute: function (senderRS, args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
+<<<<<<< HEAD
         title: 'Give Rebate',
         message: 'Return some FIMK to buyer',
+=======
+        title: 'Rebate Item',
+        message: 'Pay to complete Marketplace purchases',
+>>>>>>> 26de403d92de4f6825f57ae6153c142147320711
         senderRS: senderRS,
         requestType: 'dgsRefund',
         canHaveRecipient: false,

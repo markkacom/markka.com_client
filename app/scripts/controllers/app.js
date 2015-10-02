@@ -20,7 +20,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   $timeout, modals, $window, plugins, serverService, db, settings, $location, 
   nxt, $route, $translate, accountsService, BlockchainDownloadProvider, UserDataProvider) {
 
-  $scope.userData = new UserDataProvider($scope);
+  $rootScope.userData = new UserDataProvider($scope);
 
   $scope.mainMenuCollapsed=true;
   $scope.collapseMainMenu = function () {

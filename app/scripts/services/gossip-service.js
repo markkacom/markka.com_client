@@ -28,6 +28,7 @@ module.run(function (Gossip, $rootScope, db) {
     function onMessageStored() {
       new Audio('images/beep.wav').play();
       this.sendGossip(gossip.senderRS, gossip.id, this.MESSAGE_RECEIVED_TOPIC);
+      $rootScope.unread = true;
     }
 
     this.getSenderIsWhitelisted(gossip.senderRS).then(

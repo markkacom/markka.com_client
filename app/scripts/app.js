@@ -22,6 +22,7 @@ var module = angular.module('fim.base', [
   'ngClipboard'
 ]);
 
+
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {
   $log.log('fim.base application started');
   if (isNodeJS) {
@@ -80,3 +81,4 @@ module.config(['ngClipProvider', function(ngClipProvider) {
 }]);
 
 })();
+

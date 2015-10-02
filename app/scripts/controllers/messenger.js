@@ -34,10 +34,10 @@ function generateSpeechBubbleBootstrapCSS() {
     document.head.appendChild(styleElement);
   }
   var html = [
-    '.chat .fromMe { color:',fromMe[1],' !important; background:',fromMe[0],' !important; }\n',
+    '.chat .fromMe { color:',fromMe[1],' !important; margin-left:30px; background:',fromMe[0],' !important; }\n',
     '.chat .fromMe:before { border-right:20px solid ',fromMe[0],' !important;}\n',
     '.chat .fromMe:after { background:',background,' !important;}\n',
-    '.chat .fromThem { color:',fromThem[1],' !important; background:',fromThem[0],' !important;}\n',
+    '.chat .fromThem { color:',fromThem[1],' !important; margin-right:30px; background:',fromThem[0],' !important;}\n',
     '.chat .fromThem:before { border-left:20px solid ',fromThem[0],' !important;}\n',
     '.chat .fromThem:after { background:',background,' !important;}\n',
   ].join('');
@@ -54,9 +54,38 @@ module.config(function($routeProvider) {
     });
 });
 
+// module.run(function($rootScope, $location, $interval) {
+//   $rootScope.$watch(function() {
+
+//     if($location.path().indexOf("/messenger/") > -1) {
+//       $interval(function() {
+//         $rootScope.unread = false;
+//       }, 5000);
+//       console.log("called")
+//     } else {
+//       $interval.cancel();
+//       console.log("cancelled");
+//     }
+//   })
+// })
+
 module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope, 
   $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji, 
-  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider) {
+  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval) {
+  
+  $rootScope.unread = false;
+
+  var unreadIcon = $interval(function() {
+    $rootScope.unread = false;
+  }, 5000);
+
+  $scope.$on( "$routeChangeStart", function(event, next, current) {
+    if(next.loadedTemplateUrl != "partials/messenger.html") {
+       $scope.$on('$destroy', function () { 
+        $interval.cancel(unreadIcon); 
+      });
+    }
+  })
 
   /* might not have been started */
   Gossip.onActivated();
@@ -266,7 +295,8 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     }
     else {
       Gossip.message($scope.id_rs, $scope.message.text).then(
-        function () {
+        function (data) {
+          console.log(data);
           $scope.$evalAsync(function () {
             $scope.ui.emojiCollapse  = true;
             $scope.message.text = '';
@@ -326,6 +356,10 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
 
   $scope.goOnlineAgain = function () {
     Gossip.setEnabled();
+  }
+
+  $scope.activateTextbox = function() {
+    $rootScope.unread = false;
   }
 });
 })();
