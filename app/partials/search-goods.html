@@ -1,41 +1,41 @@
-  <div class="search-goods-page">
-    <div class="row">
-      <div class="col-md-12 search-col1">
-        <a href="#/goods/{{id_rs}}/goods/viewcart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
-        <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary">Goods</a>
-      </div>
+<div class="search-goods-page">
+  <div class="row">
+    <div class="col-md-12 search-col1">
+      <a href="#/goods/{{id_rs}}/goods/viewcart" class= "btn btn-default">Cart ({{shoppingCart.length}})</a>
+      <a href= "#/goods/{{id_rs}}/listing" class= "btn btn-primary">Goods</a>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div>
-          <form ng:submit class= "search-form">
-            <input type= "text" placeholder= "Search for Goods" ng-model= "query" class= "form-control">
-            <button ng-click="search(query)" class= "btn btn-default">Search</button>
-          </form>
-          <div class= "filter-by-tags">
-            <label>Filter by Tags</label>
-            <select ng-model= "selectedTags">
-              <option ng-repeat= "value in uniqueTags">{{value}}</option>
-            </select> 
-          </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div>
+        <form ng:submit class= "search-form">
+          <input type= "text" placeholder= "Search for Goods" ng-model= "query" class= "form-control">
+          <button ng-click="search(query)" class= "btn btn-default">Search</button>
+        </form>
+        <div class= "filter-by-tags">
+          <label>Filter by Tags</label>
+          <select ng-model= "selectedTags">
+            <option ng-repeat= "value in uniqueTags">{{value}}</option>
+          </select> 
         </div>
-        <div ng-if= "searchedGoods.length == 0">
-          <label>No Results</label>
-        </div>
-        <div class="list-group search-result-div" ng-repeat= "goods in searchedGoods | filter: selectedTags" ng-if= "searchedGoods.length > 0" ng-click= "details(goods)">
-            <img src="{{goods.image}}" ng-if= "goods.image">
-            <img src="images/no-image.jpg" ng-if= "!goods.image">
-            <a class="list-group-item">
-              <div>
-                <h4 class="list-group-item-heading">{{goods.name}}</h4>
-                <p class="list-group-item-text" ng-if= "goods.description">{{goods.description}}</p>
-                <p class="list-group-item-text" ng-if= "goods.tags"> <b>Tags:</b> {{goods.tags}}</p>
-                <p class="list-group-item-text"><b>Quantity:</b> {{goods.quantity}}</p>
-                <p class="list-group-item-text"> <b>PriceNQT:</b> {{goods.priceNQT}}</p>
-              </div>
-            </a>
-            <button class= "btn btn-primary" ng-click= "addToCart(goods)">Add to Cart</button>
-        </div>
+      </div>
+      <div ng-if= "searchedGoods.length == 0">
+        <label>No Results</label>
+      </div>
+      <div class="list-group search-result-div" ng-repeat= "goods in searchedGoods | filter: selectedTags" ng-if= "searchedGoods.length > 0" ng-click= "details(goods)">
+          <img src="{{goods.image}}" ng-if= "goods.image">
+          <img src="images/no-image.jpg" ng-if= "!goods.image">
+          <a class="list-group-item">
+            <div>
+              <h4 class="list-group-item-heading">{{goods.name}}</h4>
+              <p class="list-group-item-text" ng-if= "goods.description">{{goods.description}}</p>
+              <p class="list-group-item-text" ng-if= "goods.tags"> <b>Tags:</b> {{goods.tags}}</p>
+              <p class="list-group-item-text"><b>Quantity:</b> {{goods.quantity}}</p>
+              <p class="list-group-item-text"> <b>PriceNQT:</b> {{goods.priceNQT}}</p>
+            </div>
+          </a>
+          <button class= "btn btn-primary" ng-click= "addToCart(goods)">Add to Cart</button>
       </div>
     </div>
   </div>
+</div>
