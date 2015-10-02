@@ -30,8 +30,7 @@
                         <th>{{'translate.goods_seller' | translate}}</th>
                         <th>{{'translate.goods_tags' | translate}}</th>
                         <th>{{'translate.goods_quantity' | translate}}</th>
-                        <th ng-if= "symbol == 'FIM'" translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
-                        <th ng-if= "symbol == 'NXT'" translate= "translate.goods_price_nxt" translate-values="{symbol:symbol}"></th>
+                        <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
                         <th ng-if= "paramSection == 'viewlisting' && currentAccount.secretPhrase.length > 0"></th>
                       </tr>
                     </thead>
@@ -100,8 +99,7 @@
               <img src="images/no-image.jpg" style= "width: 225px;" ng-if= "!details.image" ng-hide= "details.description | parseImage">
             </div>
             <div class= "goods-details1">
-              <label class= "price" ng-if= "symbol == 'FIM'" translate= "translate.goods_price" translate-values="{symbol:symbol}"></label><label ng-if= "symbol == 'FIM'">: {{details.priceFIMK}}</label>
-              <label class= "price" ng-if= "symbol == 'NXT'" translate= "translate.goods_price_nxt" translate-values="{symbol:symbol}"></label><label ng-if= "symbol == 'NXT'">: {{details.priceFIMK}}</label>
+              <label class= "price" translate= "translate.goods_price" translate-values="{symbol:symbol}"></label><label>: {{details.priceFIMK}}</label>
               <label class= "quantity"><b>{{'translate.goods_quantity' | translate}}: </b>{{details.quantity}}</label>
             </div>
             <div class= "goods-details2">
@@ -137,8 +135,7 @@
                       <tr>
                         <th style= "text-align: center;">{{'translate.goods_name' | translate}}</th>
                         <th></th>
-                        <th ng-if= "symbol == 'FIM'" translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
-                        <th ng-if= "symbol == 'NXT'" translate= "translate.goods_price_nxt" translate-values="{symbol:symbol}"></th>
+                        <th translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
                         <th>{{'translate.goods_total_price' | translate}}</th>
                       </tr>
                     </thead>
@@ -151,8 +148,7 @@
                           <p><b>{{'translate.goods_seller' | translate}}: </b>{{items.seller}}</p>
                           <p class= "remove-item" ng-click= "remove($index, items)">{{'translate.remove_from_cart' | translate}}</p>
                         </td>
-                        <td class= "price" ng-if= "symbol == 'FIM'">{{items.priceFIMK}}</td>
-                        <td class= "price" ng-if= "symbol == 'NXT'">{{items.priceFIMK}}</td>
+                        <td class= "price">{{items.priceFIMK}}</td>
                         <td class= "total-price"><b>{{'translate.goods_total_price' | translate}}: {{items.priceFIMK}}</b></td>
                       </tr>
                     </tbody>
@@ -201,8 +197,7 @@
                     <th>{{'translate.goods_name' | translate}}</th>
                     <th>{{'translate.goods_seller' | translate}}</th>
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th ng-if= "symbol == 'FIM'" translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
-                    <th ng-if= "symbol == 'NXT'" translate= "translate.goods_price_nxt" translate-values="{symbol:symbol}"></th>
+                    <th translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,8 +269,7 @@
                     <th>{{'translate.purchase_id' | translate}}</th>
                     <th>{{'translate.goods_name' | translate}}</th>
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th ng-if= "symbol == 'FIM'" translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
-                    <th ng-if= "symbol == 'NXT'" translate= "translate.goods_price_nxt" translate-values="{symbol:symbol}"></th>
+                    <th translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
                     <th>{{'translate.delivery_deadline' | translate}}</th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                   </tr>
@@ -302,8 +296,7 @@
                     <th>{{'translate.goods_name' | translate}}</th>
                     <!-- <th>Seller</th> -->
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th ng-if= "symbol == 'FIM'" translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
-                    <th ng-if= "symbol == 'NXT'" translate= "translate.goods_price_nxt" translate-values="{symbol:symbol}"></th>
+                    <th translate= "translate.goods_price" translate-values="{symbol:symbol}"></th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                     <th ng-if= "currentAccount.secretPhrase.length > 0"></th>
                     <th ng-if= "decryptedMessage && currentAccount.secretPhrase.length > 0">{{'translate.message_from_buyer' | translate}}</th>
