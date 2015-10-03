@@ -73,7 +73,7 @@
         for (var i = 0; i < goods.length; i++) {
           var a = goods[i];
           a.index = index;
-          a.priceFIMK = nxt.util.convertNQT(a.priceNQT);
+          a.priceNXT = nxt.util.convertNQT(a.priceNQT);
         }
         return new Iterator(goods);
       }
