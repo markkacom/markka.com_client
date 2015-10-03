@@ -7,16 +7,15 @@
       this.init(api, $scope, pageSize, account);
       this.filter = null;
       this.account = account;
-      var account_id = nxt.util.convertRSAddress(this.account);
-      this.subscribe('addedUnConfirmedTransactions-'+account_id, this.addedTransactions);
+      if (this.account) {
+        var account_id = nxt.util.convertRSAddress(this.account);
+        this.subscribe('addedUnConfirmedTransactions-'+account_id, this.addedTransactions);
+      }
     }
-
-
-
     angular.extend(AllGoodsProvider.prototype, IndexedEntityProvider.prototype, {
 
-      add: function(data) {
-        data.attachment.priceFIMK = nxt.util.convertNQT(data.attachment.priceNQT);
+      myAdd: function(data) {
+        data.attachment.priceNXT = nxt.util.convertNQT(data.attachment.priceNQT);
         this.entities.push(data.attachment);
       },
 
@@ -33,7 +32,7 @@
            if (transaction.type == 3 && transaction.subtype == 0) {
              /* replace x and y with proper types for LISTING */
              changed = true;
-             this.add(transaction);
+             this.myAdd(transaction);
            }
            else {
               /* replace x and y with proper types for DE-LISTING */
@@ -54,6 +53,9 @@
           includeCounts: true,
           requestType: 'getDGSGoods'
         }
+        if (this.account) {
+          args.seller = this.account;
+        }
         if (this.filter) {
           args.query = this.filter;
           args.requestType = 'searchDGSGoods';
@@ -71,7 +73,7 @@
         for (var i = 0; i < goods.length; i++) {
           var a = goods[i];
           a.index = index;
-          a.priceFIMK = nxt.util.convertNQT(a.priceNQT);
+          a.priceNXT = nxt.util.convertNQT(a.priceNQT);
         }
         return new Iterator(goods);
       }
