@@ -54,21 +54,6 @@ module.config(function($routeProvider) {
     });
 });
 
-// module.run(function($rootScope, $location, $interval) {
-//   $rootScope.$watch(function() {
-
-//     if($location.path().indexOf("/messenger/") > -1) {
-//       $interval(function() {
-//         $rootScope.unread = false;
-//       }, 5000);
-//       console.log("called")
-//     } else {
-//       $interval.cancel();
-//       console.log("cancelled");
-//     }
-//   })
-// })
-
 module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope, 
   $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji, 
   KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval) {
