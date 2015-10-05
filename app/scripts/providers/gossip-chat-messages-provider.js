@@ -320,7 +320,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
           if (must_update) {
             must_update = false;
             self.$scope.$evalAsync(function () {
-              var x = 'nothing to do here';
+              var x = 'nothing to do here - but MUST remain!';
             });
           }
         }
@@ -355,10 +355,10 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
     },
 
     loadMore: function () {
-      // if (this.loadMoreBusy) {
-      //   this.scheduledLoadMore = true;
-      // }
-      // else {
+      if (this.loadMoreBusy) {
+        this.scheduledLoadMore = true;
+      }
+      else {
         var self = this;
         this.loadMoreBusy = $q.defer();
         this.loadMoreBusy.promise.then(function () {
@@ -369,19 +369,19 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
           }
         });
 
-        /* must only count gossip messages when determining firstIndex */
+        /* must only count gossip (db) messages when determining firstIndex */
         var firstIndex = firstIndex || 0;
         for (var i=0; i<this.entities.length; i++) {
-          // if (this.entities[i].attachment) {
+          if (!this.entities[i].attachment) {
             firstIndex++;
-          // }
+          }
         }
 
         this.$scope.$evalAsync(function () {
           self.isLoading = true;
           self.getData(firstIndex).then(self.loadMoreBusy.resolve);
         });
-      // }
+      }
     },
 
     getData: function (firstIndex) {
