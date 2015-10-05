@@ -191,7 +191,7 @@
           <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
             <div ng-repeat="o in provider.entities" class="well well-sm">
               <div>
-                <big>{{o.name}}</big>&nbsp;|&nbsp;<small>{{o.goods}}</small>&nbsp;|&nbsp;<a href="#/accounts/{{o.sellerRS}}/activity/latest">{{o.sellerName || o.sellerRS}}</a>
+                <a href="#/goods/{{paramEngine}}/{{o.goods}}"><big>{{o.name}}</big>&nbsp;|&nbsp;<small>{{o.goods}}</small></a>&nbsp;|&nbsp;<a href="#/accounts/{{o.sellerRS}}/activity/latest">{{o.sellerName || o.sellerRS}}</a>
               </div>
               <div>{{ o | json }}</div>
               <div>{{o.description}}</div>
