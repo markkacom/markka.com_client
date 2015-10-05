@@ -215,19 +215,5 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     );
   }
 
-}).filter('parseImage', function() {
-  return function(item) {
-    try {
-      return JSON.parse(item).image;
-    } catch (e) {
-    }
-  }
-}).filter('parseDescription', function() {
-  return function(item) {
-    try {
-      return JSON.parse(item).description;
-    } catch (e) {
-    }
-  }
-})
+});
 })();
