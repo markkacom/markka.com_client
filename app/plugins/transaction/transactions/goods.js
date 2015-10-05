@@ -2,7 +2,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (plugins, modals, $q, $rootScope, nxt) {
+module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
   
   var plugin = plugins.get('transaction');
 
@@ -75,14 +75,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     label: 'Delete Item',
     id: 'dgsDelisting',
     exclude: true,
-    execute: function (senderRS, args) {
+    execute: function (args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Delete Item',
         message: 'Delete a Marketplace item having id '+args.goods+' with no length restricted tags',
-        // senderRS: senderRS,
         requestType: 'dgsDelisting',
-        // canHaveRecipient: false,
         createArguments: function (items) {
           return {
             goods: items.goods
@@ -98,41 +96,37 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     label: 'Purchase Item',
     id: 'dgsPurchase',
     exclude: true,
-    execute: function (senderRS, args) {
+    execute: function (args) {
       console.log(args);
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Purchase Item',
         message: 'Pay to complete Marketplace purchases',
         requestType: 'dgsPurchase',
-        // hideMessage: true,
-        senderRS: senderRS,
-        // editRecipient: (args.editRecipient===false) ? false : true,
-        recipient: args.recipient||'',
         canHaveRecipient: false,
         abc: true,
         createArguments: function (items) {
           return {
             goods: items.goods, 
-            // priceNQT: items.priceNQT,
             quantity: String(items.quantity),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
-            priceNQT: nxt.util.convertToNQT(items.priceNQT),
-            recipient: items.recipient,
+            priceNQT: nxt.util.convertToNQT(items.priceNXT),
+            recipient: nxt.util.convertRSAddress(items.recipient)
           }
         },
         fields: [{
           label: 'Name',
           name: 'name',
           type: 'text',
+          readonly: true,
           value: args.name||''
         },
         {
-          label: 'Price FIMK',
-          name: 'price',
-          type: 'text',
+          label: 'Price',
+          name: 'priceNXT',
+          type: 'money',
           readonly: true,
-          value: args.priceNQT||''
+          value: args.priceNXT||''
         },
         {
           label: 'Quantity',
@@ -144,7 +138,8 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           label: 'Recipient',
           name: 'recipient',
           type: 'text',
-          value: args.recipient||''
+          value: args.recipient||'',
+          readonly: true
         }]
       }));
     }
@@ -156,31 +151,79 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     label: 'Give Rebate',
     id: 'dgsRefund',
     exclude: true,
-    execute: function (senderRS, args) {
+    execute: function (args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Give Rebate',
         message: 'Return some FIMK to buyer',
-        senderRS: senderRS,
         requestType: 'dgsRefund',
         canHaveRecipient: false,
+        initialize: function (items) {
+          var api = nxt.get($rootScope.currentAccount.id_rs);
+          var call_arg = { requestType: 'getDGSPurchase', purchase: items.purchase };
+          api.engine.socket().callAPIFunction(call_arg).then(
+            function (data) {
+              $rootScope.$evalAsync(function () {
+                var error = data.error || data.errorDescription;
+                if (error) {
+                  console.log(error);
+                  plugin.getField(items, 'name').value = '';
+                  plugin.getField(items, 'priceNXT').value = '';
+                  plugin.getField(items, 'quantity').value = '';
+                  plugin.getField(items, 'totalPriceNXT').value = '';
+                }
+                else {
+                  plugin.getField(items, 'name').value = data.name + ' ('+data.goods+')';
+                  plugin.getField(items, 'priceNXT').value = nxt.util.convertToNXT(data.priceNQT)+' '+api.engine.symbol;
+                  plugin.getField(items, 'quantity').value = data.quantity;
+                  plugin.getField(items, 'totalPriceNXT').value = nxt.util.convertToNXT((new BigInteger(data.priceNQT)).multiply(new BigInteger(""+data.quantity)).toString())+' '+api.engine.symbol;
+                }
+              });
+            }
+          );
+        },
         createArguments: function (items) {
           return {
             purchase: items.purchase,
-            refundNQT: nxt.util.convertToNQT(items.refundNQT)
+            refundNQT: nxt.util.convertToNQT(items.refundNXT)
           }
         },
         fields: [{
           label: 'Purchase',
           name: 'purchase',
           type: 'text',
-          value: args.purchase||''
+          value: args.purchase||'',
+          readonly: true
         },
         {
-          label: 'Price FIMK',
-          name: 'price',
+          label: 'Name',
+          name: 'name',
           type: 'text',
-          value: args.refundNQT||''
+          readonly: true
+        },
+        {
+          label: 'Price',
+          name: 'priceNXT',
+          type: 'text',
+          readonly: true
+        },
+        {
+          label: 'Quantity',
+          name: 'quantity',
+          type: 'text',
+          readonly: true
+        },
+        {
+          label: 'Total',
+          name: 'totalPriceNXT',
+          type: 'text',
+          readonly: true
+        },        
+        {
+          label: 'Refund',
+          name: 'refundNXT',
+          type: 'money',
+          value: args.refundNXT||''
         }]
       }));
     }
@@ -192,26 +235,84 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     label: 'Confirm Item',
     id: 'dgsDelivery',
     exclude: true,
-    execute: function (senderRS, args) {
+    execute: function (args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Confirm Item',
         message: 'Pay to complete Marketplace purchases',
-        senderRS: senderRS,
         requestType: 'dgsDelivery',
         canHaveRecipient: false,
+        initialize: function (items) {
+          var api = nxt.get($rootScope.currentAccount.id_rs);
+          var call_arg = { requestType: 'getDGSPurchase', purchase: items.purchase };
+          api.engine.socket().callAPIFunction(call_arg).then(
+            function (data) {
+              $rootScope.$evalAsync(function () {
+                var error = data.error || data.errorDescription;
+                if (error) {
+                  console.log(error);
+                  plugin.getField(items, 'buyerRS').value = '';
+                  plugin.getField(items, 'name').value = '';
+                }
+                else {
+                  plugin.getField(items, 'buyerRS').value = data.buyerRS;
+                  plugin.getField(items, 'name').value = data.name + ' ('+data.goods+')';
+
+                  /* Must get buyer public key */
+                  publicKeyService.get(data.buyerRS).then(
+                    function (publicKey) {
+                      items.recipientPublicKey = publicKey;
+                    }
+                  );
+                }
+              });
+            }
+          );
+        },        
         createArguments: function (items) {
+          var api = nxt.get($rootScope.currentAccount.id_rs);
+          var options = {
+            account: api.crypto.getAccountIdFromPublicKey(items.recipientPublicKey, false),
+            publicKey: items.recipientPublicKey
+          };
+          var encrypted = api.crypto.encryptNote(items.data, options, $rootScope.currentAccount.secretPhrase);
           return {
             purchase: items.purchase,
-            secretPhrase: items.secretPhrase,
-            goodsToEncrypt: items.purchase
-          }
+            goodsData: encrypted.message,
+            goodsNonce: encrypted.nonce,
+            goodsIsText: 'true',
+            discountNQT: nxt.util.convertToNQT(items.discountNXT)||'0'
+          };
         },
         fields: [{
+          label: 'Buyer',
+          name: 'buyerRS',
+          type: 'text',
+          readonly: true
+        },
+        {
           label: 'Purchase',
           name: 'purchase',
           type: 'text',
+          readonly: true,
           value: args.purchase||''
+        },
+        {
+          label: 'Good',
+          name: 'name',
+          type: 'text',
+          readonly: true
+        },        
+        {
+          label: 'Discount',
+          name: 'discountNXT',
+          type: 'money',
+          value: '0'
+        },
+        {
+          label: 'Data',
+          name: 'data',
+          type: 'textarea'
         }]
       }));
     }
