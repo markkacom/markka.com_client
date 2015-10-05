@@ -3,9 +3,10 @@
   var module = angular.module('fim.base');
   module.factory('AllGoodsProvider', function(nxt, $q, IndexedEntityProvider) {
 
-    function AllGoodsProvider(api, $scope, pageSize, account) {
+    function AllGoodsProvider(api, $scope, pageSize, account, tag) {
       this.init(api, $scope, pageSize, account);
       this.filter = null;
+      this.tag = tag;
       this.account = account;
       if (this.account) {
         var account_id = nxt.util.convertRSAddress(this.account);
@@ -63,6 +64,10 @@
             args.query += '*';
           }
         }
+        if (this.tag) {
+          args.tag = this.tag;
+          args.requestType = 'searchDGSGoods';
+        }
         this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
         return deferred.promise;
       },
@@ -74,6 +79,16 @@
           var a = goods[i];
           a.index = index;
           a.priceNXT = nxt.util.convertNQT(a.priceNQT);
+          if (a.tags) {
+            var tags = a.tags.split(',');
+            a.tagsHTML = '';
+            for (var j=0; j<tags.length; j++) {
+              if (j>0) {
+                a.tagsHTML += ',';
+              }
+              a.tagsHTML += '<a href="#/goods/'+this.api.engine.symbol_lower+'/tags/'+tags[j]+'">'+tags[j]+'</a>';
+            }
+          }
         }
         return new Iterator(goods);
       }
