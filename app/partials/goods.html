@@ -57,14 +57,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="goods in provider.entities" style="cursor: pointer;">
-                <td><a href="#/goods/{{paramEngine}}/{{goods.goods}}">{{goods.name}}</a></td>
-                <td><a href="#/goods/{{paramEngine}}/listing/{{goods.sellerRS}}">{{goods.sellerRS}}</a></td>
-                <td ng-bind-html="goods.tagsHTML"></td>
-                <td>{{goods.quantity}}</td>
-                <td>{{goods.priceNXT}}</td>
-                <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(goods, $index)" 
-                  class="text-danger" translate="translate.delete_good"></td>
+              <tr ng-repeat="item in provider.entities" style="cursor: pointer;" ng-class="{ 'delisted-good': item.delisted }">
+                <td><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></td>
+                <td><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></td>
+                <td ng-bind-html="item.tagsHTML"></td>
+                <td>{{item.quantity}}</td>
+                <td>{{item.priceNXT}}</td>
+                <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)" 
+                  class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
               </tr>
             </tbody>
           </table>
