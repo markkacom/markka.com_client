@@ -3,12 +3,12 @@
   var module = angular.module('fim.base');
   module.factory('GoodsDetailsProvider', function(nxt, $q) {
 
-    function GoodsDetailsProvider(api, $scope, paramSection) {
-      this.paramSection = paramSection;
+    function GoodsDetailsProvider(api, $scope, goods) {
       this.api = api;
       this.$scope = $scope;
       this.isLoading = true;
-      this.entities = [];
+      this.goods = goods;
+      this.data = {};
     }
     GoodsDetailsProvider.prototype = {
       reload: function() {
@@ -26,14 +26,25 @@
         var self = this;
         var args = {
           requestType: 'getDGSGood',
-          goods: this.paramSection
+          goods: this.goods
         }
-        this.api.engine.socket().callAPIFunction(args).then(function(data) {
+        this.api.engine.socket().callAPIFunction(args).then(
+          function(data) {
             self.$scope.$evalAsync(function() {
               self.isLoading = false;
-              var goodsDetails = data || [];
-              goodsDetails.priceFIMK = nxt.util.convertNQT(data.priceNQT);
-              self.entities.push(goodsDetails);
+              data.priceNXT = nxt.util.convertNQT(data.priceNQT);
+              angular.extend(self, data);
+              angular.extend(self.data, data);
+              if (data.tags) {
+                var tags = data.tags.split(',');
+                self.tagsHTML = '';
+                for (var j=0; j<tags.length; j++) {
+                  if (j>0) {
+                    self.tagsHTML += ',';
+                  }
+                  self.tagsHTML += '<a href="#/goods/'+self.api.engine.symbol_lower+'/tags/'+tags[j]+'">'+tags[j]+'</a>';
+                }
+              }
               deferred.resolve();
             });
           },
