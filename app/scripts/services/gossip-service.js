@@ -619,8 +619,10 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
           /* update timestamp*/
           Gossip.getChatService().get(gossip.senderRS).then(
             function (chat) {
-              chat.timestamp = gossip.timestamp;
-              chat.save();
+              if (chat) {
+                chat.timestamp = gossip.timestamp;
+                chat.save();
+              }
             }
           );
         }.bind(this));
