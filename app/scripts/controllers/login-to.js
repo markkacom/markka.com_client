@@ -62,6 +62,15 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
   $scope.alerts.activationBusy = false;
   $scope.alerts.fileError = false;
 
+  var navigate_to = ($routeParams.action||'').split('|');
+  if (navigate_to.length >= 2 && navigate_to[0] == 'navigate') {
+    navigate_to.shift();
+    navigate_to = '/' + navigate_to.join('/');
+  }
+  else {
+    navigate_to = null;
+  }
+
   var initializers = {
     2: function () {
       if ($scope.input.account) {
@@ -119,6 +128,12 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
         words.push(dice_words[w3]);
       }
       crypto.getRandomValues(random);
+
+      /* only if using a word list of 7776 words or longer can we use 10 words, 
+         otherwise use 12 words */
+      if (dice_words.length >= 7776) {
+        words = words.slice(0, 10);
+      }
       return words.join(" ");
     }
     diceWords.getWords($rootScope.langCode).then(
@@ -186,9 +201,11 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
       $rootScope.$emit('onCloseCurrentAccount', $rootScope.currentAccount);
     }
     $rootScope.currentAccount = angular.copy(account);
-    $rootScope.$emit('onOpenCurrentAccount', $rootScope.currentAccount);
 
     var api = nxt.get(account.id_rs);
+    $rootScope.currentAccount.symbol_lower = api.engine.symbol_lower;
+    $rootScope.$emit('onOpenCurrentAccount', $rootScope.currentAccount);
+
     api.engine.socket().getAccount({account:account.id_rs}).then(
       function (a) {
         $rootScope.$evalAsync(function () {
@@ -311,6 +328,9 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
       delete $rootScope.destURL;
       $timeout(function () { $location.path(url) }, 0, false);
     }
+    else if (navigate_to) {
+      $location.path(navigate_to);
+    }
     else {
       $location.path('/accounts/'+account.id_rs+'/activity/latest');  
     }
@@ -325,6 +345,9 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
       delete $rootScope.destURL;
       $timeout(function () { $location.path(url) }, 0, false);
     }
+    else if (navigate_to) {
+      $location.path(navigate_to);
+    }    
     else {
       $location.path('/accounts/'+account.id_rs+'/activity/latest');
     }
