@@ -53,6 +53,7 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
   var contacts = "++id,id_rs,name";
   var gossips = "++primaryKey,id,topic,chatId,recipientRS,senderRS";
   var chats = "++id,accountRS,otherRS"
+  var cart = "++id,goods,symbol";
 
   versions([{
     update: {
@@ -66,6 +67,10 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
     update: {
       gossips: gossips,
       chats: chats
+    }
+  }, {
+    update: {
+      cart: cart
     }
   }], db);
 
@@ -125,6 +130,7 @@ module.factory('db', function ($log, $injector, $timeout, $rootScope) {
   $injector.get('MasspayPluginPayment').initialize(db);
   $injector.get('GossipModel').initialize(db);
   $injector.get('ChatModel').initialize(db);
+  $injector.get('CartModel').initialize(db);
 
   function findFirstPropIndex(array, source, propertySource, propertyArray)  {
     propertyArray = propertyArray || propertySource;
