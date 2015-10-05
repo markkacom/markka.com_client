@@ -1,44 +1,37 @@
 <div class="landing-page">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12" style="padding-top: 60px">
       <center>
         <p>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>          
-          <!-- <h1><b>Welcome to FIMKRYPTO</b></h1> -->
-          <img src="images/fimk.png" class="img-responsive" width="320">
+          <img src="images/fimk-logo.png" class="img-responsive">
         </p>
       </center>
     </div>
-  </div>
+  </div>   
   <div class="row">
-    <div class="col-md-6 col-md-offset-3" style="margin-bottom: 8px">
+    <div class="col-md-12">
+      <center style="padding-top: 10px; padding-bottom: 60px">
+        <div class="btn-group" style="margin-bottom: 8px">
+          <a href="#/login-to" class="btn btn-primary btn-lg"><b translate="translate.sign_in"></b></a>          
+        </div>
+        <div class="btn-group" style="margin-bottom: 8px">
+          <a href="#/login-to/create" class="btn btn-success btn-lg"><b translate="translate.create_new_account"></b></a>          
+        </div>
+      </center>
+    </div>
+  </div>   
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4" style="margin-bottom: 8px">
       <form ng-submit="doSearch()">
         <div class="input-group">
-          <input type="text" class="form-control input-lg" placeholder="Search for..." ng-model="searchQuery">
+          <input type="text" class="form-control" placeholder="Search for..." ng-model="searchQuery">
           <span class="input-group-btn">
-            <button class="btn btn-default btn-lg" type="submit">Go!</button>
+            <button class="btn btn-default" type="submit">Go!</button>
           </span>
         </div>
       </form>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      <center>
-        <div class="btn-group" style="margin-bottom: 8px">
-          <a href="#/login-to" class="btn btn-primary"><b translate="translate.sign_in"></b></a>          
-        </div>
-        <div class="btn-group" style="margin-bottom: 8px">
-          <a href="#/login-to/create" class="btn btn-success"><b translate="translate.create_new_account"></b></a>          
-        </div>
-      </center>
-    </div>
-  </div>  
   <div class="row">
     <div class="col-md-12">
       <center>
@@ -59,66 +52,5 @@
         </div>
       </center>
     </div>
-  </div>
-
-  <!-- <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <div class="row">
-        <div class="col-xs-6">
-          <button type="button" class="btn btn-danger btn-block create-account-btn" ng-click="showNewAccountModal()">
-            <b translate="translate.add_account"></b>
-          </button>
-        </div>
-        <div class="col-xs-6">
-          <div>
-            <span class="input-group-btn">
-              <span class="btn btn-primary btn-block btn-file">
-                <span class="glyphicon glyphicon-folder-open"></span>
-                &nbsp;&nbsp;&nbsp;<span translate="translate.import_wallet"></span>
-                &nbsp;<input type="file" onchange="window.onWalletFileSelected(event)" file-select>
-              </span>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
-  <!-- <div ng-if="!isNodeJS">
-    <div class="col-md-6">
-      <div class="embed-responsive embed-responsive-16by9 hidden-xs" ng-if="!isNodeJS">
-        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/aGWCJ_XWauQ?autoplay=0&showinfo=0&controls=0&wmode=transparent&loop=1" frameborder="0" 
-          allowfullscreen></iframe>
-      </div>
-      <p>
-        <br>
-        <button type="button" class="btn btn-danger btn-block create-account-btn" ng-click="showNewAccountModal()" style="padding: 15px; font-size: 150%">
-          <big><b>Add account</b></big>
-        </button>
-      </p>
-      <p>
-        <div>
-          <span class="input-group-btn">
-            <span class="btn btn-primary btn-block btn-file">
-              <span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;&nbsp;Import wallet <input type="file" 
-                onchange="window.onWalletFileSelected(event)">
-            </span>
-          </span>
-        </div>
-      </p>
-    </div>
-    <div class="col-md-6">
-      <div class="jumbotron dark-background">
-        <p><b>Fimkrypto is a growing community of free individuals who come in contact, organize and do business on the distributed consensus network of FIMKrypto.</b></p>
-        <p>The Fimkrypto network is fully decentralized and built on second generation bitcoin technology. Join the decentralized revolution, <b>join Fimkrypto today</b>.</p>
-        <p>*&nbsp;&nbsp;<b>Get social</b></p>
-        <p>*&nbsp;&nbsp;<b>Publish your thoughts</b></p>
-        <p>*&nbsp;&nbsp;<b>Encrypted messaging</b></p>
-        <p>*&nbsp;&nbsp;<b>Asset exchange</b></p>
-        <p>*&nbsp;&nbsp;<b><s>Goods store</s></b> (soon)</p>
-        <p>*&nbsp;&nbsp;<b><s>Issue your own currency</s></b> (soon)</p>
-        <p>*&nbsp;&nbsp;<b><s>Crowdfunding</s></b> (soon)</p>
-        <p>*&nbsp;&nbsp;<b>Supports FIMK <u>and NXT</u></b></p>
-      </div>
-    </div>   
-  </div> -->
+  </div>  
 </div>
