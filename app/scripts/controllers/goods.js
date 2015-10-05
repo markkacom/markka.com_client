@@ -120,10 +120,6 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     plugins.get('transaction').get('dgsDelisting').execute({goods: good.goods});
   }
 
-  $scope.details = function(good) {
-    $location.path('/goods/' + $scope.paramEngine + '/' + good.goods);
-  }
-
   $scope.add = function() {
     plugins.get('transaction').get('dgsListing').execute();
   }
