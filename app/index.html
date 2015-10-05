@@ -112,6 +112,7 @@
     <script src="scripts/models/masspayPluginPayment.js"></script>
     <script src="scripts/models/gossip.js"></script>
     <script src="scripts/models/chat.js"></script>
+    <script src="scripts/models/cart.js"></script>
 
     <script src="scripts/directives/money.js"></script>
     <script src="scripts/directives/dd-text-collapse.js"></script>
@@ -273,9 +274,12 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a ng-hide="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/start" style="padding:9px 10px 9px 15px">
-          <!-- <strong ng-bind="WALLET_NAME"></strong><span class="text-danger"><b>{{isTestnet? ' TEST' : ''}}</b></span> -->
+        <!-- <a ng-hide="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/start" style="padding:9px 10px 9px 15px">
           <img alt="Brand" style="max-height:none; min-height:5px !important; height:100%" src="images/lompsa.png">
+        </a> -->
+
+        <a ng-hide="TRADE_UI_ONLY" class="navbar-brand" ng-href="#/start" style="padding:9px 10px 9px 5px">
+          <img alt="Brand" style="max-height:none; min-height:5px !important; height:100%" src="images/fimk-logo.png">
         </a>
 
         <a ng-hide="!currentAccount" class="navbar-brand visible-xs" ng-href="#/messenger" style="padding:5px 10px 0px 8px">
@@ -290,7 +294,7 @@
         <ul class="nav navbar-nav" nav-menu="active">
           <li route-active="accounts/{{currentAccount.id_rs}}/" ng-if="currentAccount && !IS_SMALL_DEVICE">
             <a ng-href="#/accounts/{{currentAccount.id_rs}}/activity/latest">
-              <strong>{{userData.label}}</strong>
+              <u>{{userData.label}}</u>
               <span ng-bind-html="userData.html"></span>
             </a>
           </li>
@@ -321,15 +325,6 @@
             <a href="javascript:window.history.forward()"><i class="fa fa-arrow-right"></i></a>
           </li>
 
-          <!-- <li route-active="start/">
-            <a ng-href="#/start"><i class="fa fa-home text-success"></i>&nbsp;&nbsp;{{'translate.home' | translate}}</a>
-          </li> -->
-
-          <!-- <li route-active="accounts/{{currentAccount.id_rs}}/" ng-show="currentAccount && !IS_SMALL_DEVICE">
-            <a ng-href="#/accounts/{{currentAccount.id_rs}}/activity/latest">
-              <b><i class="fa fa-home text-danger"></i></b>
-            </a>
-          </li> -->
           <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount">
             <a href="#/messenger">
               <i class="fa fa-comment-o"></i><span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-md hidden-sm">&nbsp;&nbsp;<span translate="translate.messenger"/></span>
