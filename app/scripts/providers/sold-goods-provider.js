@@ -37,7 +37,7 @@
           var a = goods[i];
           a.index = index;
           a.priceNXT = nxt.util.convertNQT(a.priceNQT);
-          a.deliveryTime =  String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168);
+          a.deliveryTime = String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168);
           a.totalTime = a.deliveryTime - a.deliveryDeadlineTimestamp;
           a.totalDeliveryDeadlineTimestamp = Math.floor(a.totalTime / 3600);
         }
