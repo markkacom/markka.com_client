@@ -21,6 +21,38 @@
         return deferred.promise;
       },
 
+      translate: function (data) {
+
+        /* parse the description field as JSON */
+        try {
+          var json = JSON.parse(data.description);
+          if (typeof json.description == 'string') {
+            data.description = json.description.trim();
+          }
+          if (typeof json.image == 'string') {
+            data.image = image.trim();
+          }
+          if (typeof json.callback == 'string') {
+            data.callback = callback.trim();
+          }
+        } catch (e) { /* ignore */ }
+
+
+        data.priceNXT = nxt.util.convertNQT(data.priceNQT);
+        angular.extend(this, data);
+        angular.extend(this.data, data);
+        if (data.tags) {
+          var tags = data.tags.split(',');
+          this.tagsHTML = '';
+          for (var j=0; j<tags.length; j++) {
+            if (j>0) {
+              this.tagsHTML += ',';
+            }
+            this.tagsHTML += '<a href="#/goods/'+this.api.engine.symbol_lower+'/tags/'+tags[j]+'">'+tags[j]+'</a>';
+          }
+        }
+      },
+
       getData: function() {
         var deferred = $q.defer();
         var self = this;
@@ -32,19 +64,7 @@
           function(data) {
             self.$scope.$evalAsync(function() {
               self.isLoading = false;
-              data.priceNXT = nxt.util.convertNQT(data.priceNQT);
-              angular.extend(self, data);
-              angular.extend(self.data, data);
-              if (data.tags) {
-                var tags = data.tags.split(',');
-                self.tagsHTML = '';
-                for (var j=0; j<tags.length; j++) {
-                  if (j>0) {
-                    self.tagsHTML += ',';
-                  }
-                  self.tagsHTML += '<a href="#/goods/'+self.api.engine.symbol_lower+'/tags/'+tags[j]+'">'+tags[j]+'</a>';
-                }
-              }
+              self.translate(data);
               deferred.resolve();
             });
           },
