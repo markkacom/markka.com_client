@@ -35,7 +35,7 @@
   </div>
   <div infinite-scroll="provider.loadMore()" 
       infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
-    <form class="form-inline" style="margin-bottom: 15px;">
+    <form class="form-inline" style="margin-bottom: 15px;" ng-if="paramSection == 'listing'">
       <div class="form-group">
         <span translate="translate.filter_item_label"></span>&nbsp;&nbsp;
         <input type="text" ng-model="provider.filter" ng-change="provider.reload()" class="form-control" 
@@ -159,6 +159,7 @@
           <table class="table cart-table">
             <thead>
               <tr>
+                <th></th>
                 <th style="text-align: center;">{{'translate.goods_name' | translate}}</th>
                 <th></th>
                 <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
@@ -166,16 +167,17 @@
               </tr>
             </thead>
              <tbody>
-              <tr class="itemsRow" ng-repeat="items in shoppingCart">
-                <td class="image" ng-if="items.image"> <img src="{{items.image}}"> </td>
-                <td class="no-image" ng-if="!items.image"><img src="images/no-image.jpg"></td>
+              <tr class="itemsRow" ng-repeat="item in shoppingCart">
+                <td><input type="number" ng-model="item.count" min="1" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
+                <td class="image" ng-if="item.image"> <img src="{{item.image}}"> </td>
+                <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
                 <td class="item-desc">
-                  <p><b>{{'translate.goods_name' | translate}}: </b><a href="#/goods/{{paramEngine}}/{{items.goods}}">{{items.name}}</a></p>
-                  <p><b>{{'translate.goods_seller' | translate}}: </b><a href="#/goods/{{paramEngine}}/listing/{{items.sellerRS}}">{{items.sellerRS}}</a></p>
-                  <p class="remove-item" ng-click="remove($index, items)">{{'translate.remove_from_cart' | translate}}</p>
+                  <p><b>{{'translate.goods_name' | translate}}: </b><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></p>
+                  <p><b>{{'translate.goods_seller' | translate}}: </b><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></p>
+                  <p class="remove-item" ng-click="item.delete()">{{'translate.remove_from_cart' | translate}}</p>
                 </td>
-                <td class="price">{{items.priceNXT}}</td>
-                <td class="total-price"><b>{{'translate.goods_total_price' | translate}}: {{items.priceNXT}}</b></td>
+                <td class="price">{{item.priceNXT}}</td>
+                <td class="total-price"><b>{{'translate.goods_total_price' | translate}}: {{item.totalNXT}}</b></td>
               </tr>
             </tbody>
           </table>
@@ -185,8 +187,14 @@
       <div class="col-md-12 order-buttons">
         <div>
           <a href="#/goods/{{paramEngine}}/listing" class="btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
-          <button class="btn btn-success place-order" ng-click="placeOrder()" ng-if="currentAccount">{{'translate.place_order' | translate}}</button>
-          <a href="#/login-to/navigate|goods|{{paramEngine}}|cart" class="btn btn-success place-order" ng-if="!currentAccount">{{'translate.sign_in' | translate}}</a>
+          <button class="btn btn-success place-order" ng-click="placeOrder()" 
+            ng-if="currentAccount && currentAccount.symbol_lower == paramEngine">
+            {{'translate.place_order' | translate}}
+          </button>
+          <a href="#/login-to/navigate|goods|{{paramEngine}}|cart" class="btn btn-success place-order" 
+            ng-if="!currentAccount">{{'translate.sign_in' | translate}}</a>
+          <a href="#/login-to" class="btn btn-success place-order" 
+            ng-if="currentAccount && currentAccount.symbol_lower != paramEngine">{{'translate.sign_out' | translate}}</a>
         </div>
           <hr>
       </div>
@@ -255,8 +263,8 @@
                     </a>
                   </td>
                   <td>{{orders.name}}</td>
-                  <td ng-if="!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount.secretPhrase.length > 0">{{'translate.message_to_seller' | translate}}</a></td>
-                  <td ng-if="orders.sellerName">{{orders.sellerName}}  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount.secretPhrase.length > 0">{{'translate.message_to_seller' | translate}}</a></td>
+                  <td ng-if="!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
+                  <td ng-if="orders.sellerName">{{orders.sellerName}}  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
                   <td>{{orders.quantity}}</td>
                   <td>{{orders.priceNXT}}</td>
                 </tr>
