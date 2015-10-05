@@ -155,15 +155,17 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       plugins.get('transaction').get('dgsPurchase').execute(order_args).then(
         function(data) {
           if(data) { 
-            // $http({
-            //   url: item.callback,
-            //   data: item,
-            //   method: 'POST'
-            // }).success(function(data) {
-            //   console.log(data);
-            // }).error(function(err) {
-            //   console.log(err);
-            // });
+            if (item.callback) {
+              $http({
+                url: item.callback,
+                data: item,
+                method: 'POST'
+              }).success(function(data) {
+                console.log(data);
+              }).error(function(err) {
+                console.log(err);
+              });
+            }
             item.delete().then(
               function () {
                 if (iterator.hasMore()) {
