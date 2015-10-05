@@ -385,6 +385,15 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         href  = '="#/assets/'+this.api.engine.symbol_lower+'/'+encodeURIComponent(value)+'/trade"';
         click = null;
       }
+      else if (type == this.TYPE.GOODS_NAME) {
+        var transaction = value||{};
+        href = '="#/goods/'+this.api.engine.symbol_lower+'/'+transaction.transaction+'"';
+        click = null;
+      }
+      else if (type == this.TYPE.GOODS) {
+        href = '="#/goods/'+this.api.engine.symbol_lower+'/'+label+'"';
+        click = null;
+      }
 
       var maxLength = 100;
       label = String(label);
@@ -659,7 +668,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // {{sender}} listed good {{goodsName}} quantity {{quantity}} for {{price}} {{symbol}} {{description}} {{tags}} {{details}} {{message}}
               case 0: return $translate.instant('transaction.3.0', {
                 sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                goodsName: render(TYPE.GOODS_NAME, transaction.attachment.name, transaction.transaction),
+                goodsName: render(TYPE.GOODS_NAME, transaction.attachment.name, transaction),
                 quantity:  util.commaFormat(String(transaction.attachment.quantity)),
                 price:     util.convertToNXT(transaction.attachment.priceNQT),
                 symbol:    api.engine.symbol,
