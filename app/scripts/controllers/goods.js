@@ -116,7 +116,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     plugins.get('transaction').get('sendMessage').execute($scope.id_rs, { recipient: id, editRecipient: false });
   }
 
-  $scope.deleteGood = function(good, index) {
+  $scope.deleteGood = function(good) {
     plugins.get('transaction').get('dgsDelisting').execute({goods: good.goods});
   }
 
