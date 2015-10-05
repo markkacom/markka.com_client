@@ -13,14 +13,15 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
     id: 'dgsListing',
     exclude: true,
     execute: function () {
-      // args = args||{};
       return plugin.create(angular.extend({
         title: 'Devious Item',
         message: 'Create a Marketplace item with no length restricted tags',
-        senderRS: $rootScope.currentAccount.id_rs,
         requestType: 'dgsListing',
         canHaveRecipient: false,
         createArguments: function (items) {
+          var tags = (items.tags||'').split(',');
+          tags.forEach(function (tag, index) { tags[index] = String(tag).trim() });
+          tags = tags.filter(function (tag) { return tag.length > 0 });
           return {
             name: items.name, 
             description: JSON.stringify({ description: items.description, image: items.image || '', callback: items.callback || '' }),
@@ -42,12 +43,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
         }, {
           label: 'ImageURL',
           name: 'image',
-          type: 'image',
+          type: 'text',
           value: ''
         }, {
           label: 'Callback',
           name: 'callback',
-          type: 'image',
+          type: 'text',
           value: ''
         }, {
           label: 'Tags',
@@ -79,7 +80,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Delete Item',
-        message: 'Delete a Marketplace item having id '+args.goods+' with no length restricted tags',
+        message: 'Delete a Marketplace item having id '+args.goods,
         requestType: 'dgsDelisting',
         createArguments: function (items) {
           return {
