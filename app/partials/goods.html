@@ -1,367 +1,419 @@
-<!-- goods page -->
+<div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+    <ul class="nav navbar-stacked">
 
-<div class="goods-page" ng-if="paramSection == 'listing' || paramSection == 'tags'">
-  <div class="row">
-    <div class="col-md-12" ng-if="!id_rs">
-      <span class="text-muted">Showing {{symbol}} marketplace listings
-        <a ng-show="symbol=='FIM'" href="#/goods/nxt/listing">show NXT</a>
-        <a ng-show="symbol=='NXT'" href="#/goods/fim/listing">show FIM</a>
-      </span>
-    </div>
-    <div class="col-md-12" ng-if="id_rs">
-      <span class="text-muted">Showing listings for <a href="#/accounts/{{id_rs}}/activity/latest">{{id_rs}}</a>
-      </span>
-    </div>
-    <div class="col-md-12" ng-if="provider.tag">
-      <span class="text-muted">Show results tagged with (<u>{{provider.tag}}</u>)
-        <a href="#/goods/{{paramEngine}}/listing">show all</a>
-      </span>
-    </div>
-  </div>  
-  <div class="row">
-    <div class="col-md-12 goods-col1" style="margin-bottom: 20px;">
-      <a ng-if="currentAccount && currentAccount.id_rs != id_rs" href="#/goods/{{currentAccount.symbol_lower}}/listing/{{currentAccount.id_rs}}" 
-        class="btn btn-default past-orders-button" translate="translate.view_own_listing"></a>
-      <a ng-if="id_rs" href="#/goods/{{paramEngine}}/listing" class="btn btn-default past-orders-button" translate="translate.show_all_items"></a>
-      <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
-        class="btn btn-default past-orders-button" translate="translate.past_orders"></a>
-      <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/solditems/{{currentAccount.id_rs}}" 
-        class="btn btn-default past-orders-button" translate="translate.sold_items"></a>
-      <a href="#/goods/{{paramEngine}}/cart" 
-        class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
-      <a ng-click="add()" class="btn btn-primary add-goods-button" ng-if="currentAccount" translate="translate.add_item"></a>
-      <a href="#/login-to/navigate|goods|{{paramEngine}}|listing" class="btn btn-primary" ng-if="!currentAccount" translate="translate.sign_in"></a>
-    </div>
+      <li ng-if="!currentAccount" role="presentation">
+        <a href="#/login-to/navigate|goods|{{paramEngine}}|listing" 
+            translate="translate.sign_in" class="bg-primary"></a>
+      </li>
+
+      <li role="presentation">
+        <a href="#/goods/{{paramEngine}}/listing" 
+           translate="translate.show_all_items"></a>
+      </li>
+
+      <li role="presentation">
+        <a href="#/goods/{{paramEngine}}/cart" 
+           class="font-bold bg-success text-success">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+      </li>
+
+      <li ng-if="currentAccount" role="presentation">
+        <a href="#/goods/{{currentAccount.symbol_lower}}/listing/{{currentAccount.id_rs}}" 
+          translate="translate.view_own_listing"></a>
+      </li>
+
+      <li ng-if="currentAccount" role="presentation">
+        <a href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
+           translate="translate.past_orders"></a>
+      </li>
+      <li ng-if="currentAccount"  role="presentation">
+        <a href="#/goods/{{currentAccount.symbol_lower}}/solditems/{{currentAccount.id_rs}}" 
+           translate="translate.sold_items"></a>        
+      </li>
+
+      <li ng-if="currentAccount" role="presentation">
+        <a ng-click="add()" translate="translate.add_item" class="bg-primary"></a>
+      </li>
+
+    </ul>
   </div>
-  <div infinite-scroll="provider.loadMore()" 
-      infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
-    <form class="form-inline" style="margin-bottom: 15px;" ng-if="paramSection == 'listing'">
-      <div class="form-group">
-        <span translate="translate.filter_item_label"></span>&nbsp;&nbsp;
-        <input type="text" ng-model="provider.filter" ng-change="provider.reload()" class="form-control" 
-          placeholder="{{'translate.filter_placeholder' | translate}}">
+
+  <div class="col-xs-12 col-sm-10">
+    <p class="visible-xs">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+            ng-click="offCanvas=!offCanvas">
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+        <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
+      </button>
+    </p>
+
+    <!-- goods page -->
+
+    <div class="goods-page" ng-if="paramSection == 'listing' || paramSection == 'tags'">
+      <div class="row">
+        <div class="col-md-12" ng-if="!id_rs">
+          <span class="text-muted">Showing {{symbol}} marketplace listings
+            <a ng-show="symbol=='FIM'" href="#/goods/nxt/listing">show NXT</a>
+            <a ng-show="symbol=='NXT'" href="#/goods/fim/listing">show FIM</a>
+          </span>
+        </div>
+        <div class="col-md-12" ng-if="id_rs">
+          <span class="text-muted">Showing listings for <a href="#/accounts/{{id_rs}}/activity/latest">{{id_rs}}</a>
+          </span>
+        </div>
+        <div class="col-md-12" ng-if="provider.tag">
+          <span class="text-muted">Show results tagged with (<u>{{provider.tag}}</u>)
+            <a href="#/goods/{{paramEngine}}/listing">show all</a>
+          </span>
+        </div>
+      </div>  
+      <div class="row">
+        <!-- <div class="col-md-12 goods-col1" style="margin-bottom: 20px;">
+          <a ng-if="currentAccount && currentAccount.id_rs != id_rs" href="#/goods/{{currentAccount.symbol_lower}}/listing/{{currentAccount.id_rs}}" 
+            class="btn btn-default past-orders-button" translate="translate.view_own_listing"></a>
+          <a ng-if="id_rs" href="#/goods/{{paramEngine}}/listing" class="btn btn-default past-orders-button" translate="translate.show_all_items"></a>
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
+            class="btn btn-default past-orders-button" translate="translate.past_orders"></a>
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/solditems/{{currentAccount.id_rs}}" 
+            class="btn btn-default past-orders-button" translate="translate.sold_items"></a>
+          <a href="#/goods/{{paramEngine}}/cart" 
+            class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+          <a ng-click="add()" class="btn btn-primary add-goods-button" ng-if="currentAccount" translate="translate.add_item"></a>
+          <a href="#/login-to/navigate|goods|{{paramEngine}}|listing" class="btn btn-primary" ng-if="!currentAccount" translate="translate.sign_in"></a>
+        </div> -->
       </div>
-    </form>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="table-responsive">
-          <table class="table goods-table" style="border: 1px solid #dddddd;">
-            <thead>
-              <tr>
-                <th translate="translate.goods_name"></th>
-                <th translate="translate.goods_seller"></th>
-                <th translate="translate.goods_tags"></th>
-                <th translate="translate.goods_quantity"></th>
-                <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
-                <th ng-if="currentAccount && currentAccount.id_rs == id_rs"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="item in provider.entities" style="cursor: pointer;" ng-class="{ 'delisted-good': item.delisted }">
-                <td><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></td>
-                <td><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></td>
-                <td ng-bind-html="item.tagsHTML"></td>
-                <td>{{item.quantity}}</td>
-                <td>{{item.priceNXT}}</td>
-                <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)" 
-                  class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
-              </tr>
-            </tbody>
-          </table>
+      <div infinite-scroll="provider.loadMore()" 
+          infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+        <form class="form-inline" style="margin-bottom: 15px;" ng-if="paramSection == 'listing'">
+          <div class="form-group">
+            <span translate="translate.filter_item_label"></span>&nbsp;&nbsp;
+            <input type="text" ng-model="provider.filter" ng-change="provider.reload()" class="form-control" 
+              placeholder="{{'translate.filter_placeholder' | translate}}">
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table goods-table" style="border: 1px solid #dddddd;">
+                <thead>
+                  <tr>
+                    <th translate="translate.goods_name"></th>
+                    <th translate="translate.goods_seller"></th>
+                    <th translate="translate.goods_tags"></th>
+                    <th translate="translate.goods_quantity"></th>
+                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th ng-if="currentAccount && currentAccount.id_rs == id_rs"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in provider.entities" style="cursor: pointer;" ng-class="{ 'delisted-good': item.delisted }">
+                    <td><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></td>
+                    <td><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></td>
+                    <td ng-bind-html="item.tagsHTML"></td>
+                    <td>{{item.quantity}}</td>
+                    <td>{{item.priceNXT}}</td>
+                    <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)" 
+                      class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="load-more-button" ng-show="provider.hasMore">
+          <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+            <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+            <span translate="translate.load_more_products"></span>
+          </a>
+        </div>
+      </div> 
+    </div>
+
+    <!-- goods details page -->
+
+    <div class="goods-details-page" ng-if="paramSection == 'detail'">
+      <!-- <div class="row">
+        <div class="col-md-12 goods-details-col1">
+          <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart" 
+            class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}"
+            class="btn btn-default past-orders-button">{{'translate.past_orders' | translate}}</a>
+        </div>
+      </div> -->
+      <div>
+        <div class="row">
+          <div class="col-md-12">
+            <h4>
+              <b>{{'translate.goods_name' | translate}}: </b><span>{{provider.name}}</span>
+              <span style="float: right;">
+                <b>{{'translate.goods_seller' | translate}}: </b><span><a href="#/goods/{{paramEngine}}/listing/{{provider.sellerRS}}">{{provider.sellerRS}}</a></span>
+              </span>
+            </h4>
+            <p>
+              <b>{{'translate.goods_id' | translate}}: </b><span>{{provider.goods}}</span>
+              <span style="float: right;">
+                <b ng-if="provider.sellerName">{{'translate.seller_name' | translate}} </b><span ng-if="provider.sellerName">{{provider.sellerName}}</span>
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div style="text-align: center;">
+              <img ng-if="provider.image" ng-src="provider.image" style="width: 300px">
+              <img ng-if="!provider.image" src="images/no-image.jpg" style="width: 225px">
+            </div>
+            <div class="goods-details1">
+              <label class="price" translate="translate.goods_price" translate-values="{symbol:symbol}"></label><label>: {{provider.priceNXT}}</label>
+              <label class="quantity"><b>{{'translate.goods_quantity' | translate}}: </b>{{provider.quantity}}</label>
+            </div>
+            <div class="goods-details2">
+              <p class="description">{{provider.description}}</p>
+              <p><b>{{'translate.goods_tags' | translate}}:</b> <span ng-bind-html="provider.tagsHTML"></span></p>
+            </div>
+            <div class="goods-details3">
+              <a class="btn btn-primary add-to-cart" ng-click="addToCart(provider.data)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
+              <a href="#/goods/{{paramEngine}}/listing" class="btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="load-more-button" ng-show="provider.hasMore">
-      <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
-        <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
-        <span translate="translate.load_more_products"></span>
-      </a>
-    </div>
-  </div> 
-</div>
 
-<!-- goods details page -->
+    <!-- cart page -->
 
-  <div class="goods-details-page" ng-if="paramSection == 'detail'">
-    <div class="row">
-      <div class="col-md-12 goods-details-col1">
-        <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
-        <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart" 
-          class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
-        <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}"
-          class="btn btn-default past-orders-button">{{'translate.past_orders' | translate}}</a>
-      </div>
-    </div>
-    <div>
+    <div class="cart-page" ng-if="paramSection == 'cart'">
       <div class="row">
         <div class="col-md-12">
-          <h4>
-            <b>{{'translate.goods_name' | translate}}: </b><span>{{provider.name}}</span>
-            <span style="float: right;">
-              <b>{{'translate.goods_seller' | translate}}: </b><span><a href="#/goods/{{paramEngine}}/listing/{{provider.sellerRS}}">{{provider.sellerRS}}</a></span>
-            </span>
-          </h4>
-          <p>
-            <b>{{'translate.goods_id' | translate}}: </b><span>{{provider.goods}}</span>
-            <span style="float: right;">
-              <b ng-if="provider.sellerName">{{'translate.seller_name' | translate}} </b><span ng-if="provider.sellerName">{{provider.sellerName}}</span>
-            </span>
-          </p>
+          <span class="text-muted">Showing all items in {{symbol}} cart
+            <a ng-show="symbol=='FIM'" href="#/goods/nxt/cart">show NXT</a>
+            <a ng-show="symbol=='NXT'" href="#/goods/fim/cart">show FIM</a>
+          </span>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div style="text-align: center;">
-            <img ng-if="provider.image" ng-src="provider.image" style="width: 300px">
-            <img ng-if="!provider.image" src="images/no-image.jpg" style="width: 225px">
-          </div>
-          <div class="goods-details1">
-            <label class="price" translate="translate.goods_price" translate-values="{symbol:symbol}"></label><label>: {{provider.priceNXT}}</label>
-            <label class="quantity"><b>{{'translate.goods_quantity' | translate}}: </b>{{provider.quantity}}</label>
-          </div>
-          <div class="goods-details2">
-            <p class="description">{{provider.description}}</p>
-            <p><b>{{'translate.goods_tags' | translate}}:</b> <span ng-bind-html="provider.tagsHTML"></span></p>
-          </div>
-          <div class="goods-details3">
-            <a class="btn btn-primary add-to-cart" ng-click="addToCart(provider.data)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
-            <a href="#/goods/{{paramEngine}}/listing" class="btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
-          </div>
+      </div>     
+      <!-- <div class="row">
+        <div class="col-md-12 top-buttons">
+          <label class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</label>
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
+            class="btn btn-default past-orders">{{'translate.past_orders' | translate}}</a>
+          <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.back_to_items' | translate}}</a>
         </div>
-      </div>
-    </div>
-</div>
-
-<!-- cart page -->
-
-  <div class="cart-page" ng-if="paramSection == 'cart'">
-    <div class="row">
-      <div class="col-md-12">
-        <span class="text-muted">Showing all items in {{symbol}} cart
-          <a ng-show="symbol=='FIM'" href="#/goods/nxt/cart">show NXT</a>
-          <a ng-show="symbol=='NXT'" href="#/goods/fim/cart">show FIM</a>
-        </span>
-      </div>
-    </div>     
-    <div class="row">
-      <div class="col-md-12 top-buttons">
-        <label class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</label>
-        <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
-          class="btn btn-default past-orders">{{'translate.past_orders' | translate}}</a>
-        <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.back_to_items' | translate}}</a>
-      </div>
-    </div>
-    <div class="row" ng-if="shoppingCart.length > 0">
-      <div class="col-md-12" style="padding: 0px;">
-        <h4 class="balanceError">{{balanceError}}</h4>
-        <div class="table-responsive">
-          <table class="table cart-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th style="text-align: center;">{{'translate.goods_name' | translate}}</th>
-                <th></th>
-                <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
-                <th>{{'translate.goods_total_price' | translate}}</th>
-              </tr>
-            </thead>
-             <tbody>
-              <tr class="itemsRow" ng-repeat="item in shoppingCart">
-                <td><input type="number" ng-model="item.count" min="1" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
-                <td class="image" ng-if="item.image"> <img ng-src="item.image"> </td>
-                <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
-                <td class="item-desc">
-                  <p><b>{{'translate.goods_name' | translate}}: </b><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></p>
-                  <p><b>{{'translate.goods_seller' | translate}}: </b><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></p>
-                  <p class="remove-item" ng-click="item.delete()">{{'translate.remove_from_cart' | translate}}</p>
-                </td>
-                <td class="price">{{item.priceNXT}}</td>
-                <td class="total-price"><b>{{'translate.goods_total_price' | translate}}: {{item.totalNXT}}</b></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="estPrice">{{'translate.estimated_price' | translate}}: {{totalNXT}}</div>
-        </div>
-      </div>
-      <div class="col-md-12 order-buttons">
-        <div>
-          <a href="#/goods/{{paramEngine}}/listing" class="btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
-          <button class="btn btn-success place-order" ng-click="placeOrder()" 
-            ng-if="currentAccount && currentAccount.symbol_lower == paramEngine">
-            {{'translate.place_order' | translate}}
-          </button>
-          <a href="#/login-to/navigate|goods|{{paramEngine}}|cart" class="btn btn-success place-order" 
-            ng-if="!currentAccount">{{'translate.sign_in' | translate}}</a>
-          <a href="#/login-to" class="btn btn-success place-order" 
-            ng-if="currentAccount && currentAccount.symbol_lower != paramEngine">{{'translate.sign_out' | translate}}</a>
-        </div>
-          <hr>
-      </div>
-    </div>
-
-    <p style="text-align: center; font-size: 18px; margin: 0;">{{successful}}</p>
-    <div class="row no-added" ng-if="shoppingCart.length == 0">
-      <div class="col-md-12 no-added-col">
-        <label>{{'translate.no_pending' | translate}}</label>
-        <br>
-        <a href="#/goods/{{paramEngine}}/listing" class="btn btn-success">{{'translate.continue_shopping' | translate}}</a>
-      </div>
-    </div>
-</div>
-
-<!-- past orders page -->
-
-  <div class="past-orders-page" ng-if="paramSection == 'pastorders'">
-    <div class="row">
-      <div class="col-md-12 past-order-col1">
-        <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart"
-          class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
-        <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
-      </div>
-    </div>
-    <div infinite-scroll="provider.loadMore()" 
-          infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
-      <div class="row">
-        <div class="col-md-12" style=" padding-top: 20px;">
+      </div> -->
+      <div class="row" ng-if="shoppingCart.length > 0">
+        <div class="col-md-12" style="padding: 0px;">
+          <h4 class="balanceError">{{balanceError}}</h4>
           <div class="table-responsive">
-            <table class="table" style="border: 1px solid #dddddd;">
+            <table class="table cart-table">
               <thead>
                 <tr>
-                  <th>{{'translate.purchase_id' | translate}}</th>
-                  <th>{{'translate.goods_name' | translate}}</th>
-                  <th>{{'translate.goods_seller' | translate}}</th>
-                  <th>{{'translate.goods_quantity' | translate}}</th>
+                  <th></th>
+                  <th style="text-align: center;">{{'translate.goods_name' | translate}}</th>
+                  <th></th>
                   <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                  <th>{{'translate.goods_total_price' | translate}}</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr ng-repeat="orders in provider.entities">
-                  <td>
-                    <a class="past-order-tooltip">
-                      {{orders.purchase}}
-                      <span>
-                        <p>
-                          <b translate="translate.buyer_fimk_account" translate-values="{symbol:symbol}"></b><h5>{{orders.buyerRS}}</h5>
-                        </p>
-                        <p ng-if="orders.buyerName">
-                          <b>{{'translate.buyer_name' | translate}}: </b><h5>{{orders.buyerName}}</h5>
-                        </p>
-                        <p>
-                          <b translate="translate.seller_fimk_account" translate-values="{symbol:symbol}"></b><h5><a href="#/goods/{{paramEngine}}/listing/{{orders.sellerRS}}">{{orders.sellerRS}}</a></h5>
-                        </p>
-                        <p ng-if="orders.sellerName">
-                          <b>{{'translate.seller_name' | translate}}: </b><h5>{{orders.sellerName}}</h5>
-                        </p>
-                        <p ng-if="orders.pending == false">
-                          <b>{{'translate.order_is_delivered' | translate}}</b>
-                        </p>
-                        <p ng-if="orders.pending == true">
-                          <b>{{'translate.order_is_pending' | translate}}</b>
-                        </p>
-                      </span>
-                    </a>
+               <tbody>
+                <tr class="itemsRow" ng-repeat="item in shoppingCart">
+                  <td><input type="number" ng-model="item.count" min="1" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
+                  <td class="image" ng-if="item.image"> <img ng-src="item.image"> </td>
+                  <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
+                  <td class="item-desc">
+                    <p><b>{{'translate.goods_name' | translate}}: </b><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></p>
+                    <p><b>{{'translate.goods_seller' | translate}}: </b><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></p>
+                    <p class="remove-item" ng-click="item.delete()">{{'translate.remove_from_cart' | translate}}</p>
                   </td>
-                  <td>{{orders.name}}</td>
-                  <td ng-if="!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
-                  <td ng-if="orders.sellerName">{{orders.sellerName}}  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
-                  <td>{{orders.quantity}}</td>
-                  <td>{{orders.priceNXT}}</td>
+                  <td class="price">{{item.priceNXT}}</td>
+                  <td class="total-price"><b>{{'translate.goods_total_price' | translate}}: {{item.totalNXT}}</b></td>
                 </tr>
               </tbody>
             </table>
+            <div class="estPrice">{{'translate.estimated_price' | translate}}: {{totalNXT}}</div>
           </div>
         </div>
+        <div class="col-md-12 order-buttons">
+          <div>
+            <a href="#/goods/{{paramEngine}}/listing" class="btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
+            <button class="btn btn-success place-order" ng-click="placeOrder()" 
+              ng-if="currentAccount && currentAccount.symbol_lower == paramEngine">
+              {{'translate.place_order' | translate}}
+            </button>
+            <a href="#/login-to/navigate|goods|{{paramEngine}}|cart" class="btn btn-success place-order" 
+              ng-if="!currentAccount">{{'translate.sign_in' | translate}}</a>
+            <a href="#/login-to" class="btn btn-success place-order" 
+              ng-if="currentAccount && currentAccount.symbol_lower != paramEngine">{{'translate.sign_out' | translate}}</a>
+          </div>
+            <hr>
+        </div>
       </div>
-      <div class="load-more-button" ng-show="provider.hasMore">
-        <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
-          <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
-          <span>{{'translate.load_more_products' | translate}}</span>
-        </a>
-      </div>
-  </div>
-</div>
 
-<!-- Sold Items page -->
-
-  <div class="past-orders-page" ng-if="paramSection == 'solditems'">
-    <div class="row">
-      <div class="col-md-12 past-order-col1">
-        <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart" 
-          class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
-        <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
+      <p style="text-align: center; font-size: 18px; margin: 0;">{{successful}}</p>
+      <div class="row no-added" ng-if="shoppingCart.length == 0">
+        <div class="col-md-12 no-added-col">
+          <label>{{'translate.no_pending' | translate}}</label>
+          <br>
+          <a href="#/goods/{{paramEngine}}/listing" class="btn btn-success">{{'translate.continue_shopping' | translate}}</a>
+        </div>
       </div>
     </div>
-    <div infinite-scroll="soldGoods.loadMore()" 
-          infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
-      <div class="row">
-        <div class="col-md-12" style=" padding-top: 20px;">
-          <div class="table-responsive">
-            <h3>{{'translate.pending_items' | translate}}</h3>
-            <table class="table" style="border: 1px solid #dddddd; border-collapse: inherit;">
-              <thead>
-                <tr>
-                  <th>{{'translate.purchase_time' | translate}}</th>
-                  <th>{{'translate.purchase_id' | translate}}</th>
-                  <th>{{'translate.goods_name' | translate}}</th>
-                  <th>{{'translate.goods_quantity' | translate}}</th>
-                  <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
-                  <th>{{'translate.delivery_deadline' | translate}}</th>
-                  <th ng-if="currentAccount"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="orders in soldGoods.entities">
-                  <td>{{orders.timestamp}}</td>
-                  <td>{{orders.purchase}}</td>
-                  <td>{{orders.name}}</td>
-                  <td>{{orders.quantity}}</td>
-                  <td>{{orders.priceNXT}}</td>
-                  <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
-                  <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="confirmDelivery(orders)">{{'translate.confirm_delivery' | translate}}</button></td>
-                  <!-- <td><button ng-click="rebate(orders)">Rebate</button></td> -->
-                </tr>
-              </tbody>
-            </table>
-            <h3>{{'translate.completed_orders' | translate}}</h3>
-            <table class="table" style="border: 1px solid #dddddd; border-collapse: inherit;">
-              <thead>
-                <tr>
-                  <th>{{'translate.purchase_time' | translate}}</th>
-                  <th>{{'translate.purchase_id' | translate}}</th>
-                  <th>{{'translate.goods_name' | translate}}</th>
-                  <!-- <th>Seller</th> -->
-                  <th>{{'translate.goods_quantity' | translate}}</th>
-                  <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
-                  <th ng-if="currentAccount"></th>
-                  <th ng-if="currentAccount"></th>
-                  <th ng-if="decryptedMessage && currentAccount">{{'translate.message_from_buyer' | translate}}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="orders in deliveryConfirmedGoods.entities">
-                  <td>{{orders.timestamp}}</td>
-                  <td>{{orders.purchase}}</td>
-                  <td>{{orders.name}}</td>
-                  <!-- <td>{{orders.sellerRS}}  <a href="" ng-click="msg(orders.sellerRS)">message</a></td> -->
-                  <td>{{orders.quantity}}</td>
-                  <td>{{orders.priceNXT}}</td>
-                  <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button></td>
-                  <td ng-if="currentAccount">
-                    <button class="btn btn-primary" ng-if="orders.note" ng-click="decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
-                    <label ng-if="!orders.note">{{'translate.no_messages' | translate}}</label>
-                  </td>
-                  <td ng-if="decryptedMessage && currentAccount"><span class="hide-message" ng-class="{'show-message': $index == textMessage}">{{decryptedMessage}}</span></td>
-                </tr>
-              </tbody>
-            </table>
+
+    <!-- past orders page -->
+
+    <div class="past-orders-page" ng-if="paramSection == 'pastorders'">
+      <!-- <div class="row">
+        <div class="col-md-12 past-order-col1">
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart"
+            class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+          <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
+        </div>
+      </div> -->
+      <div infinite-scroll="provider.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+        <div class="row">
+          <div class="col-md-12" style=" padding-top: 20px;">
+            <div class="table-responsive">
+              <table class="table" style="border: 1px solid #dddddd;">
+                <thead>
+                  <tr>
+                    <th>{{'translate.purchase_id' | translate}}</th>
+                    <th>{{'translate.goods_name' | translate}}</th>
+                    <th>{{'translate.goods_seller' | translate}}</th>
+                    <th>{{'translate.goods_quantity' | translate}}</th>
+                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="orders in provider.entities">
+                    <td>
+                      <a class="past-order-tooltip">
+                        {{orders.purchase}}
+                        <span>
+                          <p>
+                            <b translate="translate.buyer_fimk_account" translate-values="{symbol:symbol}"></b><h5>{{orders.buyerRS}}</h5>
+                          </p>
+                          <p ng-if="orders.buyerName">
+                            <b>{{'translate.buyer_name' | translate}}: </b><h5>{{orders.buyerName}}</h5>
+                          </p>
+                          <p>
+                            <b translate="translate.seller_fimk_account" translate-values="{symbol:symbol}"></b><h5><a href="#/goods/{{paramEngine}}/listing/{{orders.sellerRS}}">{{orders.sellerRS}}</a></h5>
+                          </p>
+                          <p ng-if="orders.sellerName">
+                            <b>{{'translate.seller_name' | translate}}: </b><h5>{{orders.sellerName}}</h5>
+                          </p>
+                          <p ng-if="orders.pending == false">
+                            <b>{{'translate.order_is_delivered' | translate}}</b>
+                          </p>
+                          <p ng-if="orders.pending == true">
+                            <b>{{'translate.order_is_pending' | translate}}</b>
+                          </p>
+                        </span>
+                      </a>
+                    </td>
+                    <td>{{orders.name}}</td>
+                    <td ng-if="!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
+                    <td ng-if="orders.sellerName">{{orders.sellerName}}  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.priceNXT}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+        <div class="load-more-button" ng-show="provider.hasMore">
+          <a href ng-click="provider.loadMore()" class="text-lowercase text-muted">
+            <span ng-show="provider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+            <span>{{'translate.load_more_products' | translate}}</span>
+          </a>
+        </div>
       </div>
-      <div class="load-more-button" ng-show="soldGoods.hasMore">
-        <a href ng-click="soldGoods.loadMore()" class="text-lowercase text-muted">
-          <span ng-show="soldGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
-          <span>{{'translate.load_more_products' | translate}}</span>
-        </a>
+    </div>
+
+    <!-- Sold Items page -->
+
+    <div class="past-orders-page" ng-if="paramSection == 'solditems'">
+      <!-- <div class="row">
+        <div class="col-md-12 past-order-col1">
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart" 
+            class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
+          <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
+        </div>
+      </div> -->
+      <div infinite-scroll="soldGoods.loadMore()" 
+            infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
+        <div class="row">
+          <div class="col-md-12" style=" padding-top: 20px;">
+            <div class="table-responsive">
+              <h3>{{'translate.pending_items' | translate}}</h3>
+              <table class="table" style="border: 1px solid #dddddd; border-collapse: inherit;">
+                <thead>
+                  <tr>
+                    <th>{{'translate.purchase_time' | translate}}</th>
+                    <th>{{'translate.purchase_id' | translate}}</th>
+                    <th>{{'translate.goods_name' | translate}}</th>
+                    <th>{{'translate.goods_quantity' | translate}}</th>
+                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th>{{'translate.delivery_deadline' | translate}}</th>
+                    <th ng-if="currentAccount"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="orders in soldGoods.entities">
+                    <td>{{orders.timestamp}}</td>
+                    <td>{{orders.purchase}}</td>
+                    <td>{{orders.name}}</td>
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.priceNXT}}</td>
+                    <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
+                    <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="confirmDelivery(orders)">{{'translate.confirm_delivery' | translate}}</button></td>
+                    <!-- <td><button ng-click="rebate(orders)">Rebate</button></td> -->
+                  </tr>
+                </tbody>
+              </table>
+              <h3>{{'translate.completed_orders' | translate}}</h3>
+              <table class="table" style="border: 1px solid #dddddd; border-collapse: inherit;">
+                <thead>
+                  <tr>
+                    <th>{{'translate.purchase_time' | translate}}</th>
+                    <th>{{'translate.purchase_id' | translate}}</th>
+                    <th>{{'translate.goods_name' | translate}}</th>
+                    <!-- <th>Seller</th> -->
+                    <th>{{'translate.goods_quantity' | translate}}</th>
+                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th ng-if="currentAccount"></th>
+                    <th ng-if="currentAccount"></th>
+                    <th ng-if="decryptedMessage && currentAccount">{{'translate.message_from_buyer' | translate}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="orders in deliveryConfirmedGoods.entities">
+                    <td>{{orders.timestamp}}</td>
+                    <td>{{orders.purchase}}</td>
+                    <td>{{orders.name}}</td>
+                    <!-- <td>{{orders.sellerRS}}  <a href="" ng-click="msg(orders.sellerRS)">message</a></td> -->
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.priceNXT}}</td>
+                    <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button></td>
+                    <td ng-if="currentAccount">
+                      <button class="btn btn-primary" ng-if="orders.note" ng-click="decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
+                      <label ng-if="!orders.note">{{'translate.no_messages' | translate}}</label>
+                    </td>
+                    <td ng-if="decryptedMessage && currentAccount"><span class="hide-message" ng-class="{'show-message': $index == textMessage}">{{decryptedMessage}}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="load-more-button" ng-show="soldGoods.hasMore">
+          <a href ng-click="soldGoods.loadMore()" class="text-lowercase text-muted">
+            <span ng-show="soldGoods.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
+            <span>{{'translate.load_more_products' | translate}}</span>
+          </a>
+        </div>
       </div>
+    </div>
   </div>
 </div>
