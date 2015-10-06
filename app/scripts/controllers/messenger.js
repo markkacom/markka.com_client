@@ -60,17 +60,8 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   
   $rootScope.unread = false;
 
-  var unreadIcon = $interval(function() {
-    $rootScope.unread = false;
-  }, 5000);
-
-  $scope.$on( "$routeChangeStart", function(event, next, current) {
-    if(next.loadedTemplateUrl != "partials/messenger.html") {
-       $scope.$on('$destroy', function () { 
-        $interval.cancel(unreadIcon); 
-      });
-    }
-  })
+  var unread_interval = $interval(function() { $rootScope.unread = false }, 5000);
+  $scope.$on('$destroy', function () {  $interval.cancel(unread_interval) });
 
   /* might not have been started */
   Gossip.onActivated();
