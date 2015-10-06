@@ -1,7 +1,5 @@
 <div class="row landing-page">
   <div class="col-md-offset-3 col-md-6">
-    
-
     <div class="panel panel-primary language-select">
       <div class="panel-heading">
         <h3 class="panel-title">Merchant terminal</h3>
@@ -29,11 +27,12 @@
           </div>
         </p>
         <p>
-          <a class="btn btn-lg btn-success pull-right" href ng-click="payNow()">
-            <i class="fa fa-1x fa-paper-plane-o"></i>&nbsp;&nbsp;Pay now</a>
+          <a class="btn btn-lg btn-success pull-right" href ng-click="payNow()" ng-show="currentAccount">
+            <i class="fa fa-1x fa-paper-plane-o"></i>&nbsp;&nbsp;<span>Pay now</span></a>
+          <a class="btn btn-lg btn-success pull-right" href ng-click="signin()" ng-show="!currentAccount">
+            <i class="fa fa-1x fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span></a>            
         </p>
       </div>
     </div>
   </div>
 </div>
-

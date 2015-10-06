@@ -3,13 +3,13 @@
 var module = angular.module('fim.base');
 
 module.config(function($routeProvider) {
-  $routeProvider.when('/merchant/:recipient/:amountNQT/:deadline/:description/:message', {
+  $routeProvider.when('/merchant/:recipient?/:amountNQT?/:deadline?/:description?/:message?', {
     templateUrl: 'partials/merchant-terminal.html',
     controller: 'MerchantTerminalController'
   });
 });
 
-module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins) {
+module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins, $location) {
 
   $scope.paramRecipient     = $routeParams.recipient;
   $scope.paramAmountNQT     = $routeParams.amountNQT;
@@ -42,6 +42,16 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
       args.txnMessageType = 'to_recipient';
     }
     plugins.get('transaction').get('tipUser').execute(args);
+  }
+
+  $scope.signin = function () {
+    var navigate_to = ['navigate','merchant',
+        $scope.paramRecipient,
+        $scope.paramAmountNQT,
+        $scope.paramDeadline,
+        $scope.paramDescription,
+        $scope.paramMessage];
+    $location.path('/login-to/' + navigate_to.join('|'));
   }
 
 });
