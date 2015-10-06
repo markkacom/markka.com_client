@@ -202,7 +202,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
 
   $scope.messageChanged = function () {
     /* notifies that the user is typing a message */
-    if ($scope.ui.sendOffline) {
+    if (!$scope.gossipUI.isDisabled) {
       if (!typing_timeout) {
         typing_timeout = $timeout(function () { typing_timeout = null }, 15*1000, false);
         Gossip.sendGossip($scope.id_rs, "typing", Gossip.IS_TYPING_TOPIC);
@@ -345,6 +345,22 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
 
   $scope.activateTextbox = function() {
     $rootScope.unread = false;
+  }
+
+  /* @param item is an entry from ChatMessagesProvider */
+  $scope.removeMessage = function (item) {
+    if (item.remover) {
+      plugins.get('alerts').confirm({
+        title: 'Remove message',
+        message: 'Do you want to remove this message? Removal cannot be undone.'
+      }).then(
+        function (value) {
+          if (value) {
+            item.remover(item);
+          }
+        }
+      );
+    }
   }
 });
 })();

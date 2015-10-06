@@ -101,7 +101,7 @@
             ng-show="(ui.chat && ui.chat.provider && ui.chat.provider.online) && !ui.sendOffline">
             Send <b>Offline</b> Message
           </a>
-          <a class="pull-right" href style="margin-bottom: 8px;" ng-show="ui.isTyping">.. is typing ..</a>          
+          <a class="pull-right" href style="margin-bottom: 8px;" ng-show="ui.isTyping">.. is typing ..</a>
         </div>
       </div>
       <div class="row" collapse="ui.emojiCollapse" style="margin-top: 8px">
@@ -155,14 +155,14 @@
             <div infinite-scroll="chatMessagesProvider.loadMore()" infinite-scroll-distance="0" 
                 infinite-scroll-immediate-check="false">
 
-              <!-- <div ng-show="ui.isTyping">
+              <div ng-show="ui.isTyping">
                 <div class="fromThem" style="margin-bottom: 10px;">
                   <span style="word-wrap: break-word; word-break: break-all; white-space: normal;">
                     ... is typing ...
                   </span>
                 </div>
                 <div class="clear"></div>
-              </div> -->
+              </div>
 
               <div ng-show="message.text">
                 <div class="fromMe" style="margin-bottom: 10px;">
@@ -175,7 +175,7 @@
               <div ng-repeat="e in chatMessagesProvider.entities">
                 <div class="{{e.clazz}}" style="margin-bottom: 10px">
 
-                  <span ng-show="e.remover" ng-click="e.remover(e)"
+                  <span ng-show="e.remover" ng-click="removeMessage(e)"
                         class="pull-right" style="cursor:pointer"><i class="fa fa-times"></i></span>
                   <span ng-show="e.received == true"
                         class="pull-right"><i class="fa fa-check"></i></span>                        
