@@ -30,10 +30,10 @@
             data.description = json.description.trim();
           }
           if (typeof json.image == 'string') {
-            data.image = image.trim();
+            data.image = json.image.trim();
           }
           if (typeof json.callback == 'string') {
-            data.callback = callback.trim();
+            data.callback = json.callback.trim();
           }
         } catch (e) { /* ignore */ }
 
