@@ -109,7 +109,12 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
 
   /* @param item CartModel */
   function calculateItemTotal(item) {
-    item.totalNXT = nxt.util.convertToNXT((new BigInteger(item.priceNQT)).multiply(new BigInteger(""+item.count)).toString());
+    if (item.count == 0) {
+      item.totalNXT = '0';
+    }
+    else {
+      item.totalNXT = nxt.util.convertToNXT((new BigInteger(item.priceNQT)).multiply(new BigInteger(""+item.count)).toString());
+    }
   }
 
   $scope.msg = function(id) {
