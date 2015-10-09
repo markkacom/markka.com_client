@@ -20,8 +20,6 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
   $scope.paramAsset       = $routeParams.asset;
   $scope.paramSection     = $routeParams.section;
 
-  $scope.breadcrumb       = [];
-
   if ($scope.paramEngine == 'nxt') {
     var api = nxt.nxt();
   }
@@ -32,30 +30,6 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
     $location.path('/activity/fim/activity/latest');
     return;
   }
-
-  /* Breadcrumbs */
-  $scope.breadcrumb.push({
-    label: 'translate.home',
-    href:  "#/home/"+$scope.paramEngine+"/activity/latest",
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.assets',
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: $scope.paramEngine,
-    active: true
-  });  
-  $scope.breadcrumb.push({
-    label: $scope.paramAsset,
-    href: "#/assets/"+$scope.paramEngine+"/"+$scope.paramAsset+"/trade"
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.'+$scope.paramSection,
-    active: true,
-    translate: true
-  });
 
   $scope.symbol           = api.engine.symbol;
   $scope.assetName        = '';
@@ -127,7 +101,6 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
   AssetInfoProvider.getInfo(api, $scope.paramAsset).then(
     function (asset) {
       $scope.$evalAsync(function () {
-        $scope.breadcrumb[2].label = asset.name;
         $scope.assetName        = asset.name;
         $scope.assetIssuerRS    = asset.issuerRS;
         $scope.assetIssuerName  = asset.issuerName;
