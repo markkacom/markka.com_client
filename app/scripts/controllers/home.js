@@ -20,7 +20,6 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
   $scope.paramTimestamp   = nxt.util.convertToEpochTimestamp(Date.now()) + (24 * 60 * 60);
   $scope.accounts         = [];
   var accounts_hash       = {};
-  $scope.breadcrumb       = [];
 
   $scope.showFilter       = 'activity' == $scope.paramSection;
   $scope.showTransactionFilter = 'activity' == $scope.paramSection;
@@ -40,36 +39,6 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
     $location.path('home/'+$scope.paramEngine+'/activity/latest');
     return;
   }
-
-  /* Breadcrumbs */
-  $scope.breadcrumb.push({
-    label: 'translate.home',
-    href:  "#/home/"+$scope.paramEngine+"/activity/latest",
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.'+$scope.paramSection,
-    active: true,
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: api.engine.symbol,
-    active: true,
-  });  
-  if ($scope.paramSection == 'activity') {
-    if ($scope.paramPeriod == 'latest') {
-      $scope.breadcrumb.push({
-        label: 'translate.latest',
-        translate: true
-      });
-    }
-    else {
-      $scope.breadcrumb.push({
-        label: $scope.paramPeriod,
-        period: true
-      });
-    }
-  }  
 
   /* Date picker */
   $scope.dt     = null;
