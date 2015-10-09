@@ -25,7 +25,7 @@
 #   a directory. That directory is then zipped. 
 #
 # ##############################################################################
-DEBUG=true
+DEBUG=false
 WITH_NEXT=true
 VERSION=`cat VERSION`
 BASE=mofowallet
@@ -75,10 +75,10 @@ mkdir dist/releases
 
 echo "nodewebkit generated successfully"
 
-FIM_FILES="../fimk/html/ ../fimk/lib/ ../fimk/fim.jar ../fimk/MIT-license.txt ../fimk/README.txt ../fimk/run.bat ../fimk/run.sh"
+FIM_FILES="../fimk/html/ ../fimk/lib/ ../fimk/fim.jar ../fimk/README.txt ../fimk/run.bat ../fimk/run.sh"
 FIM_FILES_CONF="../fimk/conf/nxt-default.properties ../fimk/conf/logging-default.properties"
 
-NXT_FILES="../nxt-plus/html/ ../nxt-plus/lib/ ../nxt-plus/nxt.jar ../nxt-plus/MIT-license.txt ../nxt-plus/README.txt ../nxt-plus/run.bat ../nxt-plus/run.sh"
+NXT_FILES="../nxt-plus/html/ ../nxt-plus/lib/ ../nxt-plus/nxt.jar ../nxt-plus/README.txt ../nxt-plus/run.bat ../nxt-plus/run.sh"
 NXT_FILES_CONF="../nxt-plus/conf/nxt-default.properties ../nxt-plus/conf/logging-default.properties"
 
 # ==============================================================================
@@ -176,6 +176,9 @@ fi
 # Copy over the mofowallet files
 cp -r -p dist/mofowallet/win32/* $BUILD
 
+# Remove pdf.dll
+rm -f $BUILD/pdf.dll
+
 # create the release zip
 cd $BUILD
 /bin/rm -f ../../../dist/releases/$BASE.win32-$VERSION.zip
@@ -208,6 +211,9 @@ fi
 
 # Copy over the mofowallet files
 cp -r -p dist/mofowallet/win64/* $BUILD
+
+# Remove pdf.dll
+rm -f $BUILD/pdf.dll
 
 # create the release zip
 cd $BUILD
