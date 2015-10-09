@@ -163,7 +163,7 @@
         <div class="row">
           <div class="col-md-12">
             <div style="text-align: center;">
-              <img ng-if="provider.image" src="{{provider.image}}" style="width: 300px">
+              <img ng-if="provider.image" ng-src="{{provider.image}}" style="width: 300px">
               <img ng-if="!provider.image" src="images/no-image.jpg" style="width: 225px">
             </div>
             <div class="goods-details1">
@@ -219,7 +219,7 @@
                <tbody>
                 <tr class="itemsRow" ng-repeat="item in shoppingCart">
                   <td><input type="number" ng-model="item.count" min="0" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
-                  <td class="image" ng-if="item.image"> <img src="{{item.image}}"> </td>
+                  <td class="image" ng-if="item.image"> <img ng-src="{{item.image}}"> </td>
                   <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
                   <td class="item-desc">
                     <p><b>{{'translate.goods_name' | translate}}: </b><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></p>
