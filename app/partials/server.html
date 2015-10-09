@@ -55,31 +55,6 @@
     </div> 
 
     <div class="row">
-      <div class="col-md-12">
-        <ol class="breadcrumb">
-          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
-            <span ng-if="b.translate && !b.period">
-              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
-              <span ng-if="!b.href">{{ b.label | translate }}</span>
-            </span>
-            <span ng-if="!b.translate && !b.period">
-              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
-              <span ng-if="!b.href">{{ b.label }}</span>              
-            </span>
-            <span ng-if="b.period">
-              <span translate="translate.show_results_before"></span>&nbsp;<b>{{paramPeriod}}</b>
-              <a href="#/home/{{paramEngine}}/{{paramSection}}/latest">
-                <small>
-                  <i class="fa fa-times"></i>&nbsp;<span translate="translate.show_latest"></span>
-                </small>
-              </a>
-            </span>
-          </li>
-        </ol>
-      </div>
-    </div>
-
-    <div class="row">
 
       <!-- console section -->
       <div ng-show="paramSection=='console'" class="col-md-12">

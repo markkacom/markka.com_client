@@ -73,7 +73,6 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
   $rootScope.paramEngine  = $routeParams.engine;
   $scope.paramEngine      = $routeParams.engine;
   $scope.paramSection     = $routeParams.section;
-  $scope.breadcrumb       = [];
   $scope.scrolllock       = true;
 
   if ($scope.paramEngine == 'fim') {
@@ -95,27 +94,6 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
   }
 
   $scope.consoleProvider = new ServerConsoleProvider(api, $scope);  
-
-  /* Breadcrumbs */
-  $scope.breadcrumb.push({
-    label: 'translate.home',
-    href:  "#/home/"+$scope.paramEngine+"/activity/latest",
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.server',
-    active: true,
-    translate: true
-  });  
-  $scope.breadcrumb.push({
-    label: $scope.paramEngine.toUpperCase(),
-    active: true
-  });  
-  $scope.breadcrumb.push({
-    label: 'translate.'+$scope.paramSection,
-    active: true,
-    translate: true
-  });
 
   switch ($scope.paramSection) {
     case 'config': {
