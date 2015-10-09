@@ -84,11 +84,17 @@ module.factory('SearchProvider', function (nxt, $q, IndexedEntityProvider) {
         }
 
         /* use searchAccounts API for nxt 1.5+ */
-        if (this.api.type == nxt.TYPE_NXT && this.category == 'accounts') {
+        if (this.category == 'accounts') {
           delete args.category;
           args.requestType = 'searchAccounts';
           this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
         }
+        /* use getAliasesLike API for nxt 1.5+ */
+        /*if (this.category == 'aliases') {
+          delete args.category;
+          args.requestType = 'getAliasesLike';
+          this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
+        }*/
         else {
           this.api.engine.socket().search(args).then(deferred.resolve, deferred.reject);
         }
