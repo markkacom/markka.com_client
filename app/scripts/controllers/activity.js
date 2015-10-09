@@ -20,7 +20,6 @@ module.controller('ActivityController', function($scope, $location, $routeParams
   $scope.paramTimestamp   = 0;
   $scope.statistics       = {};
   $scope.blockstate       = {};
-  $scope.breadcrumb       = [];
   $scope.filter           = {};
 
   if      ($scope.paramEngine == 'nxt') { var api = nxt.nxt(); }
@@ -33,40 +32,6 @@ module.controller('ActivityController', function($scope, $location, $routeParams
   if (['activity', 'blockchain', 'forgers', 'assets'].indexOf($scope.paramSection) == -1) {
     $location.path('/activity/'+$scope.paramEngine+'/activity/latest');
     return;
-  }
-
-  /* Breadcrumbs */
-  $scope.breadcrumb.push({
-    label: 'translate.home',
-    href:  "#/home/"+$scope.paramEngine+"/activity/latest",
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.explorer',
-    href:  '#/activity/fim/activity/latest',
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: api.engine.symbol,
-    active:  true
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.'+$scope.paramSection,
-    translate:  true
-  });
-  if (['activity','blockchain'].indexOf($scope.paramSection) != -1) {
-    if ($scope.paramPeriod == 'latest') {
-      $scope.breadcrumb.push({
-        label: 'translate.latest',
-        translate: true
-      });
-    }
-    else {
-      $scope.breadcrumb.push({
-        label: $scope.paramPeriod,
-        period: true
-      });
-    }
   }
 
   /* Date picker */
