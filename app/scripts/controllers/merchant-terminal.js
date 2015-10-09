@@ -41,7 +41,13 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
       args.txnMessage = $scope.paramMessage;
       args.txnMessageType = 'to_recipient';
     }
-    plugins.get('transaction').get('tipUser').execute(args);
+    plugins.get('transaction').get('tipUser').execute(args).then(
+      function (items) {
+        if (items) {
+          
+        }
+      }
+    );
   }
 
   $scope.signin = function () {
