@@ -32,32 +32,6 @@ module.controller('SearchController', function ($scope, nxt, $routeParams, $root
     return;
   }
 
-  /* Breadcrumbs */
-  $scope.breadcrumb = [];
-  $scope.breadcrumb.push({
-    label: 'translate.home',
-    href:  "#/home/"+$scope.paramEngine+"/activity/latest",
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.search',
-    active:  true,
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: $scope.paramEngine.toUpperCase(),
-    active: true,
-  });
-  $scope.breadcrumb.push({
-    label: 'translate.'+$scope.paramCategory,
-    active: true,
-    translate: true
-  });  
-  $scope.breadcrumb.push({
-    label: $scope.paramQuery,
-    active:  true,
-  });
-
   var reload_promise = null;
   function reload() {
     $scope.provider = new SearchProvider(api, $scope, 10, $scope.paramCategory, $scope.paramQuery);
