@@ -1,6 +1,6 @@
 Preview release.
 
-Embeds FIMK 0.5.1 and NXT-PLUS based on NXT 1.5.13.
+Embeds FIMK 0.5.2 (based on NXT 1.5.10) and NXT-PLUS based on NXT 1.5.15.
 
 Added about dialog, accessible from the settings menu. The dialog
 displays the client version and build time and the server version when
@@ -13,8 +13,85 @@ The build scripts now add the build time to the global auto-generated mode.js
 settings file.
 
 Changed the price chart to use the new server chart backend. This fixes 
-the pricechart bugs for low volume assets. Chart now has access to proper 
-OHLC data.
+the price chart bugs for low volume assets. Chart now has access to proper 
+OHLC data. Investigations into d3.js will continue which will likely result
+in a proper customized live updating/animated chart in the future.
 
-Improved Bulgarian translations thanks to:
-Improved Polish translations thanks to:
+New exclusive FIMK feature: 
+  Gossip based chat.
+
+Free decentralized encrypted chat based on the FIMK gossip protocol. Your
+address is your chat handle. You can see which contacts are online (you must
+confirm before your online status is shared) or when your contact starts typing.
+
+Chat messages are wrapped in gossip messages (which are similar to transactions
+but are not stored on the blockchain) and distributed over the FIMK network.
+A lot of care is given in ensuring the gossip protocol is secure and does 
+not affect the other data on the network.
+
+When using the free chat feature messages are only stored in the memory of
+your browser or desktop app, if desired individual messages can be deleted. 
+Blockchain stored messages which will appear in the same message thread as 
+your free messages giving users a fluent experience.
+
+The current chat UI is simple at best, most effort was put into designing the
+server protocol and the client code, which is fairly complex. What remains
+is for our web designer to work on the HTML and CSS only.
+
+Of course like blockchain stored messages chat messages also support the full
+set of emojis.
+
+Note: to use the free chat feature you'll need to use your FIMK account we 
+have not ported the functionality to be used with your NXT account (yet).
+
+New FIMK feature:
+  Decentralized Goods Store.
+
+For some time the Digital Goods Store has been available in the FIMK server 
+protocol but was lacking a front end in Lompsa. The Digital Goods Store is 
+a NXT invention, details of which can be found here: 
+https://wiki.nxtcrypto.org/wiki/Marketplace
+
+Through our new UI users can now buy and sell items on the Marketplace through
+Lompsa. The Lompsa Marketplace works for both FIMK and NXT accounts.
+
+FIMK Marketplace features:
+  - includes a URL callback service to notify the seller of a purchase
+  - includes support for product images
+
+The current implementation is a first fully functional prototype, expect it to
+change considerably in the future.
+
+Updated FIMK feature:
+  Merchant Terminal. 
+
+Sends an invoice as a URL, will forward users to hosted Lompsa. The idea is that
+a merchant can request a payment in FIMK (or NXT which is also supported) by 
+constructing a URL that contains the following items:
+
+- recipient address (in RS format FIM-DLVG-XSBG-NUVW-75VVM for instance)
+- amount (in NQT, 1 NQT equals 0.00000001 FIMK)
+- deadline (transaction deadline in blocks, between 1 and 1440)
+- description (shown to the user)
+- message (encrypted message that will be included with the payment)
+
+Sample: https://www.mofowallet.com/launch.html#/merchant/FIM-DLVG-XSBG-NUVW-75VVM/500000000/1440/This%20is%20the%20description/This%20is%20the%20message
+
+New FIMK feature:
+  Shorter Finnish passphrase support
+
+Instead of the standard twelve word English passphrases we have added support for
+Finnish passphrases. Because there are over 7K words in the Finnish word list 
+(instead of only 1600 in the English list) we can offer slightly greater 
+(a few bits) passphrase strength while only using 10 Finnish words instead of 
+12 English words. We are investigating if the same can be done for our English 
+word list, also expect other languages to be supported in the future.
+
+This version is build on nwjs 0.12.3 with removed support for pdf (lower download size).
+
+Includes improved user provided translations for:
+  - Polish
+  - Bulgarian
+  - Finnish
+
+Thanks translators!
