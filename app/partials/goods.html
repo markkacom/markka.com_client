@@ -52,14 +52,15 @@
 
     <div class="goods-page" ng-if="paramSection == 'listing' || paramSection == 'tags'">
       <div class="row">
-        <div class="col-md-12" ng-if="!id_rs">
+        <div class="col-md-12">
           <span class="text-muted">Showing {{symbol}} marketplace listings
             <a ng-show="symbol=='FIM'" href="#/goods/nxt/listing">show NXT</a>
             <a ng-show="symbol=='NXT'" href="#/goods/fim/listing">show FIM</a>
           </span>
         </div>
         <div class="col-md-12" ng-if="id_rs">
-          <span class="text-muted">Showing listings for <a href="#/accounts/{{id_rs}}/activity/latest">{{id_rs}}</a>
+          <span class="text-muted">Showing listings for <i>{{id_rs}}</i>
+            <a href="#/goods/{{paramEngine}}/listing">show all</a>
           </span>
         </div>
         <div class="col-md-12" ng-if="provider.tag">
@@ -217,7 +218,7 @@
               </thead>
                <tbody>
                 <tr class="itemsRow" ng-repeat="item in shoppingCart">
-                  <td><input type="number" ng-model="item.count" min="1" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
+                  <td><input type="number" ng-model="item.count" min="0" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
                   <td class="image" ng-if="item.image"> <img src="{{item.image}}"> </td>
                   <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
                   <td class="item-desc">
