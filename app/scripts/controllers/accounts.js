@@ -19,7 +19,6 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
   $scope.paramSection   = $routeParams.section;
   $scope.paramPeriod    = $routeParams.period || 'latest';
   $scope.paramTimestamp = 0; //nxt.util.convertToEpochTimestamp(Date.now()) + (24 * 60 * 60);
-  $scope.breadcrumb     = [];
   $scope.filter         = {};
   $scope.following      = false;
   
@@ -43,36 +42,6 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
 
   $scope.showFilter            = ['activity', 'messages', 'blocks', 'pulse'].indexOf($scope.paramSection) != -1;;
   $scope.showTransactionFilter = ['activity'].indexOf($scope.paramSection) != -1;
-
-  /* Breadcrumbs */
-  $scope.breadcrumb.push({
-    label: 'translate.home',
-    href:  "#/home/"+$scope.paramEngine+"/activity/latest",
-    translate: true
-  });
-  $scope.breadcrumb.push({
-    label: $scope.id_rs,
-    href:  "#/accounts/"+$scope.id_rs+"/activity/"+$scope.paramPeriod,
-  });
-  $scope.breadcrumb.push({
-    label: 'THIS IS SET FURTHER DOWN BELOW',
-    active:  true,
-    translate: true
-  });  
-  if (['activity','messages','blocks', 'pulse'].indexOf($scope.paramSection) != -1) {
-    if ($scope.paramPeriod == 'latest') {
-      $scope.breadcrumb.push({
-        label: 'translate.latest',
-        translate: true
-      });
-    }
-    else {
-      $scope.breadcrumb.push({
-        label: $scope.paramPeriod,
-        period: true
-      });
-    }
-  }
 
   /* Date picker */
   $scope.dt     = null;
@@ -131,65 +100,52 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
 
   switch ($scope.paramSection) {
     case 'pulse':
-      $scope.breadcrumb[2].label = 'translate.pulse';
       $scope.provider = new AccountPostProvider(api, $scope, 5, $scope.id_rs);
       $scope.provider.reload();
       break;
     case 'comments':
-      $scope.breadcrumb[2].label = 'translate.comments';
       $scope.provider = new AccountCommentsProvider(api, $scope, $scope.paramTimestamp, $scope.id_rs);
       $scope.provider.reload();
       break;       
     case 'activity':
-      $scope.breadcrumb[2].label = 'translate.activity';
       $scope.provider = new ActivityProvider(api, $scope, $scope.paramTimestamp, $scope.id_rs, $scope.filter);
       $scope.provider.reload();
       break;
     case 'messages':
-      $scope.breadcrumb[2].label = 'translate.messages';
       $scope.provider = new MessagesProvider(api, $scope, $scope.paramTimestamp, $scope.id_rs);
       $scope.provider.reload();
       break;
     case 'blocks':
-      $scope.breadcrumb[2].label = 'translate.blocks_forged';
       $scope.provider = new BlocksProvider(api, $scope, $scope.paramTimestamp, $scope.id_rs);
       $scope.provider.reload();
       break;
     case 'aliases':
-      $scope.breadcrumb[2].label = 'translate.aliases';
       $scope.provider = new AliasProvider(api, $scope, 10, $scope.id_rs);
       $scope.provider.reload();
       break;
     case 'fim_aliases':
-      $scope.breadcrumb[2].label = 'translate.namespaced_aliases';
       $scope.provider = new NamespacedAliasProvider(api, $scope, 10, $scope.id_rs);
       $scope.provider.reload();      
       break;
     case 'currency':
-      $scope.breadcrumb[2].label = 'translate.currencies';
       $scope.provider = new CurrencyProvider(api, $scope, 10, $scope.id_rs);
       $scope.provider.reload();  
       break;
     case 'assets':
-      $scope.breadcrumb[2].label = 'translate.assets';
       $scope.provider = new AssetsProvider(api, $scope, 10, $scope.id_rs);
       $scope.provider.reload();    
       break;
     case 'sell_orders':
-      $scope.breadcrumb[2].label = 'translate.sell_orders';
       $scope.provider = new SellOrderProvider(api, $scope, 10, $scope.id_rs);
       $scope.provider.reload();    
       break;
     case 'buy_orders':
-      $scope.breadcrumb[2].label = 'translate.buy_orders';
       $scope.provider = new BuyOrderProvider(api, $scope, 10, $scope.id_rs);
       $scope.provider.reload();    
       break;
     case 'goods':
-      $scope.breadcrumb[2].label = 'translate.goods';
       break;
     case 'leasing':
-      $scope.breadcrumb[2].label = 'translate.balance_leasing';
       $scope.provider = new AccountLessorsProvider(api, $scope, $scope.id_rs);
       $scope.provider.reload();
       break;
@@ -198,7 +154,6 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
         $location.path('/login-to');
         return;
       }
-      $scope.breadcrumb[2].label = 'translate.payments';
       $scope.provider = new PaymentsProvider(api, $scope, $scope.id_rs);
       break;
     default:
