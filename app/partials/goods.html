@@ -208,7 +208,7 @@
             <table class="table cart-table">
               <thead>
                 <tr>
-                  <th></th>
+                  <th translate="translate.amount"></th>
                   <th style="text-align: center;">{{'translate.goods_name' | translate}}</th>
                   <th></th>
                   <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
@@ -218,7 +218,7 @@
                <tbody>
                 <tr class="itemsRow" ng-repeat="item in shoppingCart">
                   <td><input type="number" ng-model="item.count" min="1" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
-                  <td class="image" ng-if="item.image"> <img ng-src="item.image"> </td>
+                  <td class="image" ng-if="item.image"> <img src="{{item.image}}"> </td>
                   <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
                   <td class="item-desc">
                     <p><b>{{'translate.goods_name' | translate}}: </b><a href="#/goods/{{paramEngine}}/{{item.goods}}">{{item.name}}</a></p>
