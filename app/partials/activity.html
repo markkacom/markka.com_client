@@ -269,33 +269,6 @@
       </div>
     </div>  
 
-    <!-- <div class="row hidden-xs">
-      <div class="col-md-12">
-        <ol class="breadcrumb">
-          <li ng-repeat="b in breadcrumb" ng-class="{active: b.active}">
-            <span ng-if="b.translate && !b.period">
-              <a ng-if="b.href" href="{{b.href}}">{{ b.label | translate }}</a>
-              <span ng-if="!b.href">{{ b.label | translate }}</span>
-            </span>
-            <span ng-if="!b.translate && !b.period">
-              <a ng-if="b.href" href="{{b.href}}">{{ b.label }}</a>
-              <span ng-if="!b.href">{{ b.label }}</span>              
-            </span>
-            <span ng-if="b.period">
-              <span translate translate-cloak>translate.show_results_before</span>&nbsp;<b>{{paramPeriod}}</b>
-              <a href="#/activity/{{paramEngine}}/{{paramSection}}/latest">
-                <i class="fa fa-times"></i>&nbsp;<span translate="translate.show_latest"></span>
-              </a>
-            </span>
-          </li>
-          <a href ng-click="provider.reload()" class="pull-right">
-            {{ 'translate.reload' | translate }}&nbsp;&nbsp;
-            <i class="fa fa-refresh" ng-class="{'fa-spin': provider.isLoading}"></i>
-          </a>
-        </ol>
-      </div>
-    </div> -->
-
     <div class="row">
       <div class="col-md-12">
         <div ng-if="paramSection=='activity'">
