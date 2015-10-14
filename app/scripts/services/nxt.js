@@ -134,7 +134,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     localSocket: function () {
       return this._localSocket || (this._localSocket = new MofoSocket(this, true));
-    }
+    },
+
+    remoteSocket: function () {
+      return this._remoteSocket || (this._remoteSocket = new MofoSocket(this, false, true));
+    }    
   };
 
   function URLPool(engine, ips, tls) {
