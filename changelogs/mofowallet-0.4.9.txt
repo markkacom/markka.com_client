@@ -34,10 +34,6 @@ your browser or desktop app, if desired individual messages can be deleted.
 Blockchain stored messages which will appear in the same message thread as 
 your free messages giving users a fluent experience.
 
-The current chat UI is simple at best, most effort was put into designing the
-server protocol and the client code, which is fairly complex. What remains
-is for our web designer to work on the HTML and CSS only.
-
 Of course like blockchain stored messages chat messages also support the full
 set of emojis.
 
@@ -56,6 +52,7 @@ Through our new UI users can now buy and sell items on the Marketplace through
 Lompsa. The Lompsa Marketplace works for both FIMK and NXT accounts.
 
 FIMK Marketplace features:
+
   - includes a URL callback service to notify the seller of a purchase
   - includes support for product images
 
@@ -69,11 +66,11 @@ Sends an invoice as a URL, will forward users to hosted Lompsa. The idea is that
 a merchant can request a payment in FIMK (or NXT which is also supported) by 
 constructing a URL that contains the following items:
 
-- recipient address (in RS format FIM-DLVG-XSBG-NUVW-75VVM for instance)
-- amount (in NQT, 1 NQT equals 0.00000001 FIMK)
-- deadline (transaction deadline in blocks, between 1 and 1440)
-- description (shown to the user)
-- message (encrypted message that will be included with the payment)
+  - recipient address (in RS format FIM-DLVG-XSBG-NUVW-75VVM for instance)
+  - amount (in NQT, 1 NQT equals 0.00000001 FIMK)
+  - deadline (transaction deadline in blocks, between 1 and 1440)
+  - description (shown to the user)
+  - message (encrypted message that will be included with the payment)
 
 Sample: https://www.mofowallet.com/launch.html#/merchant/FIM-DLVG-XSBG-NUVW-75VVM/500000000/1440/This%20is%20the%20description/This%20is%20the%20message
 
