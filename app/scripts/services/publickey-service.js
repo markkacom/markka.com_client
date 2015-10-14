@@ -33,14 +33,18 @@ module.factory('publicKeyService', function ($q, nxt) {
       return deferred.promise;
     },
     set: function (id_rs, publicKey) {
-      var api = nxt.get(id_rs);
-      if (id_rs != api.crypto.getAccountIdFromPublicKey(publicKey, true)) {
-        throw new Error("Account and public key don't match ("+id_rs+")");
+      if (!this.getSync(id_rs)) {
+        var api = nxt.get(id_rs);
+        if (id_rs != api.crypto.getAccountIdFromPublicKey(publicKey, true)) {
+          console.log("Account and public key don't match ("+id_rs+")");
+          return false;
+        }
+        var item = window.localStorage.getItem('mofo.publickey.'+id_rs);
+        if (!item) {
+          window.localStorage.setItem('mofo.publickey.'+id_rs, publicKey);
+        }
       }
-      var item = window.localStorage.getItem('mofo.publickey.'+id_rs);
-      if (!item) {
-        window.localStorage.setItem('mofo.publickey.'+id_rs, publicKey);
-      }
+      return true;
     }
   };
 });
