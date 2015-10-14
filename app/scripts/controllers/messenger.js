@@ -88,7 +88,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
 
   /* have to login first */
   if (!$rootScope.currentAccount) {
-    $rootScope.destURL = $location.url();
+    $rootScope.destURL = $location.url(); /* TODO use new "navigate" functionality on login-to controller */
     $location.path('/login-to');
     return;
   }
@@ -103,9 +103,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   
   generateSpeechBubbleBootstrapCSS();
   settings.resolve('themes.default.theme', function () {
-    $timeout(function () {
-      generateSpeechBubbleBootstrapCSS();
-    });
+    $timeout(generateSpeechBubbleBootstrapCSS);
   });
 
   $scope.chatListProvider = new GossipChatListProvider(api, $scope, $rootScope.currentAccount.id_rs);
@@ -143,13 +141,21 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
               if (chat.provider && !chat.provider.online) {
                 Gossip.ping(chat.otherRS);
               }
-              /* create the messages provider */ 
-              $scope.chatMessagesProvider = new GossipChatMessagesProvider(api, $scope, 8, $rootScope.currentAccount.id_rs, $scope.id_rs);
-              $scope.chatMessagesProvider.reload().then(
+              /* make sure the public key of our contact was loaded from the network 
+                 if no public key could be found we should not create the GossipChatMessagesProvider
+                 but wait until we receive it from a transaction */
+              publicKeyService.get($scope.id_rs).then(
+                /* we dont actually use the public key, it just has to be in the cache */
                 function () {
-                  $scope.$evalAsync(function () {
-                    $scope.contactName = $scope.chatMessagesProvider.accountTwoName;
-                  });
+                  /* create the messages provider */ 
+                  $scope.chatMessagesProvider = new GossipChatMessagesProvider(api, $scope, 8, $rootScope.currentAccount.id_rs, $scope.id_rs);
+                  $scope.chatMessagesProvider.reload().then(
+                    function () {
+                      $scope.$evalAsync(function () {
+                        $scope.contactName = $scope.chatMessagesProvider.accountTwoName;
+                      });
+                    }
+                  );
                 }
               );
             });
