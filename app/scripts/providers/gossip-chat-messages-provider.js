@@ -90,7 +90,9 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
         transaction.clazz = "fromThem";
         transaction.pull_clazz = "pull-left";
         transaction.says = this.parent.accountTwoName;
-        transaction.attachment.senderPublicKey = this.parent.accountTwoPublicKey; 
+        if (this.parent.getAccountTwoPublicKey()) {
+          transaction.attachment.senderPublicKey = this.parent.getAccountTwoPublicKey(); 
+        }
       }
       var decoded  = this.decode(transaction);
       if (decoded) {
@@ -222,9 +224,9 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
     this.provider   = new ChatMessagesProvider(this);
 
     /* we can throw an error here - the public key should have always been stored already */
-    if (!this.accountTwoPublicKey) {
-      throw new Error('Could not obtain public key for '+this.accountTwo);
-    }
+    // if (!this.accountTwoPublicKey) {
+    //   throw new Error('Could not obtain public key for '+this.accountTwo);
+    // }
 
     this.interval(function (entity) {
       entity.date = nxt.util.formatTimestamp(entity.timestamp, false);
@@ -237,6 +239,12 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
     this.subscribe();
   }
   GossipChatMessagesProvider.prototype = {
+
+    /* in case we have the public key return it, in case we dont have it try and 
+       get it from the public key cache */
+    getAccountTwoPublicKey: function () {
+      return this.accountTwoPublicKey || (this.accountTwoPublicKey = publicKeyService.getSync(this.accountTwo));
+    },
 
     subscribe: function () {
       for (var i=0; i<this.topics.length; i++) {
@@ -519,14 +527,17 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
       } catch (e) {
         return {encrypted:false, text: message };
       }
-      return {
-        encrypted:true, 
-        text: Gossip.decryptMessage(
-          this.accountTwoPublicKey, 
-          json.nonce, 
-          json.message
-        )
-      };
+      if (this.getAccountTwoPublicKey()) {
+        return {
+          encrypted:true, 
+          text: Gossip.decryptMessage(
+            this.getAccountTwoPublicKey(), 
+            json.nonce, 
+            json.message
+          )
+        };
+      }
+      return {encrypted:false, text: 'no public key'};
     },
 
     interval: function (each_fn, delay) {
