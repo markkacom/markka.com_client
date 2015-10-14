@@ -113,8 +113,8 @@ module.exports = function (grunt) {
       options: {
         version: '0.12.3',
         // https://github.com/mllrsohn/node-webkit-builder#optionswinico
-        // macIcns: './icon.icns',
-        // winIco: './win-icon.ico',
+        macIcns: './app/images/fimk-coin.icns',
+        winIco: './app/images/fimk-coin.ico',
         build_dir: './dist',
         // choose what platforms to compile for here
         osx32: true,
