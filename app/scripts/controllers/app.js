@@ -291,6 +291,14 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     }    
     return false;
   }
+
+  if (isNodeJS) {
+    $scope.clipboardCopy = function (text) {
+      var gui = require('nw.gui');
+      var clipboard = gui.Clipboard.get();
+      clipboard.set(text, 'text');
+    }
+  }
 });
 
 })();

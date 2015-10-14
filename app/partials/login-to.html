@@ -182,8 +182,13 @@
                 <div class="input-group">
                   <input type="text" class="form-control input-lg" rows="4" ng-model="input.secretPhrase" readonly>
                   <span class="input-group-btn">
-                    <button class="btn btn-default btn-lg" type="button" 
+                    <!-- browser clipboard -->
+                    <button class="btn btn-default btn-lg" type="button" ng-if="!isNodeJS"
                       clip-copy="input.secretPhrase" clip-click="alerts.clipped=true;">
+                      <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
+                    <!-- nwjs clipboard -->
+                    <button class="btn btn-default btn-lg" type="button" ng-if="isNodeJS"
+                        ng-click="clipboardCopy(input.secretPhrase); alerts.clipped=true;">
                       <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
                   </span>
                 </div>
@@ -461,8 +466,13 @@
                 <button class="btn btn-default btn-lg" type="button" ng-click="nextSecretPhrase()"
                   ng-if="input.pickSecretPhrase">
                   <i class="fa fa-arrow-right"></i>&nbsp;<span translate="translate.next"></span></button>
-                <button class="btn btn-default btn-lg" type="button" 
+                <!-- browser clipboard -->
+                <button class="btn btn-default btn-lg" type="button" ng-if="!isNodeJS"
                   clip-copy="input.secretPhrase" clip-click="alerts.clipped=true; input.pickSecretPhrase=false">
+                  <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
+                <!-- nwjs clipboard -->
+                <button class="btn btn-default btn-lg" type="button" ng-if="isNodeJS"
+                  ng-click="clipboardCopy(input.secretPhrase); alerts.clipped=true; input.pickSecretPhrase=false">
                   <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
               </span>
             </div>
@@ -488,8 +498,13 @@
               <i class="fa fa-arrow-right"></i>&nbsp;<span translate="translate.next"></span></button>
           </div>          
           <div class="col-md-3 col-xs-12" style="margin-top: 8px" ng-if="IS_SMALL_DEVICE">
-            <button class="btn btn-default btn-lg btn-block" clip-copy="input.secretPhrase" 
+            <!-- browser clipboard -->
+            <button class="btn btn-default btn-lg btn-block" clip-copy="input.secretPhrase" ng-if="!isNodeJS"
               clip-click="alerts.clipped=true; input.pickSecretPhrase=false">
+              <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
+            <!-- nwjs clipboard -->
+            <button class="btn btn-default btn-lg btn-block" clip-copy="input.secretPhrase" ng-if="isNodeJS"
+              ng-click="clipboardCopy(input.secretPhrase); alerts.clipped=true; input.pickSecretPhrase=false">
               <i class="fa fa-clipboard"></i>&nbsp;<span translate="translate.copy"></span></button>
           </div>
           <div class="col-md-3 col-xs-12" style="margin-top: 8px">
