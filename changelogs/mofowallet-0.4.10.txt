@@ -3,3 +3,5 @@ Embeds FIMK 0.5.2 (based on NXT 1.5.10) and NXT-PLUS based on NXT 1.5.15.
 Fixed a bug where passphrase word list did not load when run in node-webkit.
 
 Fixed a bug where copy to clipboard did not work when run in node-webkit.
+
+Added date column to transaction list on dashboard page.
