@@ -291,7 +291,6 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     }    
     return false;
   }
-
 });
 
 })();
