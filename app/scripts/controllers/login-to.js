@@ -490,6 +490,7 @@ module.controller('LoginToController', function($scope, $rootScope, KeyService, 
         }
       })
     }
-  }  
+  }
+
 });
 })();
