@@ -83,7 +83,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
 
   var Gossip = {
 
-    DEBUG: true,
+    DEBUG: false,
     providers: {},
     isActive: false,
     topics: {},
@@ -196,7 +196,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     /* handles all gossip messages and forwards to topic handlers */
     genericGossipHandler: function (gossip) {
       if (this.DEBUG) {
-        console.log('RECEIVED GOSSIP FROM '+gossip.senderRS+' '+Date.now(), gossip);
+        console.log('RECEIVED',gossip);
       }
       if (!this.topics[gossip.topic]) {
         console.log('Unsupported gossip topic '+gossip.topic, gossip);
@@ -211,16 +211,20 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
         return;
       }
       if (this.getIsFloodAttack(gossip.senderRS)) {
+        console.log('Gossip flood attack', gossip);
         return;
       }
       if (this.getSenderIsBlacklisted(gossip.senderRS)) {
+        console.log('Gossip sender blacklisted', gossip);
+        return;
+      }
+      if (!publicKeyService.set(gossip.senderRS, gossip.senderPublicKey)) {
         return;
       }
 
       var address = this.api.createAddress();
       gossip.recipientRS = address.set(gossip.recipient) ? address.toString() : '';
 
-      publicKeyService.set(gossip.senderRS, gossip.senderPublicKey);
       this.updateOnlineStatus(gossip.senderRS, gossip.senderPublicKey);
       this.topics[gossip.topic].call(this, gossip);
 
@@ -531,6 +535,9 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
         id: arg.id
       };
       if (this.verify(gossip)) {
+        if (this.DEBUG) {
+          console.log('SEND', gossip);
+        }
         this.api.engine.socket().callAPIFunction(arg).then(
           function () {
             deferred.resolve(gossip);
