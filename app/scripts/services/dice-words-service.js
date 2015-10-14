@@ -8,6 +8,7 @@ module.factory('diceWords', function ($q, $http, $rootScope) {
       return ['en','fi'/*,'de', 'fr','it','jp','nl','pl','sv'*/];
     },
     resolveURL: function (fileName) {
+      if (isNodeJS) { return 'dice-words/' + fileName; }
       return window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/dice-words/' + fileName
     },
     getWords: function (key) {
