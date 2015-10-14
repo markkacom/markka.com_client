@@ -3,3 +3,11 @@ bower install
 grunt less
 grunt sass
 grunt serve
+
+# In order to run the windows icon maker on ubuntu (on a 32 bit machine)
+sudo add-apt-repository ppa:ubuntu-wine/ppa
+sudo apt-get update
+sudo apt-get install wine1.7-i386
+
+# Then when running *grunt nwjs* set the following
+export WINEARCH="win32"
