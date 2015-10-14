@@ -3,7 +3,7 @@
 var module = angular.module('fim.base');
 module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
 
-  function MofoSocket(engine, force_local) {
+  function MofoSocket(engine, force_local, force_remote) {
     this.call_id      = 0;
     this.engine       = engine;
     this.callbacks    = {};
@@ -15,11 +15,12 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
     this.alive_cb     = null;
     this.topics       = {};
     this.pending_send = [];
-    this.force_local  = force_local;
+    this.force_local  = force_local||false;
+    this.force_remote = force_remote||false;
     this.observers    = [];
     this.stopped      = false;
     
-    this.createIsOpenPromise();    
+    this.createIsOpenPromise();
     this.refresh();
   }
   MofoSocket.prototype = {
@@ -178,6 +179,18 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       }
     },
 
+    /* called from nxt.AbstractEngine upon server ready */
+    stopAndRefresh: function () {
+      this.createIsOpenPromise();
+      if (this.socket) {
+        this.url = null;
+        this.socket.close();
+      }
+      else {
+        this.refresh();
+      }
+    },
+
     /* When the local server is stopped it tells the socket to not try and re-connect */
     stop: function () {
       this.stopped = true;
@@ -234,8 +247,11 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
         }
       }
 
-      // connecting to the local host only makes sense when the server is running
-      if (this.force_local) {
+      /* force remote trumps force local */
+      if (this.force_remote) {
+        this.engine.getSocketNodeURL().then(setSocketURL);
+      }
+      else if (this.force_local) {
         var protocol = window.location.protocol == 'https:' ? 'wss:' : 'ws:';
         var url = protocol + '//' + (window.location.hostname||'localhost') + ':' + this.engine.port + '/ws/';
         setSocketURL(url);
@@ -375,7 +391,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       this.observers.push(observer);
       if ($scope) {
         observer.__removeDestroyListener = $scope.$on('$destroy', this._createObserverRemoveHandler(this, observer));
-      }      
+      }
     },
 
     removeObserver: function (observer) {
