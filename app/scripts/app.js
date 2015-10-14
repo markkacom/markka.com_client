@@ -32,7 +32,7 @@ module.run(function ($log, $rootScope, $translate, plugins, serverService) {
       var self = this;
       plugins.get('alerts').confirm({
         title: 'Close Mofowallet',
-        message: 'Are you sure you want to exit MofoWallet?'
+        message: 'Are you sure you want to exit Lompsa?'
       }).then( 
         function (confirmed) {
           if (confirmed) {
