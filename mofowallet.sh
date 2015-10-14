@@ -36,7 +36,7 @@ echo "successfully built mofowallet"
 echo "copy mofo files to jekyll repo"
 MOFO_FILES="dist/fonts dist/images dist/partials \
   dist/plugins dist/scripts dist/styles dist/favicon.ico \
-  dist/i18n dist/amstockchart dist/mode.js dist/dice-words"
+  dist/i18n dist/mode.js dist/dice-words dist/ZeroClipboard.swf"
 cp -r -p $MOFO_FILES ~/git/mofo
 cp dist/index.html ~/git/mofo/launch.html
 DATE=`date`
