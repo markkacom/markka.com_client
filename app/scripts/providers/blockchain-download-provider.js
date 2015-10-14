@@ -47,9 +47,11 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
       api.engine.localSocket().subscribe('blockPushed', this.onSetCurrentBlockLocal, $scope);
     }
 
+    this.onSetCurrentBlockRemote = angular.bind(this, this.setCurrentBlockRemote);
+
     /* and observes the remote server */
-    api.engine.socket().subscribe('blockPopped', angular.bind(this, this.setCurrentBlock), $scope);
-    api.engine.socket().subscribe('blockPushed', angular.bind(this, this.setCurrentBlock), $scope);
+    api.engine.remoteSocket().subscribe('blockPopped', this.onSetCurrentBlockRemote, $scope);
+    api.engine.remoteSocket().subscribe('blockPushed', this.onSetCurrentBlockRemote, $scope);
   };
   BlockchainDownloadProvider.prototype = {
     load: function () {
@@ -63,7 +65,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
       var self = this;
 
       /* get remote server state */
-      this.api.engine.socket().getBlockchainState().then(
+      this.api.engine.remoteSocket().getBlockchainState().then(
         function (data) {
           self.$scope.$evalAsync(function () {
             self.remoteheight = data.height;
@@ -90,7 +92,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
       }
     },
 
-    setCurrentBlock: function (block) {
+    setCurrentBlockRemote: function (block) {
       var self = this;
       this.$scope.$evalAsync(function () {      
         self.remoteheight = block.height;
@@ -108,6 +110,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
         var elapsed      = date.getTime() - self.genesis; // elapsed time from genesis to block
         self.progress    = (elapsed * 100) / total;
         self.downloading = (now - date.getTime()) > DOWNLOADING_THRESHOLD;
+        self.setForceLocalSocket(!self.downloading);
       });
     },
 
@@ -142,10 +145,19 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
       this.$scope.$evalAsync(function () {
         self.server_running = false;
         self.downloading    = false;
+        self.setForceLocalSocket(false);
         self.api.engine.localSocket().unsubscribe('blockPopped', self.onSetCurrentBlockLocal);
         self.api.engine.localSocket().unsubscribe('blockPushed', self.onSetCurrentBlockLocal); 
         self.api.engine.localSocket().stop();
       });
+    },
+
+    setForceLocalSocket: function (force_local) {
+      var socket = this.api.engine.socket();
+      if (socket.force_local != force_local) {
+        socket.force_local = force_local;
+        socket.stopAndRefresh();
+      }
     }
   }
   return BlockchainDownloadProvider;
