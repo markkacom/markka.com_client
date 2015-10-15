@@ -7,31 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>.ng-cloak { display:none; }</style>
     <script src="mode.js"></script>    
-    <script type="text/javascript">
-    try {
-      isNodeJS = typeof require == 'function' && require('child_process');
-    } catch (e) {
-      isNodeJS = false;
-    }
-    DEBUG = false;
-
-    if (IS_TEST_NET === false) {
-      if (("www.mofowallet.com" == window.location.host || 
-           "mofowallet.com" == window.location.host) && (window.location.protocol != "https:")) {
-        window.location.protocol = "https";
-      }
-      else if ("fimkrypto.github.io" == window.location.host) {
-        window.location = "https://www.mofowallet.com/launch.html" + window.location.hash;
-      }
-    }
-
-    var entityMap = {"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":'&#39;',"/":'&#x2F;',"\n":'<br>'};
-    function escapeHtml(string) {
-      return String(string).replace(/[&<>"'\/]|[\n]/g, function (s) {
-        return entityMap[s];
-      });
-    }
-    </script>
+    <script src="scripts/lib/init_lompsa.js"></script>
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link rel="shortcut icon" href="/favicon.ico?v=7" />
@@ -284,6 +260,9 @@
           <img alt="Brand" style="max-height:none; min-height:5px !important; height:100%" src="images/fimk-coin.png">
         </a>
         -->
+        <span ng-hide="!isTestnet" class="navbar-brand">
+          <u><b class="text-danger">TESTNET</b></u>
+        </span>
 
         <a ng-hide="!currentAccount" class="navbar-brand visible-xs" ng-href="#/messenger" style="padding:5px 10px 0px 8px">
           <i class="fa fa-comment-o fa-2x" style="max-height:none; min-height:5px !important; height:100%"></i>
@@ -398,6 +377,12 @@
               </li>
               <li>
                 <a href="#/translation/en"><i class="fa fa-globe"></i>&nbsp;&nbsp;{{'translate.translator' | translate}}</a> 
+              </li>
+              <li>
+                <a href="" ng-click="toggleTestNet()">
+                  <i ng-class="{'text-success':isTestnet}" class="fa fa-bug"></i>&nbsp;&nbsp;
+                  <span ng-class="{'font-bold':isTestnet}">Testnet</span>
+                </a> 
               </li>
               <li>
                 <a href ng-click="showAboutModal()">
