@@ -13,7 +13,6 @@ var VERSION='#VERSION#';
 var ENABLE_DUAL_ENGINES=true;
 var IS_TEST_NET=false;
 var FORCE_LOCAL_HOST=false;
-var PRIVATE_ENABLED=false;
 var WALLET_NAME='Lompsa.com';
 var TRADE_UI_ONLY=false;
 var DEBUG=false;

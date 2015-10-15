@@ -6,7 +6,6 @@ var VERSION='#VERSION#';
 var ENABLE_DUAL_ENGINES=false;
 var IS_TEST_NET=window.location.port == "6886";
 var FORCE_LOCAL_HOST=true;
-var PRIVATE_ENABLED=false;
 var WALLET_NAME='FIMKrypto';
 var TRADE_UI_ONLY=false;
 var DEBUG=false;
