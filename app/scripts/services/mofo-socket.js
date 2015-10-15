@@ -319,7 +319,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
     onerror: function (event) {
       this._notifyObservers('onerror', event);
 
-      if (this.debug) { console.log('WEBSOCKET - onerror ' + new Date(), {event: event }) }
+      console.log('WEBSOCKET - onerror REMOVE BAD URL ['+this.url+']'+new Date(), {event: event });
 
       this.engine.urlPool.badURL(this.url);
     },
