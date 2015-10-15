@@ -4,6 +4,7 @@ var module = angular.module('fim.base');
 module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
 
   var unlockedKeys = {};
+  var storage_key  = $rootScope.isTestNet ? "mofo.key.service" : "mofo.key.service.test";
 
   var SERVICE = {
     wallet: null,
@@ -27,13 +28,13 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
       return this.wallet = new Wallet([], password);
     },
     walletExists: function () {
-      return typeof window.localStorage.getItem("mofo.key.service") == 'string';
+      return typeof window.localStorage.getItem(storage_key) == 'string';
     },
     remember: function (id_rs, secretPhrase) {
       unlockedKeys[id_rs] = secretPhrase;
     },
     remove: function () {
-      window.localStorage.removeItem("mofo.key.service");
+      window.localStorage.removeItem(storage_key);
       this.wallet = null;
       unlockedKeys = {};
     },
@@ -56,7 +57,7 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
   Wallet.prototype = {
     save: function () {
       var encrypted = encryptJSONObject(this.entries, this.password);
-      window.localStorage.setItem("mofo.key.service", encrypted);
+      window.localStorage.setItem(storage_key, encrypted);
     },
 
     add: function (id_rs, secretPhrase) {
@@ -88,7 +89,7 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
    * @return Wallet
    */
   function loadWallet(password, cipher_text_override) {
-    var text = cipher_text_override || window.localStorage.getItem("mofo.key.service");
+    var text = cipher_text_override || window.localStorage.getItem(storage_key);
     if (!text) {
       return null;
     }
