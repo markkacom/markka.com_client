@@ -3,14 +3,17 @@
 var uriParser = null;
 var module = angular.module('fim.base');
 module.run(function ($rootScope) {
+  if (window.localStorage.getItem("lompsa.testnet") == null) {
+    window.localStorage.setItem("lompsa.testnet", IS_TEST_NET);
+  }
   $rootScope.FIM_SERVER_VERSION = null;
   $rootScope.TITLE = WALLET_NAME+' '+VERSION;
   $rootScope.WALLET_NAME = WALLET_NAME;
   $rootScope.paramEngine = 'fim';
   $rootScope.enableDualEngines = ENABLE_DUAL_ENGINES;
-  $rootScope.isTestnet = IS_TEST_NET;
+  $rootScope.isTestnet = window.localStorage.getItem("lompsa.testnet")=="true";
   $rootScope.forceLocalHost = FORCE_LOCAL_HOST;
-  $rootScope.privateEnabled = PRIVATE_ENABLED;
+  $rootScope.privateEnabled = $rootScope.isTestnet;
   $rootScope.multiLanguage = true;
   $rootScope.MONETARY_SYSTEM = false;
   $rootScope.TRADE_UI_ONLY = TRADE_UI_ONLY;
@@ -21,6 +24,11 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   nxt, $route, $translate, accountsService, BlockchainDownloadProvider, UserDataProvider) {
 
   $rootScope.userData = new UserDataProvider($scope);
+
+  $scope.toggleTestNet = function () {
+    window.localStorage.setItem("lompsa.testnet", !$rootScope.isTestnet);
+    $scope.reloadMofoWallet();
+  }
 
   $scope.mainMenuCollapsed=true;
   $scope.collapseMainMenu = function () {
