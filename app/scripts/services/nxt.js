@@ -8,25 +8,6 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
   var FAILED_RETRIES = 0;
 
-  /* Register settings */
-  settings.initialize([{
-    id: 'nxt.localhost',
-    value: 'http://127.0.0.1',
-    type: String,
-    label: 'localhost',
-    resolve: function (value) {
-      INSTANCE.nxt().engine.localhost = value;
-    }
-  }, {
-    id: 'fim.localhost',
-    value: 'http://127.0.0.1',
-    type: String,
-    label: 'localhost',
-    resolve: function (value) {
-      INSTANCE.fim().engine.localhost = value;
-    }
-  }]);
-
   var TYPE_FIM  = 'TYPE_FIM';
   var TYPE_NXT  = 'TYPE_NXT';
 
@@ -84,25 +65,21 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       this.symbol = 'EUR';
     }
 
-    this.localhost = 'http://localhost';
-
-    if (_type == TYPE_FIM) {
-      if ($rootScope.forceLocalHost) {
-        this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:'); 
-      }
-      else if (_test) {
+    if ($rootScope.forceLocalHost) {
+      this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:'); 
+    }
+    else if (this.type == TYPE_FIM) {
+      if (this.test) {
         this.urlPool = new URLPool(this, [/*'188.166.36.203',*/ '188.166.0.145'], false);
       }
       else {
         this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
       }
     }
-    else if (_type == TYPE_NXT) {
-      if ($rootScope.forceLocalHost) {
-        this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:'); 
-      }
-      else if (_test) {
+    else if (this.type == TYPE_NXT) {
+      if (this.test) {
         console.log('There are no nxt testnet servers');
+        this.urlPool = new URLPool(this, [], false);
       }
       else {
         this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
@@ -979,7 +956,6 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     verifyEngineType(_type);
     this.type                 = _type;
     this.test                 = _test;
-    this.downloaders          = {};
     this.engine               = new AbstractEngine(_type, _test);
     this.crypto               = new Crypto(_type, this);
     this.renderer             = new Renderer(this);
