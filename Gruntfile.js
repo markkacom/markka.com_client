@@ -653,24 +653,13 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build-uncompressed', [
     'clean:dist',
-    //'html2js',
-    //'google_translate',
     'wiredep',
-    //'useminPrepare',
-    'concurrent:dist',
+    'copy:styles',
+    'copy:images',
     'autoprefixer',
-    // 'concat',
-    //'ngAnotate',
-    // 'nodewebkit',
     'copy:devDist',
-    // 'cdnify',
     'sass:dist',
     'less:dist',
-    'cssmin',
-    // 'uglify',
-    'filerev',
-    // 'usemin',
-    //'htmlmin',
   ]);  
 
   grunt.registerTask('default', [
