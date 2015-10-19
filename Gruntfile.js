@@ -656,7 +656,7 @@ module.exports = function (grunt) {
     //'html2js',
     //'google_translate',
     'wiredep',
-    'useminPrepare',
+    //'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
     // 'concat',
