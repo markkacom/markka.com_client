@@ -6,7 +6,6 @@ var VERSION='#VERSION#';
 var ENABLE_DUAL_ENGINES=false;
 var IS_TEST_NET=true;
 var FORCE_LOCAL_HOST=false;
-var PRIVATE_ENABLED=true;
 var WALLET_NAME='FIMK';
 var TRADE_UI_ONLY=true;
 var DEBUG=false;
