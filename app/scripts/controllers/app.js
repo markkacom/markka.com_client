@@ -10,8 +10,8 @@ module.run(function ($rootScope) {
   $rootScope.TITLE = WALLET_NAME+' '+VERSION;
   $rootScope.WALLET_NAME = WALLET_NAME;
   $rootScope.paramEngine = 'fim';
-  $rootScope.enableDualEngines = ENABLE_DUAL_ENGINES;
   $rootScope.isTestnet = window.localStorage.getItem("lompsa.testnet")=="true";
+  $rootScope.enableDualEngines = $rootScope.isTestnet ? false : ENABLE_DUAL_ENGINES;
   $rootScope.forceLocalHost = FORCE_LOCAL_HOST;
   $rootScope.privateEnabled = $rootScope.isTestnet;
   $rootScope.multiLanguage = true;
