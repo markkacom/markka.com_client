@@ -399,7 +399,8 @@
       "0":                  "{{sender}} set namespaced alias {{aliasName}} to {{aliasURI}} {{details}} {{message}}",
       "1":                  "{{sender}} adds {{recipient}} to {{assetName}} allowed accounts {{details}} {{message}}",
       "2":                  "{{sender}} removed {{recipient}} from {{assetName}} allowed accounts {{details}} {{message}}",
-      "3":                  "{{sender}} set {{assetName}} order fee {{orderFee}}% trade fee {{tradeFee}}% {{details}} {{message}}"
+      "3":                  "{{sender}} set {{assetName}} order fee {{orderFee}}% trade fee {{tradeFee}}% {{details}} {{message}}",
+      "4":                  "{{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}"
     }
   },
 

@@ -941,6 +941,14 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
+              // {{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}
+              case 4: return $translate.instant('transaction.40.4', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                identifier: render(TYPE.ACCOUNT, transaction.attachment.identifier, transaction.recipientRS), 
+                recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
             }
           }
         }
@@ -1611,6 +1619,35 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         pos += 2;
 
         if (transaction.period !== data.period) {
+          return false;
+        }
+
+        break;
+
+      case "setAccountIdentifier":
+        if (transaction.type !== 40 && transaction.subtype !== 4) {
+          return false;
+        }
+
+        var identifierLength = parseInt(byteArray[pos], 10);
+        pos++;
+        transaction.identifier = converters.byteArrayToString(byteArray, pos, identifierLength);
+        pos += identifierLength;
+
+        transaction.signatory = String(converters.byteArrayToBigInteger(byteArray, pos));
+        pos += 8;
+
+        var signatureLength = parseInt(byteArray[pos], 10);
+        pos++;
+        if (signatureLength > 0) {
+          transaction.signature = converters.byteArrayToString(byteArray, pos, signatureLength);
+          pos += signatureLength;
+        }
+
+        if (transaction.identifier !== data.identifier || transaction.signatory !== data.signatory) {
+          return false;
+        }
+        if (signatureLength > 0 && transaction.signature !== data.signature) {
           return false;
         }
 
