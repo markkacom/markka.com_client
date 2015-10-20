@@ -68,6 +68,9 @@ module.factory('UserDataProvider', function (nxt, $q, $rootScope, $timeout) {
             this.updateBalance(data.unconfirmedBalanceNQT);
             this.name       = data.accountName;
             this.label      = this.name || this.account;
+            if ($rootScope.currentAccount) {
+              $rootScope.currentAccount.label = this.label;
+            }
             deferred.resolve();
           }.bind(this));
         }.bind(this),
