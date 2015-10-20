@@ -45,7 +45,7 @@
       <!-- Show static recipient control -->
       <div class="form-group col-xs-12" ng-if="items.canHaveRecipient"
            ng-class="{ 'has-error' : transactionCreateForm.recipientField.$invalid && ! transactionCreateForm.recipientField.$pristine }"
-           ng-init="items.onRecipientChange && iems.onRecipientChange(items)">
+           ng-init="items.onRecipientChange && items.onRecipientChange(items)">
         <span class="form-control-static">
           <label class="control-label" translate="translate.recipient"></label>
           <span ng-if="!items.editRecipient" class="form-control">
@@ -59,7 +59,7 @@
               <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="caret"></span></button>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
                 <li ng-repeat="a in items.accounts" class="input">
-                  <a href ng-click="(items.recipient = a.id_rs) && (items.onRecipientChange && iems.onRecipientChange(items))">
+                  <a href ng-click="(items.recipient = a.id_rs) && (items.onRecipientChange && items.onRecipientChange(items))">
                     <span style="font-family: monospace !important;">{{a.id_rs}}&nbsp;&nbsp;</span>
                     <span ng-if="a.name" class="badge"><b>{{a.name}}</b></span>
                   </a>
