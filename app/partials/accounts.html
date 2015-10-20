@@ -81,7 +81,7 @@
           </li>
           <li role="presentation" route-active="accounts/{{id_rs}}/buy_orders" ng-hide="TRADE_UI_ONLY">
             <a ng-href="#/accounts/{{id_rs}}/buy_orders/{{paramPeriod}}" role="menuitem">
-              <i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;<span translate="translate.buy_orders"/>
+              <i class="fa fa-paper-plane"></i>&nbsp;&nbsp;<span translate="translate.buy_orders"/>
             </a>
           </li>
           <!-- mass pay -->
@@ -89,7 +89,12 @@
             <a ng-href="#/accounts/{{id_rs}}/payments/latest" role="menuitem">
               <i class="fa fa-diamond"></i>&nbsp;&nbsp;<span translate="translate.payments"/>
             </a>
-          </li>          
+          </li>
+          <li role="presentation" ng-hide="TRADE_UI_ONLY">
+            <a ng-href="#/goods/{{paramEngine}}/listing/{{id_rs}}" role="menuitem">
+              <i class="fa fa-shopping-cart"></i>&nbsp;&nbsp;<span translate="translate.marketplace"/>
+            </a>
+          </li>
         </ul>
       </li>
       <li ng-if="isCurrentAccount(id_rs)">
@@ -99,9 +104,6 @@
         <ul class="nav navbar-stacked" collapse="accountCollapse">
           <li ng-repeat="t in transactions">
             <a href ng-click="executeTransaction(t.id)">{{t.label}}</a>
-          </li>
-          <li>
-            <a href="#/goods/{{id_rs}}/listing" translate="translate.marketplace"></a>
           </li>
         </ul>
       </li>      

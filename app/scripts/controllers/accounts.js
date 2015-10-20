@@ -29,6 +29,8 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     return;
   }
 
+  $scope.paramEngine    = api.engine.symbol_lower;
+
   if (['activity', 'messages', 'blocks', 'aliases', 'fim_aliases', 'assets', 
        'goods', 'leasing', 'currency', 'buy_orders', 'sell_orders', 'pulse', 
        'payments'].indexOf($scope.paramSection) == -1) {
