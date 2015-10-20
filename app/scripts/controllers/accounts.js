@@ -322,7 +322,12 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
         break;
       }
       default: {
-        plugins.get('transaction').get(id).execute($scope.id_rs, {});
+        if (id == 'setAccountIdentifier') {
+          $scope.setAccountIdentifier();
+        }
+        else {
+          plugins.get('transaction').get(id).execute($scope.id_rs, {});
+        }
         break;
       }
     }
@@ -395,6 +400,15 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
       aliasName: alias.aliasName,
       aliasURI: alias.aliasURI
     }, true);
+  }
+
+  $scope.setAccountIdentifier = function (recipient, identifier, signatory, signature) {
+    plugins.get('transaction').get('setAccountIdentifier').execute({ 
+      identifier: identifier, 
+      signatory: signatory, 
+      signature: signature,
+      recipient: recipient||$scope.id_rs
+    });
   }
 
   $scope.privateChat = function () {
