@@ -322,8 +322,10 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
         break;
       }
       default: {
-        if (id == 'setAccountIdentifier') {
-          $scope.setAccountIdentifier();
+        if (id == 'setAccountIdentifier' || 
+            id == 'setVerificationAuthority' ||
+            id == 'requestFreeAccountIdentifier') {
+          plugins.get('transaction').get(id).execute({});
         }
         else {
           plugins.get('transaction').get(id).execute($scope.id_rs, {});
