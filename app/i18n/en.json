@@ -400,7 +400,8 @@
       "1":                  "{{sender}} adds {{recipient}} to {{assetName}} allowed accounts {{details}} {{message}}",
       "2":                  "{{sender}} removed {{recipient}} from {{assetName}} allowed accounts {{details}} {{message}}",
       "3":                  "{{sender}} set {{assetName}} order fee {{orderFee}}% trade fee {{tradeFee}}% {{details}} {{message}}",
-      "4":                  "{{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}"
+      "4":                  "{{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}",
+      "5":                  "{{sender}} made {{recipient}} a verification authority for {{period}} blocks {{details}} {{message}}"
     }
   },
 
