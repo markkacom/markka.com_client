@@ -56,7 +56,7 @@ module.config(function($routeProvider) {
 
 module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope, 
   $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji, 
-  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval) {
+  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval, AccountAutocompleteProvider) {
   
   $rootScope.unread = false;
 
@@ -99,6 +99,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     return;
   }
 
+  $scope.accountSearchProvider = new AccountAutocompleteProvider(api);
   $scope.feeCost = api.engine.feeCost + ' ' + api.engine.symbol;
   
   generateSpeechBubbleBootstrapCSS();
@@ -164,7 +165,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
         }
         /* if it aint there - assume it's an account we want to add */
         $scope.$evalAsync(function () {
-          $scope.message.recipient = $scope.id_rs;
+          $scope.message.recipient = '';
           $scope.ui.editRecipient  = true;
           $scope.accountChanged();
         });
@@ -212,7 +213,6 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     $scope.$evalAsync(function () {
       $scope.message.recipientValid = false;
       $scope.message.recipientPublicKey = '';
-      $scope.message.name = '';
 
       var id_rs = $scope.message.recipient;
       if (id_rs && id_rs.trim().length > 0) {
@@ -229,12 +229,16 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
                   $scope.message.recipientPublicKey = data.publicKey;
                   publicKeyService.set(id_rs, data.publicKey);
                 }
-                $scope.message.name = data.accountName;
+                if (!$scope.message.name) {
+                  $scope.message.name = data.accountName;
+                }
               });
             }
           });
+          return;
         }
       }
+      $scope.message.name = '';
     });
   }
 
