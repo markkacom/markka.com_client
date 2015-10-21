@@ -17,16 +17,16 @@ module.factory('AccountAutocompleteProvider', function (nxt, $q, $timeout, $root
       this.api.engine.socket().callAPIFunction(args).then(
         function (data) {
           console.log('data', data);
-          if (data.accounts.length == 1 && 
-              data.accounts[0].identifier == data.accounts[0].accountRS && 
+          if (data.accounts.length == 1 &&
+              data.accounts[0].identifier == data.accounts[0].accountRS &&
               data.accounts[0].identifier == query) {
             deferred.resolve([]);
           }
           else {
             deferred.resolve(data.accounts.map(
-              function (obj) { 
-                var v = { 
-                  label: obj.identifier, 
+              function (obj) {
+                var v = {
+                  label: obj.identifier,
                   id_rs: obj.accountRS
                 };
                 if (v.label != v.id_rs) {
