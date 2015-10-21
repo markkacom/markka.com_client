@@ -62,16 +62,22 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
   };
 
   $scope.close = function () {
+    /* Makes fields available on items by name */
+    angular.forEach($scope.items.fields, function (field) { 
+      $scope.items[field.name] = field.value;
+    });
+
     if ($scope.sendSuccess) {
       $modalInstance.close($scope.items);
     }
+    else if ($scope.items.onclose) {
+      $scope.items.onclose($scope.items).then(
+        function () {
+          $modalInstance.close($scope.items);
+        }
+      );
+    }
     else {
-
-      /* Makes fields available on items by name */
-      angular.forEach($scope.items.fields, function (field) {
-        $scope.items[field.name] = field.value;
-      });
-
       var args = {
         feeNQT:   nxt.util.convertToNQT($scope.items.feeNXT),
         deadline: $scope.items.deadline,
