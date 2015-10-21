@@ -949,6 +949,14 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
+              // {{sender}} made {{recipient}} a verification authority for {{period}} blocks {{details}} {{message}}
+              case 5: return $translate.instant('transaction.40.5', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                period:     transaction.attachment.period, 
+                recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
             }
           }
         }
@@ -1623,7 +1631,6 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         }
 
         break;
-
       case "setAccountIdentifier":
         if (transaction.type !== 40 && transaction.subtype !== 4) {
           return false;
@@ -1640,7 +1647,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         var signatureLength = parseInt(byteArray[pos], 10);
         pos++;
         if (signatureLength > 0) {
-          transaction.signature = converters.byteArrayToString(byteArray, pos, signatureLength);
+          transaction.signature = converters.byteArrayToHexString(byteArray.slice(pos, pos + signatureLength));
           pos += signatureLength;
         }
 
@@ -1650,7 +1657,18 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         if (signatureLength > 0 && transaction.signature !== data.signature) {
           return false;
         }
+        break;
+      case "setVerificationAuthority":
+        if (transaction.type !== 40 && transaction.subtype !== 5) {
+          return false;
+        }
 
+        transaction.period = parseInt(String(converters.byteArrayToSignedInt32(byteArray, pos)));
+        pos += 4;
+
+        if (transaction.period !== data.period) {
+          return false;
+        }
         break;
       default:
         //invalid requestType..
