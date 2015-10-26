@@ -4,7 +4,7 @@ var uriParser = null;
 var module = angular.module('fim.base');
 module.run(function ($rootScope) {
   if (window.localStorage.getItem("lompsa.testnet") == null) {
-    window.localStorage.setItem("lompsa.testnet", IS_TEST_NET);
+    window.localStorage.setItem("lompsa.testnet", IS_TEST_NET?"true":"false");
   }
   $rootScope.FIM_SERVER_VERSION = null;
   $rootScope.TITLE = WALLET_NAME+' '+VERSION;
@@ -81,8 +81,8 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   //   $translate.refresh();
   // });
 
-  $rootScope.loginAddAccount = function () {
-    modals.open('welcome', {
+  $rootScope.loginTo = function () {
+    modals.open('login-to', {
       resolve: {
         items: function () { 
           return {}; 
@@ -306,6 +306,63 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
       var clipboard = gui.Clipboard.get();
       clipboard.set(text, 'text');
     }
+  }
+
+  $rootScope.followUser = function (id_rs) {
+    var deferred = $q.defer();
+    var api = nxt.get(id_rs);
+    if (!api) {
+      deferred.resolve(false);
+      return;
+    }
+    var args = {
+      id_rs: id_rs,
+      publicKey: '',
+      engine: api.engine.type,
+      name: '',
+      excluded: false
+    };
+    api.engine.socket().getAccount({ account:id_rs }).then(
+      function (a) {
+        args.name = a.accountName;
+      }
+    );
+
+    plugins.get('alerts').confirm({
+      title: 'Follow account',
+      html: 'Do you want to follow this account?<br>By following this account it will be added to your dashboard.'
+    }).then(
+      function (confirmed) {
+        if (confirm) {
+          db.accounts.put(args).then(function () {
+            deferred.resolve(true);
+          }, function () {
+            deferred.resolve(false);
+          });
+        }
+        else {
+          deferred.resolve(false);
+        }
+      }
+    );
+    return deferred.promise;
+  }
+
+  $rootScope.unFollowUser = function (id_rs) {
+    accountsService.getFirst(id_rs).then(function (item) {
+      if (item) {
+        plugins.get('alerts').confirm({
+          title: 'Unfollow account',
+          html: 'Are you sure you want to unfollow this account?<br>By un following this account it will be removed from your dashboard.'
+        }).then(
+          function (confirmed) {
+            if (confirmed) {
+              item.delete();
+            }
+          }
+        );
+      }
+    });
   }
 });
 
