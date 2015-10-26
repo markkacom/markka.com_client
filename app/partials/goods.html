@@ -54,8 +54,8 @@
       <div class="row">
         <div class="col-md-12">
           <span class="text-muted">Showing {{symbol}} marketplace listings
-            <a ng-show="symbol=='FIM'" href="#/goods/nxt/listing">show NXT</a>
-            <a ng-show="symbol=='NXT'" href="#/goods/fim/listing">show FIM</a>
+            <a ng-show="symbol=='FIM' && enableDualEngines" href="#/goods/nxt/listing">show NXT</a>
+            <a ng-show="symbol=='NXT' && enableDualEngines" href="#/goods/fim/listing">show FIM</a>
           </span>
         </div>
         <div class="col-md-12" ng-if="id_rs">
