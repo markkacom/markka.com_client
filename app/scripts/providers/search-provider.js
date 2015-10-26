@@ -109,7 +109,7 @@ module.factory('SearchProvider', function (nxt, $q, IndexedEntityProvider) {
       var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
       
       /* use searchAccounts API for nxt 1.5+ */
-      if (this.api.type == nxt.TYPE_NXT && this.category == 'accounts') {
+      if (this.category == 'accounts') {
         var results = data.accounts||[];
       }
       else {
