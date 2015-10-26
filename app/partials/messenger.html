@@ -63,22 +63,37 @@
       <div class="col-md-12">
         <form>
           <div class="form-group">
-            <label for="accountIdentifier2" translate="translate.name"></label>
-            <input type="text" class="form-control" id="accountIdentifier2" placeholder="{{'translate.name'|translate}}" ng-model="message.name" readonly>
-          </div>
-          <div class="form-group">
-            <label for="accountIdentifier3" translate="translate.account"></label>
-            <input type="text" class="form-control" id="accountIdentifier3" placeholder="{{'translate.account'|translate}}" 
-              ng-model="message.recipient" ng-model-opts="{ 'debounce': { 'default': 500, 'blur': 0 } }" ng-change="accountChanged()">
+            <label for="accountIdentifierx">Search names</label>
+            <div class="input-group">
+              <input type="text" class="form-control" 
+                      ng-model="message.recipient" 
+                      ng-change="accountChanged()"
+                      typeahead-on-select="message.name = $item.name; accountChanged()"
+                      placeholder="{{'translate.name'|translate}}" 
+                      typeahead="result.id_rs as result for result in accountSearchProvider.getResults($viewValue)" 
+                      typeahead-template-url="partials/account-search-template.html" 
+                      typeahead-wait-ms="10"
+                      typeahead-loading="loadingResults"
+                      typeahead-no-results="noResults"
+                      id="accountIdentifierx"
+                      autocomplete="false">
+              <span ng-show="message.name" class="input-group-addon" 
+                ng-bind="message.name"></span> 
+              <span ng-hide="message.name" class="input-group-addon">
+                <span ng-show="loadingResults"><i class="fa fa-refresh fa-spin"></i></span>
+                <span ng-hide="loadingResults"><i class="fa fa-search"></i></span>
+              </span>
+            </div>
           </div>
           <div class="form-group">
             <label for="accountIdentifier4" translate="translate.public_key"></label>
-            <input type="text" class="form-control" id="accountIdentifier4" placeholder="{{'translate.public_key'|translate}}" ng-model="message.recipientPublicKey">
+            <input type="text" class="form-control" id="accountIdentifier4" placeholder="{{'translate.public_key'|translate}}" 
+              ng-model="message.recipientPublicKey">
           </div>
           <div class="form-group">
             <button class="btn btn-primary" ng-click="addContact(message.recipient)" style="margin-top:8px" 
             ng-disabled="!message.recipientValid">Save</button>
-          </div>
+          </div>         
         </form>
       </div>
     </div>
@@ -93,9 +108,10 @@
         <div class="col-md-12">
           <div class="input-group">
             <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
-            <textarea class="form-control" rows="{{IS_SMALL_DEVICE?1:2}}" ng-model="message.text" ng-change="messageChanged()"
-              ng-disabled="ui.editRecipient&&!message.recipientPublicKey" enter-submit="sendDirectMessage()" ng-click= "activateTextbox()"></textarea>
-            <span ng-if="message.text" class="visible-xs input-group-addon btn btn-default" ng-click="sendDirectMessage()" translate="translate.send"></span>
+            <textarea class="form-control" rows="2" ng-model="message.text" ng-change="messageChanged()"
+              enter-submit="sendDirectMessage()" ng-click= "activateTextbox()"></textarea>
+            <span ng-show="message.text && IS_SMALL_DEVICE" class="input-group-addon" 
+              ng-click="sendDirectMessage()" translate="translate.send"></span>
           </div>
           <a href ng-click="ui.sendOffline=true" style="margin-bottom: 8px;"
             ng-show="(ui.chat && ui.chat.provider && ui.chat.provider.online) && !ui.sendOffline">
