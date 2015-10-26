@@ -140,7 +140,7 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
     if ($scope.privateAsset) {
       args.orderFeeNQT = $scope.order.orderFeeNQT;
     }
-    plugins.get('transaction').get('buyAsset').execute($rootScope.currentAccount.id_rs, args);
+    plugins.get('transaction').get('buyAsset').execute(args);
   }
 
   $scope.sellAsset = function () {
@@ -157,7 +157,7 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
     if ($scope.privateAsset) {
       args.orderFeeQNT = $scope.order.orderFeeQNT;
     }
-    plugins.get('transaction').get('sellAsset').execute($rootScope.currentAccount.id_rs, args);
+    plugins.get('transaction').get('sellAsset').execute(args);
   }
 
   $scope.writePost = function () {
