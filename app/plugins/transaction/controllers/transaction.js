@@ -2,7 +2,7 @@
 'use strict';
 var module = angular.module('fim.base');
 module.controller('TransactionCreateModalController', function(items, $modalInstance, $scope, nxt, 
-  modals, $sce, $q, plugins, i18n, $timeout, accountsService, $rootScope, Emoji) {
+  modals, $sce, $q, plugins, i18n, $timeout, accountsService, $rootScope, Emoji, AccountAutocompleteProvider, AssetAutocompleteProvider) {
 
   $scope.sendSuccess          = false;
   $scope.show                 = {};
@@ -25,6 +25,11 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
   $scope.items.feeNXT         = items.feeNXT || api.engine.feeCost;
   $scope.items.message        = $sce.getTrustedHtml(items.message);
   $scope.items.accounts       = [];
+
+  $scope.symbol_lower         = $scope.items.symbol.toLowerCase();
+
+  $scope.accountSearchProvider = new AccountAutocompleteProvider(api);
+  $scope.assetSearchProvider  = new AssetAutocompleteProvider(api);
 
   if ($scope.items.editRecipient) {
     var promise = accountsService.getAll(api.engine.type == nxt.TYPE_FIM ? accountsService.FIM_FILTER : accountsService.NXT_FILTER);
@@ -172,6 +177,11 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
           delete args.txnMessageType;
 
           progress.setMessage('Creating Transaction');
+          if (!socket.is_connected) {
+            progress.setErrorMessage("No connection with server, try later");
+            progress.enableCloseBtn();
+            return;
+          }
           socket.callAPIFunction(args).then(
             function (data) {
 
@@ -219,6 +229,11 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
                   var fullHash = api.crypto.calculateFullHash(data.unsignedTransactionBytes, signature);
 
                   progress.setMessage('Broadcasting Transaction');
+                  if (!socket.is_connected) {
+                    progress.setErrorMessage("No connection with server, try later");
+                    progress.enableCloseBtn();
+                    return;
+                  }
                   socket.callAPIFunction({ requestType: 'broadcastTransaction', transactionBytes: payload }).then(
                     function (data) {
                       progress.animateProgress().then(

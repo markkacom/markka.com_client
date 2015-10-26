@@ -15,33 +15,6 @@
             ng-show="recipientDescriptionHTML && !sendSuccess" ng-bind-html="recipientDescriptionHTML"></div>
       </div>
      
-      <!-- Show static sender control -->
-      <!-- <div class="form-group col-xs-12"
-           ng-class="{ 'has-error' : transactionCreateForm.senderField.$invalid && ! transactionCreateForm.senderField.$pristine }">
-        <span class="form-control-static">
-          <label class="control-label">Sender</label>
-          <span ng-if="!items.editSender" class="form-control">
-            <b>{{items.senderRS}}</b>
-          </span>
-          <div ng-if="items.editSender" class="input-group">
-            <input class="form-control" ng-model="items.senderRS" type="text" 
-                 required ui-validate=" 'validateAddress($value)' " ui-validate-watch=" 'items.senderRS' "
-                 name="senderField" ng-change="items.onRecipientChange && items.onRecipientChange(items)">
-            <div class="input-group-btn" dropdown>
-              <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="caret"></span></button>
-              <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <li ng-repeat="a in items.accounts" class="input">
-                  <a href ng-click="items.senderRS = a.id_rs">
-                    <span style="font-family: monospace !important;">{{a.id_rs}}&nbsp;&nbsp;</span>
-                    <span ng-if="a.name" class="badge"><b>{{a.name}}</b></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </span>
-      </div> -->
-
       <!-- Show static recipient control -->
       <div class="form-group col-xs-12" ng-if="items.canHaveRecipient"
            ng-class="{ 'has-error' : transactionCreateForm.recipientField.$invalid && ! transactionCreateForm.recipientField.$pristine }"
@@ -51,21 +24,26 @@
           <span ng-if="!items.editRecipient" class="form-control">
             <b>{{items.recipient}}</b>
           </span>
-          <div ng-if="items.editRecipient" class="input-group">
-            <input class="form-control" ng-model="items.recipient" type="text" 
-                 required ui-validate=" 'validateAddress($value)' " ui-validate-watch=" 'items.recipient' "
-                 name="recipientField" ng-change="items.onRecipientChange && items.onRecipientChange(items)">
-            <div class="input-group-btn" dropdown>
-              <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="caret"></span></button>
-              <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <li ng-repeat="a in items.accounts" class="input">
-                  <a href ng-click="(items.recipient = a.id_rs) && (items.onRecipientChange && items.onRecipientChange(items))">
-                    <span style="font-family: monospace !important;">{{a.id_rs}}&nbsp;&nbsp;</span>
-                    <span ng-if="a.name" class="badge"><b>{{a.name}}</b></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <div ng-if="items.editRecipient" class="input-group" ng-init="recipientName=''">
+            <input type="text" class="form-control" 
+                    ng-model="items.recipient" 
+                    ng-change="items.onRecipientChange && items.onRecipientChange(items)"
+                    typeahead-on-select="recipientName = $item.name; items.onRecipientChange && items.onRecipientChange(items)"
+                    placeholder="{{'translate.name'|translate}}" 
+                    typeahead="result.id_rs as result for result in accountSearchProvider.getResults($viewValue)" 
+                    typeahead-template-url="partials/account-search-template.html" 
+                    typeahead-wait-ms="10"
+                    typeahead-loading="loadingAccountResults"
+                    typeahead-no-results="noAccountResults"
+                    autocomplete="false"
+                    required ui-validate=" 'validateAddress($value)' "
+                    ui-validate-watch=" 'items.recipient' "
+                    name="recipientField">
+            <span ng-show="recipientName" class="input-group-addon" ng-bind="recipientName"></span> 
+            <span ng-hide="recipientName" class="input-group-addon">
+              <span ng-show="loadingAccountResults"><i class="fa fa-refresh fa-spin"></i></span>
+              <span ng-hide="loadingAccountResults"><i class="fa fa-search"></i></span>
+            </span>
           </div>
         </span>
       </div>
@@ -76,20 +54,33 @@
            ng-class="{ 'has-error' : transactionCreateForm.assetField.$invalid && ! transactionCreateForm.assetField.$pristine }">
         <span class="form-control-static">
           <label class="control-label" translate="translate.asset"></label>
-          <div class="input-group">
-            <input class="form-control" ng-model="items.asset" type="text" 
-                 required name="assetField" ng-change="items.onAssetChange && items.onAssetChange(items)">
-            <div class="input-group-btn" dropdown>
-              <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="caret"></span></button>
-              <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <li ng-repeat="a in items.assets" class="input">
-                  <a href ng-click="(items.asset = a.asset) && (items.onAssetChange && items.onAssetChange(items))">
-                    <span style="font-family: monospace !important;">{{a.asset}}&nbsp;&nbsp;</span>
-                    <span ng-if="a.name" class="badge"><b>{{a.name}}</b></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <span ng-if="!items.editAsset" class="form-control">
+            <b>{{items.asset}}</b><span ng-show="noAssetResults" class="text-danger">&nbsp;&nbsp;No results</span>
+          </span>
+          <div ng-if="items.editAsset" class="input-group" ng-init="items.assetName=''">
+            <input type="text" class="form-control" 
+                    ng-model="items.asset"
+                    ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 150, 'blur': 0 } }"
+                    ng-change="items.onAssetChange && items.onAssetChange(items)"
+                    typeahead-on-select="items.assetName=$item.name; items.onAssetChange && items.onAssetChange(items)"
+                    placeholder="{{'translate.name'|translate}}" 
+                    typeahead="result.asset as result for result in assetSearchProvider.getResults($viewValue, items.editAssetAccount)" 
+                    typeahead-template-url="partials/asset-search-template.html" 
+                    typeahead-wait-ms="10"
+                    typeahead-loading="loadingAssetResults"
+                    typeahead-no-results="noAssetResults"
+                    autocomplete="false"
+                    required 
+                    name="assetField"
+                    ng-readonly="items.editAssetReadonly==true">
+            <span ng-show="items.assetName" class="input-group-addon">
+              <b><a href="#/assets/{{symbol_lower}}/{{items.asset}}/trade" ng-click="dismiss()">{{items.assetName}}</a></b>&nbsp;|&nbsp;
+              <a href="#/accounts/{{items.assetIssuerRS}}/assets/latest" ng-click="dismiss()">{{items.assetIssuerName}}</a>
+            </span> 
+            <span ng-hide="items.assetName" class="input-group-addon">
+              <span ng-show="loadingAssetResults"><i class="fa fa-refresh fa-spin"></i></span>
+              <span ng-hide="loadingAssetResults"><i class="fa fa-search"></i></span>
+            </span>
           </div>
         </span>
       </div>
@@ -194,7 +185,7 @@
             </div>
 
           </div>
-        </ng-form>        
+        </ng-form>
       </div>
 
 
@@ -229,7 +220,7 @@
               <a href ng-repeat="e in emoji.groups.signs" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
             </tab>
           </tabset>
-        </div>          
+        </div>
         <div class="radio">
           <label ng-if= "items.abc">
             <input type="radio" name="type" ng-model="items.txnMessageType" value="note" 
@@ -269,7 +260,7 @@
                   type="text" ng-model="items.deadline" ng-disabled="sendSuccess" required>
           </div>
         </div>
-      </div>      
+      </div>
 
       <!-- Show Fee + Deadline + Message-->
       <div class="form-group col-xs-12" ng-if="!items.hideFee">
@@ -280,9 +271,9 @@
           </span>
           <a href ng-click="show.advanced = !show.advanced" 
             ng-class="{ 'text-muted': show.advanced }"><strong>Fee</strong> {{items.feeNXT}} {{items.symbol}} <strong>Deadline</strong> {{items.deadline}}</a>
-          <span ng-if="items.canHaveRecipient">
+          <!-- <span ng-if="items.canHaveRecipient">
             &nbsp;/&nbsp;<a href ng-click="show.showPublicKey = !show.showPublicKey" 
-              ng-class="{ 'text-muted': show.showPublicKey }"><strong>Publickey</strong></a>
+              ng-class="{ 'text-muted': show.showPublicKey }"><strong>Publickey</strong></a> -->
           </span>
         </span>
       </div>
