@@ -21,6 +21,9 @@
           </span>
           <span ng-class="{'font-bold':!a.excluded}">{{a.name||a.id_rs}}</span>
         </a>
+        <span style="position:absolute; top:12px; right:12px;" ng-click="unFollowUser(a.id_rs)">
+          <b><i class="fa fa-times text-danger"></i></b>
+        </span>
       </li>
       <li ng-show="showFilter">
         <hr class="stacked-divider">
