@@ -17,6 +17,17 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         requestType: 'setAccountInfo',
         senderRS: senderRS,
         canHaveRecipient: false,
+        initialize: function (items) {
+          var api = nxt.get(senderRS);
+          api.engine.socket().getAccount({account: senderRS}).then(
+            function (data) {
+              $rootScope.$evalAsync(function () {
+                plugin.getField(items, 'name').value = data.accountName;
+                plugin.getField(items, 'description').value = data.description;
+              });
+            }
+          );
+        },
         createArguments: function (items) {
           return { 
             name: items.name,
