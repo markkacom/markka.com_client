@@ -49,10 +49,11 @@ module.factory('TradesProvider', function (nxt, $q, IndexedEntityProvider) {
     },
 
     dataIterator: function (data) {
-      for (var i=0; i<data.trades.length; i++) {
-        this.translate(data.trades[i]);
+      var trades = data.trades||[];
+      for (var i=0; i<trades.length; i++) {
+        this.translate(trades[i]);
       }
-      return new Iterator(data.trades);
+      return new Iterator(trades);
     },
 
     getTypeColor: function (type) {
