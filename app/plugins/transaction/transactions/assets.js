@@ -8,20 +8,17 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (plugins, modals, $q, $rootScope, nxt) {
-  
+module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider) {
   var plugin = plugins.get('transaction');
-
   plugin.add({
     label: 'Issue Asset',
     id: 'issueAsset',
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Issue Asset',
         message: 'Issue a new asset on the asset exchange (costs 1000 '+api.engine.symbol+')',
-        senderRS: senderRS,
         feeNXT: '1000',
         requestType: 'issueAsset',
         canHaveRecipient: false,
@@ -47,7 +44,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'name',
           type: 'text',
           value: args.name||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -60,7 +57,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'quantity',
           type: 'text',
           value: args.quantity||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isInteger(text)) { this.errorMsg = 'Must be a number'; }
@@ -72,7 +69,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'decimals',
           type: 'text',
           value: args.decimals||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isInteger(text, 0, 8)) { this.errorMsg = 'Must be a number between 0 and 8'; }
@@ -84,7 +81,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'description',
           type: 'textarea',
           value: args.description||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else {
@@ -103,60 +100,79 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
-
+  /* handles the variables expected by the view in transaction-modal.html */
+  function genericOnAssetChange(self, items, api) {
+    var deferred = $q.defer();
+    $rootScope.$evalAsync(function () {
+      var decimals = plugin.getField(items, 'decimals');
+      if (decimals) {
+        decimals.value = '';
+      }
+      items.assetName       = '';
+      items.assetIssuerName = '';
+      items.assetIssuerRS   = '';
+      items.privateAsset    = null;
+      /* only lookup if asset id consists of at least 9 numbers only */
+      if (/\d{9}/.test(items.asset)) {
+        api.engine.socket().getAsset({asset:items.asset,includeDetails:"true"}).then(
+          function (data) {
+            $rootScope.$evalAsync(function () {
+              var error = data.error || data.errorDescription;
+              if (error) {
+                console.log(error);
+                self.errorMsg = error;
+                deferred.reject();
+              }
+              else {
+                var decimals = plugin.getField(items, 'decimals');
+                if (decimals) {
+                  decimals.value = data.decimals;
+                }
+                var quantity = plugin.getField(items, 'quantity');
+                if (quantity) {
+                  quantity.precision = String(data.decimals);
+                }
+                items.assetName       = data.name;
+                items.assetIssuerName = data.issuerName||data.issuerRS;
+                items.assetIssuerRS   = data.issuerRS;
+                if ($rootScope.privateEnabled) {
+                  items.privateAsset = null;
+                  if (angular.isDefined(data.orderFeePercentage)) {
+                    items.privateAsset = {
+                      orderFeePercentage: String(data.orderFeePercentage||0),
+                      tradeFeePercentage: String(data.tradeFeePercentage||0)
+                    };
+                    items.privateAsset.orderFee = nxt.util.convertToQNTf(items.privateAsset.orderFeePercentage, 6);
+                  }
+                }
+                deferred.resolve(data);
+              }
+            });
+          }
+        );
+      }
+    });
+    return deferred.promise;
+  }
   plugin.add({
     label: 'Transfer Asset',
     id: 'transferAsset',
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
-
       return plugin.create(angular.extend(args, {
         title: 'Transfer Asset',
         message: 'Transfer asset',
-        senderRS: senderRS,
         requestType: 'transferAsset',
         canHaveRecipient: true,
         editRecipient: true,
         editAsset: true,
+        editAssetAccount: $rootScope.currentAccount.id_rs,
         initialize: function (items) {
-          var api = nxt.get(senderRS);
-          api.engine.socket().getAccountAssets({account:senderRS, firstIndex:0, lastIndex: 40}).then(
-            function (data) {
-              console.log(data);
-              $rootScope.$evalAsync(function () {
-                var error = data.error || data.errorDescription;
-                if (error) {
-                  console.log(error);
-                  items.assets = [];
-                }
-                else {
-                  items.assets = data
-                }
-              });
-            }
-          );
+          this.onAssetChange(items);
         },
         onAssetChange: function (items) {
-          if (items.asset) {
-            var api = nxt.get(senderRS);
-            api.engine.socket().getAsset({asset:items.asset}).then(
-              function (data) {
-                $rootScope.$evalAsync(function () {
-                  var error = data.error || data.errorDescription;
-                  if (error) {
-                    console.log(error);
-                    plugin.getField(items, 'name').value = '';
-                    plugin.getField(items, 'decimals').value = '';
-                  }
-                  else {
-                    plugin.getField(items, 'name').value = data.name;
-                    plugin.getField(items, 'decimals').value = data.decimals;
-                  }
-                });
-              }
-            );
-          }
+          genericOnAssetChange(this, items, api);
         },
         createArguments: function (items) {
           return {
@@ -166,23 +182,19 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           }
         },
         fields: [{
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
-        }, {
           label: 'Decimals',
           name: 'decimals',
           readonly: true,
           value: args.decimals||'',
-          type: 'text'
+          type: 'text',
+          required: true, /* required but hidden ensures we always look up the decimals info */
+          show: 'false'
         }, {
           label: 'Quantity',
           name: 'quantity',
           type: 'text',
           value: args.quantity||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }
@@ -193,54 +205,53 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
-
   plugin.add({
     label: 'Buy Asset',
     id: 'buyAsset',
     exclude: true,
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
-      var privateAsset = null;
-
       function reCalculateOrderTotal(items) {
-        var decimals    = plugin.getField(items, 'decimals');
-        var quantity    = plugin.getField(items, 'quantity');
-        var price       = plugin.getField(items, 'priceNXT');
-        var total       = plugin.getField(items, 'totalNXT');
-        var fee         = plugin.getField(items, 'orderFeeNXT');
-
-        var quantityQNT = new BigInteger(nxt.util.convertToQNT(quantity.value, parseInt(decimals.value)));
-        var priceNQT    = new BigInteger(nxt.util.calculatePricePerWholeQNT(nxt.util.convertToNQT(price.value), parseInt(decimals.value)));
-        var totalNQT    = '';
-        if (priceNQT.toString() == "0" || quantityQNT.toString() == "0") {
-          total.value   = '';
-          fee.value     = '';
-        }
-        else {
-          totalNQT      = quantityQNT.multiply(priceNQT);
-          total.value   = nxt.util.convertToNXT(totalNQT);
-        }
-        if (privateAsset && totalNQT) {
-          var feeNQT    = totalNQT.
-                            multiply(new BigInteger(String(privateAsset.orderFeePercentage))).
-                            divide(new BigInteger("100000000")).
-                            toString();
-          fee.value     = nxt.util.convertToNXT(feeNQT);
-          items.orderFeeNQT = feeNQT;
-
-          var effective = totalNQT.add(new BigInteger(feeNQT));
-          total.value   = nxt.util.convertToNXT(effective.toString());
-          total.setLabel(api.engine.symbol, privateAsset.orderFee, nxt.util.convertToNXT(feeNQT.toString()));
-        }
+        var decimals      = plugin.getField(items, 'decimals');
+        var quantity      = plugin.getField(items, 'quantity');
+        var price         = plugin.getField(items, 'priceNXT');
+        var total         = plugin.getField(items, 'totalNXT');
+        var fee           = plugin.getField(items, 'orderFeeNXT');
+        total.value       = '';
+        total.label       = 'Total';
+        fee.value         = '';
+        var provider      = new OrderEntryProvider(api, null, items.asset, parseInt(decimals.value), null, items.privateAsset);
+        provider.quantity = quantity.value;
+        provider.priceNXT = price.value;
+        provider.reCalculate().then(
+          function () {
+            fee.value         = provider.orderFeeNXT;
+            total.value       = provider.totalPriceNXT;
+            if (items.privateAsset) {
+              total.setLabel(items, provider);
+            }
+          }
+        )
       }
-
       return plugin.create(angular.extend(args, {
         title: 'Buy Asset',
         message: 'Place buy order for asset',
-        senderRS: senderRS,
         requestType: 'placeBidOrder',
         canHaveRecipient: false,
+        editAsset: true,
+        initialize: function (items) {
+          this.onAssetChange(items);
+        },
+        onAssetChange: function (items) {
+          genericOnAssetChange(this, items, api).then(
+            function (data) {
+              $rootScope.$evalAsync(function () {
+                reCalculateOrderTotal(items);
+              });
+            }
+          );
+        },
         createArguments: function (items) {
           var quantityQNT = nxt.util.convertToQNT(items.quantity, parseInt(items.decimals));
           var priceNQT    = nxt.util.calculatePricePerWholeQNT(nxt.util.convertToNQT(items.priceNXT), parseInt(items.decimals));
@@ -249,65 +260,19 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             asset:        items.asset,
             quantityQNT:  quantityQNT
           };
-          if (items.orderFeeNQT) {
-            arg.orderFeeNQT = items.orderFeeNQT;
+          if (items.orderFeeNXT) {
+            arg.orderFeeNQT = nxt.util.convertToNQT(items.orderFeeNXT);
           }
           return arg;
         },
-        initialize: function (items) {
-          if (!items.autoSubmit) {
-            plugin.getField(items, 'asset').onchange(items);
-          }
-        },
         fields: [{
-          label: 'Asset',
-          name: 'asset',
-          type: 'text',
-          value: args.asset||'',
-          onchange: function (items) {
-            if (this.value) {
-              var api = nxt.get(senderRS), self = this;
-              api.engine.socket().getAsset({asset:this.value}).then(
-                function (data) {
-                  var error = data.error || data.errorDescription;
-                  if (error) {
-                    self.errorMsg = error;
-                  }
-                  privateAsset = null;
-                  if (angular.isDefined(data.orderFeePercentage)) {
-                    privateAsset = {
-                      orderFeePercentage: String(data.orderFeePercentage||0),
-                      tradeFeePercentage: String(data.tradeFeePercentage||0)
-                    };
-                    privateAsset.orderFee = nxt.util.convertToQNTf(privateAsset.orderFeePercentage, 6);
-                  }
-                  $rootScope.$evalAsync(function () {
-                    plugin.getField(items, 'name').value = data.name;
-                    plugin.getField(items, 'decimals').value = data.decimals;
-                    plugin.getField(items, 'quantity').precision = String(data.decimals);
-                  });
-                }
-              );
-            }
-          },
-          validate: function (text) { 
-            this.errorMsg = null;
-            if (!text) { this.errorMsg = null; }
-            return ! this.errorMsg;
-          },
-          required: true
-        }, {
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
-        }, {
           label: 'Decimals',
           name: 'decimals',
           readonly: true,
           value: args.decimals||'',
-          type: 'text'
+          type: 'text',
+          required: true,
+          show: 'false'
         }, {
           label: 'Price',
           name: 'priceNXT',
@@ -331,9 +296,22 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'orderFeeNQT',
           value: args.orderFeeNQT||''
         }, {
-          label: 'Total',
-          setLabel: function (symbol, orderFee, feeNXT) {
-            this.label = 'Total (order fee '+orderFee+'% = '+feeNXT+' '+api.engine.symbol+')';
+          label: 'Fee (plus transaction cost '+api.engine.feeCost+' '+api.engine.symbol+')',
+          name: 'orderFeeNXT',
+          readonly: true,
+          value: args.orderFeeNXT||'',
+          type: 'text',
+          show: 'false'
+        }, {
+          label: 'Total expected price',
+          setLabel: function (items, provider) {
+            if (items.privateAsset && items.privateAsset.orderFeePercentage != "0") {
+              this.label = 'Total expected price '+provider.totalPriceNXT+' '+api.engine.symbol+
+                           ' (fee '+items.privateAsset.orderFee+'% + '+api.engine.feeCost+' '+api.engine.symbol+')';
+            }
+            else {
+              this.label = 'Total expected price (transaction fee '+api.engine.feeCost+' '+api.engine.symbol+')';
+            }
           },
           name: 'totalNXT',
           readonly: true,
@@ -343,56 +321,55 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
-
   plugin.add({
     label: 'Sell Asset',
     id: 'sellAsset',
     exclude: true,
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
       var privateAsset = null;
-
       function reCalculateOrderTotal(items) {
-        var decimals    = plugin.getField(items, 'decimals');
-        var quantity    = plugin.getField(items, 'quantity');
-        var price       = plugin.getField(items, 'priceNXT');
-        var total       = plugin.getField(items, 'totalNXT');
-        var fee         = plugin.getField(items, 'orderFeeQNT');
-
-        var quantityQNT = new BigInteger(nxt.util.convertToQNT(quantity.value, parseInt(decimals.value)));
-        var priceNQT    = new BigInteger(nxt.util.calculatePricePerWholeQNT(nxt.util.convertToNQT(price.value), parseInt(decimals.value)));
-        var totalNQT    = '';
-        if (priceNQT.toString() == "0" || quantityQNT.toString() == "0") {
-          total.value   = '';
-          fee.value     = '';
-        }
-        else {
-          totalNQT      = quantityQNT.multiply(priceNQT);
-          total.value   = nxt.util.convertToNXT(totalNQT); // what you'll receive
-        }
-        quantity.label  = 'Quantity';
-        if (privateAsset && quantityQNT) {
-          var feeQNT    = quantityQNT.
-                            multiply(new BigInteger(String(privateAsset.orderFeePercentage))).
-                            divide(new BigInteger("100000000")).
-                            toString();
-          fee.value     = feeQNT;
-          items.orderFeeQNT = feeQNT;
-          var effective = quantityQNT.add(new BigInteger(feeQNT)).toString();
-
-          quantity.setLabel(privateAsset.orderFee, 
-                            nxt.util.convertToQNTf(feeQNT, items.decimals),
-                            nxt.util.convertToQNTf(effective, items.decimals));
-        }        
+        var decimals      = plugin.getField(items, 'decimals');
+        var quantity      = plugin.getField(items, 'quantity');
+        var price         = plugin.getField(items, 'priceNXT');
+        var total         = plugin.getField(items, 'totalNXT');
+        var totalQuantity = plugin.getField(items, 'totalQuantity');
+        total.value         = '';
+        totalQuantity.value = '';
+        totalQuantity.label = 'Total '+items.assetName;
+        var provider      = new OrderEntryProvider(api, null, items.asset, parseInt(decimals.value), null, items.privateAsset);
+        provider.quantity = quantity.value;
+        provider.priceNXT = price.value;
+        provider.reCalculate().then(
+          function () {
+            totalQuantity.value = provider.totalQuantity;
+            totalQuantity.setLabel(items, provider);
+            total.value = provider.totalNXT;
+            total.setLabel(items, provider);
+            items.orderFeeQNT = provider.orderFeeQNT;
+          }
+        );
       }
- 
       return plugin.create(angular.extend(args, {
         title: 'Sell Asset',
         message: 'Place sell order for asset',
-        senderRS: senderRS,
         requestType: 'placeAskOrder',
         canHaveRecipient: false,
+        editAsset: true,
+        editAssetAccount: $rootScope.currentAccount.id_rs,
+        initialize: function (items) {
+          this.onAssetChange(items);
+        },
+        onAssetChange: function (items) {
+          genericOnAssetChange(this, items, api).then(
+            function (data) {
+              $rootScope.$evalAsync(function () {
+                reCalculateOrderTotal(items);
+              });
+            }
+          );
+        },
         createArguments: function (items) {
           var quantityQNT = nxt.util.convertToQNT(items.quantity, parseInt(items.decimals));
           var priceNQT    = nxt.util.calculatePricePerWholeQNT(nxt.util.convertToNQT(items.priceNXT), parseInt(items.decimals));
@@ -403,63 +380,17 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           };
           if (items.orderFeeQNT) {
             arg.orderFeeQNT = items.orderFeeQNT;
-          }       
+          }
           return arg;
         },
-        initialize: function (items) {
-          if (items.autoSubmit) {
-            plugin.getField(items, 'asset').onchange(items);
-          }
-        },        
         fields: [{
-          label: 'Asset',
-          name: 'asset',
-          type: 'text',
-          value: args.asset||'',
-          onchange: function (items) {
-            if (this.value) {
-              var api = nxt.get(senderRS), self = this;
-              api.engine.socket().getAsset({asset:this.value}).then(
-                function (data) {
-                  var error = data.error || data.errorDescription;
-                  if (error) {
-                    self.errorMsg = error;
-                  }
-                  privateAsset = null;
-                  if (angular.isDefined(data.orderFeePercentage)) {
-                    privateAsset = {
-                      orderFeePercentage: String(data.orderFeePercentage||0),
-                      tradeFeePercentage: String(data.tradeFeePercentage||0)
-                    };
-                    privateAsset.orderFee = nxt.util.convertToQNTf(privateAsset.orderFeePercentage, 6);
-                  }                
-                  $rootScope.$evalAsync(function () {
-                    plugin.getField(items, 'name').value = data.name;
-                    plugin.getField(items, 'decimals').value = data.decimals;
-                    plugin.getField(items, 'quantity').precision = String(data.decimals);
-                  });
-                }
-              );
-            }
-          },
-          validate: function (text) { 
-            this.errorMsg = null;
-            if (!text) { this.errorMsg = null; }
-            return ! this.errorMsg;
-          },
-          required: true
-        }, {
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
-        }, {
           label: 'Decimals',
           name: 'decimals',
           readonly: true,
           value: args.decimals||'',
-          type: 'text'
+          type: 'text',
+          required: true,
+          show: 'false'
         }, {
           label: 'Price',
           name: 'priceNXT',
@@ -472,9 +403,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           required: true
         }, {
           label: 'Quantity',
-          setLabel: function (orderFee, totalFee, totalQuantity) {
-            this.label = 'Quantity (order fee '+orderFee+'% = '+totalFee+' total '+totalQuantity+')';
-          },
           name: 'quantity',
           type: 'money',
           value: args.quantity||'',
@@ -483,33 +411,50 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           },
           required: true
         }, {
-          name: 'orderFeeQNT',
-          value: args.orderFeeQNT||''
-        }, {
-          label: 'Total '+api.engine.symbol+' that you receive',
+          label: 'Total',
+          setLabel: function (items, provider) {
+            this.label = 'Total '+api.engine.symbol+' you receive'
+          },
           name: 'totalNXT',
           readonly: true,
           value: args.totalNXT||'',
           type: 'text'
+        }, {
+          label: 'Total assets',
+          setLabel: function (items, provider) {
+            if (items.privateAsset && items.privateAsset.orderFeePercentage != "0") {
+              this.label = 'Total '+items.assetName+' required (fee '+items.privateAsset.orderFee+'%)';
+            }
+          },
+          name: 'totalQuantity',
+          readonly: true,
+          value: args.totalQuantity||'',
+          type: 'text',
+          show: 'items.privateAsset && items.privateAsset.orderFeePercentage != "0"'
+        }, {
+          name: 'orderFeeQNT',
+          value: args.orderFeeQNT||''
         }]
       }));
     }
   });
-
   plugin.add({
     label: 'Cancel sell order',
     id: 'cancelAskOrder',
     exclude: true,
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
-
       return plugin.create(angular.extend(args, {
         title: 'Cancel order',
         message: 'Cancel sell order',
-        senderRS: senderRS,
         requestType: 'cancelAskOrder',
         canHaveRecipient: false,
+        editAsset: true,
+        editAssetReadonly: true,
+        initialize: function (items) {
+          plugin.getField(items, 'order').onchange(items);
+        },
         createArguments: function (items) {
           return { order: items.order };
         },
@@ -520,7 +465,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           precision: String(0),
           onchange: function (items) {
             if (this.value) {
-              var api = nxt.get(senderRS), self = this;
+              var self = this;
               api.engine.socket().getAskOrder({order:this.value}).then(
                 function (data) {
                   var error = data.error || data.errorDescription;
@@ -528,8 +473,10 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
                     self.errorMsg = error;
                   }
                   $rootScope.$evalAsync(function () {
-                    plugin.getField(items, 'asset').value    = data.asset;
-                    plugin.getField(items, 'name').value     = data.name;
+                    items.asset           = data.asset;
+                    items.assetName       = data.name;
+                    items.assetIssuerName = data.issuerName||data.issuerRS;
+                    items.assetIssuerRS   = data.issuerRS;
                     plugin.getField(items, 'price').value    = data.priceNQT ? nxt.util.calculateOrderPricePerWholeQNT(data.priceNQT, data.decimals) : '';
                     plugin.getField(items, 'quantity').value = data.quantityQNT ? nxt.util.convertToQNTf(data.quantityQNT, data.decimals) : '';
                   });
@@ -537,25 +484,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
               );
             }
           },
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             return ! this.errorMsg;
-          },          
+          },
           value: args.order||'',
           required: true
-        }, {
-          label: 'Asset',
-          name: 'asset',
-          type: 'text',
-          value: args.asset||'',
-          readonly: true
-        }, {
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
         }, {
           label: 'Price',
           name: 'price',
@@ -572,21 +507,23 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
-
   plugin.add({
     label: 'Cancel buy order',
     id: 'cancelBidOrder',
     exclude: true,
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
-
       return plugin.create(angular.extend(args, {
         title: 'Cancel order',
         message: 'Cancel buy order',
-        senderRS: senderRS,
         requestType: 'cancelBidOrder',
         canHaveRecipient: false,
+        editAsset: true,
+        editAssetReadonly: true,
+        initialize: function (items) {
+          plugin.getField(items, 'order').onchange(items);
+        },
         createArguments: function (items) {
           return { order: items.order };
         },
@@ -597,7 +534,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           precision: String(0),
           onchange: function (items) {
             if (this.value) {
-              var api = nxt.get(senderRS), self = this;
+              var self = this;
               api.engine.socket().getBidOrder({order:this.value}).then(
                 function (data) {
                   var error = data.error || data.errorDescription;
@@ -605,8 +542,10 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
                     self.errorMsg = error;
                   }
                   $rootScope.$evalAsync(function () {
-                    plugin.getField(items, 'asset').value    = data.asset;
-                    plugin.getField(items, 'name').value     = data.name;
+                    items.asset           = data.asset;
+                    items.assetName       = data.name;
+                    items.assetIssuerName = data.issuerName||data.issuerRS;
+                    items.assetIssuerRS   = data.issuerRS;
                     plugin.getField(items, 'price').value    = data.priceNQT ? nxt.util.calculateOrderPricePerWholeQNT(data.priceNQT, data.decimals) : '';
                     plugin.getField(items, 'quantity').value = data.quantityQNT ? nxt.util.convertToQNTf(data.quantityQNT, data.decimals) : '';
                   });
@@ -614,25 +553,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
               );
             }
           },
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             return ! this.errorMsg;
-          },          
+          },
           value: args.order||'',
           required: true
-        }, {
-          label: 'Asset',
-          name: 'asset',
-          type: 'text',
-          value: args.asset||'',
-          readonly: true
-        }, {
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
         }, {
           label: 'Price',
           name: 'price',
@@ -649,59 +576,26 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
-
   plugin.add({
     label: 'Add private account',
     id: 'addPrivateAssetAccount',
     exclude: $rootScope.TRADE_UI_ONLY,
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
-
       return plugin.create(angular.extend(args, {
         title: 'Add private account',
         message: 'Add private account',
-        senderRS: senderRS,
         requestType: 'addPrivateAssetAccount',
         canHaveRecipient: true,
-        editRecipient: angular.isDefined(args.editRecipient) ? args.editRecipient : true,
-        editAsset: angular.isDefined(args.editAsset) ? args.editAsset : true,
+        editRecipient: true,
+        editAsset: true,
+        editAssetAccount: $rootScope.currentAccount.id_rs,
         initialize: function (items) {
-          var api = nxt.get(senderRS);
-          api.engine.socket().getAccountAssets({account:senderRS, firstIndex:0, lastIndex: 40}).then(
-            function (data) {
-              console.log(data);
-              $rootScope.$evalAsync(function () {
-                var error = data.error || data.errorDescription;
-                if (error) {
-                  console.log(error);
-                  items.assets = [];
-                }
-                else {
-                  items.assets = data.filter(function (a) { return a.type == 1 });
-                }
-              });
-            }
-          );
+          this.onAssetChange(items);
         },
         onAssetChange: function (items) {
-          if (items.asset) {
-            var api = nxt.get(senderRS);
-            api.engine.socket().getAsset({asset:items.asset}).then(
-              function (data) {
-                $rootScope.$evalAsync(function () {
-                  var error = data.error || data.errorDescription;
-                  if (error) {
-                    console.log(error);
-                    plugin.getField(items, 'name').value = '';
-                  }
-                  else {
-                    plugin.getField(items, 'name').value = data.name;
-                  }
-                });
-              }
-            );
-          }
+          genericOnAssetChange(this, items, api);
         },
         createArguments: function (items) {
           return {
@@ -709,69 +603,30 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             asset: items.asset
           }
         },
-        fields: [{
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
-        }]
+        fields: []
       }));
     }
   });
-
   plugin.add({
     label: 'Remove private account',
     id: 'removePrivateAssetAccount',
     exclude: $rootScope.TRADE_UI_ONLY,
-    execute: function (senderRS, args) {
-      var api = nxt.get(senderRS);
+    execute: function (args) {
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       args = args||{};
-
       return plugin.create(angular.extend(args, {
         title: 'Remove private account',
         message: 'Remove private account',
-        senderRS: senderRS,
         requestType: 'removePrivateAssetAccount',
         canHaveRecipient: true,
-        editRecipient: angular.isDefined(args.editRecipient) ? args.editRecipient : true,
-        editAsset: angular.isDefined(args.editAsset) ? args.editAsset : true,
+        editRecipient: true,
+        editAsset: true,
+        editAssetAccount: $rootScope.currentAccount.id_rs,
         initialize: function (items) {
-          var api = nxt.get(senderRS);
-          api.engine.socket().getAccountAssets({account:senderRS, firstIndex:0, lastIndex: 40}).then(
-            function (data) {
-              console.log(data);
-              $rootScope.$evalAsync(function () {
-                var error = data.error || data.errorDescription;
-                if (error) {
-                  console.log(error);
-                  items.assets = [];
-                }
-                else {
-                  items.assets = data.filter(function (a) { return a.type == 1 });
-                }
-              });
-            }
-          );
+          this.onAssetChange(items);
         },
         onAssetChange: function (items) {
-          if (items.asset) {
-            var api = nxt.get(senderRS);
-            api.engine.socket().getAsset({asset:items.asset}).then(
-              function (data) {
-                $rootScope.$evalAsync(function () {
-                  var error = data.error || data.errorDescription;
-                  if (error) {
-                    console.log(error);
-                    plugin.getField(items, 'name').value = '';
-                  }
-                  else {
-                    plugin.getField(items, 'name').value = data.name;
-                  }
-                });
-              }
-            );
-          }
+          genericOnAssetChange(this, items, api);
         },
         createArguments: function (items) {
           return {
@@ -779,17 +634,10 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             asset: items.asset
           }
         },
-        fields: [{
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
-        }]
+        fields: []
       }));
     }
   });
-
   plugin.add({
     label: 'Asset fee',
     id: 'setPrivateAssetFee',
@@ -797,54 +645,24 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     execute: function (senderRS, args) {
       var api = nxt.get(senderRS);
       args = args||{};
-
       return plugin.create(angular.extend(args, {
         title: 'Private asset fee',
         message: 'Set private asset fee',
         senderRS: senderRS,
         requestType: 'setPrivateAssetFee',
         canHaveRecipient: false,
-        editAsset: angular.isDefined(args.editAsset) ? args.editAsset : true,
+        editAsset: true,
+        editAssetAccount: $rootScope.currentAccount.id_rs,
         initialize: function (items) {
-          var api = nxt.get(senderRS);
-          api.engine.socket().getAccountAssets({account:senderRS, firstIndex:0, lastIndex: 40}).then(
-            function (data) {
-              console.log(data);
-              $rootScope.$evalAsync(function () {
-                var error = data.error || data.errorDescription;
-                if (error) {
-                  console.log(error);
-                  items.assets = [];
-                }
-                else {
-                  items.assets = data.filter(function (a) { return a.type == 1 });
-                }
-              });
-            }
-          );
+          this.onAssetChange(items);
         },
         onAssetChange: function (items) {
-          if (items.asset) {
-            var api = nxt.get(senderRS);
-            api.engine.socket().getAsset({asset:items.asset}).then(
-              function (data) {
-                $rootScope.$evalAsync(function () {
-                  var error = data.error || data.errorDescription;
-                  if (error) {
-                    console.log(error);
-                    plugin.getField(items, 'name').value     = '';
-                    plugin.getField(items, 'tradeFee').value = '';
-                    plugin.getField(items, 'orderFee').value = '';
-                  }
-                  else {
-                    plugin.getField(items, 'name').value     = data.name;
-                    plugin.getField(items, 'tradeFee').value = nxt.util.convertToQNTf(String(data.tradeFeePercentage), 6)||'0';
-                    plugin.getField(items, 'orderFee').value = nxt.util.convertToQNTf(String(data.orderFeePercentage), 6)||'0';
-                  }
-                });
-              }
-            );
-          }
+          genericOnAssetChange(this, items, api).then(
+            function (data) {
+              plugin.getField(items, 'tradeFee').value = nxt.util.convertToQNTf(String(data.tradeFeePercentage), 6)||'0';
+              plugin.getField(items, 'orderFee').value = nxt.util.convertToQNTf(String(data.orderFeePercentage), 6)||'0';
+            }
+          );
         },
         createArguments: function (items) {
           return {
@@ -854,12 +672,6 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           }
         },
         fields: [{
-          label: 'Name',
-          name: 'name',
-          readonly: true,
-          value: args.name||'',
-          type: 'text'
-        }, {
           label: 'Order fee %',
           name: 'orderFee',
           value: args.orderFee||'0',
@@ -873,7 +685,5 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       }));
     }
   });
-
-
 });
 })();
