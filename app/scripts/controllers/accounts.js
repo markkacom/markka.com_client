@@ -13,7 +13,8 @@ module.config(function($routeProvider) {
 module.controller('AccountsController', function($location, $q, $scope, modals, $routeParams, nxt, db, plugins, $timeout, 
   ActivityProvider, MessagesProvider, BlocksProvider, AliasProvider, NamespacedAliasProvider, AssetsProvider, CurrencyProvider, AccountProvider, 
   BuyOrderProvider, SellOrderProvider, AccountPostProvider, AccountForgerProvider, AccountLessorsProvider, 
-  dateParser, dateFilter, accountsService, PaymentsProvider, $rootScope, serverService) {
+  dateParser, dateFilter, accountsService, PaymentsProvider, $rootScope, serverService,
+  AllGoodsProvider, PastGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider) {
 
   $scope.id_rs          = $routeParams.id_rs;
   $scope.paramSection   = $routeParams.section;
@@ -21,6 +22,16 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
   $scope.paramTimestamp = 0; //nxt.util.convertToEpochTimestamp(Date.now()) + (24 * 60 * 60);
   $scope.filter         = {};
   $scope.following      = false;
+
+  $scope.collapse       = JSON.parse(window.localStorage.getItem("lompsa.accounts.menu")||'{"account":true}');
+  $scope.toggleMenuCollapse = function (id) {
+    var val = !$scope.collapse[id];
+    Object.getOwnPropertyNames($scope.collapse).forEach(function (name) {
+      $scope.collapse[name] = false;
+    });
+    $scope.collapse[id] = val;
+    window.localStorage.setItem("lompsa.accounts.menu",JSON.stringify($scope.collapse));
+  }
   
   var api = nxt.get($scope.id_rs);
   if (!api) {
@@ -33,7 +44,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
 
   if (['activity', 'messages', 'blocks', 'aliases', 'fim_aliases', 'assets', 
        'goods', 'leasing', 'currency', 'buy_orders', 'sell_orders', 'pulse', 
-       'payments'].indexOf($scope.paramSection) == -1) {
+       'payments', 'listing', 'solditems', 'pastorders'].indexOf($scope.paramSection) == -1) {
     $location.path('/home/fim/activity/latest');
     return;
   }
@@ -158,6 +169,23 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
       }
       $scope.provider = new PaymentsProvider(api, $scope, $scope.id_rs);
       break;
+    case 'listing':
+      $scope.provider = new AllGoodsProvider(api, $scope, 10, $scope.id_rs);
+      $scope.provider.reload();
+      break;
+    case 'pastorders':
+      $scope.provider = new PastGoodsProvider(api, $scope, 10, $scope.id_rs);
+      $scope.provider.reload();
+      break;
+    case 'solditems':
+      // for pending
+      $scope.soldGoods = new SoldGoodsProvider(api, $scope, 10, $scope.id_rs);
+      $scope.soldGoods.reload();
+
+      // for Completed
+      $scope.deliveryConfirmedGoods = new DeliveryConfirmedGoodsProvider(api, $scope, $scope.id_rs);
+      $scope.deliveryConfirmedGoods.reload();
+      break;
     default:
       throw new Error('Not reached');
   }
@@ -231,192 +259,50 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     }
   }
 
-  $scope.followUser = function () {
-    plugins.get('alerts').confirm({
-      title: 'Follow account',
-      html: 'Do you want to follow this account?<br>By following this account it will be added to your dashboard.'
-    }).then(
-      function (confirmed) {
-        if (confirm) {
-          var args = {
-            id_rs: $scope.id_rs,
-            publicKey: '',
-            engine: api.engine.type,
-            name: $scope.account.name,
-            excluded: false
-          };
-          db.accounts.put(args).then(function () {
-            $scope.$evalAsync(function () {
-              $scope.following = true;
-            })
-          });
-        }
+  $scope.followThisUser = function () {
+    $rootScope.followUser($scope.id_rs).then(
+      function (following) {
+        $scope.$evalAsync(function () {
+          $scope.following = following;
+        });
       }
     );
   }
 
-  $scope.unFollowUser = function () {
-    accountsService.getFirst($scope.id_rs).then(function (item) {
-      if (item) {
-        plugins.get('alerts').confirm({
-          title: 'Unfollow account',
-          html: 'Are you sure you want to unfollow this account?<br>By un following this account it will be removed from your dashboard.'
-        }).then(
-          function (confirmed) {
-            if (confirmed) {
-              item.delete();
+  $scope.executeTransaction = function (id, arg) {
+    arg = arg||{};
+    switch (id) {
+      case 'startForging': {
+        plugins.get('transaction').get('startForging').execute($scope.id_rs).then(
+          function () {
+            if ($scope.forger) {
+              $scope.forger.reload();
             }
           }
         );
-      }
-    });
-  }
-
-  $scope.sendMoney = function () {
-    plugins.get('transaction').get('tipUser').execute({ recipient: $scope.id_rs });
-  }
-
-  $scope.sendMessage = function () {
-    plugins.get('transaction').get('accountMessage').execute({ recipient: $scope.id_rs });
-  }
-
-  $scope.setAccountInfo = function () {
-    plugins.get('transaction').get('setAccountInfo').execute($scope.id_rs, {
-      name: ($scope.account ? $scope.account.name : ''),
-      description: ($scope.account ? $scope.account.description : ''),
-    });
-  }
-
-  function startForging() {
-    plugins.get('transaction').get('startForging').execute($scope.id_rs).then(
-      function () {
-        if ($scope.forger) {
-          $scope.forger.reload();
-        }
-      }
-    );
-  }
-
-  function stopForging() {
-    plugins.get('transaction').get('stopForging').execute($scope.id_rs).then(
-      function () {
-        if ($scope.forger) {
-          $scope.forger.reload();
-        }
-      }
-    );
-  }  
-
-  $scope.executeTransaction = function (id) {
-    switch (id) {
-      case 'setAccountInfo': {
-        $scope.setAccountInfo();
-        break;
-      }
-      case 'startForging': {
-        startForging();
         break;
       }
       case 'stopForging': {
-        stopForging();
+        plugins.get('transaction').get('stopForging').execute($scope.id_rs).then(
+          function () {
+            if ($scope.forger) {
+              $scope.forger.reload();
+            }
+          }
+        );
         break;
       }
       default: {
-        if (id == 'setAccountIdentifier' || 
-            id == 'setVerificationAuthority' ||
-            id == 'requestFreeAccountIdentifier') {
-          plugins.get('transaction').get(id).execute({});
+        if (plugins.get('transaction').get(id).execute.length == 1) {
+          plugins.get('transaction').get(id).execute(arg);
         }
         else {
-          plugins.get('transaction').get(id).execute($scope.id_rs, {});
+          plugins.get('transaction').get(id).execute($scope.id_rs, arg);
         }
         break;
       }
     }
   }
-
-  $scope.editAlias = function (alias) {
-    plugins.get('transaction').get('setAlias').execute($scope.id_rs, alias);
-  }
-
-  $scope.transferAlias = function (alias) {
-    plugins.get('transaction').get('transferAlias').execute($scope.id_rs, alias);
-  }
-
-  $scope.sellAlias = function (alias) {
-    plugins.get('transaction').get('sellAlias').execute($scope.id_rs, alias);
-  }
-
-  $scope.buyAlias = function (alias) {
-    plugins.get('transaction').get('buyAlias').execute($scope.id_rs, angular.extend(alias, { amountNXT: nxt.util.convertToNXT(alias.priceNQT) }));
-  }
-
-  $scope.cancelSellAlias = function (alias) {
-    plugins.get('transaction').get('cancelSellAlias').execute($scope.id_rs, alias);
-  }
-
-  $scope.sellAsset = function (asset) {
-    asset = angular.copy(asset);
-    asset.quantity = 0;
-    plugins.get('transaction').get('sellAsset').execute($scope.id_rs, asset);
-  }
-
-  $scope.buyAsset = function (asset) {
-    asset = angular.copy(asset);
-    asset.quantity = 0;
-    plugins.get('transaction').get('buyAsset').execute($scope.id_rs, asset);
-  }
-
-  $scope.transferAsset = function (asset) {
-    asset = angular.copy(asset);
-    asset.quantity = 0;
-    plugins.get('transaction').get('transferAsset').execute($scope.id_rs, asset);
-  }
-
-  $scope.writePost = function () {
-    plugins.get('transaction').get('accountPost').execute($scope.id_rs);
-  }
-
-  $scope.writeComment = function (post_transaction_id) {
-    plugins.get('transaction').get('writeComment').execute({ recipient: $scope.id_rs, post_transaction_id: post_transaction_id });
-  }
-
-  $scope.writeMessage = function () {
-    plugins.get('transaction').get('accountMessage').execute({ recipient: $scope.id_rs });
-  }
-
-  $scope.cancelBidOrder = function (order) {
-    plugins.get('transaction').get('cancelBidOrder').execute($scope.id_rs, order);
-  }
-
-  $scope.cancelAskOrder = function (order) {
-    plugins.get('transaction').get('cancelAskOrder').execute($scope.id_rs, order);
-  }
-
-  $scope.tipUser = function () {
-    plugins.get('transaction').get('tipUser').execute({ recipient: $scope.id_rs });
-  }
-
-  $scope.editNSAlias = function (alias) {
-    plugins.get('transaction').get('setNamespacedAlias').execute($scope.id_rs, { 
-      aliasName: alias.aliasName,
-      aliasURI: alias.aliasURI
-    }, true);
-  }
-
-  $scope.setAccountIdentifier = function (recipient, identifier, signatory, signature) {
-    plugins.get('transaction').get('setAccountIdentifier').execute({ 
-      identifier: identifier, 
-      signatory: signatory, 
-      signature: signature,
-      recipient: recipient||$scope.id_rs
-    });
-  }
-
-  $scope.privateChat = function () {
-
-  }
-
 });
 
 })();
