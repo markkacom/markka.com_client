@@ -1,0 +1,27 @@
+<div class="panel panel-primary language-select">
+  <div class="panel-body">
+    <div class="col-md-12">
+      <div>
+        <h2>Account Identifier Request</h2>
+      </div>
+      <p>If you provide the following information to any other account (for @fimk.fi identifiers) or to an account verification authority (for any other email address) they can register this identifier for your account.</p>
+      <p>
+        <label>Identifier</label>
+        <input type="text" readonly class="form-control" ng-model="items.identifier">
+      </p>
+      <p>
+        <label>Signatory</label>
+        <input type="text" readonly class="form-control" ng-model="items.signatory">
+      </p>
+      <p>
+        <label>Signature</label>
+        <textarea readonly class="form-control" ng-model="items.signature"></textarea>
+      </p>
+    </div>
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+      <button class="btn btn-default btn-block" ng-click="close()">
+        <b><span translate="translate.close"></span></b>
+      </button>
+    </div>
+  </div>
+</div>
