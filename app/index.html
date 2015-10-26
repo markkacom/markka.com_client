@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>.ng-cloak { display:none; }</style>
     <script src="mode.js"></script>    
-    <script src="scripts/lib/init_lompsa.js"></script>
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link rel="shortcut icon" href="/favicon.ico?v=7" />
@@ -36,6 +35,7 @@
          <script src="scripts/controllers/login.js"></script> -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/lib/init_lompsa.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script>
     window.jQuery = window.$ = angular.element;
@@ -101,6 +101,7 @@
     <script src="scripts/directives/enter-submit.js"></script>
 
     <script src="scripts/providers/account-autocomplete-provider.js"></script>
+    <script src="scripts/providers/asset-autocomplete-provider.js"></script>
     <script src="scripts/providers/account-forger-provider.js"></script>
     <script src="scripts/providers/account-lessors-provider.js"></script>
     <script src="scripts/providers/account-provider.js"></script>
@@ -175,6 +176,7 @@
     <script src="scripts/controllers/about-modal.js"></script>
     <script src="scripts/controllers/account-identifier-modal.js"></script>
     <script src="scripts/controllers/login-to.js"></script>
+    <script src="scripts/controllers/login-to-modal.js"></script>
     <script src="scripts/controllers/start.js"></script>
     <script src="scripts/controllers/search.js"></script>
     <script src="scripts/controllers/language-modal.js"></script>
@@ -400,7 +402,7 @@
             </a>
           </li>
           <li style="margin-right: 10px">
-            <a href="#/login-to">
+            <a href ng-click="loginTo()">
               <span ng-show="!currentAccount">
                 <i class="fa fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span>
               </span>
