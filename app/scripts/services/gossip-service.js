@@ -107,15 +107,28 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
           deferred.resolve(this.allowed[id_rs]);
         }
         else {
-          plugins.get('alerts').confirm({
-            title: 'Share online status',
-            message: 'Do you want to share your online status so others can send you messages?'
-          }).then(
-            function (allowed) {
-              this.allowed[id_rs] = allowed;
-              deferred.resolve(allowed);
-            }.bind(this)
-          );
+          var key = "lompsa.online_allowed."+id_rs;
+          var allowed_val = window.localStorage.getItem(key);
+          if (allowed_val == "true") {
+            this.allowed[id_rs] = true;
+            deferred.resolve(true);
+          }
+          else if (allowed_val == "false") {
+            this.allowed[id_rs] = false;
+            deferred.resolve(false);
+          }
+          else {
+            plugins.get('alerts').confirm({
+              title: 'Share online status',
+              message: 'Do you want to share your online status so others can send you messages?'
+            }).then(
+              function (allowed) {
+                this.allowed[id_rs] = allowed;
+                window.localStorage.setItem(key, allowed?"true":"false");
+                deferred.resolve(allowed);
+              }.bind(this)
+            );
+          }
         }
         var promise = this.promise = deferred.promise;
         promise.then(function () { this.promise = null }.bind(this));
