@@ -278,6 +278,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       if (this.debug) { console.log('WEBSOCKET - onopen ' + new Date(), {socket: this.socket, event: event }) }
 
       this.is_open.resolve();
+      this.is_connected = true;
 
       var topics = [];
       for (var topic in this.topics) {
@@ -295,6 +296,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
     },
 
     onclose: function (event) {
+      this.is_connected = false;
       this._notifyObservers('onclose', event);
 
       if (this.debug) { console.log('WEBSOCKET - onclose ' + new Date(), {socket: this.socket, event: event }) }
