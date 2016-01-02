@@ -94,6 +94,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     create: create,
     transactions: [],
     _map: {},
+    _fields: {},
 
     /* { id: String, label: String, exec: Function } */
     add: function (opts) {
@@ -102,6 +103,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
     },
     get: function (id) {
       return this._map[id];
+    },
+    addField: function (id, opts) {
+      this._fields[id] = opts;
+    },
+    fields: function (id) {
+      return this._fields[id];
     },
 
     validators: {
