@@ -1,6 +1,6 @@
 <div class="panel panel-primary" ng-init="items.initialize && items.initialize(items)" ng-hide="items.autoSubmit">
   <div class="panel-heading">
-    <h3 class="panel-title" ng-bind="items.title"></h3>
+    <h3 class="panel-title"><center><b ng-bind="items.title"></b></center></h3>
   </div>
 
   <!-- Perform payment -->
@@ -11,10 +11,10 @@
         <div class="alert alert-success" role="alert" ng-show="sendSuccess"><b>Transaction sent successfully.</b></div>
       </div>
       <div class="col-xs-12">
-        <div class="alert alert-{{recipientAlertLevel}}" role="alert" 
+        <div class="alert alert-{{recipientAlertLevel}}" role="alert"
             ng-show="recipientDescriptionHTML && !sendSuccess" ng-bind-html="recipientDescriptionHTML"></div>
       </div>
-     
+
       <!-- Show static recipient control -->
       <div class="form-group col-xs-12" ng-if="items.canHaveRecipient"
            ng-class="{ 'has-error' : transactionCreateForm.recipientField.$invalid && ! transactionCreateForm.recipientField.$pristine }"
@@ -24,14 +24,14 @@
           <span ng-if="!items.editRecipient" class="form-control">
             <b>{{items.recipient}}</b>
           </span>
-          <div ng-if="items.editRecipient" class="input-group" ng-init="recipientName=''">
-            <input type="text" class="form-control" 
-                    ng-model="items.recipient" 
+          <div ng-if="items.editRecipient && !items.disableAutoCompleteRecipient" class="input-group" ng-init="recipientName=''">
+            <input type="text" class="form-control"
+                    ng-model="items.recipient"
                     ng-change="items.onRecipientChange && items.onRecipientChange(items)"
                     typeahead-on-select="recipientName = $item.name; items.onRecipientChange && items.onRecipientChange(items)"
-                    placeholder="{{'translate.name'|translate}}" 
-                    typeahead="result.id_rs as result for result in accountSearchProvider.getResults($viewValue)" 
-                    typeahead-template-url="partials/account-search-template.html" 
+                    placeholder="{{'translate.name'|translate}}"
+                    typeahead="result.id_rs as result for result in accountSearchProvider.getResults($viewValue)"
+                    typeahead-template-url="partials/account-search-template.html"
                     typeahead-wait-ms="10"
                     typeahead-loading="loadingAccountResults"
                     typeahead-no-results="noAccountResults"
@@ -39,17 +39,26 @@
                     required ui-validate=" 'validateAddress($value)' "
                     ui-validate-watch=" 'items.recipient' "
                     name="recipientField">
-            <span ng-show="recipientName" class="input-group-addon" ng-bind="recipientName"></span> 
+            <span ng-show="recipientName" class="input-group-addon" ng-bind="recipientName"></span>
             <span ng-hide="recipientName" class="input-group-addon">
               <span ng-show="loadingAccountResults"><i class="fa fa-refresh fa-spin"></i></span>
               <span ng-hide="loadingAccountResults"><i class="fa fa-search"></i></span>
             </span>
           </div>
+          <div ng-if="items.editRecipient && items.disableAutoCompleteRecipient">
+            <input type="text" class="form-control"
+                    ng-model="items.recipient"
+                    ng-change="items.onRecipientChange && items.onRecipientChange(items)"
+                    autocomplete="false"
+                    required ui-validate=" 'validateAddress($value)' "
+                    ui-validate-watch=" 'items.recipient' "
+                    name="recipientField">
+          </div>
         </span>
       </div>
 
       <!-- Show static asset control -->
-      <div class="form-group col-xs-12" ng-if="items.editAsset" 
+      <div class="form-group col-xs-12" ng-if="items.editAsset"
            ng-init="items.onAssetChange && items.onAssetChange(items)"
            ng-class="{ 'has-error' : transactionCreateForm.assetField.$invalid && ! transactionCreateForm.assetField.$pristine }">
         <span class="form-control-static">
@@ -58,25 +67,25 @@
             <b>{{items.asset}}</b><span ng-show="noAssetResults" class="text-danger">&nbsp;&nbsp;No results</span>
           </span>
           <div ng-if="items.editAsset" class="input-group" ng-init="items.assetName=''">
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
                     ng-model="items.asset"
                     ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 150, 'blur': 0 } }"
                     ng-change="items.onAssetChange && items.onAssetChange(items)"
                     typeahead-on-select="items.assetName=$item.name; items.onAssetChange && items.onAssetChange(items)"
-                    placeholder="{{'translate.name'|translate}}" 
-                    typeahead="result.asset as result for result in assetSearchProvider.getResults($viewValue, items.editAssetAccount)" 
-                    typeahead-template-url="partials/asset-search-template.html" 
+                    placeholder="{{'translate.name'|translate}}"
+                    typeahead="result.asset as result for result in assetSearchProvider.getResults($viewValue, items.editAssetAccount)"
+                    typeahead-template-url="partials/asset-search-template.html"
                     typeahead-wait-ms="10"
                     typeahead-loading="loadingAssetResults"
                     typeahead-no-results="noAssetResults"
                     autocomplete="false"
-                    required 
+                    required
                     name="assetField"
                     ng-readonly="items.editAssetReadonly==true">
             <span ng-show="items.assetName" class="input-group-addon">
               <b><a href="#/assets/{{symbol_lower}}/{{items.asset}}/trade" ng-click="dismiss()">{{items.assetName}}</a></b>&nbsp;|&nbsp;
               <a href="#/accounts/{{items.assetIssuerRS}}/assets/latest" ng-click="dismiss()">{{items.assetIssuerName}}</a>
-            </span> 
+            </span>
             <span ng-hide="items.assetName" class="input-group-addon">
               <span ng-show="loadingAssetResults"><i class="fa fa-refresh fa-spin"></i></span>
               <span ng-hide="loadingAssetResults"><i class="fa fa-search"></i></span>
@@ -85,36 +94,155 @@
         </span>
       </div>
 
-      <div ng-repeat="f in items.fields" ng-show="f.label && f.__show">
+      <div ng-repeat="f in items.fields" ng-show="f.__show && !f.hide">
         <ng-form name="userFieldForm">
-          <div class="form-group col-xs-12" 
+          <div class="form-group col-xs-12" style="padding-bottom:5px"
             ng-class="{ 'has-error' : userFieldForm.userFieldName.$invalid && ! userFieldForm.userFieldName.$pristine }">
-            <div>
-              <label class="control-label">{{f.label}}</label>
+            <div ng-show="f.label">
+              <label class="control-label">{{f.label}}<span ng-show="f.required" class="text-danger">&nbsp;<b>*</b></span></label>
               <span class="text-danger pull-right" ng-show="f.errorMsg">{{f.errorMsg}}</span>
+              <span class="text-warning pull-right" ng-show="f.warnMsg && !f.errorMsg">{{f.warnMsg}}</span>
             </div>
             <div ng-switch on="f.type">
+              <!-- STATIC -->
+              <div ng-switch-when="static">
+                <span class="form-control-static" ng-bind-html="f.value"></span>
+              </div>
+              <!-- INPUT (used for text and password) -->
+              <div ng-switch-when="input">
+                <input class="form-control"
+                       ng-model="f.value"
+                       type="{{f.inputType||'text'}}"
+                       placeholder="{{f.placeHolder}}"
+                       ng-required="f.required"
+                       ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
+                       ui-validate-watch="f.watch"
+                       name="userFieldName"
+                       ng-disabled="sendSuccess"
+                       ng-readonly="f.readonly"
+                       ng-change="f.onchange(items)">
+              </div>
+              <!-- MONEY VERSION 2 -->
+              <div ng-switch-when="money-v2">
+                <input money
+                       precision="{{f.precision||8}}"
+                       class="form-control"
+                       name="userFieldName"
+                       placeholder="{{f.placeHolder}}"
+                       type="text"
+                       ng-model="f.value"
+                       ng-disabled="sendSuccess"
+                       ng-required="f.required"
+                       ng-readonly="f.readonly"
+                       ng-change="f.onchange(items)"
+                       ng-required="f.required"
+                       ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
+                       ui-validate-watch="f.watch">
+              </div>
+              <!-- TEXTAREA VERSION 2 -->
+              <div ng-switch-when="textarea-v2">
+                <textarea rows="{{f.rows}}"
+                          class="form-control"
+                          ng-model="f.value"
+                          placeholder="{{f.placeHolder}}"
+                          ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
+                          ui-validate-watch="f.watch"
+                          name="userFieldName"
+                          ng-disabled="sendSuccess"
+                          ng-readonly="f.readonly"
+                          ng-change="f.onchange(items)"
+                          ng-required="f.required"></textarea>
+              </div>
+              <!-- AUTOCOMPLETE -->
+              <div ng-switch-when="autocomplete">
+                <div class="input-group" ng-init="f.__label='';f.__loading=false;f.__noResults=false">
+                  <span ng-show="f.__label" class="input-group-addon" ng-bind-html="f.__label"></span>
+                  <input type="text"
+                         class="form-control"
+                         ng-model="f.value"
+                         ng-change="f.__label=''; f.onchange(items)"
+                         typeahead-on-select="f.__label = $item.label; f.onchange && f.onchange(items)"
+                         placeholder="{{f.placeHolder}}"
+                         typeahead="result.value as result for result in f.getResults($viewValue)"
+                         typeahead-template-url="{{f.templateURL}}"
+                         typeahead-wait-ms="10"
+                         typeahead-loading="f.__loading"
+                         typeahead-no-results="f.__noResults"
+                         autocomplete="false"
+                         ng-required="f.required"
+                         ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
+                         ui-validate-watch="f.watch"
+                         name="userFieldName"
+                         ng-disabled="sendSuccess"
+                         ng-readonly="f.readonly"
+                         typeahead-wait-ms="f.typeahead_wait">
+                  <span ng-hide="f.__label" class="input-group-addon">
+                    <span ng-show="f.__loading"><i class="fa fa-refresh fa-spin"></i></span>
+                    <span ng-hide="f.__loading"><i class="fa fa-search"></i></span>
+                  </span>
+                </div>
+              </div>
+              <!-- RADIO -->
+              <div ng-switch-when="radio-v2">
+                <span ng-repeat="option in f.options">
+                  <span ng-if="!$first">&nbsp;&nbsp;</span>
+                  <input type="radio"
+                         ng-checked="option.value==f.value"
+                         name="userFieldName"
+                         ng-model="f.value"
+                         ng-disabled="sendSuccess"
+                         ng-readonly="f.readonly"
+                         ng-value="option.value"
+                         ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
+                         ui-validate-watch="f.watch"
+                         ng-change="f.onchange(items)">&nbsp;&nbsp;{{option.label}}
+                </span>
+              </div>
+              <!-- CHECKBOX -->
+              <div ng-switch-when="checkbox">
+                <input type="checkbox"
+                       name="userFieldName"
+                       ng-model="f.value"
+                       ng-disabled="sendSuccess"
+                       ng-readonly="f.readonly"
+                       ng-true-value="true"
+                       ng-false-value="false"
+                       ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
+                       ui-validate-watch="f.watch"
+                       ng-change="f.onchange(items)">&nbsp;&nbsp;{{f.inline_label}}
+              </div>
+              <!-- HIDDEN -->
+              <div ng-switch-when="hidden">
+                <input type="hidden"
+                       name="userFieldName"
+                       ng-model="f.value"
+                       ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
+                       ui-validate-watch="f.watch"
+                       ng-change="f.onchange(items)">
+              </div>
+
+
               <div ng-switch-default>
                 <div ng-if="f.required">
-                  <input ng-if="!f.validate" class="form-control" ng-model="f.value" type="text" 
+                  <input ng-if="!f.validate" class="form-control" ng-model="f.value" type="text"
                          placeholder="{{f.placeHolder}}" required name="userFieldName" ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"
                          ng-change="f.onchange && f.onchange(items)">
-                  <input ng-if="f.validate" class="form-control" ng-model="f.value" type="text" 
+                  <input ng-if="f.validate" class="form-control" ng-model="f.value" type="text"
                          placeholder="{{f.placeHolder}}" required
-                         ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                         ui-validate=" 'f.validate($value, items)' " ui-validate-watch="'f.value'"
                          name="userFieldName" ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"
                          ng-change="f.onchange && f.onchange(items)">
                 </div>
                 <div ng-if="!f.required">
-                  <input ng-if="!f.validate" class="form-control" ng-model="f.value" type="text" 
+                  <input ng-if="!f.validate" class="form-control" ng-model="f.value" type="text"
                          placeholder="{{f.placeHolder}}" name="userFieldName" ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"
                          ng-change="f.onchange && f.onchange(items)">
-                  <input ng-if="f.validate" class="form-control" ng-model="f.value" type="text" 
-                         placeholder="{{f.placeHolder}}" 
-                         ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                  <input ng-if="f.validate" class="form-control" ng-model="f.value" type="text"
+                         placeholder="{{f.placeHolder}}"
+                         ui-validate=" 'f.validate($value, items)' " ui-validate-watch="'f.value'"
                          name="userFieldName" ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"
                          ng-change="f.onchange && f.onchange(items)">
@@ -122,13 +250,13 @@
               </div>
               <div ng-switch-when="money">
                 <div ng-if="f.required">
-                  <input money precision="{{f.precision||8}}" class="form-control" name="userFieldName" placeholder="{{f.placeHolder}}" 
+                  <input money precision="{{f.precision||8}}" class="form-control" name="userFieldName" placeholder="{{f.placeHolder}}"
                          type="text" ng-model="f.value" ng-disabled="sendSuccess" required
                          ng-readonly="f.readonly"
                          ng-change="f.onchange && f.onchange(items)">
                 </div>
                 <div ng-if="!f.required">
-                  <input money precision="{{f.precision||8}}" class="form-control" name="userFieldName" placeholder="{{f.placeHolder}}" 
+                  <input money precision="{{f.precision||8}}" class="form-control" name="userFieldName" placeholder="{{f.placeHolder}}"
                          type="text" ng-model="f.value" ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"
                          ng-change="f.onchange && f.onchange(items)">
@@ -153,37 +281,38 @@
                   <input type="radio" name="userFieldName" ng-model="f.value"
                          ng-disabled="sendSuccess" ng-value="false"
                          ng-readonly="f.readonly"
-                         ng-change="f.onchange && f.onchange(items)">&nbsp;&nbsp;No                  
+                         ng-change="f.onchange && f.onchange(items)">&nbsp;&nbsp;No
                 </div>
               </div>
               <div ng-switch-when="textarea">
                 <div ng-if="f.required">
-                  <textarea ng-if="!f.validate" rows="3" class="form-control" ng-model="f.value" 
+                  <textarea ng-if="!f.validate" rows="3" class="form-control" ng-model="f.value"
                             placeholder="{{f.placeHolder}}" required name="userFieldName" ng-disabled="sendSuccess"
                             ng-readonly="f.readonly"
                             ng-change="f.onchange && f.onchange(items)"></textarea>
-                  <textarea ng-if="f.validate" rows="3" class="form-control" ng-model="f.value" 
+                  <textarea ng-if="f.validate" rows="3" class="form-control" ng-model="f.value"
                             placeholder="{{f.placeHolder}}" required
-                            ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                            ui-validate=" 'f.validate($value, items)' " ui-validate-watch=" 'f.value' "
                             name="userFieldName" ng-disabled="sendSuccess"
                             ng-readonly="f.readonly"
                             ng-change="f.onchange && f.onchange(items)"></textarea>
                 </div>
                 <div ng-if="!f.required">
-                  <textarea ng-if="!f.validate" rows="3" class="form-control" ng-model="f.value" 
+                  <textarea ng-if="!f.validate" rows="3" class="form-control" ng-model="f.value"
                             placeholder="{{f.placeHolder}}" name="userFieldName" ng-disabled="sendSuccess"
                             ng-readonly="f.readonly"
                             ng-change="f.onchange && f.onchange(items)"></textarea>
-                  <textarea ng-if="f.validate" rows="3" class="form-control" ng-model="f.value" 
-                            placeholder="{{f.placeHolder}}" 
-                            ui-validate=" 'f.validate($value)' " ui-validate-watch=" 'f.value' " 
+                  <textarea ng-if="f.validate" rows="3" class="form-control" ng-model="f.value"
+                            placeholder="{{f.placeHolder}}"
+                            ui-validate=" 'f.validate($value, items)' " ui-validate-watch=" 'f.value' "
                             name="userFieldName" ng-disabled="sendSuccess"
                             ng-readonly="f.readonly"
                             ng-change="f.onchange && f.onchange(items)"></textarea>
                 </div>
               </div>
-            </div>
 
+
+            </div>
           </div>
         </ng-form>
       </div>
@@ -194,7 +323,7 @@
         <label for="msg-1" class="control-label">Message</label>
         <div class="input-group">
           <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
-          <textarea rows="3" class="form-control" id="msg-1" ng-model="items.txnMessage" placeholder="Include message" 
+          <textarea rows="3" class="form-control" id="msg-1" ng-model="items.txnMessage" placeholder="Include message"
             ng-disabled="sendSuccess"></textarea>
         </div>
         <div collapse="ui.emojiCollapse">
@@ -205,15 +334,15 @@
             </tab>
             <tab>
               <tab-heading><i class="emoji emoji-sunny"></i></tab-heading>
-              <a href ng-repeat="e in emoji.groups.nature" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>                    
+              <a href ng-repeat="e in emoji.groups.nature" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
             </tab>
             <tab>
               <tab-heading><i class="emoji emoji-bamboo"></i></tab-heading>
-              <a href ng-repeat="e in emoji.groups.life" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>                    
+              <a href ng-repeat="e in emoji.groups.life" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
             </tab>
             <tab>
               <tab-heading><i class="emoji emoji-house"></i></tab-heading>
-              <a href ng-repeat="e in emoji.groups.travel" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>                    
+              <a href ng-repeat="e in emoji.groups.travel" title="{{e}}" ng-click="insertEmoji(e)"><i class="emoji emoji-{{e}}"></i></a>
             </tab>
             <tab>
               <tab-heading><i class="emoji emoji-one"></i></tab-heading>
@@ -223,23 +352,23 @@
         </div>
         <div class="radio">
           <label ng-if= "items.abc">
-            <input type="radio" name="type" ng-model="items.txnMessageType" value="note" 
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="note"
               ng-disabled="sendSuccess">Private Note&nbsp;
           </label>
           <label ng-if="items.canHaveRecipient">
-            <input type="radio" name="type" ng-model="items.txnMessageType" value="to_recipient" 
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="to_recipient"
               ng-disabled="sendSuccess">Message to recipient&nbsp;
           </label>
           <label>
-            <input type="radio" name="type" ng-model="items.txnMessageType" value="to_self" 
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="to_self"
               ng-disabled="sendSuccess">Message to self&nbsp;
           </label>
           <label>
-            <input type="radio" name="type" ng-model="items.txnMessageType" value="public" 
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="public"
               ng-disabled="sendSuccess">Public message
           </label>
           <label>
-            <input type="radio" name="type" ng-model="items.txnMessageType" value="note" 
+            <input type="radio" name="type" ng-model="items.txnMessageType" value="note"
               ng-disabled="sendSuccess">Note
           </label>
         </div>
@@ -251,12 +380,12 @@
         <div class="row">
           <div class="col-xs-6">
             <label for="payment-fee-1" class="control-label">Fee</label>
-            <input money precision="8" class="form-control" id="payment-fee-1" placeholder="Fee" name="fee" type="text" 
+            <input money precision="8" class="form-control" id="payment-fee-1" placeholder="Fee" name="fee" type="text"
                 ng-model="items.feeNXT" ng-disabled="sendSuccess" required>
           </div>
           <div class="col-xs-6">
             <label for="payment-deadline-1" class="control-label">Deadline</label>
-            <input class="form-control" id="payment-deadline-1" placeholder="Deadline" name="deadline" 
+            <input class="form-control" id="payment-deadline-1" placeholder="Deadline" name="deadline"
                   type="text" ng-model="items.deadline" ng-disabled="sendSuccess" required>
           </div>
         </div>
@@ -266,13 +395,13 @@
       <div class="form-group col-xs-12" ng-if="!items.hideFee">
         <span class="form-control-static">
           <span ng-show="!items.showMessage && !items.hideMessage">
-            <a href ng-click="show.message = !show.message" 
+            <a href ng-click="show.message = !show.message"
               ng-class="{ 'text-muted': show.message }"><strong>Add Message</strong></a>&nbsp;/&nbsp;
           </span>
-          <a href ng-click="show.advanced = !show.advanced" 
+          <a href ng-click="show.advanced = !show.advanced"
             ng-class="{ 'text-muted': show.advanced }"><strong>Fee</strong> {{items.feeNXT}} {{items.symbol}} <strong>Deadline</strong> {{items.deadline}}</a>
           <!-- <span ng-if="items.canHaveRecipient">
-            &nbsp;/&nbsp;<a href ng-click="show.showPublicKey = !show.showPublicKey" 
+            &nbsp;/&nbsp;<a href ng-click="show.showPublicKey = !show.showPublicKey"
               ng-class="{ 'text-muted': show.showPublicKey }"><strong>Publickey</strong></a> -->
           </span>
         </span>
