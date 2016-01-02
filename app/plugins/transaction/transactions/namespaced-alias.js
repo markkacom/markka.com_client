@@ -6,49 +6,54 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   var plugin = plugins.get('transaction');
 
   plugin.add({
-    label: 'Set Namespaced Alias',
     id: 'setNamespacedAlias',
     exclude: $rootScope.TRADE_UI_ONLY,
-    execute: function (senderRS, args) {
+    execute: function (args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
-        title: 'Set Namespaced Alias',
-        message: 'Set or update a namespaced alias',
-        senderRS: senderRS,
+        title: 'Namespaced Alias',
+        message: 'Create new or update existing alias.',
         requestType: 'setNamespacedAlias',
-        canHaveRecipient: false,
         createArguments: function (items) {
           return {
             aliasName: items.aliasName,
             aliasURI: items.aliasURI
           }
         },
-        fields: [{
-          label: 'Alias Name',
-          name: 'aliasName',
-          type: 'text',
-          value: args.aliasName||'',
-          validate: function (text) { 
-            this.errorMsg = null;
-            if (!text) { this.errorMsg = null; }
-            else if ( ! plugin.EXTENDED_ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
-            else if (plugin.getByteLen(text) > 100) { this.errorMsg = 'To much characters'; }
-            return ! this.errorMsg;
-          },
-          required: true
-        }, {
-          label: 'Alias Value',
-          name: 'aliasURI',
-          type: 'textarea',
-          value: args.aliasURI||'',
-          validate: function (text) { 
-            this.errorMsg = null;
-            if (!text) { this.errorMsg = null; }
-            else if (plugin.getByteLen(text) > 1000) { this.errorMsg = 'To much characters'; }
-            return ! this.errorMsg;
-          },
-          required: true
-        }]
+        fields: [
+          plugin.fields('namespaced-alias').create('aliasName', { label: 'Name', required: true, value: args.aliasName||'', 
+            validate: function (text) {
+              if (text) {
+                if (!plugin.EXTENDED_ALPHABET.test(text)) throw 'Invalid character';
+                if (plugin.getByteLen(text) > 100) throw 'To much characters';
+              }
+            },
+            onchange: function (fields) {
+              fields.aliasURI.value = this.alias ? this.alias.aliasURI : '';
+              fields.aliasURI.changed();
+            }
+          }),
+          plugin.fields('textarea').create('aliasURI', { label: 'Value', value: args.aliasURI||'',
+            validate: function (text) {
+              if (text) {
+                if (!plugin.EXTENDED_ALPHABET.test(text)) throw 'Invalid character';
+                if (plugin.getByteLen(text) > 1000) throw 'To much characters';
+              }
+            },
+            onchange: function () {
+              this.warnMsg = '';
+              if (this.value) {
+                var remain = 1000 - plugin.getByteLen(this.value);
+                if (remain > 0) {
+                  this.warnMsg = remain+' characters remain';
+                }
+                else {
+                  this.warnMsg = 'Maximum reached';
+                }
+              }
+            }
+          })
+        ]
       }));
     }
   });
