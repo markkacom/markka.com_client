@@ -1,0 +1,30 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title"><center><b ng-bind="title"></b></center></h3>
+  </div>
+  <div class="panel-body">
+    <style type="text/css">
+      accordion .panel-heading a.accordion-toggle:after { display: none; }
+      accordion h4.panel-title { font-size: 14px }
+    </style>
+    <div class="row" ng-show="description.length">
+      <div class="col-md-12">
+        <div class="well well-sm" ng-bind-html="description" style="margin-bottom:10px"></div>
+      </div>
+    </div>
+    <div ng-if="step.templateURL" ng-include="step.templateURL"></div>
+  </div>
+  <div class="panel-footer">
+    <div class="row">
+      <div class="col-xs-4">
+        <button ng-show="step.buttons.cancel" class="btn btn-block btn-default" ng-click="$cancelButtonClick($event)" ng-disabled="$cancelButtonDisabled()" ng-bind="$cancelButtonLabel"></button>
+      </div>
+      <div class="col-xs-4">
+        <button ng-show="step.buttons.back" class="btn btn-block btn-default" ng-click="$backButtonClick($event)" ng-disabled="$backButtonDisabled()" ng-bind="$backButtonLabel"></button>
+      </div>
+      <div class="col-xs-4">
+        <button ng-show="step.buttons.next" class="btn btn-block btn-primary" ng-click="$nextButtonClick($event)" ng-disabled="$nextButtonDisabled()" ng-bind="$nextButtonLabel"></button>
+      </div>
+    </div>
+  </div>
+</div>
