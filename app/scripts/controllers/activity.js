@@ -61,13 +61,13 @@ module.controller('ActivityController', function($scope, $location, $routeParams
 
   switch ($scope.paramSection) {
     case 'activity':
-      $scope.showFilter = true;
+      $scope.showFilter = !TRADE_UI_ONLY;
       $scope.showTransactionFilter = true;
       $scope.provider = new ActivityProvider(api, $scope, $scope.paramTimestamp, null, $scope.filter);
       $scope.provider.reload();
       break;
     case 'blockchain':
-      $scope.showFilter = true;
+      $scope.showFilter = !TRADE_UI_ONLY;
       $scope.provider = new BlocksProvider(api, $scope, $scope.paramTimestamp);
       $scope.provider.reload();
       break;
