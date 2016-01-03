@@ -4,7 +4,9 @@ var module = angular.module('fim.base');
 module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
 
   var unlockedKeys = {};
-  var storage_key  = $rootScope.isTestNet ? "mofo.key.service" : "mofo.key.service.test";
+  var storage_key  = function () {
+    return /*$rootScope.isTestnet ? "mofo.key.service.test" :*/ "mofo.key.service";
+  }
 
   var SERVICE = {
     wallet: null,
@@ -12,8 +14,8 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
       unlockedKeys = {};
       this.wallet = null;
     },
-    unlock: function (password, cipher_text_override) {
-      return this.wallet = loadWallet(password, cipher_text_override);
+    unlock: function (password, cipher_text_override, fileName) {
+      return this.wallet = loadWallet(password, cipher_text_override, fileName);
     },
     get: function (id_rs) {
       if (this.wallet) {
@@ -28,13 +30,13 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
       return this.wallet = new Wallet([], password);
     },
     walletExists: function () {
-      return typeof window.localStorage.getItem(storage_key) == 'string';
+      return typeof window.localStorage.getItem(storage_key()) == 'string';
     },
     remember: function (id_rs, secretPhrase) {
       unlockedKeys[id_rs] = secretPhrase;
     },
     remove: function () {
-      window.localStorage.removeItem(storage_key);
+      window.localStorage.removeItem(storage_key());
       this.wallet = null;
       unlockedKeys = {};
     },
@@ -43,12 +45,14 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
     }
   };
 
-  function Wallet(entries, password) {
+  function Wallet(entries, password, fileName) {
     this.password = password;
+    this.fileName = fileName;
     this.mapped = {};
     this.entries = [];
-    for (var i=0; i<entries.length;i++) {
-      if (!this.mapped[entries[i].id_rs]) {
+    for (var i=0; i<entries.length; i++) {
+      if (!angular.isDefined(this.mapped[entries[i].id_rs])) {
+        delete entries[i].$$hashKey; // these should not be stored
         this.entries.push(entries[i]);
         this.mapped[entries[i].id_rs] = entries[i].secretPhrase;
       }
@@ -56,8 +60,23 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
   }
   Wallet.prototype = {
     save: function () {
-      var encrypted = encryptJSONObject(this.entries, this.password);
-      window.localStorage.setItem(storage_key, encrypted);
+      var filtered = [];
+      this.entries.forEach(function (entry) {
+        var copy = angular.copy(entry);
+        angular.forEach(copy, function (value, key) {
+          if (String(key).indexOf('$$') == 0 || String(key).indexOf('__') == 0) {
+            delete copy[key];
+          }
+        });
+        filtered.push(copy);
+      });
+      if (filtered.length) {
+        var encrypted = encryptJSONObject(filtered, this.password);
+        window.localStorage.setItem(storage_key(), encrypted);
+      }
+      else {
+        window.localStorage.removeItem(storage_key());
+      }
     },
 
     add: function (id_rs, secretPhrase) {
@@ -86,10 +105,11 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
    *
    * @param password
    * @param cipher_text_override
+   * @param fileName
    * @return Wallet
    */
-  function loadWallet(password, cipher_text_override) {
-    var text = cipher_text_override || window.localStorage.getItem(storage_key);
+  function loadWallet(password, cipher_text_override, fileName) {
+    var text = cipher_text_override || window.localStorage.getItem(storage_key());
     if (!text) {
       return null;
     }
@@ -107,7 +127,7 @@ module.factory('KeyService', function ($q, $timeout, $interval, $rootScope) {
       });
       list = temp;
     }
-    return new Wallet(list, password);
+    return new Wallet(list, password, fileName);
   }
 
   /**
