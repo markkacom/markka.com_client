@@ -19,9 +19,15 @@ var module = angular.module('fim.base', [
   'ui.validate',
   'pascalprecht.translate',
   'infinite-scroll',
-  'ngClipboard'
+  'ngClipboard',
+  'noCAPTCHA'
 ]);
 
+module.config(function(noCAPTCHAProvider, $translateProvider) {
+  noCAPTCHAProvider.setSiteKey('6Le7pBITAAAAANPHWrIsoP_ZvlxWr0bSjOPrlszc');
+  noCAPTCHAProvider.setTheme('light');
+  noCAPTCHAProvider.setLanguage($translateProvider.preferredLanguage());
+});
 
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {
   $log.log('fim.base application started');
