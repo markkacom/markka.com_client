@@ -12,9 +12,9 @@ body.showing-landing-page {
   -o-background-size: cover;  
 }
 
-body.showing-landing-page .landing-page {
+/*body.showing-landing-page .landing-page {
   color: white;
-}
+}*/
 
 body.showing-landing-page .jumbotron.dark-background {
   background-color: rgb(0, 0, 0);
