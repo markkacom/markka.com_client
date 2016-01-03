@@ -2,23 +2,18 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (plugins, modals, $q, $rootScope, nxt) {
+module.run(function (plugins, modals, $q, $rootScope, nxt, UserService) {
   
   var plugin = plugins.get('transaction');
-
   plugin.add({
-    label: 'Send money from',
     id: 'sendMoney',
-    exclude: $rootScope.TRADE_UI_ONLY,
-    execute: function (senderRS, args) {
+    execute: function (args) {
       args = args||{};
+      var api = nxt.get(UserService.currentAccount.id_rs);
       return plugin.create(angular.extend(args, {
-        title: 'Send money from',
-        message: 'Sends money to recipient',
-        senderRS: senderRS,
+        title: 'Send '+UserService.currentAccount.symbol,
+        message: 'Sends '+UserService.currentAccount.symbol+' to recipient',
         requestType: 'sendMoney',
-        canHaveRecipient: true,
-        editRecipient: true,
         createArguments: function (items) {
           var _args = {
             recipient: nxt.util.convertRSAddress(items.recipient),
@@ -29,20 +24,20 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           }
           return _args;
         },
-        fields: [{
-          label: 'Recipient public key',
-          name: 'recipientPublicKey',
-          type: 'text',
-          value: args.recipientPublicKey||'',
-          required: false,
-          show: 'show.showPublicKey'          
-        }, {
-          label: 'Amount',
-          name: 'amountNXT',
-          type: 'money',
-          value: args.amountNXT||'',
-          required: true
-        }]
+        fields: [
+          plugin.fields('account').create('recipient', { value: args.recipient||'', label: 'Recipient', required: true, 
+            api:api, accountColorId: UserService.currentAccount.accountColorId }
+          ),
+          plugin.fields('money').create('amountNXT', { value: args.amountNXT||'', label: 'Amount ('+UserService.currentAccount.symbol+')', required: true }),
+          {
+            label: 'Recipient public key',
+            name: 'recipientPublicKey',
+            type: 'text',
+            value: args.recipientPublicKey||'',
+            required: false,
+            show: 'show.showPublicKey'          
+          }
+        ]
       }));
     }
   });
