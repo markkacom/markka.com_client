@@ -26,6 +26,7 @@ module.controller('SearchController', function ($scope, nxt, $routeParams, $root
     $location.path('home/fim/activity/latest');
     return;
   }
+  $scope.symbol           = api.engine.symbol;
 
   if (['accounts', 'assets', 'currencies', 'market', 'aliases'].indexOf($scope.paramCategory) == -1) {
     $location.path('/home/fim/activity/latest');
