@@ -37,14 +37,14 @@ module.factory('TradesProvider', function (nxt, $q, IndexedEntityProvider) {
 
     translate: function (trade) {
       if (trade.quantityQNT) {
-        trade.quantity = nxt.util.convertToQNTf(trade.quantityQNT, this.decimals);
+        trade.quantity = nxt.util.commaFormat(nxt.util.convertToQNTf(trade.quantityQNT, this.decimals));
       }
       if (trade.priceNQT) {
         trade.price    = nxt.util.calculateOrderPricePerWholeQNT(trade.priceNQT, this.decimals);
         trade.total    = nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(trade.priceNQT, trade.quantityQNT));
       }
       if (trade.timestamp) {
-        trade.date     = nxt.util.formatTimestamp(trade.timestamp, true);
+        trade.date     = nxt.util.formatTimestamp(trade.timestamp, false);
       }
     },
 
