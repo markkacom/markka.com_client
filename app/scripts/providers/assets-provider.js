@@ -29,6 +29,9 @@ module.factory('AssetsProvider', function (nxt, $q, IndexedEntityProvider) {
         a.quantity = nxt.util.commaFormat(nxt.util.convertToQNTf(a.quantityQNT, a.decimals));
         a.totalQuantity = nxt.util.commaFormat(nxt.util.convertToQNTf(a.totalQuantityQNT, a.decimals));
         a.index = index++;
+        a.isPrivate = a.type == 1;
+        a.label = a.issuerColorName ? a.issuerColorName : this.api.engine.symbol;
+        a.label += '/' + a.name;
       }
       return new Iterator(accountAssets);
     }
