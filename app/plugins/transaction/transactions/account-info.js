@@ -2,28 +2,27 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.run(function (plugins, modals, $q, $rootScope, nxt) {
+module.run(function (plugins, modals, $q, $rootScope, nxt, UserService) {
   
   var plugin = plugins.get('transaction');
 
   plugin.add({
     label: 'Set account info',
     id: 'setAccountInfo',
-    execute: function (senderRS, args) {
+    execute: function (args) {
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Set account info',
         message: 'Set your publicly visible account name and description',
         requestType: 'setAccountInfo',
-        senderRS: senderRS,
         canHaveRecipient: false,
         initialize: function (items) {
-          var api = nxt.get(senderRS);
-          api.engine.socket().getAccount({account: senderRS}).then(
+          var api = nxt.get(UserService.currentAccount.id_rs);
+          api.engine.socket().getAccount({account: UserService.currentAccount.id_rs}).then(
             function (data) {
               $rootScope.$evalAsync(function () {
-                plugin.getField(items, 'name').value = data.accountName;
-                plugin.getField(items, 'description').value = data.description;
+                plugin.getField(items, 'name').value = data.accountName||'';
+                plugin.getField(items, 'description').value = data.description||'';
               });
             }
           );
