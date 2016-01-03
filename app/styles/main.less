@@ -766,3 +766,12 @@ a.past-order-tooltip span
     text-decoration: line-through;
   }
 }
+
+/* Animate changed model bindings */
+.animate-change {
+  transition: background-color 0.3s linear 0s;
+  &[class*="-add"] {
+    background-color: yellow;
+    font-weight: bold;
+  }
+}
