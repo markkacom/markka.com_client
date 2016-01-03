@@ -6,6 +6,34 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
   function IndexedEntityProvider() {
   }
   IndexedEntityProvider.prototype = {
+    changeObservers: [],
+
+    /**
+     * Registers a function that is called whenever the model changes.
+     * If a $scope is provided the observer will automatically be removed
+     * 
+     * @param observer Function
+     * @param $scope Angular $scope
+     */
+    addChangeObserver: function (fn, $scope) {
+      if (this.changeObservers.indexOf(fn) == -1) {
+        this.changeObservers.push(fn);
+        if ($scope) {
+          $scope.$on('$destroy', function () { this.removeChangeObserver(fn) }.bind(this));
+        }
+      }
+    },
+
+    /**
+     * Removes a previously added observer.
+     *
+     * @param observer Function
+     */
+    removeChangeObserver: function (fn) {
+      this.changeObservers = this.changeObservers.filter(function (_fn) {
+        return fn !== _fn;
+      })
+    },
     
     /**
      * # getData
@@ -195,7 +223,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
           angular.extend(this.keys[key], entity);
         }
       }
-      this.sort();
+      this.sort(); /* will notify change observers */
     },
 
     remove: function (uniqueKey) {
@@ -220,15 +248,17 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
         entity.uniqueKey = key;
         this.entities.unshift(entity);
       }
-      this.sort();      
+      this.sort(); /* will notify change observers */
     },
 
     filter: function (filter_fn) {
       this.entities = this.entities.filter(filter_fn);
+      this.notifyChange();
     },
 
     sort: function () {
       this.entities.sort(angular.bind(this, this.sortFunction));
+      this.notifyChange();
     },
 
     forEach: function (each_fn) {
@@ -237,6 +267,14 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
 
     subscribe: function (topic, handler) {
       this.api.engine.socket().subscribe(topic, angular.bind(this, handler), this.$scope);
+    },
+
+    notifyChange: function () {
+      if (this.changeObservers.length) {
+        for (var i=0; i<this.changeObservers.length; i++) {
+          this.changeObservers[i].call(null);
+        }
+      }
     },
 
     /* Extending classes can re-use this generic sorted function */
@@ -275,7 +313,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
       );
       if (this.entities.length != length) {        
         this.$scope.$evalAsync(function () {
-          self.sort();
+          self.sort(); /* will notify change observers */
         });
       }
     },
@@ -316,7 +354,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
         }
         self.entities = result;
         if (changed) {
-          self.sort();
+          self.sort(); /* will notify change observers */
         }
       });
     },
