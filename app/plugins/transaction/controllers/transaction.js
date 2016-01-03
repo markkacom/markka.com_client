@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('TransactionCreateModalController', function(items, $modalInstance, $scope, nxt, 
+module.controller('TransactionCreateModalController', function(items, $modalInstance, $scope, nxt,
   modals, $sce, $q, plugins, i18n, $timeout, accountsService, $rootScope, Emoji, AccountAutocompleteProvider, AssetAutocompleteProvider) {
 
   $scope.sendSuccess          = false;
@@ -19,12 +19,13 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
 
   $scope.items.title          = items.title || 'Create Transaction';
   $scope.items.txnMessageType = items.txnMessageType || ($scope.items.canHaveRecipient ? 'to_recipient' : 'note');
-  $scope.items.txnMessage     = items.txnMessage || '';  
+  $scope.items.txnMessage     = items.txnMessage || '';
   $scope.items.symbol         = items.symbol || api.engine.symbol;
   $scope.items.deadline       = items.deadline || '1440';
   $scope.items.feeNXT         = items.feeNXT || api.engine.feeCost;
   $scope.items.message        = $sce.getTrustedHtml(items.message);
   $scope.items.accounts       = [];
+  $scope.items.fields_map     = {};
 
   $scope.symbol_lower         = $scope.items.symbol.toLowerCase();
 
@@ -40,14 +41,35 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
     });
   }
 
-  /* Add watches for fields supporting a show expression */
   angular.forEach($scope.items.fields, function (field) {
+
+    /* Make fields available by name for use in ui-validate-watch */
+    $scope.items.fields_map[field.name] = field;
+
+    /* Add watches for fields supporting a show expression */
     field.__show = true;
     if (field.show) {
       field.__show = !!$scope.$eval(field.show);
       $scope.$watch(field.show, function (val) {
         field.__show = !!val;
       });
+    }
+
+    /* Make global $scope.items available for field instances */
+    field.getScopeItems = function () {
+      return $scope.items;
+    }
+
+    /* Make $evalAsync available for field instances */
+    field.$evalAsync = function (fn) {
+      $scope.$evalAsync(fn);
+    }
+  });
+
+  /* Call field initializers (if there are any) */
+  angular.forEach($scope.items.fields, function (field) {
+    if (typeof field.initialize == 'function') {
+      field.initialize($scope.items);
     }
   });
 
@@ -68,7 +90,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
 
   $scope.close = function () {
     /* Makes fields available on items by name */
-    angular.forEach($scope.items.fields, function (field) { 
+    angular.forEach($scope.items.fields, function (field) {
       $scope.items[field.name] = field.value;
     });
 
@@ -88,7 +110,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
         deadline: $scope.items.deadline,
         sender:   $scope.items.senderRS
       };
-      args = angular.extend(args, $scope.items.createArguments($scope.items));
+      args = angular.extend(args, $scope.items.createArguments($scope.items, $scope.items.fields_map));
       /*
       -- DISABLED FOR NOW --
 
@@ -215,16 +237,16 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
                   progress.setErrorMessage(msg);
                   progress.enableCloseBtn();
                   return;
-                } 
+                }
                 else {
-                  var payload = api.verifyAndSignTransactionBytes(data.unsignedTransactionBytes, signature, 
+                  var payload = api.verifyAndSignTransactionBytes(data.unsignedTransactionBytes, signature,
                                     args.requestType, args, api.type);
                   if (!payload) {
                     var msg = i18n.format('error_signature_verification_server');
                     progress.setErrorMessage(msg);
                     progress.enableCloseBtn();
                     return;
-                  } 
+                  }
 
                   var fullHash = api.crypto.calculateFullHash(data.unsignedTransactionBytes, signature);
 
@@ -251,7 +273,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
                             };
                           }
                         }
-                      );                        
+                      );
                     },
                     function (data) {
                       progress.setMessage(JSON.stringify(data));
@@ -263,7 +285,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
             },
             function (data) {
               progress.setMessage(JSON.stringify(data));
-              progress.enableCloseBtn();             
+              progress.enableCloseBtn();
             }
           );
         }
@@ -300,7 +322,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
         var options = {};
         if (data.recipient) {
           options.account = data.recipient;
-        } 
+        }
         else if (data.encryptedMessageRecipient) {
           options.account = data.encryptedMessageRecipient;
           delete data.encryptedMessageRecipient;
@@ -311,14 +333,14 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
         }
 
         var encrypted = api.crypto.encryptNote(data.message, options, secretPhrase);
-        
+
         data.encryptedMessageData = encrypted.message;
         data.encryptedMessageNonce = encrypted.nonce;
         data.messageToEncryptIsText = "true";
 
         delete data.encrypt_message;
         delete data.message;
-      } 
+      }
 
       /* Encrypt message to self */
       else if (data.note_to_self && data.message) {
@@ -332,7 +354,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
 
         delete data.note_to_self;
         delete data.message;
-      } 
+      }
 
       /* Public message */
       else if (data.public_message && data.message) {
