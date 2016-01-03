@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('UserDataProvider', function (nxt, $q, $rootScope, $timeout) {
+module.factory('UserDataProvider', function (nxt, $q, $rootScope, UserService) {
   function UserDataProvider($scope) {
     this.api                 = null;
     this.$scope              = $scope;
@@ -20,6 +20,11 @@ module.factory('UserDataProvider', function (nxt, $q, $rootScope, $timeout) {
     if ($rootScope.currentAccount) {
       this.onOpenCurrentAccount(null, $rootScope.currentAccount);
     }
+
+    var self = this;
+    this.lazy_reload = function () {
+      this.reload();
+    }.debounce(500);
   }
   UserDataProvider.prototype = {
     subscr: [],
@@ -61,16 +66,36 @@ module.factory('UserDataProvider', function (nxt, $q, $rootScope, $timeout) {
 
     getNetworkData: function (timestamp) {
       var deferred = $q.defer();
-      this.api.engine.socket().getAccount({ account: this.account }).then(
-        function (data) {
+      var args = {
+        includeLessors: 'false',
+        includeAssets: 'false',
+        includeCurrencies: 'false',
+        includeEffectiveBalance: 'false',
+        account: this.account,
+        requestType: 'getAccount'
+      };
+      this.api.engine.socket().callAPIFunction(args).then(
+        function (a) {
           this.$scope.$evalAsync(function () {
             this.isLoading  = false;
-            this.updateBalance(data.unconfirmedBalanceNQT);
-            this.name       = data.accountName;
-            this.label      = this.name || this.account;
-            if ($rootScope.currentAccount) {
-              $rootScope.currentAccount.label = this.label;
+            this.balanceNXT = nxt.util.convertToNXT(a.unconfirmedBalanceNQT);
+            var account     = UserService.currentAccount;
+
+            account.name = a.accountName;
+            account.description = a.description;
+            account.balance = nxt.util.convertToNXT(a.unconfirmedBalanceNQT);
+            if (a.accountColorName) {
+              account.balance += ' '+a.accountColorName;
+              account.symbol = a.accountColorName;
+              account.accountColorId = a.accountColorId;
             }
+            else {
+              account.balance += ' '+this.api.engine.symbol;
+              account.symbol = this.api.engine.symbol;
+              account.accountColorId = '0';
+            }
+            account.label = a.accountName || a.accountRS;
+
             deferred.resolve();
           }.bind(this));
         }.bind(this),
@@ -84,21 +109,9 @@ module.factory('UserDataProvider', function (nxt, $q, $rootScope, $timeout) {
       return deferred.promise;
     },
 
-    updateBalance: function (valueNQT) {
-      var balanceNXT = nxt.util.convertToNXT(valueNQT);
-      var parts      = (balanceNXT||"").split('.');
-      this.html      = '<b>'+parts[0]+'</b>'+(parts[1]?'<small><b>.</b>'+parts[1]+'</small>':'');
-    },
-
     /* @websocket */
     addedUnConfirmedTransactions: function (transactions) {
-      if (this.timeout) {
-        $timeout.cancel(this.timeout);
-      }
-      this.timeout = $timeout(function () {
-        this.timeout = null;
-        this.reload();
-      }.bind(this), 500, false);
+      this.lazy_reload();
     }
   }
   return UserDataProvider;
