@@ -28,9 +28,10 @@ module.factory('BuyOrderProvider', function (nxt, $q, IndexedEntityProvider) {
       var orders = data.bidOrders;
       for (var i=0; i<orders.length; i++) {
         var a = orders[i];
-        a.price = nxt.util.calculateOrderPricePerWholeQNT(a.priceNQT, a.decimals);
-        a.quantity = nxt.util.commaFormat(nxt.util.convertToQNTf(a.quantityQNT, a.decimals));
-        a.index = index;
+        a.price     = nxt.util.calculateOrderPricePerWholeQNT(a.priceNQT, a.decimals)+' '+(a.accountColorName||this.api.engine.symbol);
+        a.quantity  = nxt.util.commaFormat(nxt.util.convertToQNTf(a.quantityQNT, a.decimals))+' '+a.name;
+        a.total     = nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(a.priceNQT, a.quantityQNT))+' '+(a.accountColorName||this.api.engine.symbol);
+        a.index     = index;
       }
       return new Iterator(orders);
     }
