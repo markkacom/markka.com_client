@@ -25,21 +25,25 @@ module.factory('ChartDataProvider', function (nxt, $q, $timeout) {
     return bs_colors;
   }
 
+  var FIVTEEN_MINUTES = 0;
   var HOUR = 1;
   var DAY = 2;
   var WEEK = 3;
 
-  var ONE_DAY_MS = 1000*60*60*24;
-  var ONE_WEEK_MS = ONE_DAY_MS*7;
+  function unformat(number) {
+    return String(number).replace(/,/g,'');
+  }
 
   function ChartDataProvider(api, $scope, asset, decimals) {
     this.api       = api;
     this.asset     = asset;
     this.decimals  = decimals;
     this.$scope    = $scope;
-    this.window    = DAY;
+    this.window    = HOUR;
     this.isLoading = true;
     this.data      = [];
+
+    api.engine.socket().subscribe('blockPushed', angular.bind(this, this.blockPushed), $scope);
 
     // api.engine.socket().subscribe('blockPopped', angular.bind(this, this.blockPopped), $scope);
     // api.engine.socket().subscribe('VIRTUAL_TRADE*'+asset, angular.bind(this, this.virtualTrade), $scope);
@@ -48,10 +52,10 @@ module.factory('ChartDataProvider', function (nxt, $q, $timeout) {
     reload: function () {
       var self = this;
       this.$scope.$evalAsync(function () {
-        self.data        = [];
+        //self.data        = [];
         self.isLoading   = true;
         self.chart       = null;
-        $timeout(function () { self.getNetworkData(); }, 1, false);        
+        $timeout(function () { self.getNetworkData(); }, 1, false);
       });
     },
 
@@ -65,18 +69,19 @@ module.factory('ChartDataProvider', function (nxt, $q, $timeout) {
 
       d.timestamp = timestamp;
       d.date  = nxt.util.timestampToDate(timestamp);
-      d.open  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(open, this.decimals));
-      d.close = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(close, this.decimals));
-      d.high  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(high, this.decimals));
-      d.low    = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(low, this.decimals));
-      d.volume = parseFloat(nxt.util.convertToQNTf(vol, this.decimals));
-      d.value  = parseFloat(nxt.util.calculateOrderPricePerWholeQNT(avg, this.decimals));
+      d.open  = parseFloat(unformat(nxt.util.calculateOrderPricePerWholeQNT(open, this.decimals)));
+      d.close = parseFloat(unformat(nxt.util.calculateOrderPricePerWholeQNT(close, this.decimals)));
+      d.high  = parseFloat(unformat(nxt.util.calculateOrderPricePerWholeQNT(high, this.decimals)));
+      d.low    = parseFloat(unformat(nxt.util.calculateOrderPricePerWholeQNT(low, this.decimals)));
+      d.volume = parseFloat(unformat(nxt.util.convertToQNTf(vol, this.decimals)));
+      d.value  = parseFloat(unformat(nxt.util.calculateOrderPricePerWholeQNT(avg, this.decimals)));
     },
 
     getNetworkData: function () {
       var self = this;
       this.api.engine.socket().getAssetChartData({ asset: this.asset, window: this.window }).then(
         function (data) {
+          self.data = [];
           self.$scope.$evalAsync(function () {
             self.isLoading = false;
             if (!data.asset) return;
@@ -95,7 +100,12 @@ module.factory('ChartDataProvider', function (nxt, $q, $timeout) {
           });
         }
       );
-    }
+    },
+
+    /* @websocket */
+    blockPushed: function (block) {
+      this.reload();
+    }    
   }
   return ChartDataProvider
 });
