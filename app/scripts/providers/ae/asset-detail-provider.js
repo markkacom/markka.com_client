@@ -32,32 +32,28 @@ module.factory('AssetDetailProvider', function (nxt, $q, IndexedEntityProvider, 
       data.issuerRS = d.issuerRS;
       data.issuerName = d.issuerName;
       data.quantityQNT = d.quantityQNT;
-      data.numberOfTrades = d.numberOfTrades;
+      data.numberOfTrades = nxt.util.commaFormat(String(d.numberOfTrades));
       data.numberOfTransfers = d.numberOfTransfers;
       data.numberOfAccounts = d.numberOfAccounts;
       data.volumeTodayQNT = d.volumeTodayQNT;
-      data.numberOfTradesToday = d.numberOfTradesToday;
+      data.numberOfTradesToday = nxt.util.commaFormat(String(d.numberOfTradesToday));
       data.volumeTotalQNT = d.volumeTotalQNT;
       data.orderFeePercentage = d.orderFeePercentage;
       data.tradeFeePercentage = d.tradeFeePercentage;
       data.type = '';
-      data.lastPriceNQT = d.lastPriceNQT;
-
+      data.lastPriceNQT = d.lastPriceNQT||'0';
       data.lastPriceNXT = nxt.util.calculateOrderPricePerWholeQNT(data.lastPriceNQT, this.decimals);
-      data.quantity = nxt.util.convertToQNTf(d.quantityQNT, this.decimals);
-      data.volumeToday = nxt.util.convertToQNTf(d.volumeTodayQNT, this.decimals);
-      data.volumeTotal = nxt.util.convertToQNTf(d.volumeTotalQNT, this.decimals);
+      data.quantity = nxt.util.commaFormat(nxt.util.convertToQNTf(d.quantityQNT, this.decimals));
+      data.volumeToday = nxt.util.convertToQNTf(d.volumeTodayQNT||'0', this.decimals);
+      data.volumeTotal = nxt.util.convertToQNTf(d.volumeTotalQNT||'0', this.decimals);
       data.orderFee = nxt.util.convertToQNTf(String(d.orderFeePercentage), 6)||'0';
       data.tradeFee = nxt.util.convertToQNTf(String(d.tradeFeePercentage), 6)||'0'
       data.isPrivate = d.type && d.type == 1;
 
       var quantityQNT = new BigInteger(String(d.quantityQNT));
-      var priceNQT = new BigInteger(String(d.lastPriceNQT));
+      var priceNQT = new BigInteger(String(d.lastPriceNQT||'0'));
       var marketcapNQT = quantityQNT.multiply(priceNQT).toString();
       data.marketcapNXT = nxt.util.convertToNXT(marketcapNQT);
-
-      
-
     },    
 
     getNetworkData: function (reload_deferred) {
