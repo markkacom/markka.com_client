@@ -4,10 +4,10 @@ var module = angular.module('fim.base');
 module.factory('AssetInfoProvider', function (nxt, $q, $timeout) {
   var cache = {};
   return {
-    getInfo: function (api, asset) {
+    getInfo: function (api, asset, ignore_cache) {
       var c = cache[api.engine.type] || (cache[api.engine.type] = {});
       var deferred = $q.defer();
-      if (c[asset]) {
+      if (!ignore_cache && c[asset] && c[asset].name) {
         deferred.resolve(c[asset]);
       }
       else {
