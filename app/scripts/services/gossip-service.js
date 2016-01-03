@@ -117,7 +117,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
             this.allowed[id_rs] = false;
             deferred.resolve(false);
           }
-          else {
+          else if (!TRADE_UI_ONLY) {
             plugins.get('alerts').confirm({
               title: 'Share online status',
               message: 'Do you want to share your online status so others can send you messages?'
