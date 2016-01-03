@@ -267,7 +267,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
 
       if (!/^[0]+$/.test(toRemove)) {
         //return new Big(price).div(new Big(Math.pow(10, decimals))).round(8, 0);
-        throw $.t("error_invalid_input");
+        throw "Invalid input";
       } 
       else {
         return price.slice(0, -decimals);
@@ -366,7 +366,23 @@ module.run(function (nxt, timeagoService, $rootScope) {
   nxt.util = {
     
     convertToNXT: function (amountNQT) {
-      return commaFormat(convertNQT(amountNQT, 8));
+      var result = commaFormat(convertNQT(amountNQT, 8));
+      /* When in trade demo mode format all results to have two decimal places */
+      if (TRADE_UI_ONLY) {
+        var parts = result.split('.'), fraction = parts[1];
+        if (fraction) {
+          if (fraction.length == 1) {
+            return parts[0] + '.' + fraction + '0';
+          }
+          else {
+            return parts[0] + '.' + fraction.substring(0,2); 
+          }
+        }
+        else {
+          return parts[0] + '.00';
+        }
+      }
+      return result;
     },
     
     sign: sign,
