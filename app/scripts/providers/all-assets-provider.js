@@ -36,9 +36,14 @@ module.factory('AllAssetsProvider', function (nxt, $q, IndexedEntityProvider) {
       var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
       for (var i=0; i<assets.length; i++) {
         var a       = assets[i];
-        a.quantity  = nxt.util.convertToQNTf(a.quantityQNT, a.decimals);
+        a.quantity  = nxt.util.commaFormat(nxt.util.convertToQNTf(a.quantityQNT, a.decimals));
+        a.numberOfTrades    = nxt.util.commaFormat(String(a.numberOfTrades));
+        a.numberOfTransfers = nxt.util.commaFormat(String(a.numberOfTransfers));
+        a.numberOfAccounts  = nxt.util.commaFormat(String(a.numberOfAccounts));
         a.index     = index++;
         a.isPrivate = a.type == 1;
+        a.label     = a.accountColorName ? a.accountColorName : this.api.engine.symbol;
+        a.label    += '/' + a.name;
       }
       return new Iterator(assets);
     }
