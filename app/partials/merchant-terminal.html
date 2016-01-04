@@ -1,9 +1,31 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div class="row landing-page">
   <div class="col-md-offset-3 col-md-6">
     <div class="panel panel-primary language-select">
       <div class="panel-heading">
         <h3 class="panel-title">Merchant terminal</h3>
-      </div>  
+      </div>
       <div class="panel-body">
         <h2>Amount <b>{{amountNXT}}</b> {{symbol}}</h2>
         <p></p>
@@ -30,7 +52,7 @@
           <a class="btn btn-lg btn-success pull-right" href ng-click="payNow()" ng-show="currentAccount">
             <i class="fa fa-1x fa-paper-plane-o"></i>&nbsp;&nbsp;<span>Pay now</span></a>
           <a class="btn btn-lg btn-success pull-right" href ng-click="signin()" ng-show="!currentAccount">
-            <i class="fa fa-1x fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span></a>            
+            <i class="fa fa-1x fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span></a>
         </p>
       </div>
     </div>

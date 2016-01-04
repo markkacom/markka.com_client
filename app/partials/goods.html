@@ -1,34 +1,56 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
   <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
     <ul class="nav navbar-stacked">
 
       <li ng-if="!currentAccount" role="presentation">
-        <a href="#/login-to/navigate|goods|{{paramEngine}}|listing" 
-            translate="translate.sign_in" class="bg-primary"></a>
+        <a ng-click="loginWizard('signin', {}, 'goods/'+paramEngine+'/listing');"
+           translate="translate.sign_in" class="bg-primary"></a>
       </li>
 
       <li role="presentation">
-        <a href="#/goods/{{paramEngine}}/listing" 
+        <a href="#/goods/{{paramEngine}}/listing"
            translate="translate.show_all_items"></a>
       </li>
 
       <li role="presentation">
-        <a href="#/goods/{{paramEngine}}/cart" 
+        <a href="#/goods/{{paramEngine}}/cart"
            class="font-bold bg-success text-success">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
       </li>
 
       <li ng-if="currentAccount" role="presentation">
-        <a href="#/goods/{{currentAccount.symbol_lower}}/listing/{{currentAccount.id_rs}}" 
+        <a href="#/goods/{{currentAccount.symbol_lower}}/listing/{{currentAccount.id_rs}}"
           translate="translate.view_own_listing"></a>
       </li>
 
       <li ng-if="currentAccount" role="presentation">
-        <a href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
+        <a href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}"
            translate="translate.past_orders"></a>
       </li>
       <li ng-if="currentAccount"  role="presentation">
-        <a href="#/goods/{{currentAccount.symbol_lower}}/solditems/{{currentAccount.id_rs}}" 
-           translate="translate.sold_items"></a>        
+        <a href="#/goods/{{currentAccount.symbol_lower}}/solditems/{{currentAccount.id_rs}}"
+           translate="translate.sold_items"></a>
       </li>
 
       <li ng-if="currentAccount" role="presentation">
@@ -40,7 +62,7 @@
 
   <div class="col-xs-12 col-sm-10">
     <p class="visible-xs">
-      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}"
             ng-click="offCanvas=!offCanvas">
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
@@ -68,28 +90,15 @@
             <a href="#/goods/{{paramEngine}}/listing">show all</a>
           </span>
         </div>
-      </div>  
-      <div class="row">
-        <!-- <div class="col-md-12 goods-col1" style="margin-bottom: 20px;">
-          <a ng-if="currentAccount && currentAccount.id_rs != id_rs" href="#/goods/{{currentAccount.symbol_lower}}/listing/{{currentAccount.id_rs}}" 
-            class="btn btn-default past-orders-button" translate="translate.view_own_listing"></a>
-          <a ng-if="id_rs" href="#/goods/{{paramEngine}}/listing" class="btn btn-default past-orders-button" translate="translate.show_all_items"></a>
-          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
-            class="btn btn-default past-orders-button" translate="translate.past_orders"></a>
-          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/solditems/{{currentAccount.id_rs}}" 
-            class="btn btn-default past-orders-button" translate="translate.sold_items"></a>
-          <a href="#/goods/{{paramEngine}}/cart" 
-            class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
-          <a ng-click="add()" class="btn btn-primary add-goods-button" ng-if="currentAccount" translate="translate.add_item"></a>
-          <a href="#/login-to/navigate|goods|{{paramEngine}}|listing" class="btn btn-primary" ng-if="!currentAccount" translate="translate.sign_in"></a>
-        </div> -->
       </div>
-      <div infinite-scroll="provider.loadMore()" 
+      <div class="row">
+      </div>
+      <div infinite-scroll="provider.loadMore()"
           infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
         <form class="form-inline" style="margin-bottom: 15px;" ng-if="paramSection == 'listing'">
           <div class="form-group">
             <span translate="translate.filter_item_label"></span>&nbsp;&nbsp;
-            <input type="text" ng-model="provider.filter" ng-change="provider.reload()" class="form-control" 
+            <input type="text" ng-model="provider.filter" ng-change="provider.reload()" class="form-control"
               placeholder="{{'translate.filter_placeholder' | translate}}">
           </div>
         </form>
@@ -114,7 +123,7 @@
                     <td ng-bind-html="item.tagsHTML"></td>
                     <td>{{item.quantity}}</td>
                     <td>{{item.priceNXT}}</td>
-                    <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)" 
+                    <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)"
                       class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
                   </tr>
                 </tbody>
@@ -128,7 +137,7 @@
             <span translate="translate.load_more_products"></span>
           </a>
         </div>
-      </div> 
+      </div>
     </div>
 
     <!-- goods details page -->
@@ -137,7 +146,7 @@
       <!-- <div class="row">
         <div class="col-md-12 goods-details-col1">
           <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
-          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart" 
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart"
             class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
           <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}"
             class="btn btn-default past-orders-button">{{'translate.past_orders' | translate}}</a>
@@ -193,11 +202,11 @@
             <a ng-show="symbol=='NXT'" href="#/goods/fim/cart">show FIM</a>
           </span>
         </div>
-      </div>     
+      </div>
       <!-- <div class="row">
         <div class="col-md-12 top-buttons">
           <label class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</label>
-          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}" 
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/pastorders/{{currentAccount.id_rs}}"
             class="btn btn-default past-orders">{{'translate.past_orders' | translate}}</a>
           <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.back_to_items' | translate}}</a>
         </div>
@@ -237,14 +246,13 @@
         <div class="col-md-12 order-buttons">
           <div>
             <a href="#/goods/{{paramEngine}}/listing" class="btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
-            <button class="btn btn-success place-order" ng-click="placeOrder()" 
+            <button class="btn btn-success place-order" ng-click="placeOrder()"
               ng-if="currentAccount && currentAccount.symbol_lower == paramEngine">
               {{'translate.place_order' | translate}}
             </button>
-            <a href="#/login-to/navigate|goods|{{paramEngine}}|cart" class="btn btn-success place-order" 
+            <a class="btn btn-success place-order"
+              ng-click="loginWizard('signin', {}, 'goods/'+paramEngine+'/cart');"
               ng-if="!currentAccount">{{'translate.sign_in' | translate}}</a>
-            <a href="#/login-to" class="btn btn-success place-order" 
-              ng-if="currentAccount && currentAccount.symbol_lower != paramEngine">{{'translate.sign_out' | translate}}</a>
           </div>
             <hr>
         </div>
@@ -270,7 +278,7 @@
           <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
         </div>
       </div> -->
-      <div infinite-scroll="provider.loadMore()" 
+      <div infinite-scroll="provider.loadMore()"
             infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
         <div class="row">
           <div class="col-md-12" style=" padding-top: 20px;">
@@ -337,12 +345,12 @@
     <div class="past-orders-page" ng-if="paramSection == 'solditems'">
       <!-- <div class="row">
         <div class="col-md-12 past-order-col1">
-          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart" 
+          <a ng-if="currentAccount" href="#/goods/{{currentAccount.symbol_lower}}/cart"
             class="btn btn-default">{{'translate.cart' | translate}} ({{shoppingCart.length}})</a>
           <a href="#/goods/{{paramEngine}}/listing" class="btn btn-primary goods-button">{{'translate.all_items' | translate}}</a>
         </div>
       </div> -->
-      <div infinite-scroll="soldGoods.loadMore()" 
+      <div infinite-scroll="soldGoods.loadMore()"
             infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
         <div class="row">
           <div class="col-md-12" style=" padding-top: 20px;">

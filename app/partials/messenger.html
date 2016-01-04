@@ -1,16 +1,38 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div ng-init="slide={offCanvas:false}" class="row row-offcanvas row-offcanvas-left" ng-class="{active: slide.offCanvas}">
 
   <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar" ng-init="slide.init('messenger')">
     <div>
       <ul class="nav navbar-stacked">
         <li role="presentation">
-          <a href="#/messenger/new" class="elipses navbar-btn chat-btn" 
-            style="margin-top: 0px" 
+          <a href="#/messenger/new" class="elipses navbar-btn chat-btn"
+            style="margin-top: 0px"
             ng-class="{'font-bold':('new'==id_rs),'bg-primary':('new'==id_rs)}">
             <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Add Contact
           </a>
         </li>
-        <li role="presentation" ng-repeat="e in chatListProvider.entities" 
+        <li role="presentation" ng-repeat="e in chatListProvider.entities"
             ng-hide="e.hidden">
           <a href="#/messenger/{{e.otherRS}}"
             class="elipses navbar-btn chat-btn"
@@ -31,8 +53,8 @@
 
   <div class="col-xs-12 col-sm-10">
     <p class="visible-xs">
-      <button type="button" class="btn btn-xs" 
-            ng-class="{'btn-default':slide.offCanvas, 'btn-primary':!slide.offCanvas}" 
+      <button type="button" class="btn btn-xs"
+            ng-class="{'btn-default':slide.offCanvas, 'btn-primary':!slide.offCanvas}"
             ng-click="slide.offCanvas=!slide.offCanvas">
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
@@ -44,7 +66,7 @@
       <div class="col-md-12">
         <div class="alert alert-danger" ng-show="ui.sendOffline" style="margin-bottom: 8px;">
           <button type="button" class="close" aria-label="Close"
-            ng-click="ui.sendOffline=false"><span aria-hidden="true">Cancel</span></button>          
+            ng-click="ui.sendOffline=false"><span aria-hidden="true">Cancel</span></button>
           Offline messages costs <b>{{feeCost}}</b>
         </div>
         <div>
@@ -65,20 +87,20 @@
           <div class="form-group">
             <label for="accountIdentifierx">Search names</label>
             <div class="input-group">
-              <input type="text" class="form-control" 
-                      ng-model="message.recipient" 
+              <input type="text" class="form-control"
+                      ng-model="message.recipient"
                       ng-change="accountChanged()"
                       typeahead-on-select="message.name = $item.name; accountChanged()"
-                      placeholder="{{'translate.name'|translate}}" 
-                      typeahead="result.id_rs as result for result in accountSearchProvider.getResults($viewValue)" 
-                      typeahead-template-url="partials/account-search-template.html" 
+                      placeholder="{{'translate.name'|translate}}"
+                      typeahead="result.id_rs as result for result in accountSearchProvider.getResults($viewValue)"
+                      typeahead-template-url="partials/account-search-template.html"
                       typeahead-wait-ms="10"
                       typeahead-loading="loadingResults"
                       typeahead-no-results="noResults"
                       id="accountIdentifierx"
                       autocomplete="false">
-              <span ng-show="message.name" class="input-group-addon" 
-                ng-bind="message.name"></span> 
+              <span ng-show="message.name" class="input-group-addon"
+                ng-bind="message.name"></span>
               <span ng-hide="message.name" class="input-group-addon">
                 <span ng-show="loadingResults"><i class="fa fa-refresh fa-spin"></i></span>
                 <span ng-hide="loadingResults"><i class="fa fa-search"></i></span>
@@ -87,13 +109,13 @@
           </div>
           <div class="form-group">
             <label for="accountIdentifier4" translate="translate.public_key"></label>
-            <input type="text" class="form-control" id="accountIdentifier4" placeholder="{{'translate.public_key'|translate}}" 
+            <input type="text" class="form-control" id="accountIdentifier4" placeholder="{{'translate.public_key'|translate}}"
               ng-model="message.recipientPublicKey">
           </div>
           <div class="form-group">
-            <button class="btn btn-primary" ng-click="addContact(message.recipient)" style="margin-top:8px" 
+            <button class="btn btn-primary" ng-click="addContact(message.recipient)" style="margin-top:8px"
             ng-disabled="!message.recipientValid">Save</button>
-          </div>         
+          </div>
         </form>
       </div>
     </div>
@@ -110,7 +132,7 @@
             <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
             <textarea class="form-control" rows="2" ng-model="message.text" ng-change="messageChanged()"
               enter-submit="sendDirectMessage()" ng-click= "activateTextbox()"></textarea>
-            <span ng-show="message.text && IS_SMALL_DEVICE" class="input-group-addon" 
+            <span ng-show="message.text && IS_SMALL_DEVICE" class="input-group-addon"
               ng-click="sendDirectMessage()" translate="translate.send"></span>
           </div>
           <a href ng-click="ui.sendOffline=true" style="margin-bottom: 8px;"
@@ -147,12 +169,12 @@
             </tabset>
           </div>
         </div>
-      </div> 
+      </div>
 
       <!-- <div class="row" style="margin-top: 8px" ng-show="!message.text && message.send" style="margin-bottom: 8px;">
         <div class="col-md-12">
           <div class="alert alert-success">
-            <b><i class="fa fa-check"></i></b>&nbsp;&nbsp;<span translate="translate.msg_sent_to" 
+            <b><i class="fa fa-check"></i></b>&nbsp;&nbsp;<span translate="translate.msg_sent_to"
             translate-values="{recipient:contactName||id_rs}"></span>
           </div>
         </div>
@@ -166,9 +188,9 @@
         <div class="col-md-12">
           <div class="chat" style="padding-top: 10px;">
 
-            <!-- <div ng-show="ui.chat && ui.chat.provider.online" class="alert alert-success">{{contactRS}} is <b>ONLINE</b></div> -->            
+            <!-- <div ng-show="ui.chat && ui.chat.provider.online" class="alert alert-success">{{contactRS}} is <b>ONLINE</b></div> -->
 
-            <div infinite-scroll="chatMessagesProvider.loadMore()" infinite-scroll-distance="0" 
+            <div infinite-scroll="chatMessagesProvider.loadMore()" infinite-scroll-distance="0"
                 infinite-scroll-immediate-check="false">
 
               <div ng-show="ui.isTyping">
@@ -194,7 +216,7 @@
                   <span ng-show="e.remover" ng-click="removeMessage(e)"
                         class="pull-right" style="cursor:pointer"><i class="fa fa-times"></i></span>
                   <span ng-show="e.received == true"
-                        class="pull-right"><i class="fa fa-check"></i></span>                        
+                        class="pull-right"><i class="fa fa-check"></i></span>
 
                   <span ng-if="e.confirmations <= 0">
                     <i class="fa fa-spinner fa-spin"></i>
@@ -206,7 +228,7 @@
                     <i class="fa fa-check"></i>
                   </span>
                   <span><i class="fa" ng-class="{'fa-key':e.encrypted}"></i>&nbsp;</span>
-                  <span ng-bind-html="e.text || '[encrypted]'" 
+                  <span ng-bind-html="e.text || '[encrypted]'"
                         style="word-wrap: break-word; word-break: break-all; white-space: normal;"></span><br>
                   <small class="{{e.pull_clazz}}">{{e.date}}</small>
                 </div>

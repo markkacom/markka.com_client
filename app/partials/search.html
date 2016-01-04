@@ -1,3 +1,25 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
   <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
     <ul class="nav nav-pills nav-stacked">
@@ -10,19 +32,19 @@
       <!-- <li role="presentation" route-active="search/{{paramEngine}}/currencies">
         <a href="#/search/{{paramEngine}}/currencies/{{paramQuery}}">Currencies</a>
       </li> -->
-      <li role="presentation" route-active="search/{{paramEngine}}/market">
+      <li role="presentation" route-active="search/{{paramEngine}}/market" ng-hide="TRADE_UI_ONLY">
         <a href="#/search/{{paramEngine}}/market/{{paramQuery}}">Market</a>
       </li>
-      <li role="presentation" route-active="search/{{paramEngine}}/aliases">
+      <li role="presentation" route-active="search/{{paramEngine}}/aliases" ng-hide="TRADE_UI_ONLY">
         <a href="#/search/{{paramEngine}}/aliases/{{paramQuery}}">Aliases</a>
       </li>
-    </ul> 
+    </ul>
 
   </div>
 
   <div class="col-xs-12 col-sm-10">
     <!-- <p class="visible-xs">
-      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}"
             ng-click="offCanvas=!offCanvas">
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
@@ -82,7 +104,7 @@
 
     <div class="row">
       <div class="col-md-12">
-        
+
         <!-- search accounts -->
         <div ng-if="paramCategory == 'accounts'">
           <div ng-if="provider.entities == 0 && paramQuery">
@@ -92,11 +114,7 @@
             <div ng-repeat="o in provider.entities" class="well well-sm">
               <div>
                 <big><span ng-if="o.name">{{o.name}}&nbsp;&nbsp;</span></big>
-                <a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.accountRS}}</a>
-                &nbsp;|&nbsp;
-                <small>Balance</small>&nbsp;<b>{{o.balanceNXT}}</b>
-                &nbsp;|&nbsp;
-                <small>Effective</small>&nbsp;<b>{{o.effectiveBalanceNXT}}</b>
+                <a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.identifier || o.accountRS}}</a>
               </div>
               <div>{{o.description}}</div>
             </div>
@@ -117,7 +135,7 @@
           <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
             <div ng-repeat="o in provider.entities" class="well well-sm">
               <div>
-                <big>{{o.name}}</big>&nbsp;<a href="#/assets/{{paramEngine}}/{{o.asset}}/trade">{{o.asset}}</a>
+                <big>{{o.accountColorName||symbol}}/{{o.name}}</big>&nbsp;<a href="#/assets/{{paramEngine}}/{{o.asset}}/trade">{{o.asset}}</a>
                 <br><small>Issuer</small>&nbsp;<a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.accountRS}}</a>
               </div>
               <div>{{o.description}}</div>

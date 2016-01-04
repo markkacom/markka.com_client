@@ -1,3 +1,25 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
   <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
     <ul class="nav navbar-stacked">
@@ -5,7 +27,7 @@
         <a href="#/server/{{paramEngine}}/console">
           <i class="fa fa-desktop"></i>&nbsp;&nbsp;<span translate="translate.console"></span>
         </a>
-      </li>  
+      </li>
       <li route-active="server/{{paramEngine}}/config">
         <a href="#/server/{{paramEngine}}/config">
           <i class="fa fa-file-text-o"></i>&nbsp;&nbsp;<span translate="translate.config"></span>
@@ -33,7 +55,7 @@
 
   <div class="col-xs-12 col-sm-10">
     <p class="visible-xs">
-      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}"
             ng-click="offCanvas=!offCanvas">
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
@@ -52,7 +74,7 @@
           </li>
         </ul>
       </div>
-    </div> 
+    </div>
 
     <div class="row">
 
@@ -61,26 +83,26 @@
         <div ng-show="consoleProvider.isRunning" style="font-size: 120%">
           <b translate="translate.server_is_running" translate-values="{symbol: symbol}"></b>
           <span class="pull-right">
-            <a href ng-click="scrolllock=!scrolllock" 
+            <a href ng-click="scrolllock=!scrolllock"
               ng-class="{'text-muted': !scrolllock}" tooltip="Scrollock">
               <i class="fa fa-list-alt"></i></a>
-            <a href ng-click="clearConsole()" tooltip="Clear console" class="text-muted"><i class="fa fa-times"></i></a>            
+            <a href ng-click="clearConsole()" tooltip="Clear console" class="text-muted"><i class="fa fa-times"></i></a>
           </span>
         </div>
         <div ng-show="!consoleProvider.isRunning" style="font-size: 120%">
           <b translate="translate.server_is_off" translate-values="{symbol: symbol}"></b>
           <span class="pull-right">
-            <a href ng-click="scrolllock=!scrolllock" 
+            <a href ng-click="scrolllock=!scrolllock"
             ng-class="{'text-muted': scrolllock}" tooltip="Scrollock">
               <i class="fa fa-list-alt"></i></a>
-            <a href ng-click="clearConsole()" tooltip="Clear console"><i class="fa fa-times"></i></a>            
+            <a href ng-click="clearConsole()" tooltip="Clear console"><i class="fa fa-times"></i></a>
           </span>
         </div>
-        <div style="overflow-y: scroll; overflow-x: hidden; width: 100%; height: 500px; background-color: black; color: white;" 
+        <div style="overflow-y: scroll; overflow-x: hidden; width: 100%; height: 500px; background-color: black; color: white;"
               class="form-control monospace" id="fake-console" scroll-glue="scrolllock">
           <p ng-repeat="m in consoleProvider.messages">{{m.data}}</p>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-md-12">
             <div class="checkbox">
               <label>
@@ -93,7 +115,7 @@
               </label>
             </div>
           </div>
-        </div>        
+        </div> -->
       </div>
 
       <!-- config section -->

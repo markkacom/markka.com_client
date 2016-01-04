@@ -1,28 +1,84 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div ng-init="offCanvas=false" class="row row-offcanvas row-offcanvas-left" ng-class="{active: offCanvas}">
-  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar">
+  <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar" ng-if="currentAccount">
     <ul class="nav navbar-stacked">
-      <li role="presentation" route-active="assets/{{paramEngine}}/{{paramAsset}}/trade">
-        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade" translate-cloak>
+      <li role="presentation" ng-if="currentAccount">
+        <a href="#/accounts/{{currentAccount.id_rs}}/activity/latest" class="font-bold">
+          <i class="fa fa-tachometer fa-fw"></i>&nbsp;&nbsp;<span translate="translate.dashboard"/>
+        </a>
+      </li>
+      <li role="presentation">
+        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade" class="font-bold">
           <i class="fa fa-line-chart"></i>&nbsp;&nbsp;<span translate="translate.trade" />
         </a>
       </li>
-      <li role="presentation" route-active="assets/{{paramEngine}}/{{paramAsset}}/pulse">
-        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" translate-cloak>
+      <li role="presentation">
+        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="font-bold">
           <i class="fa fa-heartbeat"></i>&nbsp;&nbsp;<span translate="translate.pulse" />
         </a>
       </li>
-      <li role="presentation" route-active="assets/{{paramEngine}}/{{paramAsset}}/private" 
-          ng-show="privateEnabled && isPrivate && showPrivate">
-        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/private" translate-cloak>
+      <li role="presentation" ng-show="privateEnabled && isPrivate && showPrivate">
+        <a href="#/assets/{{paramEngine}}/{{paramAsset}}/private" class="font-bold">
           <i class="fa fa-university"></i>&nbsp;&nbsp;<span>Private</span>
+        </a>
+      </li>
+      <li role="presentation" ng-if="currentAccount">
+        <a href ng-click="executeTransaction('transferAsset',{ asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.transfer_asset"/>
+        </a>
+      </li>
+      <li role="presentation" ng-if="currentAccount">
+        <a href ng-click="executeTransaction('buyAsset',{ asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.place_buy_order"/>
+        </a>
+      </li>
+      <li role="presentation" ng-if="currentAccount">
+        <a href ng-click="executeTransaction('sellAsset',{ asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.place_sell_order"/>
+        </a>
+      </li>
+      <li role="presentation" ng-show="privateEnabled && isPrivate && showPrivate">
+        <a href ng-click="executeTransaction('setPrivateAssetFee',{ asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.set_fees"/>
+        </a>
+      </li>
+      <li role="presentation" ng-show="privateEnabled && isPrivate && showPrivate">
+        <a href ng-click="executeTransaction('addPrivateAssetAccount',{ asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.add_account"/>
+        </a>
+      </li>
+      <li role="presentation" ng-show="privateEnabled && isPrivate && showPrivate">
+        <a href ng-click="executeTransaction('removePrivateAssetAccount',{ asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.remove_account"/>
         </a>
       </li>
     </ul>
   </div>
 
-  <div class="col-xs-12 col-sm-10">
-    <p class="visible-xs">
-      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}" 
+  <div class="col-xs-12 col-sm-10" ng-class="{'col-md-12': !currentAccount, 'col-md-10': currentAccount }">
+    <p class="visible-xs" ng-if="currentAccount">
+      <button type="button" class="btn btn-xs" ng-class="{'btn-default':offCanvas, 'btn-primary':!offCanvas}"
             ng-click="offCanvas=!offCanvas">
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
         <i class="fa fa-angle-double-{{offCanvas?'left':'right'}}"></i>
@@ -54,7 +110,7 @@
                   <span ng-show="TRADE_UI_ONLY">{{assetIssuerName||assetIssuerRS}}</span>
                 </td>
               </tr>
-              <tr ng-if="isPrivate"><td>Type</td><td colspan="3"><b>Private</b></td></tr>            
+              <tr ng-if="isPrivate"><td>Type</td><td colspan="3"><b>Private</b></td></tr>
               <tr><td>Quantity</td><td>{{assetQuantity}}</td><td>Decimals</td><td>{{assetDecimals}}</td></tr>
               <tr><td>Trades</td><td>{{assetTrades}}</td><td>Transfers</td><td>{{assetTransfers}}</td></tr>
             </table>
@@ -69,7 +125,7 @@
           </div>
           <div ng-if="provider.entities.length > 0">
             <div>
-              
+
               <!-- List all posts -->
               <ul class="media-list">
                 <li class="media" ng-repeat="p in provider.entities">
@@ -96,15 +152,15 @@
                         <i class="fa fa-comment-o"></i>&nbsp;&nbsp;{{p.comment_count}}&nbsp;&nbsp;<span translate="translate.leave_comment"/>
                       </button>
                       &nbsp;
-                      <a href ng-click="p.commentProvider.reload()" 
+                      <a href ng-click="p.commentProvider.reload()"
                           ng-if="p.comment_count > 0 && p.commentProvider.entities.length == 0">
                         <span ng-show="p.commentProvider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
                         <span translate="translate.load_comments" />
                       </a>
-                      <a href ng-click="p.commentProvider.clear()" 
+                      <a href ng-click="p.commentProvider.clear()"
                           ng-if="p.comment_count > 0 && p.commentProvider.entities.length > 0">
                         <span translate="translate.hide_comments" />
-                      </a>                          
+                      </a>
                     </p>
                     <br>
 
@@ -119,7 +175,7 @@
                             <span ng-if="c.confirmations > 10" tooltip="{{c.confirmations}} confirmations">
                               <i class="fa fa-check text-success"></i>
                             </span>
-                          </div>                                
+                          </div>
                         </a>
                         <div class="media-body">
                           <h4 class="media-heading"><small><a ng-href="#/accounts/{{c.senderRS}}/activity/latest">{{c.senderName||c.senderRS}}</a>&nbsp;&nbsp;{{c.date}}&nbsp;&nbsp;
@@ -130,7 +186,7 @@
                           </h4>
                           <p>{{c.text}}</p>
                         </div>
-                      </div>  
+                      </div>
                       <div class="load-more-button" ng-show="p.commentProvider.hasMore">
                         <a href ng-click="p.commentProvider.loadMore()" class="text-lowercase text-muted">
                           <span ng-show="p.commentProvider.isLoading"><i class="fa fa-refresh fa-spin"></i></span>
@@ -150,7 +206,7 @@
             </div>
           </div>
         </div>
-      </div>          
+      </div>
     </div>
 
     <style>
@@ -168,16 +224,19 @@
           <div class="panel panel-default" style="width: 100%">
             <div class="panel-heading">
               <b>Price chart</b>
-              <!-- <span class="pull-right"> 
+              <!-- <span class="pull-right">
                 Show&nbsp;<a href ng-click="chartType='old'">old</a>&nbsp;/&nbsp;<a href ng-click="chartType='new'">new</a>
               </span> -->
-              <span class="pull-right"> 
-                <a href ng-class="{'font-bold': chart.window==1}" ng-click="chart.setWindow(1)">Hour</a>,
-                <a href ng-class="{'font-bold': chart.window==2}" ng-click="chart.setWindow(2)">Day</a>,
-                <a href ng-class="{'font-bold': chart.window==3}" ng-click="chart.setWindow(3)">Week</a>
+              <span class="pull-right">
+                <a href ng-class="{'font-bold': chart.window==0}" ng-click="chart.setWindow(0)" ng-show="TRADE_UI_ONLY">10 Minutes</a>,
+                <a href ng-class="{'font-bold': chart.window==1}" ng-click="chart.setWindow(1)">Hour</a>
+                <span ng-hide="TRADE_UI_ONLY">
+                  ,<a href ng-class="{'font-bold': chart.window==2}" ng-click="chart.setWindow(2)">Day</a>
+                  ,<a href ng-class="{'font-bold': chart.window==3}" ng-click="chart.setWindow(3)">Week</a>
+                </span>
               </span>
             </div>
-            <div class="panel-body" style="padding: 0px; height: 250px; width: 100%;">              
+            <div class="panel-body" style="padding: 0px; height: 250px; width: 100%;">
               <!-- <div id="chartdiv" style="width:100%; height:100%" ng-show="chartType=='old'"></div> -->
               <price-chart chart="chart" style="width:100%; height:100%"></price-chart>
             </div>
@@ -187,24 +246,50 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <b>{{assetName}}</b>&nbsp;#<a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade">{{paramAsset}}</a>
-              <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase">
+              <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase" ng-hide="TRADE_UI_ONLY">
                 <span translate="translate.show_pulse" />
               </a>
             </div>
-            <div class="panel-body" style="height: 250px;">
-              <p><span translate="translate.marketcap"></span>:&nbsp;{{details.data.marketcapNXT}}&nbsp;{{symbol}}</p>
-              <p><span translate="translate.last_price"></span>:&nbsp;{{details.data.lastPriceNXT}}&nbsp;{{symbol}}</p>
-              <p><span translate="translate.volume_today"></span>:&nbsp;{{details.data.volumeToday}}&nbsp;{{assetName}}&nbsp;({{details.data.numberOfTradesToday}}&nbsp;{{ 'translate.trades' | translate }})</p>
-              <p><span translate="translate.volume_total"></span>:&nbsp;{{details.data.volumeTotal}}&nbsp;{{assetName}}&nbsp;({{details.data.numberOfTrades}}&nbsp;{{ 'translate.trades' | translate }})</p>
-              <p ng-show="isPrivate"><span translate="translate.order_fee"></span>:&nbsp;{{details.data.orderFee}}%&nbsp;<span translate="translate.trade_fee"></span>:&nbsp;{{details.data.tradeFee}}%</p>
-              <p ng-show="unconfirmedAssetBalance">
-                Balance:&nbsp;
-                <span>
-                  <b>{{unconfirmedAssetBalance}}</b> 
-                  <span class="text-muted" ng-show="unconfirmedAssetBalance!=assetBalance">({{assetBalance}})</span> {{assetName}}
-                </span>
-              </p>
-              <p class="text-muted">{{details.data.description}}</p>
+            <div class="panel-body" style="height: 250px;overflow-y:auto">
+              <table class="table table-condensed">
+                <tr ng-show="currentAccount">
+                  <td translate="translate.balance"></td>
+                  <td><b class="animate-change value-{{accountAsset.unconfirmedQuantity}}">{{accountAsset.unconfirmedQuantity}}&nbsp;{{assetName}}</b></td>
+                </tr>
+                <tr>
+                  <td translate="translate.issuer"></td>
+                  <td><a ng-href="#/accounts/{{assetIssuerRS}}/activity/latest">{{assetIssuerName||assetIssuerRS}}</a></td>
+                </tr>
+                <tr>
+                  <td translate="translate.marketcap"></td>
+                  <td><span class="animate-change value-{{details.data.marketcapNXT}}">{{details.data.marketcapNXT}}</span>&nbsp;{{symbol}}</td>
+                </tr>
+                <tr>
+                  <td translate="translate.last_price"></td>
+                  <td><span class="animate-change value-{{details.data.lastPriceNXT}}">{{details.data.lastPriceNXT}}</span>&nbsp;{{symbol}}</td>
+                </tr>
+                <!-- Cannot use slow query on massive dataset -->
+                <!-- <tr>
+                  <td translate="translate.volume_today"></td>
+                  <td>
+                    <span class="animate-change value-{{details.data.volumeToday}}">{{details.data.volumeToday}}</span>&nbsp;{{assetName}}&nbsp;(<span class="animate-change value-{{details.data.numberOfTradesToday}}">{{details.data.numberOfTradesToday}}</span>&nbsp;{{ 'translate.trades' | translate }})</td>
+                </tr>
+                <tr>
+                  <td translate="translate.volume_total"></td>
+                  <td><span class="animate-change value-{{details.data.volumeTotal}}">{{details.data.volumeTotal}}</span>&nbsp;{{assetName}}&nbsp;(<span class="animate-change value-{{details.data.numberOfTrades}}">{{details.data.numberOfTrades}}</span>&nbsp;{{ 'translate.trades' | translate }})</td>
+                </tr> -->
+                <tr>
+                  <td translate="translate.trades"></td>
+                  <td><span class="animate-change value-{{details.data.numberOfTrades}}">{{details.data.numberOfTrades}}</span></td>
+                </tr>
+
+                <tr ng-show="isPrivate">
+                  <td colspan="2"><span translate="translate.order_fee"></span>:&nbsp;{{details.data.orderFee}}%&nbsp;<span translate="translate.trade_fee"></span>:&nbsp;{{details.data.tradeFee}}%</td>
+                </tr>
+                <tr>
+                  <td colspan="2" class="text-muted">{{details.data.description}}</td>
+                </tr>
+              </table>
             </div>
           </div>
         </div>
@@ -229,7 +314,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr ng-repeat="o in bidOrders.entities" ng-class="{'text-danger': o.cancellers}" 
+                    <tr ng-repeat="o in bidOrders.entities" ng-class="{'text-danger': o.cancellers}"
                       ng-hide="o.cancelled || o.quantity=='0'" style="cursor:pointer" ng-click="bidOrderClicked(o)">
                       <td>
                         <span ng-if="o.confirmations <= 0" class="text-muted">
@@ -243,8 +328,8 @@
                         </span>
                       </td>
                       <td>{{o.price}}</td>
-                      <td>{{o.quantity}}</td>
-                      <td>{{o.total}}</td>
+                      <td class="animate-change value-{{o.quantity}}">{{o.quantity}}</td>
+                      <td class="animate-change value-{{o.total}}">{{o.total}}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -279,7 +364,7 @@
                       <div class="form-group">
                         <label translate="translate.price_per_share"></label>&nbsp;
                         <input type="text" class="form-control" placeholder="{{'translate.enter_price' | translate}}"
-                          ng-model="order.priceNXT" ng-change="order.reCalculate()" money precision="8">
+                          ng-model="order.priceNXT" ng-change="order.reCalculate()"> <!--  money ng-attr-precision="{{TRADE_UI_ONLY?'2':'8'}}" -->
                       </div>
                     </form>
                   </p>
@@ -292,14 +377,14 @@
               </div>
               <div class="row">
                 <div class="col-xs-6">
-                  <button class="btn btn-success btn-block text-center" ng-click="buyAsset()" 
+                  <button class="btn btn-success btn-block text-center" ng-click="buyAsset()"
                     ng-disabled="!currentAccount || !order.priceNXT || !order.quantity">
                     <big><b><span translate="translate.buy"></span></b></big><br>
                     <small>Click to send order</small>
                   </button>
                 </div>
                 <div class="col-xs-6">
-                  <button class="btn btn-danger btn-block text-center" ng-click="sellAsset()" 
+                  <button class="btn btn-danger btn-block text-center" ng-click="sellAsset()"
                     ng-disabled="!currentAccount || !order.priceNXT || !order.quantity">
                     <big><b><span translate="translate.sell"></span></b></big><br>
                     <small>Click to send order</small>
@@ -327,7 +412,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr ng-repeat="o in askOrders.entities" ng-class="{'text-danger': o.cancellers}" 
+                    <tr ng-repeat="o in askOrders.entities" ng-class="{'text-danger': o.cancellers}"
                       ng-hide="o.cancelled || o.quantity=='0'" style="cursor:pointer" ng-click="askOrderClicked(o)">
                       <td>
                         <span ng-if="o.confirmations <= 0" class="text-muted">
@@ -336,14 +421,14 @@
                         <span ng-if="o.confirmations > 0 && o.confirmations <= 10" class="text-muted">
                           <b>{{o.confirmations}}</b>
                         </span>
-                        <span ng-if="o.confirmations > 10" tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}" 
+                        <span ng-if="o.confirmations > 10" tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}"
                                 class="text-success">
                           <i class="fa fa-check"></i>
                         </span>
                       </td>
                       <td>{{o.price}}</td>
-                      <td>{{o.quantity}}</td>
-                      <td>{{o.total}}</td>
+                      <td class="animate-change value-{{o.quantity}}">{{o.quantity}}</td>
+                      <td class="animate-change value-{{o.total}}">{{o.total}}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -434,15 +519,15 @@
                         <span ng-if="o.confirmations > 0 && o.confirmations <= 10" class="text-muted">
                           <b>{{o.confirmations}}</b>
                         </span>
-                        <span ng-if="o.confirmations > 10" 
-                              tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}" 
+                        <span ng-if="o.confirmations > 10"
+                              tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}"
                               ng-class="{'text-danger': o.cancellers, 'text-success': !o.cancellers}">
                           <i class="fa fa-check"></i>
                         </span>
                       </td>
                       <td>{{o.price}}</td>
-                      <td>{{o.quantity}}</td>                      
-                      <td>{{o.total}}</td>
+                      <td class="animate-change value-{{o.quantity}}">{{o.quantity}}</td>
+                      <td class="animate-change value-{{o.total}}">{{o.total}}</td>
                       <td><a href ng-click="cancelOrder(o)" class="pull-right"
                         ng-hide="o.confirmations < 1">Cancel</a></td>
                     </tr>
@@ -455,7 +540,7 @@
                   <span translate-cloak>{{ 'translate.load_more_orders' | translate }}</span>
                 </a>
               </div>
-            </div>            
+            </div>
           </div>
         </div>
 
@@ -484,16 +569,16 @@
                         <span ng-if="o.confirmations > 0 && o.confirmations <= 10" class="text-muted">
                           <b>{{o.confirmations}}</b>
                         </span>
-                        <span ng-if="o.confirmations > 10" 
-                              tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}" 
+                        <span ng-if="o.confirmations > 10"
+                              tooltip="{{o.confirmations}} {{ 'translate.confirmations' | translate }}"
                               ng-class="{'text-danger': o.cancellers, 'text-success': !o.cancellers}">
                           <i class="fa fa-check"></i>
                         </span>
                       </td>
                       <td>{{o.price}}</td>
-                      <td>{{o.quantity}}</td>                      
-                      <td>{{o.total}}</td>
-                      <td><a href ng-click="cancelOrder(o)" class="pull-right" 
+                      <td class="animate-change value-{{o.quantity}}">{{o.quantity}}</td>
+                      <td class="animate-change value-{{o.total}}">{{o.total}}</td>
+                      <td><a href ng-click="cancelOrder(o)" class="pull-right"
                           ng-hide="o.confirmations < 1">Cancel</a></td>
                     </tr>
                   </tbody>
@@ -505,7 +590,7 @@
                   <span translate-cloak>{{ 'translate.load_more_orders' | translate }}</span>
                 </a>
               </div>
-            </div>            
+            </div>
           </div>
         </div>
       </div>
@@ -524,22 +609,22 @@
             <form class="form-inline">
               <div class="form-group">
                 <b>{{ 'translate.show' | translate }}</b>&nbsp;&nbsp;
-                <input type="radio" name="showAllowed" ng-value="'all'" 
+                <input type="radio" name="showAllowed" ng-value="'all'"
                     ng-model="provider.showWhat" ng-change="provider.reload()">&nbsp;{{ 'translate.all' | translate }}&nbsp;&nbsp;
-                <input type="radio" name="showAllowed" ng-value="'allowed'" 
+                <input type="radio" name="showAllowed" ng-value="'allowed'"
                     ng-model="provider.showWhat" ng-change="provider.reload()">&nbsp;{{ 'translate.allowed' | translate }}&nbsp;&nbsp;
-                <input type="radio" name="showAllowed" ng-value="'prohibited'" 
+                <input type="radio" name="showAllowed" ng-value="'prohibited'"
                     ng-model="provider.showWhat" ng-change="provider.reload()">&nbsp;{{ 'translate.prohibited' | translate }}
               </div>
-              <div class="pull-right">
+              <!-- <div class="pull-right">
                 <button class="btn btn-success" translate="translate.add_account"
                   ng-click="addPrivateAssetAccount(a.id_rs)"></button>
                 <button class="btn btn-primary" translate="translate.set_fees"
                   ng-click="setPrivateAssetFee(a.id_rs)"></button>
-              </div>
+              </div> -->
             </form>
           </div>
-          
+
           <div infinite-scroll="provider.loadMore()" infinite-scroll-distance="0" infinite-scroll-immediate-check="false">
             <div>
               <div class="table-responsive">
