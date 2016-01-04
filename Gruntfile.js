@@ -17,7 +17,7 @@ module.exports = function (grunt) {
   //grunt.loadNpmTasks('grunt-node-webkit-builder');
   grunt.loadNpmTasks('grunt-nw-builder');
   grunt.loadNpmTasks('grunt-ng-annotate');
-  
+
   //grunt.loadNpmTasks('grunt-google-translate');
   grunt.loadTasks('vendor/grunt-google-translate/tasks');
 
@@ -38,10 +38,10 @@ module.exports = function (grunt) {
     { n: "Afrikaans", c:"af" },
     { n: "Albanian", c:"sq" },
     { n: "Arabic", c:"ar" },
-    { n: "Azerbaijani", c:"az" },  
+    { n: "Azerbaijani", c:"az" },
     { n: "Basque", c:"eu" },
     { n: "Bengali", c:"bn" },
-    { n: "Belarusian", c:"be" },  
+    { n: "Belarusian", c:"be" },
     { n: "Bulgarian", c:"bg" },
     { n: "Catalan", c:"ca" },
     { n: "Chinese Simplified", c:"zh" },
@@ -60,13 +60,13 @@ module.exports = function (grunt) {
     { n: "Georgian", c:"ka" },
     { n: "German", c:"de" },
     { n: "Greek", c:"el" },
-    { n: "Gujarati", c:"gu" },  
+    { n: "Gujarati", c:"gu" },
     { n: "Haitian Creole", c:"ht" },
     { n: "Hebrew", c:"iw" },
-    { n: "Hindi", c:"hi" },  
-    { n: "Hungarian", c:"hu" },  
-    { n: "Icelandic", c:"is" },  
-    { n: "Indonesian", c:"id" },  
+    { n: "Hindi", c:"hi" },
+    { n: "Hungarian", c:"hu" },
+    { n: "Icelandic", c:"is" },
+    { n: "Indonesian", c:"id" },
     { n: "Irish", c:"ga" },
     { n: "Italian", c:"it" },
     { n: "Japanese", c:"ja" },
@@ -98,7 +98,7 @@ module.exports = function (grunt) {
     { n: "Urdu", c:"ur" },
     { n: "Vietnamese", c:"vi" },
     { n: "Welsh", c:"cy" },
-    { n: "Yiddish", c:"yi" }  
+    { n: "Yiddish", c:"yi" }
   ];
   var restrictToLanguages = languages.map(function (language) { return language.c });
 
@@ -195,9 +195,9 @@ module.exports = function (grunt) {
     exec: {
       bootswatch: {
         command: 'ruby bootswatch.rb',
-        stdout: true        
+        stdout: true
       }
-    },    
+    },
 
     // The actual grunt server settings
     connect: {
@@ -565,7 +565,7 @@ module.exports = function (grunt) {
           src: 'fonts/*',
           dest: '<%= yeoman.dist %>'
         }]
-      },      
+      },
     },
 
     // Run some tasks in parallel to speed up the build process
@@ -627,7 +627,7 @@ module.exports = function (grunt) {
     //'google_translate',
     'wiredep',
     'useminPrepare',
-    
+
     // dont run concurrent do individual instead
     // 'concurrent:dist',
     'copy:styles',
@@ -660,7 +660,7 @@ module.exports = function (grunt) {
     'copy:devDist',
     'sass:dist',
     'less:dist',
-  ]);  
+  ]);
 
   grunt.registerTask('default', [
     'newer:jshint',
