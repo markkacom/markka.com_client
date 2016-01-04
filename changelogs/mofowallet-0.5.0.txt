@@ -1,0 +1,18 @@
+Embeds FIMK 0.6.0 (based on NXT 1.5.10) no longer includes NXT.
+
+This is probably the last release under the old mofowallet brand name,
+throughout the client you'll notice the use of the new Lompsa brand.
+
+The latest online version can always be found at http://lompsa.com.
+
+FIMK 0.6.0 introduces Private Assets, Colored Accounts and a new Account
+Idetifier mechanism.
+This relases adds support for those FIMK features.
+
+Other changes apply to various sections. The following list highlights some of
+the more important changes.
+
+  - new wallet handling with configuration section
+  - multi account support, switch between accounts with single click
+  - many improvements to the Asset Exchange, Marketplace and Account sections
+  - revamped account section menus
