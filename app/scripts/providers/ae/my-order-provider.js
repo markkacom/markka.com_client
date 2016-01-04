@@ -1,8 +1,30 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
 module.factory('MyOrdersProvider', function (nxt, $q, IndexedEntityProvider) {
-  
+
   function MyOrdersProvider(api, $scope, pageSize, asset, decimals, accounts) {
     this.init(api, $scope, pageSize);
     this.asset = asset;
@@ -18,7 +40,7 @@ module.factory('MyOrdersProvider', function (nxt, $q, IndexedEntityProvider) {
 
     api.engine.socket().subscribe('BID_ORDER_ADD*'+asset, angular.bind(this, this.orderAddUpdate), $scope);
     api.engine.socket().subscribe('BID_ORDER_UPDATE*'+asset, angular.bind(this, this.orderAddUpdate), $scope);
-    api.engine.socket().subscribe('BID_ORDER_REMOVE*'+asset, angular.bind(this, this.orderRemove), $scope); 
+    api.engine.socket().subscribe('BID_ORDER_REMOVE*'+asset, angular.bind(this, this.orderRemove), $scope);
   }
   angular.extend(MyOrdersProvider.prototype, IndexedEntityProvider.prototype, {
 
@@ -34,7 +56,7 @@ module.factory('MyOrdersProvider', function (nxt, $q, IndexedEntityProvider) {
     },
 
     /* @override */
-    uniqueKey: function (order) { return order.order },    
+    uniqueKey: function (order) { return order.order },
 
     getData: function (firstIndex) {
       var deferred = $q.defer();

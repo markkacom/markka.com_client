@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -11,7 +33,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
     /**
      * Registers a function that is called whenever the model changes.
      * If a $scope is provided the observer will automatically be removed
-     * 
+     *
      * @param observer Function
      * @param $scope Angular $scope
      */
@@ -34,14 +56,14 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
         return fn !== _fn;
       })
     },
-    
+
     /**
      * # getData
      *
      * This function is provided by the extending class.
      *
-     * It expects a firstIndex argument. The result must be a Promise that 
-     * retrieves said data. 
+     * It expects a firstIndex argument. The result must be a Promise that
+     * retrieves said data.
      */
     getData: function (firstIndex) {
       console.log('IndexedEntityProvider.getData not implemented');
@@ -54,7 +76,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
      * # dataIterator
      *
      * It expects the raw data returned from the getData function and returns
-     * an Iterator. 
+     * an Iterator.
      *
      * If the data returned from getData needs additional filtering it must be
      * done in this function.
@@ -71,7 +93,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
      * is called from 'addedConfirmedTransactions', 'addedUnConfirmedTransactions'
      * and 'removedUnConfirmedTransactions'.
      *
-     * If an account was set or if this provider must filter certain types of 
+     * If an account was set or if this provider must filter certain types of
      * transactions it must be done in this function.
      */
     transactionIterator: function (transactions) {
@@ -86,7 +108,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
      * In order to prevent duplicate entries to appear each entity must have a
      * unique key.
      *
-     * This function expects an entity and returns a unique key to identify that 
+     * This function expects an entity and returns a unique key to identify that
      * entity.
      */
     uniqueKey: function (entity) {
@@ -121,7 +143,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
 
     /**
      * Applies a function on each entity every N milliseconds.
-     * Implementers would use this function to define a function that updates 
+     * Implementers would use this function to define a function that updates
      * calculated date fields of the 'timeago' type.
      *
      * @param each_fn Function
@@ -140,7 +162,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
         self.keys             = {};
         self.isLoading        = true;
         self.hasMore          = true;
-        $timeout(function () {  self.getNetworkData(0, deferred); }, 1, false);        
+        $timeout(function () {  self.getNetworkData(0, deferred); }, 1, false);
       });
       return deferred.promise;
     },
@@ -167,12 +189,12 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
             self.loadMore();
           }
         });
-        
+
         this.$scope.$evalAsync(function () {
           self.isLoading = true;
           self.getNetworkData(self.entities.length).then(self.loadMoreBusy.resolve);
         });
-      }      
+      }
     },
 
     getNetworkData: function (firstIndex, reload_deferred) {
@@ -196,7 +218,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
             deferred.resolve();
             if (reload_deferred) {
               reload_deferred.resolve();
-            }            
+            }
           });
         }
       );
@@ -204,7 +226,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
     },
 
     processGetData: function (iterator, unshift) {
-      this.hasMore = iterator.hasMore();      
+      this.hasMore = iterator.hasMore();
       var entity, key;
       while (iterator.hasMore()) {
         entity = iterator.next();
@@ -216,7 +238,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
             this.entities.unshift(entity);
           }
           else {
-            this.entities.push(entity); 
+            this.entities.push(entity);
           }
         }
         else {
@@ -235,8 +257,8 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
       }
     },
 
-    /* Adds or updates an entity. 
-       If there is no such entity it is added. 
+    /* Adds or updates an entity.
+       If there is no such entity it is added.
        If there is an entity with the same uniqueKey it is updated. */
     add: function (entity) {
       var key = this.uniqueKey(entity);
@@ -311,7 +333,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
           return true;
         }
       );
-      if (this.entities.length != length) {        
+      if (this.entities.length != length) {
         this.$scope.$evalAsync(function () {
           self.sort(); /* will notify change observers */
         });

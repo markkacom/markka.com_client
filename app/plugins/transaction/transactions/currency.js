@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 // currency buy
 // currency sell
 // currency reserve claim
@@ -15,7 +37,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   if (!$rootScope.MONETARY_SYSTEM) {
     return;
   }
-  
+
   var plugin = plugins.get('transaction');
 
   plugin.add({
@@ -36,7 +58,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
             code: String(items.code).toUpperCase(),
             description: items.description,
             type: items.type,
-            initialSupply: items.initialSupply, 
+            initialSupply: items.initialSupply,
             reserveSupply: items.reserveSupply,
             maxSupply: items.maxSupply,
             issuanceHeight: items.issuanceHeight,
@@ -53,7 +75,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'name',
           type: 'text',
           value: args.name||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -66,7 +88,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'code',
           type: 'text',
           value: args.code||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -80,7 +102,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'description',
           type: 'textarea',
           value: args.code||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if (plugin.getByteLen(text) > 1000) { this.errorMsg = 'To much characters'; }
@@ -98,7 +120,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'maxSupply',
           type: 'text',
           value: args.maxSupply||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }
@@ -110,7 +132,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'initialSupply',
           type: 'text',
           value: args.initialSupply||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }
@@ -122,7 +144,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'decimals',
           type: 'text',
           value: args.decimals||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }
@@ -134,7 +156,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'issuanceHeight',
           type: 'text',
           value: args.issuanceHeight||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }
@@ -152,7 +174,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'reserveSupply',
           type: 'text',
           value: args.reserveSupply||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }
@@ -164,7 +186,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'minDifficulty',
           type: 'text',
           value: args.minDifficulty||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }
@@ -176,7 +198,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'maxDifficulty',
           type: 'text',
           value: args.maxDifficulty||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.isNumeric(text)) { this.errorMsg = 'Must be a number'; }

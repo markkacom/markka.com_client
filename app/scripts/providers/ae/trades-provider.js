@@ -1,8 +1,30 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
 module.factory('TradesProvider', function (nxt, $q, IndexedEntityProvider) {
-  
+
   function TradesProvider(api, $scope, pageSize, asset, decimals) {
     this.init(api, $scope, pageSize);
     this.asset = asset;
@@ -13,7 +35,7 @@ module.factory('TradesProvider', function (nxt, $q, IndexedEntityProvider) {
 
     api.engine.socket().subscribe('TRADE_ADDED*'+asset, angular.bind(this, this.tradeAddUpdate), $scope);
     api.engine.socket().subscribe('TRADE_UPDATED*'+asset, angular.bind(this, this.tradeAddUpdate), $scope);
-    api.engine.socket().subscribe('TRADE_REMOVED*'+asset, angular.bind(this, this.tradeRemove), $scope); 
+    api.engine.socket().subscribe('TRADE_REMOVED*'+asset, angular.bind(this, this.tradeRemove), $scope);
   }
   angular.extend(TradesProvider.prototype, IndexedEntityProvider.prototype, {
 
@@ -30,7 +52,7 @@ module.factory('TradesProvider', function (nxt, $q, IndexedEntityProvider) {
         firstIndex:     firstIndex,
         lastIndex:      firstIndex + this.pageSize,
         requestType:    'getVirtualTrades'
-      }      
+      }
       this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
       return deferred.promise;
     },

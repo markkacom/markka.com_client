@@ -1,33 +1,105 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var uriParser = null;
 var module = angular.module('fim.base');
-module.run(function ($rootScope) {
+module.run(function ($rootScope, $location) {
+
   if (window.localStorage.getItem("lompsa.testnet") == null) {
     window.localStorage.setItem("lompsa.testnet", IS_TEST_NET?"true":"false");
   }
+
+  $rootScope.isTestnet = window.localStorage.getItem("lompsa.testnet")=="true";
+  if (TRADE_UI_ONLY) {
+    $rootScope.isTestnet = true;
+  }
+  if ($rootScope.isTestnet) {
+    ENABLE_DUAL_ENGINES=false;
+  }
+
   $rootScope.FIM_SERVER_VERSION = null;
   $rootScope.TITLE = WALLET_NAME+' '+VERSION;
   $rootScope.WALLET_NAME = WALLET_NAME;
   $rootScope.paramEngine = 'fim';
-  $rootScope.isTestnet = window.localStorage.getItem("lompsa.testnet")=="true";
   $rootScope.enableDualEngines = $rootScope.isTestnet ? false : ENABLE_DUAL_ENGINES;
   $rootScope.forceLocalHost = FORCE_LOCAL_HOST;
-  $rootScope.privateEnabled = $rootScope.isTestnet;
+  $rootScope.privateEnabled = true;
   $rootScope.multiLanguage = true;
   $rootScope.MONETARY_SYSTEM = false;
   $rootScope.TRADE_UI_ONLY = TRADE_UI_ONLY;
   $rootScope.currentAccount = typeof CURRENT_ACCOUNT != "undefined" ? angular.copy(CURRENT_ACCOUNT) : null;
+
+  if (("www.mofowallet.com" == window.location.host ||
+       "mofowallet.com" == window.location.host) && (window.location.protocol != "https:")) {
+    window.location.protocol = "https:";
+  }
+  else if ("fimkrypto.github.io" == window.location.host) {
+    window.location = "https://www.mofowallet.com/launch.html" + window.location.hash;
+  }
+
+  // if ($rootScope.isTestnet) {
+  //   if ($location.path().indexOf('/start') != 0) {
+  //     $location.path('/start');
+  //     return;
+  //   }
+  // }
 });
-module.controller('AppController', function($rootScope, $scope, $modal, $q, $log,  
-  $timeout, modals, $window, plugins, serverService, db, settings, $location, 
-  nxt, $route, $translate, accountsService, BlockchainDownloadProvider, UserDataProvider) {
+module.controller('AppController', function($rootScope, $scope, $modal, $q, $log,
+  $timeout, modals, $window, plugins, serverService, db, settings, $location,
+  nxt, $route, $translate, accountsService, BlockchainDownloadProvider, UserDataProvider, UserService) {
 
   $rootScope.userData = new UserDataProvider($scope);
 
   $scope.toggleTestNet = function () {
-    window.localStorage.setItem("lompsa.testnet", !$rootScope.isTestnet);
+    var value = $rootScope.isTestnet ? "false":"true";
+    window.localStorage.setItem("lompsa.testnet", value);
     $scope.reloadMofoWallet();
+  }
+
+  $rootScope.loginWizard = function (step, config, path) {
+    var deferred = $q.defer();
+    modals.open('login-wizard', {
+      resolve: {
+        items: function () {
+          return {
+            step: step,
+            config: config,
+            path: path
+          };
+        }
+      },
+      close: function (items) {
+        deferred.resolve();
+      }
+    });
+    return deferred.promise;
+  }
+
+  $rootScope.logout = function () {
+    $rootScope.$evalAsync(function () {
+      UserService.logout();
+    });
   }
 
   $scope.mainMenuCollapsed=true;
@@ -77,18 +149,14 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
 
   $scope.isNodeJS = isNodeJS;
 
-  // $rootScope.$on('$translatePartialLoaderStructureChanged', function () {
-  //   $translate.refresh();
-  // });
+  $rootScope.setCurrentAccount = function (account) {
+    UserService.setCurrentAccount(account);
+  }
 
-  $rootScope.loginTo = function () {
-    modals.open('login-to', {
-      resolve: {
-        items: function () { 
-          return {}; 
-        }
-      }
-    });
+  $rootScope.loadUserAccountData = function (menu_is_open) {
+    if (menu_is_open) {
+      UserService.loadAccountData(new Iterator(UserService.userAccounts));
+    }
   }
 
   $rootScope.availableLanguages = [
@@ -166,7 +234,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   $rootScope.setLang  = function (langCode) {
     $rootScope.langCode = langCode;
     $rootScope.langName = $rootScope.availableLanguages[langCode];
-    $translate.use(langCode);    
+    $translate.use(langCode);
   }
 
   if (!$rootScope.multiLanguage) {
@@ -180,7 +248,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
       },
       close: function () {
       }
-    });    
+    });
   }
 
   $scope.showAboutModal = function () {
@@ -190,11 +258,11 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
       },
       close: function () {
       }
-    }); 
+    });
   }
 
   $scope.reloadMofoWallet = function () {
-    try { 
+    try {
       if (isNodeJS) {
         var wait = 0;
         if (serverService.isRunning('TYPE_FIM')) {
@@ -218,7 +286,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   }
 
   $scope.openDevTools = function () {
-    try { 
+    try {
       require('nw.gui').Window.get().showDevTools();
     } catch (e) {
       console.log(e)
@@ -296,7 +364,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
         });
         break;
       }
-    }    
+    }
     return false;
   }
 
@@ -363,6 +431,16 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
         );
       }
     });
+  }
+
+  $rootScope.executeTransaction = function (id, arg) {
+    arg = arg||{};
+    if (plugins.get('transaction').get(id).execute.length == 1) {
+      plugins.get('transaction').get(id).execute(arg);
+    }
+    else {
+      plugins.get('transaction').get(id).execute($scope.id_rs, arg);
+    }
   }
 });
 

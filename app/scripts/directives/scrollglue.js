@@ -71,9 +71,9 @@
           }
 
           scope.$watch(scrollIfGlued);
-          
+
           $timeout(scrollIfGlued, 0, false);
-          
+
           $window.addEventListener('resize', scrollIfGlued, false);
 
           $el.bind('scroll', function(){

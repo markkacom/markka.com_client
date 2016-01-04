@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -5,7 +27,7 @@ module.factory('PrivateAccountsProvider', function (nxt, $q, IndexedEntityProvid
 
   /**
     public static final byte TYPE_FIMKRYPTO = 40;
-    
+
     private static final byte SUBTYPE_FIMKRYPTO_NAMESPACED_ALIAS_ASSIGNMENT = 0;
     private static final byte SUBTYPE_FIMKRYPTO_PRIVATE_ASSET_ADD_ACCOUNT = 1;
     private static final byte SUBTYPE_FIMKRYPTO_PRIVATE_ASSET_REMOVE_ACCOUNT = 2;
@@ -27,20 +49,20 @@ module.factory('PrivateAccountsProvider', function (nxt, $q, IndexedEntityProvid
       var issuer_id  = nxt.util.convertRSAddress(asset.issuerRS);
       self.subscribe('removedUnConfirmedTransactions-'+issuer_id, self.removedUnConfirmedTransactions);
       self.subscribe('addedUnConfirmedTransactions-'+issuer_id, self.addedUnConfirmedTransactions);
-      self.subscribe('addedConfirmedTransactions-'+issuer_id, self.addedConfirmedTransactions); 
+      self.subscribe('addedConfirmedTransactions-'+issuer_id, self.addedConfirmedTransactions);
       self.$scope.$evalAsync(function () {
         self.orderFee = nxt.util.convertToQNTf(String(asset.orderFeePercentage), 6)||'0';
         self.tradeFee = nxt.util.convertToQNTf(String(asset.tradeFeePercentage), 6)||'0';
       });
     });
   }
-  angular.extend(PrivateAccountsProvider.prototype, IndexedEntityProvider.prototype, {    
-    sortFunction: function (a,b) { 
-      return a.confirmations - b.confirmations; 
+  angular.extend(PrivateAccountsProvider.prototype, IndexedEntityProvider.prototype, {
+    sortFunction: function (a,b) {
+      return a.confirmations - b.confirmations;
     },
-    uniqueKey: function (txn_or_account) { 
+    uniqueKey: function (txn_or_account) {
       if (txn_or_account.id_rs) {
-        return txn_or_account.id_rs; 
+        return txn_or_account.id_rs;
       }
       return txn_or_account.recipientRS;
     },
@@ -55,7 +77,7 @@ module.factory('PrivateAccountsProvider', function (nxt, $q, IndexedEntityProvid
         case "allowed":
           args.allowed = true;
           break;
-        case "prohibited": 
+        case "prohibited":
           args.allowed = false;
           break;
       }
@@ -74,7 +96,7 @@ module.factory('PrivateAccountsProvider', function (nxt, $q, IndexedEntityProvid
     /**
      * This iterator serves a double purpose.
      * a. prepares a list of model objects based of blockchain events (websockets)
-     * b. update the trade and order fee when an appropriate transaction is seen 
+     * b. update the trade and order fee when an appropriate transaction is seen
      */
     transactionIterator: function (transactions) {
       console.log('transactionIterator', transactions);
@@ -96,7 +118,7 @@ module.factory('PrivateAccountsProvider', function (nxt, $q, IndexedEntityProvid
           confirmations: 0
         });
       }
-      return new Iterator(data); 
+      return new Iterator(data);
     },
     blockPopped: function () {
       var self = this;

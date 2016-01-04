@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -6,13 +28,13 @@ module.factory('Emoji', function () {
   /**
    * About base32 encoding of emojiis.
    *
-   * For this to work the order and position of each emoji in the overall set of 
+   * For this to work the order and position of each emoji in the overall set of
    * emojiis is important.
    * After placing all emojiis in a list we'll assign each one them the index id
    * of where it resides in the list.
-   * 
+   *
    * To allow for the shortest possible notation of these indexes we'll use base32
-   * encoding to store each of them, allowing for a 2 digit code to represent a 
+   * encoding to store each of them, allowing for a 2 digit code to represent a
    * 3 or 4 letter number.
    *
    * To go from and to base 32 we'll use javascript native Number.toString function

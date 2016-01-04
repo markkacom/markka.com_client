@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function() {
 var module = angular.module('fim.base');
 module.config(function($routeProvider) {
@@ -8,12 +30,12 @@ module.config(function($routeProvider) {
     })
 });
 
-module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins, 
-  shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider, 
+module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins,
+  shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider,
   SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db) {
 
   $scope.paramEngine  = $rootScope.paramEngine = $routeParams.engine;
-  $scope.paramSection = $routeParams.section;  
+  $scope.paramSection = $routeParams.section;
   $scope.id_rs        = $routeParams.id_rs;
 
   var api             = $scope.paramEngine == 'fim' ? nxt.fim() : nxt.nxt();
@@ -29,7 +51,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   }
 
   shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
-  db.cart.addObserver($scope, { 
+  db.cart.addObserver($scope, {
     finally: function () {
       shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
     }
@@ -48,7 +70,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       $scope.provider = new AllGoodsProvider(api, $scope, 10, null, $routeParams.id_rs); /* we use id_rs for the tag parameter */
       $scope.provider.reload();
       break;
-    }    
+    }
     /* /goods/nxt/pastorders/NXT-7JDS-CS72-TNGS-BBE8E */
     case 'pastorders': {
       if ($scope.id_rs) {
@@ -79,13 +101,13 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     /* /goods/nxt/cart OR /goods/nxt/cart/NXT-7JDS-CS72-TNGS-BBE8E */
     case 'cart': {
       /* nothing to do here $scope.shoppingCart is setup elsewhere */
-      break;      
+      break;
     }
     /* /goods/nxt/142563763572767 */
     default: {
       $scope.provider = new GoodsDetailsProvider(api, $scope, $scope.paramSection);
       $scope.provider.reload();
-      $scope.paramSection = 'detail';      
+      $scope.paramSection = 'detail';
     }
   }
 
@@ -100,9 +122,9 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
 
   function calculateCartTotal() {
     var totalNQT = '0';
-    $scope.shoppingCart.forEach(function (item) { 
+    $scope.shoppingCart.forEach(function (item) {
       totalNQT = (new BigInteger(totalNQT)).add(
-                    new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString() 
+                    new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString()
     });
     $scope.totalNXT = nxt.util.convertToNXT(totalNQT.toString());
   }
@@ -132,7 +154,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   $scope.placeOrder = function() {
     var result = (new BigInteger(nxt.util.convertToNQT($scope.totalNXT))).compareTo(
                     new BigInteger(nxt.util.convertToNQT($rootScope.userData.balanceNXT)));
-    if (result <= 0) {
+    if (result > 0) {
       $scope.balanceError = "You don't have enough balance to place these orders.";
     }
     else {
@@ -155,7 +177,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       }
       plugins.get('transaction').get('dgsPurchase').execute(order_args).then(
         function(data) {
-          if(data) { 
+          if(data) {
             if (item.callback) {
               $http({
                 url: item.callback,
@@ -177,7 +199,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
                     $scope.successful = "Payment Completed";
                   });
                 }
-              }              
+              }
             );
           }
         }

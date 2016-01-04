@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function() {
   'use strict';
   var module = angular.module('fim.base');
@@ -15,7 +37,7 @@
       else {
         this.subscribe('addedUnConfirmedTransactions', this.addedUnConfirmedTransactions);
       }
-      this.subscribe('blockPushedNew', this.blockPushed);      
+      this.subscribe('blockPushedNew', this.blockPushed);
     }
     angular.extend(AllGoodsProvider.prototype, IndexedEntityProvider.prototype, {
 
@@ -107,8 +129,8 @@
                 };
 
                 /* set unconfirmed to true so blockPushed knows that there are unconfirmed entries */
-                item.unconfirmed = true; 
-                this.translate(item);                
+                item.unconfirmed = true;
+                this.translate(item);
                 this.add(item);
                 break;
               }
@@ -124,7 +146,7 @@
                 break;
               }
 
-              /* TODO 
+              /* TODO
                   - add a cases for subtypes :
                     1. PRICE_CHANGE(2) - update price
                     2. QUANTITY_CHANGE(3) - update quantity
@@ -148,7 +170,7 @@
       blockPushed: function () {
         var must_reload = false;
 
-        /* there is a new block 
+        /* there is a new block
            look at all entries to see if there are any unconfirmed entries, if there are
            do a simple reload to get back in sync.. */
         this.forEach(function (item) {

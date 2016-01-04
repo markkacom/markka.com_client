@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -18,8 +40,8 @@ module.run(function (nxt, $q, modals) {
   // 2. Krypto Fin translates personal data into <1000 character JSON string
   var PERSONAL_JSON = customer_data;
 
-  // 3. Krypto Fin encrypts JSON with Krypto Fin private key and customer public key, 
-  //    the encrypted JSON is stored as namespaced alias under Krypto Fin account. 
+  // 3. Krypto Fin encrypts JSON with Krypto Fin private key and customer public key,
+  //    the encrypted JSON is stored as namespaced alias under Krypto Fin account.
   //    Eg. JSON:FIM-XXX-YYYY:[encrypted data here]
   var options = {
     account: customer_rs,
@@ -50,18 +72,18 @@ module.run(function (nxt, $q, modals) {
     close: function (items) {
 
       // 4. Krypto Fin creates SHA256 HASH of JSON
-      //    CHANGE THE JSON SLIGHTLY      
+      //    CHANGE THE JSON SLIGHTLY
       var SHA256_HASH   = SHA256_hash(PERSONAL_JSON+PERSONAL_JSON);
 
-      // (we could alter the JSON slightly to prevent an attacker has A. a hash of the 
-      //  unencrypted data and B. the encrypted data) 
+      // (we could alter the JSON slightly to prevent an attacker has A. a hash of the
+      //  unencrypted data and B. the encrypted data)
 
       // 5. Krypto Fin registers alias.. AUTHENTICATED:FIM-XXX-YYYY=ghdg7u4ghj337ryurg37rg83grgg
-      //    where FIM-XXX-YYYY is the account of the customer and 
-      //    ghdg7u4ghj337ryurg37rg83grgg is the SHA256 hash of the JSON 
-      //    (we could alter the JSON slightly to prevent an attacker has A. a hash of the 
-      //    unencrypted data and B. the encrypted data) this could be solved in the client 
-      //    since the customer has to decrypt and send the decrypted contents to the party 
+      //    where FIM-XXX-YYYY is the account of the customer and
+      //    ghdg7u4ghj337ryurg37rg83grgg is the SHA256 hash of the JSON
+      //    (we could alter the JSON slightly to prevent an attacker has A. a hash of the
+      //    unencrypted data and B. the encrypted data) this could be solved in the client
+      //    since the customer has to decrypt and send the decrypted contents to the party
       //    he is identifying with.
       var ALIAS_NAME_2  = 'AUTHENTICATED:'+customer_rs;
       var ALIAS_VALUE_2 = SHA256_HASH;
@@ -76,17 +98,17 @@ module.run(function (nxt, $q, modals) {
                 deadline:       '1440',
                 feeNQT:         nxt.util.convertToNQT('0.1'),
                 secretPhrase:   authenticator_pass,
-                publicKey:      api.crypto.secretPhraseToPublicKey(authenticator_pass),        
+                publicKey:      api.crypto.secretPhraseToPublicKey(authenticator_pass),
                 aliasName:      ALIAS_NAME_2,
                 aliasURI:       ALIAS_VALUE_2,
-                sender:         authenticator_rs 
+                sender:         authenticator_rs
               }
             };
           }
         },
         close: function (items) {
 
-          // 7. Customer wants to identify with lender 
+          // 7. Customer wants to identify with lender
           // 8. Customer reads namespaced alias set earlier (better than message since we can change that)
           api.getNamespacedAlias({
             account:        authenticator_rs,
@@ -94,8 +116,8 @@ module.run(function (nxt, $q, modals) {
           }).then(
             function (alias /* { n: String, m: String } */) {
 
-              // 9. Customer decrypts the JSON and slightly alters the JSON to match the JSON that the 
-              //    hash was made for, then transmits unencrypted JSON to lender 
+              // 9. Customer decrypts the JSON and slightly alters the JSON to match the JSON that the
+              //    hash was made for, then transmits unencrypted JSON to lender
               //    (a change could be adding/removing/changing a single property in the JSON doc)
               var obj         = JSON.parse(alias.aliasURI);
               var PRIVATE_KEY = converters.hexStringToByteArray(api.crypto.getPrivateKey(customer_pass))
@@ -103,7 +125,7 @@ module.run(function (nxt, $q, modals) {
               var NONCE       = converters.hexStringToByteArray(obj.n);
               var DATA        = converters.hexStringToByteArray(obj.m);
 
-              var DECRYPTED   = api.crypto.decryptData(DATA, { 
+              var DECRYPTED   = api.crypto.decryptData(DATA, {
                 privateKey: PRIVATE_KEY,
                 publicKey:  PUBLIC_KEY,
                 nonce:      NONCE
@@ -112,7 +134,7 @@ module.run(function (nxt, $q, modals) {
               // 10. Lender makes SHA256 HASH of JSON received from customer
               var SHA256_HASH_2 = SHA256_hash(PERSONAL_JSON+PERSONAL_JSON);
 
-              // 11. Lender reads namespaced alias AUTHENTICATED:FIM-XXX-YYYY from 
+              // 11. Lender reads namespaced alias AUTHENTICATED:FIM-XXX-YYYY from
               //     Krypto Fin ry namespace
               api.getNamespacedAlias({
                 account:        authenticator_rs,
@@ -121,11 +143,11 @@ module.run(function (nxt, $q, modals) {
 
                 function (alias) {
 
-                  // 12. Lender compares his own calculated hash with that of the one in 
+                  // 12. Lender compares his own calculated hash with that of the one in
                   //     AUTHENTICATED:FIM-XXX-YYYY
                   if (alias.aliasURI == SHA256_HASH_2) {
 
-                    // 13. If hashes check out, customer apparently gave the actual JSON he 
+                    // 13. If hashes check out, customer apparently gave the actual JSON he
                     //     received from Krypto Fin ry in the first place
 
                     console.log('Test success');

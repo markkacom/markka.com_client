@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -6,7 +28,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
   var FIMKRYPTO_ALIAS     = "FIMKAUTHACCOUNT";
   var FIMKRYPTO_RS        = null;
   var FIMKRYPTO_PUBLICKEY = null;
-  
+
   $scope.challenger_id_rs = $routeParams.challenger_id_rs;
   $scope.identifier_id_rs = $routeParams.identifier_id_rs;
   $scope.challenger_name  = decodeURIComponent($routeParams.challenger_name);
@@ -30,7 +52,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
           function (data_str) {
 
             $scope.$evalAsync(function () {
-              $scope.decryptedJSON = data_str; 
+              $scope.decryptedJSON = data_str;
             });
 
             /* Confirm this is the correct account */
@@ -42,7 +64,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
                 if (confirmed) {
                   $scope.$evalAsync(function () {
                     $scope.confirmed = true;
-                  });                  
+                  });
 
                   createChalengeResponse(secretPhrase).then(
                     function (challenge) {
@@ -77,7 +99,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
           });
           $scope.$evalAsync(function () {
             $scope.http_args = options;
-          });          
+          });
           sendData(options).then(
             function (success) {
               console.log($scope.challenger_url, success);
@@ -86,7 +108,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
         }
       }
     );
-  }  
+  }
 
   function getSecretPhrase() {
     var deferred = $q.defer();
@@ -127,7 +149,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
     var publicKey = converters.hexStringToByteArray(FIMKRYPTO_PUBLICKEY);
     var data = converters.hexStringToByteArray(message.data);
     var nonce = converters.hexStringToByteArray(message.nonce);
-    return api.crypto.decryptData(data, { 
+    return api.crypto.decryptData(data, {
       privateKey: privateKey,
       publicKey:  publicKey,
       nonce:      nonce
@@ -135,7 +157,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
   }
 
   /**
-   * Reads and decrypts the personal data as JSON from the association 
+   * Reads and decrypts the personal data as JSON from the association
    * namespaced alias.
    */
   function getAccountPersonalData(secretPhrase, id_rs) {
@@ -148,7 +170,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
         }).then(
           function (data) {
             $scope.$evalAsync(function () {
-              $scope.encryptedJSON = data.aliasURI; 
+              $scope.encryptedJSON = data.aliasURI;
             });
             deferred.resolve(decryptAlias(secretPhrase, data.aliasURI));
           }
@@ -162,7 +184,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
   /**
    * The challenge text is taken from the return URL, it is the protocol and
    * hostname combined.
-   * 
+   *
    * Eg. From URL http://bobsloans.com/auth.cgi we get the challenge text
    *     http://bobloans.com
    *
@@ -171,7 +193,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
   function getChallengeText() {
     var obj = document.createElement('a');
     obj.href = $scope.challenger_url;
-    if (!obj.href) 
+    if (!obj.href)
       throw new Error('Could not parse URL');
     return obj.protocol+'//'+obj.hostname;
   }
@@ -230,7 +252,7 @@ module.controller('AuthenticatePlugin', function($scope, $routeParams, modals, $
       url: url,
       data: qs,
       headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }; 
+    };
   }
 
   function getAuthenticator() {

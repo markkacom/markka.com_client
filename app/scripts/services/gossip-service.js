@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -53,7 +75,7 @@ module.run(function (Gossip, $rootScope, db) {
           }.bind(this)
         );
       }.bind(this)
-    );    
+    );
   });
 
   Gossip.addTopic(Gossip.MESSAGE_RECEIVED_TOPIC, function (raw_gossip) {
@@ -154,7 +176,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     },
 
     /**
-     * Adds an external listener. 
+     * Adds an external listener.
      * The returned function removes the listener.
      *
      * @param topic String one of the supported gossip types
@@ -182,7 +204,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     /**
      * Adds a subscription to a websocket topic.
      * Subscribe as many times as you like, all messages matching the topic
-     * you provide will be handled by the topic handler you registered 
+     * you provide will be handled by the topic handler you registered
      * through addTopic.
      *
      * @param topic String
@@ -301,11 +323,11 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     onCloseCurrentAccount: function (e, currentAccount) {
       if (this.isActive) {
         $rootScope.$evalAsync(function () { this.ui.isDisabled = false }.bind(this));
-        
+
         this.subscriptions.forEach(function (conf) {
           this.api.engine.socket().unsubscribe(conf.topic, conf.handler);
         }.bind(this));
-        
+
         this.subscriptions.length = 0;
         this.isActive = false;
 
@@ -323,11 +345,11 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
      * @event-listener - new chat contact added
      *
      * start listening to pings send from this contact
-     * upon closing the currentAccount these are removed 
+     * upon closing the currentAccount these are removed
      * if this is called on construction we pass the dont_ping=true argument to
      * indicate we dont need to send a targetted ping to this contact.
      * instead we rely on the I_AM_ALIVE initial ping and see if the contact responds to that
-     * 
+     *
      * @param e Event (angular)
      * @param chat ChatModel
      * @param dont_ping Boolean
@@ -336,12 +358,12 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
       this.subscribe(Gossip.PING_TOPIC, chat.otherRS, null);
 
       // pre-create the provider
-      var provider = this.getChatStatusProvider(null, chat.otherRS, chat.id); 
-      if (dont_ping) { 
+      var provider = this.getChatStatusProvider(null, chat.otherRS, chat.id);
+      if (dont_ping) {
         provider.startWaitingForInitialPongReply();
       }
       else { /* send a directed ping to the new contact */
-        this.ping(chat.otherRS);        
+        this.ping(chat.otherRS);
       }
     },
 
@@ -350,7 +372,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
       if (!this.isActive && $rootScope.currentAccount) {
         this.onOpenCurrentAccount(null, $rootScope.currentAccount);
       }
-    },    
+    },
 
     /* enable the gossip feature when it was disabled */
     setEnabled: function () {
@@ -394,14 +416,14 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
      * a combination of sender and topic or recipient and topic.
      *
      * Java Impl: /fimk/src/java/nxt/http/websocket/EventForwarder.java
-     * 
+     *
      *    MS.notify("ADDEDGOSSIP*"+senderId, gossip);
      *    MS.notify("ADDEDGOSSIP#"+recipientId, gossip);
      *    MS.notify("ADDEDGOSSIP-"+topicId, gossip);
      *    MS.notify("ADDEDGOSSIP*"+senderId+"-"+topicId, gossip);
      *    MS.notify("ADDEDGOSSIP#"+recipientId+"-"+topicId, gossip);
-     * 
-     * @param senderRS 
+     *
+     * @param senderRS
      * @param recipientRS
      * @param topic String
      * @returns String
@@ -440,7 +462,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
      *
      * @param recipientRS String
      * @param message String clear un-encrypted text
-     * @returns Promise     
+     * @returns Promise
      */
     message: function (recipientRS, message) {
       if (this.DEBUG) {
@@ -489,7 +511,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     },
 
     /**
-     * @public 
+     * @public
      *
      * @param recipientPublicKey String
      * @param message String
@@ -506,7 +528,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     },
 
     /**
-     * @public 
+     * @public
      *
      * @param recipient String numeric account id
      * @param message String
@@ -554,12 +576,12 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
         this.api.engine.socket().callAPIFunction(arg).then(
           function () {
             deferred.resolve(gossip);
-          }, 
+          },
           deferred.reject
         );
       }
       else {
-        deferred.reject('Gossip not valid');        
+        deferred.reject('Gossip not valid');
       }
       return deferred.promise;
     },
@@ -613,7 +635,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
 
     createSignatureSeed: function (gossip) {
       return gossip.timestamp+gossip.recipient+gossip.message+gossip.topic;
-    },    
+    },
 
     /* adds a MESSAGE_TOPIC gossip to the db */
     persistGossip: function (gossip) {
@@ -708,7 +730,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
       this.safeAsync(function () {
         this.online  = false;
         this.loading = false;
-      });      
+      });
     },
 
     /* account inactive for too long */
@@ -739,7 +761,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
    * There always is the 'accountRS' which is the currently logged in
    * account and there is the 'otherRS' which is the account we have
    * the conversation with.
-   * 
+   *
    * Chats are stored in the indexedDB and can be accessed through this
    * service.
    */

@@ -1,3 +1,25 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div class="panel panel-primary">
   <div class="panel-heading">
     <h3 class="panel-title" ng-bind="dialogTitle"></h3>
@@ -25,7 +47,7 @@
         <label for="nsalias-value" class="control-label col-xs-2">Value</label>
         <div class="col-xs-10">
           <textarea rows="4" class="form-control" id="nsalias-value" ng-model="items.value" name="value" required
-                    ui-validate="{length : 'validateValueLength($value)'}" 
+                    ui-validate="{length : 'validateValueLength($value)'}"
                     ui-validate-watch=" 'items.value' "></textarea>
         </div>
         <div class="col-xs-10 col-xs-offset-2">
@@ -54,7 +76,7 @@
           <div class="input-group">
 
             <!-- Recipient text box -->
-            <input class="form-control" id="nsalias-account" placeholder="Other account" name="account" 
+            <input class="form-control" id="nsalias-account" placeholder="Other account" name="account"
               type="text" ng-model="items.recipientRS" ng-change="recipientChanged()"
               ng-mouseenter="setTitle('Enter the other accounts account number')" ng-mouseleave="setTitle(null)">
 
@@ -69,29 +91,29 @@
         </div>
         <label for="nsalias-publickey" class="control-label col-xs-2">Public key</label>
         <div class="col-xs-10">
-          <input class="form-control" id="nsalias-publickey" placeholder="Public key" name="publickey" 
+          <input class="form-control" id="nsalias-publickey" placeholder="Public key" name="publickey"
               type="text" ng-model="items.recipientPublicKey" ng-change="recipientPublicKeyChanged()">
-        </div>        
+        </div>
       </div>
       <div class="form-group" ng-show="items.advanced">
         <label for="nsalias-fee-1" class="control-label col-xs-2">Fee</label>
         <div class="col-xs-4">
-          <input money precision="8" class="form-control" id="nsalias-fee-1" placeholder="Fee" name="fee" type="text" 
+          <input money precision="8" class="form-control" id="nsalias-fee-1" placeholder="Fee" name="fee" type="text"
               ng-model="items.feeNXT"
               ng-mouseenter="setTitle('Enter a fee')" ng-mouseleave="setTitle(null)">
         </div>
         <label for="nsalias-deadline-1" class="control-label col-xs-2">Deadline</label>
         <div class="col-xs-4">
-          <input class="form-control" id="nsalias-deadline-1" placeholder="Deadline" name="deadline" 
+          <input class="form-control" id="nsalias-deadline-1" placeholder="Deadline" name="deadline"
                 type="text" ng-model="items.deadline"
                 ng-mouseenter="setTitle('Set the deadline minimum 1 maximum 1440')" ng-mouseleave="setTitle(null)">
         </div>
-      </div>      
+      </div>
       <div class="form-group" ng-show="!items.advanced">
         <span class="form-control-static col-xs-12">
           <div class="pull-right">
-            <a href ng-click="items.advanced = !items.advanced" ng-show="!items.advanced" 
-            ng-mouseenter="setTitle('Click to adjust fee and deadline')" 
+            <a href ng-click="items.advanced = !items.advanced" ng-show="!items.advanced"
+            ng-mouseenter="setTitle('Click to adjust fee and deadline')"
             ng-mouseleave="setTitle(null)"><strong>Fee:</strong> {{items.feeNXT}} <strong>Deadline:</strong> {{items.deadline}}</a>
           </div>
         </span>

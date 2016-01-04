@@ -1,20 +1,42 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
 
 module.config(function($routeProvider) {
   $routeProvider
-    .when('/accounts/:id_rs/:section/:period', {
+    .when('/accounts/:id_rs/:section/:period?', {
       templateUrl: 'partials/accounts.html',
       controller: 'AccountsController'
     });
 });
 
-module.controller('AccountsController', function($location, $q, $scope, modals, $routeParams, nxt, db, plugins, $timeout, 
-  ActivityProvider, MessagesProvider, BlocksProvider, AliasProvider, NamespacedAliasProvider, AssetsProvider, CurrencyProvider, AccountProvider, 
-  BuyOrderProvider, SellOrderProvider, AccountPostProvider, AccountForgerProvider, AccountLessorsProvider, 
+module.controller('AccountsController', function($location, $q, $scope, modals, $routeParams, nxt, db, plugins, $timeout,
+  ActivityProvider, MessagesProvider, BlocksProvider, AliasProvider, NamespacedAliasProvider, AssetsProvider, CurrencyProvider, AccountProvider,
+  BuyOrderProvider, SellOrderProvider, AccountPostProvider, AccountForgerProvider, AccountLessorsProvider,
   dateParser, dateFilter, accountsService, PaymentsProvider, $rootScope, serverService,
-  AllGoodsProvider, PastGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider) {
+  AllGoodsProvider, PastGoodsProvider, SoldGoodsProvider, DeliveryConfirmedGoodsProvider, UserService) {
 
   $scope.id_rs          = $routeParams.id_rs;
   $scope.paramSection   = $routeParams.section;
@@ -32,7 +54,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     $scope.collapse[id] = val;
     window.localStorage.setItem("lompsa.accounts.menu",JSON.stringify($scope.collapse));
   }
-  
+
   var api = nxt.get($scope.id_rs);
   if (!api) {
     console.log('Could not determine engine "'+$scope.id_rs+'"');
@@ -42,9 +64,9 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
 
   $scope.paramEngine    = api.engine.symbol_lower;
 
-  if (['activity', 'messages', 'blocks', 'aliases', 'fim_aliases', 'assets', 
-       'goods', 'leasing', 'currency', 'buy_orders', 'sell_orders', 'pulse', 
-       'payments', 'listing', 'solditems', 'pastorders'].indexOf($scope.paramSection) == -1) {
+  if (['activity', 'messages', 'blocks', 'aliases', 'fim_aliases', 'assets',
+       'goods', 'leasing', 'currency', 'buy_orders', 'sell_orders', 'pulse',
+       'payments', 'listing', 'solditems', 'pastorders', 'dashboard'].indexOf($scope.paramSection) == -1) {
     $location.path('/home/fim/activity/latest');
     return;
   }
@@ -83,7 +105,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
           $scope.following = false;
         }
       });
-    }); 
+    });
   }
 
   determineFollowingStatus();
@@ -102,6 +124,16 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     }
   }
 
+  /* Lazily navigate to logged in account dashboard */
+  $scope.$on('$destroy', $rootScope.$on('onOpenCurrentAccount', function () {
+    if (UserService.currentAccount.id_rs != $scope.id_rs) {
+      $location.path('/accounts/'+UserService.currentAccount.id_rs+'/'+$scope.paramSection+'/latest');
+    }
+    else {
+      $scope.account.reload();
+    }
+  }));
+
   /* TODO.. this loads all comments - this has to be separated when loaded on anything than the pulse page */
   $scope.account = new AccountProvider(api, $scope, $scope.id_rs);
   $scope.account.reload();
@@ -112,6 +144,8 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
   }
 
   switch ($scope.paramSection) {
+    case 'dashboard':
+      break;
     case 'pulse':
       $scope.provider = new AccountPostProvider(api, $scope, 5, $scope.id_rs);
       $scope.provider.reload();
@@ -119,7 +153,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     case 'comments':
       $scope.provider = new AccountCommentsProvider(api, $scope, $scope.paramTimestamp, $scope.id_rs);
       $scope.provider.reload();
-      break;       
+      break;
     case 'activity':
       $scope.provider = new ActivityProvider(api, $scope, $scope.paramTimestamp, $scope.id_rs, $scope.filter);
       $scope.provider.reload();
@@ -138,23 +172,23 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
       break;
     case 'fim_aliases':
       $scope.provider = new NamespacedAliasProvider(api, $scope, 10, $scope.id_rs);
-      $scope.provider.reload();      
+      $scope.provider.reload();
       break;
     case 'currency':
       $scope.provider = new CurrencyProvider(api, $scope, 10, $scope.id_rs);
-      $scope.provider.reload();  
+      $scope.provider.reload();
       break;
     case 'assets':
       $scope.provider = new AssetsProvider(api, $scope, 10, $scope.id_rs);
-      $scope.provider.reload();    
+      $scope.provider.reload();
       break;
     case 'sell_orders':
       $scope.provider = new SellOrderProvider(api, $scope, 10, $scope.id_rs);
-      $scope.provider.reload();    
+      $scope.provider.reload();
       break;
     case 'buy_orders':
       $scope.provider = new BuyOrderProvider(api, $scope, 10, $scope.id_rs);
-      $scope.provider.reload();    
+      $scope.provider.reload();
       break;
     case 'goods':
       break;
@@ -164,7 +198,8 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
       break;
     case 'payments':
       if (!$rootScope.currentAccount || $scope.id_rs != $rootScope.currentAccount.id_rs) {
-        $location.path('/login-to');
+        $rootScope.loginWizard('signin', {}, $location.url());
+        $location.path('/start');
         return;
       }
       $scope.provider = new PaymentsProvider(api, $scope, $scope.id_rs);
@@ -195,7 +230,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
   $scope.dateOptions  = {
     formatYear: 'yy',
     startingDay: 1
-  }; 
+  };
   $scope.openDatePicker = function($event) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -248,7 +283,7 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
         $scope.filter.assetOrder = on;
         $scope.filter.currencyIssued = on;
         $scope.filter.currencyTransfer = on;
-        $scope.filter.currencyOther = on;       
+        $scope.filter.currencyOther = on;
 
         $scope.filterChanged();
       });
@@ -269,39 +304,24 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     );
   }
 
-  $scope.executeTransaction = function (id, arg) {
-    arg = arg||{};
-    switch (id) {
-      case 'startForging': {
-        plugins.get('transaction').get('startForging').execute($scope.id_rs).then(
-          function () {
-            if ($scope.forger) {
-              $scope.forger.reload();
-            }
-          }
-        );
-        break;
-      }
-      case 'stopForging': {
-        plugins.get('transaction').get('stopForging').execute($scope.id_rs).then(
-          function () {
-            if ($scope.forger) {
-              $scope.forger.reload();
-            }
-          }
-        );
-        break;
-      }
-      default: {
-        if (plugins.get('transaction').get(id).execute.length == 1) {
-          plugins.get('transaction').get(id).execute(arg);
+  $scope.startForging = function () {
+    plugins.get('transaction').get('startForging').execute($scope.id_rs).then(
+      function () {
+        if ($scope.forger) {
+          $scope.forger.reload();
         }
-        else {
-          plugins.get('transaction').get(id).execute($scope.id_rs, arg);
-        }
-        break;
       }
-    }
+    );
+  }
+
+  $scope.stopForging = function () {
+    plugins.get('transaction').get('stopForging').execute($scope.id_rs).then(
+      function () {
+        if ($scope.forger) {
+          $scope.forger.reload();
+        }
+      }
+    );
   }
 });
 

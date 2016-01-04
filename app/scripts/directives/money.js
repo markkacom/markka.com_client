@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 
@@ -36,7 +58,7 @@ module.directive('money', function($timeout) {
     link: function(scope, element, attrs, ngModelCtrl){
       function formatPrecision(value) {
         var precision = parseInt(attrs.precision || 0);
-        return value ? parseFloat(value).toFixed(precision).replace(/(\.0+)$/, '') : '';
+        return value ? parseFloat((value+'').replace(/,/g,'')).toFixed(precision).replace(/(\.0+)$/, '') : '';
       }
       function fromUser(text) {
         var precision = parseInt(attrs.precision || 0);
@@ -45,13 +67,13 @@ module.directive('money', function($timeout) {
         var empty     = ngModelCtrl.$isEmpty(text) || text == undefined;
         text          = empty ? '0' : text;
         if (regexp.test(text)) {
-          return text; 
+          return text;
         }
-        else {          
+        else {
           if (precision == 0 && new RegExp('\\.$').test(text)) {
             var msg = 'No decimals places allowed'
           } else {
-            var msg = new RegExp('^\\d+\\.\\d{9,}$').test(text) ? ('Only '+precision+' decimals allowed') : 'Allowed format is 12.345';            
+            var msg = new RegExp('^\\d+\\.\\d{9,}$').test(text) ? ('Only '+precision+' decimals allowed') : 'Allowed format is 12.345';
           }
           // $(element[0]).popover('destroy');
           // $(element[0]).popover({

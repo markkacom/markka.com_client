@@ -1,6 +1,28 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
-var module = angular.module('fim.base');  
+var module = angular.module('fim.base');
 module.factory('settings', function($log, db, $timeout) {
 
   function resolve(id, value) {
@@ -22,19 +44,19 @@ module.factory('settings', function($log, db, $timeout) {
 
   db.settings.addObserver(null, {
     create: function (settings) {
-      angular.forEach(settings, function (setting) { 
+      angular.forEach(settings, function (setting) {
         registry[setting.id] = setting;
-        resolve(setting.id, setting.value); 
+        resolve(setting.id, setting.value);
       });
     },
     update: function (settings) {
-      angular.forEach(settings, function (setting) { 
+      angular.forEach(settings, function (setting) {
         angular.extend(registry[setting.id], setting);
-        resolve(setting.id, setting.value); 
-      });      
+        resolve(setting.id, setting.value);
+      });
     },
     remove: function (settings) {
-      angular.forEach(settings, function (setting) { 
+      angular.forEach(settings, function (setting) {
         delete registry[setting.id];
       });
     }
@@ -43,7 +65,7 @@ module.factory('settings', function($log, db, $timeout) {
   var stored_settings = null;
   var registry        = {};
   var resolvers       = {};
-  var initializers    = [];  
+  var initializers    = [];
 
   db.settings.toArray().then(
     function (settings) {
@@ -106,10 +128,10 @@ module.factory('settings', function($log, db, $timeout) {
      * All settings have a unique id which is made from several nested namespaces.
      * Namespaces are separated with dots to form unique ids.
      *
-     * Settings have a type to protect against unsupported values. Users can use 
+     * Settings have a type to protect against unsupported values. Users can use
      * one of these values for type: String, Number, Boolean, Object.
      *
-     * A setting of undefined is never supported, use null in that case and Object 
+     * A setting of undefined is never supported, use null in that case and Object
      * as type.
      *
      * @param settings Array of { id: String, value: Object, label: String, type: Object, resolve: Function }
@@ -161,7 +183,7 @@ module.factory('settings', function($log, db, $timeout) {
      * that (partially) matches the provided setting key.
      *
      * This allows to iterate over all settings for a certain namespace.
-     * 
+     *
      * @param key String (partial) key
      */
     getAll: function (prefix, callback) {

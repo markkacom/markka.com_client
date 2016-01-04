@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -22,45 +44,45 @@ module.config(function($routeProvider) {
  */
 
 module.run(function (modals, settings) {
-  modals.register('language', { 
-    templateUrl: 'partials/language-modal.html', 
-    controller: 'LanguageModalController' 
+  modals.register('language', {
+    templateUrl: 'partials/language-modal.html',
+    controller: 'LanguageModalController'
   });
 
-  modals.register('startServer', { 
-    templateUrl: 'partials/start-server-modal.html', 
-    controller: 'StartServerModalController' 
+  modals.register('startServer', {
+    templateUrl: 'partials/start-server-modal.html',
+    controller: 'StartServerModalController'
   });
 
   settings.initialize([{
     id: 'initialization.always_start_fimk',
-    value: false, 
+    value: false,
     type: Boolean,
     label: 'Always start FIMK server',
   }, {
     id: 'initialization.never_start_fimk',
-    value: false, 
+    value: false,
     type: Boolean,
     label: 'Never start FIMK server',
   }, {
     id: 'initialization.always_start_nxt',
-    value: false, 
+    value: false,
     type: Boolean,
     label: 'Always start NXT server',
   }, {
     id: 'initialization.never_start_nxt',
-    value: false, 
+    value: false,
     type: Boolean,
     label: 'Never start NXT server',
   }, {
     id: 'initialization.user_selected_language',
-    value: false, 
+    value: false,
     type: Boolean,
     label: 'User selected initial language'
   }]);
 });
 
-module.controller('StartController', function ($scope, settings, db, modals, plugins, $rootScope, serverService, $location, $timeout) {
+module.controller('StartController', function ($scope, settings, db, modals, plugins, $rootScope, serverService, $location, $timeout, ActivityProvider, nxt) {
 
   /* While on the landing page the <body> will have the class showing-landing-page */
   $rootScope.showingLandingPage = true;
@@ -91,23 +113,26 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
     });
   });
 
+  $scope.provider = new ActivityProvider(nxt.fim(), $scope, 0, null, {all:true});
+  $scope.provider.reload();
+
   $scope.changeTheme = function (theme) {
     settings.update('themes.default.theme', theme.id);
   }
 
   function maybeStartFIMKServer() {
-    if (isNodeJS && 
-        !settings.get('initialization.never_start_fimk') && 
+    if (isNodeJS &&
+        !settings.get('initialization.never_start_fimk') &&
         !serverService.isRunning('TYPE_FIM')) {
       modals.open('startServer', {
         resolve: {
-          items: function () { 
-            return { 
+          items: function () {
+            return {
               type: 'TYPE_FIM',
               symbol: 'FIM',
               always_start_setting: 'initialization.always_start_fimk',
               never_start_setting: 'initialization.never_start_fimk'
-            } 
+            }
           }
         },
         close: function () {
@@ -121,19 +146,19 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
   }
 
   function maybeStartNXTServer() {
-    if (isNodeJS && 
-        $rootScope.enableDualEngines && 
-        !settings.get('initialization.never_start_nxt') &&  
+    if (isNodeJS &&
+        $rootScope.enableDualEngines &&
+        !settings.get('initialization.never_start_nxt') &&
         !serverService.isRunning('TYPE_NXT')) {
       modals.open('startServer', {
         resolve: {
-          items: function () { 
-            return { 
+          items: function () {
+            return {
               always_start_setting: 'initialization.always_start_nxt',
               never_start_setting: 'initialization.never_start_nxt',
               type: 'TYPE_NXT',
               symbol: 'NXT'
-            } 
+            }
           }
         }
       });
@@ -142,7 +167,7 @@ module.controller('StartController', function ($scope, settings, db, modals, plu
 
   $scope.doSearch = function () {
     $location.path('/search/fim/accounts/'+$scope.searchQuery);
-  }  
+  }
 
 });
 

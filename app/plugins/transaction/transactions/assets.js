@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 // pay dividend
 // issue asset
 // place sell order
@@ -10,7 +32,7 @@
 var module = angular.module('fim.base');
 module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, UserService) {
   var plugin = plugins.get('transaction');
-  
+
   plugin.add({
     label: 'Issue Asset',
     id: 'issueAsset',
@@ -92,11 +114,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
           },
           required: true
         }, {
-          label: 'Private Asset',
+          label: 'Private Asset (costs 10,000 FIM)',
           name: 'private',
           type: 'radio',
           value: args['private']||false,
-          show: 'privateEnabled'
+          show: 'privateEnabled',
+          onchange: function (items) {
+            items.feeNXT = this.value ? 10000 : 1000;
+          }
         }]
       }));
     }
@@ -173,7 +198,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
         },
         fields: [
           plugin.fields('asset').create('asset', { value: args.asset||'', label: 'Asset', required: true, account: $rootScope.currentAccount.id_rs, api: api }),
-          plugin.fields('account').create('recipient', { value: args.recipient||'', label: 'Recipient', required: true, 
+          plugin.fields('account').create('recipient', { value: args.recipient||'', label: 'Recipient', required: true,
             api:api, accountColorId: UserService.currentAccount.accountColorId }),
           plugin.fields('text').create('quantity', { value: args.quantity||'', label: 'Quantity', required: true,
             validate: function (text) {
@@ -256,7 +281,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
               reCalculateOrderTotal(fields);
             }
           }),
-          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precission: 8, 
+          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precission: 8,
             onchange: function (fields) {
               reCalculateOrderTotal(fields);
             }
@@ -351,12 +376,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
               reCalculateOrderTotal(fields);
             }
           }),
-          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precission: 8, 
+          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precission: 8,
             onchange: function (fields) {
               reCalculateOrderTotal(fields);
             }
           }),
-          plugin.fields('money').create('quantity', { value: args.quantity||'', label: 'Quantity', required: true, precision:(args.decimals||0), 
+          plugin.fields('money').create('quantity', { value: args.quantity||'', label: 'Quantity', required: true, precision:(args.decimals||0),
             onchange: function (fields) {
               reCalculateOrderTotal(fields);
             }
@@ -468,7 +493,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
           plugin.fields('text').create('order', { value: args.order||'', required: true, label: 'Order',
             initialize: function (fields) {
               this.changed(true);
-            },            
+            },
             onchange: function (fields) {
               if (this.value) {
                 var self = this;

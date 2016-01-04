@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 
@@ -144,10 +166,10 @@ var module = angular.module('fim.base');
 module.factory('ServerConfigProvider', function (serverService, plugins) {
   if (isNodeJS) {
     var fs = require('fs');
-    var properties = require('java-properties');  
+    var properties = require('java-properties');
     var os = require('os');
   }
-  
+
   function ServerConfigProvider(api, $scope) {
     this.api               = api;
     this.$scope            = $scope;
@@ -168,11 +190,11 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
       for (var name in PROPERTIES) {
         this.rows.push({ type: 0, name: name });
         for (var key in PROPERTIES[name]) {
-          this.rows.push({ 
-            type: 1, 
-            name: key, 
-            value: this.config[key], 
-            description: PROPERTIES[name][key] 
+          this.rows.push({
+            type: 1,
+            name: key,
+            value: this.config[key],
+            description: PROPERTIES[name][key]
           });
         }
       }
@@ -207,7 +229,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
           delete this.userConfig[name];
         }
       }
-      fs.writeFile(this.userConfigPath, this.serialize(this.userConfig), 
+      fs.writeFile(this.userConfigPath, this.serialize(this.userConfig),
         function (err) {
           if (err) {
             plugins.get('alerts').danger({title: 'Save failed', message: 'Failure, setting not saved'});
@@ -232,7 +254,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
           delete this.userConfig[name];
         }
       }
-      fs.writeFile(this.userConfigPath, this.serialize(this.userConfig), 
+      fs.writeFile(this.userConfigPath, this.serialize(this.userConfig),
         function (err) {
           if (err) {
             plugins.get('alerts').danger({title: 'Restore failed', message: 'Failure, setting not restored'});

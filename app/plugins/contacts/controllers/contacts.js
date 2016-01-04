@@ -1,7 +1,29 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.controller('ContactsPlugin', function ($scope, plugins, ngTableParams, db, $timeout) {
+module.controller('ContactsPlugin', function ($scope, $rootScope, plugins, ngTableParams, db, $timeout) {
 
   $scope.addContact = function () {
     plugins.get('contacts').add({
@@ -20,7 +42,7 @@ module.controller('ContactsPlugin', function ($scope, plugins, ngTableParams, db
 
   $scope.contacts = [];
   $scope.tableParams = new ngTableParams({ page: 1, count: 20 }, {
-    total: 0, 
+    total: 0,
     getData: function($defer, params) {
       $defer.resolve($scope.contacts.slice((params.page() - 1) * params.count(), params.page() * params.count()));
     }
@@ -45,7 +67,7 @@ module.controller('ContactsPlugin', function ($scope, plugins, ngTableParams, db
   });
 
   /* Register CRUD observer for contacts */
-  db.contacts.addObserver($scope, 
+  db.contacts.addObserver($scope,
     db.createObserver($scope, 'contacts', 'id_rs', {
       finally: function () {
         $scope.tableParams.total($scope.contacts);
@@ -89,6 +111,11 @@ module.controller('ContactsPlugin', function ($scope, plugins, ngTableParams, db
   };
 
   $scope.sendMoney = function (contact) {
+    $rootScope.executeTransaction('sendMoney', {recipient: contact.id_rs});
+  };
+
+  $scope.sendMessage = function (contact) {
+    $rootScope.executeTransaction('sendMessage', {recipient: contact.id_rs});
   };
 
 });

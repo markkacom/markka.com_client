@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -9,8 +31,8 @@ module.config(function($routeProvider) {
   });
 });
 
-module.controller('HomeController', function ($scope, $rootScope, plugins, settings, $timeout, 
-  $route, $routeParams, $location, nxt, accountsService, RecentTransactionsProvider, BalanceProvider, 
+module.controller('HomeController', function ($scope, $rootScope, plugins, settings, $timeout,
+  $route, $routeParams, $location, nxt, accountsService, RecentTransactionsProvider, BalanceProvider,
   dateParser, dateFilter, $translate, modals) {
 
   $rootScope.paramEngine  = $routeParams.engine;
@@ -67,7 +89,7 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
   $scope.dateOptions  = {
     formatYear: 'yy',
     startingDay: 1
-  }; 
+  };
   $scope.openDatePicker = function($event) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -108,9 +130,9 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
       var filtered = accounts.filter(function (a) {
         return !a.excluded;
       })
-      var flattend = filtered.map(function (a) { 
+      var flattend = filtered.map(function (a) {
         accounts_hash[a.id_rs] = a;
-        return a.id_rs 
+        return a.id_rs
       });
 
       var args = { accounts: flattend, excludeForging: 'true' };
@@ -137,7 +159,7 @@ module.controller('HomeController', function ($scope, $rootScope, plugins, setti
         $scope.balanceProvider.reload();
       }
     });
-  });   
+  });
 
   $scope.filterAllChanged = function () {
     $scope.$evalAsync(function () {

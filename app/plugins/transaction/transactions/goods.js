@@ -1,9 +1,31 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 // goods
 (function () {
 'use strict';
 var module = angular.module('fim.base');
 module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
-  
+
   var plugin = plugins.get('transaction');
 
   // Add Goods
@@ -23,7 +45,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           tags.forEach(function (tag, index) { tags[index] = String(tag).trim() });
           tags = tags.filter(function (tag) { return tag.length > 0 });
           return {
-            name: items.name, 
+            name: items.name,
             description: JSON.stringify({ description: items.description, image: items.image || '', callback: items.callback || '' }),
             tags: items.tags,
             quantity: String(items.quantity),
@@ -108,7 +130,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
         abc: true,
         createArguments: function (items) {
           return {
-            goods: items.goods, 
+            goods: items.goods,
             quantity: String(items.quantity),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
             priceNQT: nxt.util.convertToNQT(items.priceNXT),
@@ -127,7 +149,8 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           name: 'priceNXT',
           type: 'money',
           readonly: true,
-          value: args.priceNXT||''
+          value: args.priceNXT||'',
+          precision: '8'
         },
         {
           label: 'Quantity',
@@ -219,7 +242,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           name: 'totalPriceNXT',
           type: 'text',
           readonly: true
-        },        
+        },
         {
           label: 'Refund',
           name: 'refundNXT',
@@ -269,7 +292,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
               });
             }
           );
-        },        
+        },
         createArguments: function (items) {
           var api = nxt.get($rootScope.currentAccount.id_rs);
           var options = {
@@ -303,7 +326,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           name: 'name',
           type: 'text',
           readonly: true
-        },        
+        },
         {
           label: 'Discount',
           name: 'discountNXT',

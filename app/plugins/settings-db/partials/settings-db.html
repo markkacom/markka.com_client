@@ -1,3 +1,25 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div class="row" ng-controller="SettingsPluginDBController">
   <div class="col-md-12">
     <div class="row">
@@ -9,7 +31,7 @@
             <div class="col-xs-4">
               <select id="table-delete-select"
                       class="form-control"
-                      ng-model="selectedTable" 
+                      ng-model="selectedTable"
                       ng-options="t as t.name for t in tables"
                       ng-change="selectedTableChanged()"></select>
             </div>
@@ -18,7 +40,7 @@
             </div>
             <div class="col-xs-3">
               <button class="form-control btn btn-danger" ng-click="deleteDatabase()">Delete Database</button>
-            </div>               
+            </div>
           </div>
         </form>
         <br>
@@ -33,7 +55,7 @@
           </tab>
           <tab>
             <tab-heading><i class="glyphicon glyphicon-cog"></i>&nbsp;&nbsp;Schema</tab-heading>
-            <!-- 
+            <!--
               Use JSON pretty print. Several options available..
               - https://github.com/pc035860/angular-highlightjs
               - http://stackoverflow.com/questions/22776476/use-json-pretty-print-in-angularjs
@@ -41,7 +63,7 @@
             -->
             <div><pre>{{selectedTable.schema | json}}</pre></div>
           </tab>
-        </tabset>    
+        </tabset>
       </div>
     </div>
   </div>

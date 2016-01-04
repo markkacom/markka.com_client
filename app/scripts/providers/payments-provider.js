@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -108,7 +130,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
       this.totalNXT   = nxt.util.convertToNXT(totalNQT.toString());
 
       window.localStorage.setItem('PAYMENTS-'+this.id_rs, JSON.stringify(this.payments));
-      window.localStorage.setItem('PAYMENTS-'+this.id_rs+'-TEXT', this.text_input);      
+      window.localStorage.setItem('PAYMENTS-'+this.id_rs+'-TEXT', this.text_input);
     },
 
     execute: function () {
@@ -198,7 +220,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
                   payment.setStatus(data.error || data.errorDescription);
                   self.snapshot();
                   self.next();
-                });                
+                });
                 return;
               }
 
@@ -215,9 +237,9 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
                   self.next();
                 });
                 return;
-              } 
+              }
               else {
-                var payload = self.api.verifyAndSignTransactionBytes(data.unsignedTransactionBytes, signature, 
+                var payload = self.api.verifyAndSignTransactionBytes(data.unsignedTransactionBytes, signature,
                                   args.requestType, args, self.api.type);
                 if (!payload) {
                   var msg = i18n.format('error_signature_verification_server');
@@ -229,7 +251,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
                     self.next();
                   });
                   return;
-                } 
+                }
 
                 var fullHash        = self.api.crypto.calculateFullHash(data.unsignedTransactionBytes, signature);
                 var transaction     = self.api.crypto.calculateTransactionId(fullHash);
@@ -249,7 +271,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
                           self.next();
                         });
                       }
-                    );                        
+                    );
                   },
                   function (data) {
                     var msg = JSON.stringify(data);
@@ -267,7 +289,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
             },
             function (data) {
               var msg = JSON.stringify(data);
-              console.log(msg);              
+              console.log(msg);
               progress.setErrorMessage(msg);
               progress.close().then(function () {
                 payment.error = true;
@@ -307,7 +329,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
           }
         }
         self.snapshot();
-      });      
+      });
     },
 
     removedUnConfirmedTransactions: function (transactions) {
@@ -370,7 +392,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
       var options = {};
       if (data.recipient) {
         options.account = data.recipient;
-      } 
+      }
       else if (data.encryptedMessageRecipient) {
         options.account = data.encryptedMessageRecipient;
         delete data.encryptedMessageRecipient;
@@ -381,14 +403,14 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
       }
 
       var encrypted = api.crypto.encryptNote(data.message, options, secretPhrase);
-      
+
       data.encryptedMessageData = encrypted.message;
       data.encryptedMessageNonce = encrypted.nonce;
       data.messageToEncryptIsText = "true";
 
       delete data.encrypt_message;
       delete data.message;
-    } 
+    }
 
     /* Encrypt message to self */
     else if (data.note_to_self && data.message) {
@@ -402,7 +424,7 @@ module.factory('PaymentsProvider', function (nxt, $q, modals, plugins, $rootScop
 
       delete data.note_to_self;
       delete data.message;
-    } 
+    }
 
     /* Public message */
     else if (data.public_message && data.message) {

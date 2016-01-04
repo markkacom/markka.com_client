@@ -1,7 +1,29 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyService, 
+module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyService,
   $rootScope, Gossip, $interval, publicKeyService, db) {
 
   function ChatMessagesProvider(parent) {
@@ -91,7 +113,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
         transaction.pull_clazz = "pull-left";
         transaction.says = this.parent.accountTwoName;
         if (this.parent.getAccountTwoPublicKey()) {
-          transaction.attachment.senderPublicKey = this.parent.getAccountTwoPublicKey(); 
+          transaction.attachment.senderPublicKey = this.parent.getAccountTwoPublicKey();
         }
       }
       var decoded  = this.decode(transaction);
@@ -99,7 +121,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
         transaction.text = Emoji.emojifi(decoded.text);
         transaction.encrypted = decoded.encrypted;
       }
-    },    
+    },
 
     /* @param transaction Transaction|JSON
        @returns { encrypted: Boolean, text: String } */
@@ -110,7 +132,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
       if (transaction.attachment.encryptedMessage || transaction.attachment.encryptToSelfMessage) {
         try {
           return {encrypted:true, text: this.tryToDecryptMessage(transaction)};
-        } 
+        }
         catch (e) {
          console.log(e);
          return null;
@@ -120,16 +142,16 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
         if (!transaction.attachment["version.Message"]) {
           try {
             return {encrypted:false, text: converters.hexStringToString(transaction.attachment.message) };
-          } 
+          }
           catch (err) { //legacy
             if (transaction.attachment.message.indexOf("feff") === 0) {
               return {encrypted:false, text: nxt.util.convertFromHex16(transaction.attachment.message) };
-            } 
+            }
             else {
               return {encrypted:false, text: nxt.util.convertFromHex8(transaction.attachment.message) };
             }
           }
-        } 
+        }
         else {
           return {encrypted:false, text: String(transaction.attachment.message) };
         }
@@ -186,7 +208,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
           nonce     = converters.hexStringToByteArray(transaction.attachment.encryptedMessage.nonce);
           data      = converters.hexStringToByteArray(transaction.attachment.encryptedMessage.data);
         }
-      } 
+      }
       else if (transaction.attachment.encryptToSelfMessage) {
         privateKey   = this.getPrivateKey(transaction.senderRS);
         if (privateKey) {
@@ -197,7 +219,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
         }
       }
       if (privateKey && publicKey && data && nonce) {
-        var decrypted = this.parent.api.crypto.decryptData(data, { 
+        var decrypted = this.parent.api.crypto.decryptData(data, {
           privateKey: privateKey,
           publicKey:  publicKey,
           nonce:      nonce
@@ -205,7 +227,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
         return decrypted;
       }
       return null;
-    }    
+    }
   };
 
   function GossipChatMessagesProvider(api, $scope, pageSize, accountOne, accountTwo) {
@@ -240,7 +262,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
   }
   GossipChatMessagesProvider.prototype = {
 
-    /* in case we have the public key return it, in case we dont have it try and 
+    /* in case we have the public key return it, in case we dont have it try and
        get it from the public key cache */
     getAccountTwoPublicKey: function () {
       return this.accountTwoPublicKey || (this.accountTwoPublicKey = publicKeyService.getSync(this.accountTwo));
@@ -285,7 +307,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
           models.forEach(function (gossip) {
             /* note that when having multiple tabs open you could potentially get
                duplicate reports.
-               make sure you filter for the chatId */            
+               make sure you filter for the chatId */
             if (gossip.chatId == self.chatId) {
 
               //console.log('GossipChatMessagesProvider.observer.create', gossip);
@@ -441,9 +463,9 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
 
       var self = this;
       var repeat = function () {
-        self.advance(result, iterator).then(repeat, 
-          function () { 
-            deferred.resolve(result) 
+        self.advance(result, iterator).then(repeat,
+          function () {
+            deferred.resolve(result)
           }
         );
       };
@@ -456,7 +478,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
       var deferred = $q.defer();
       var self = this;
       this.provider.peek().then(function (transaction) {
-        var gossip = iterator.peek();          
+        var gossip = iterator.peek();
         if (!transaction && gossip) {
           output_array.push(gossip);
           iterator.next();
@@ -529,10 +551,10 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
       }
       if (this.getAccountTwoPublicKey()) {
         return {
-          encrypted:true, 
+          encrypted:true,
           text: Gossip.decryptMessage(
-            this.getAccountTwoPublicKey(), 
-            json.nonce, 
+            this.getAccountTwoPublicKey(),
+            json.nonce,
             json.message
           )
         };

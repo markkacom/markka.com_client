@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -39,15 +61,15 @@ module.run(function (nxt, timeagoService, $rootScope) {
     var amount  = parts[0];
     if (parts.length == 1) {
       var fraction = "00000000";
-    } 
+    }
     else if (parts.length == 2) {
       if (parts[1].length <= 8) {
         var fraction = parts[1];
-      } 
+      }
       else {
         var fraction = parts[1].substring(0, 8);
       }
-    } 
+    }
     else {
       throw "Invalid input";
     }
@@ -68,7 +90,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
   function convertToQNT(quantity, decimals) {
     if (typeof quantity == 'undefined') {
       return '0';
-    }   
+    }
     quantity  = String(quantity);
     var parts = quantity.split(".");
     var qnt   = parts[0];
@@ -78,19 +100,19 @@ module.run(function (nxt, timeagoService, $rootScope) {
           qnt += "0";
         }
       }
-    } 
+    }
     else if (parts.length == 2) {
       var fraction = parts[1];
       if (fraction.length > decimals) {
         throw "Fraction can only have " + decimals + " decimals max.";
-      } 
+      }
       else if (fraction.length < decimals) {
         for (var i = fraction.length; i < decimals; i++) {
           fraction += "0";
         }
       }
       qnt += fraction;
-    } 
+    }
     else {
       throw "Incorrect input";
     }
@@ -105,7 +127,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
   function convertToQNTf(quantity, decimals) {
     if (typeof quantity == 'undefined') {
       return '0';
-    }     
+    }
     quantity = String(quantity);
     if (quantity.length < decimals) {
       for (var i = quantity.length; i < decimals; i++) {
@@ -130,12 +152,12 @@ module.run(function (nxt, timeagoService, $rootScope) {
   function commaFormat(amount) {
     if (typeof amount == 'undefined') {
       return '0';
-    }      
+    }
     var neg    = amount.indexOf('-') == 0 && (amount.shift());
     amount     = amount.split('.'); // input is result of convertNQT
     var parts  = amount[0].split("").reverse().join("").split(/(\d{3})/).reverse();
     var format = [];
-    for(var i=0;i<parts.length;i++) { 
+    for(var i=0;i<parts.length;i++) {
       if (parts[i]) {
         format.push(parts[i].split('').reverse().join(''));
       }
@@ -150,7 +172,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
 
   var ONE_HOUR_MS = 60 * 60 * 1000;
 
-  /* EVerything older than 1 hour is considered old !! */  
+  /* EVerything older than 1 hour is considered old !! */
   function timestampIsOld(timestamp) {
     var date = timestampToDate(timestamp);
     var now  = Date.now();
@@ -210,7 +232,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
     timeago_cache_count = 0;
     date_cache = {};
     date_cache_count = 0;
-  });  
+  });
 
   /**
    * Converts an UTC timestamp to a NXT epoch timestamp.
@@ -258,7 +280,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
       price = new BigInteger(String(price));
     }
     return nxt.util.convertToNXT(price.multiply(new BigInteger("" + Math.pow(10, decimals))));
-  }  
+  }
 
   function calculatePricePerWholeQNT(price, decimals) {
     price = String(price);
@@ -268,14 +290,14 @@ module.run(function (nxt, timeagoService, $rootScope) {
       if (!/^[0]+$/.test(toRemove)) {
         //return new Big(price).div(new Big(Math.pow(10, decimals))).round(8, 0);
         throw "Invalid input";
-      } 
+      }
       else {
         return price.slice(0, -decimals);
       }
     } else {
       return price;
     }
-  }  
+  }
 
   function convertFromHex16(hex) {
     var j;
@@ -322,7 +344,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
     _hash.init();
     _hash.update(message);
     return _hash.getBytes();
-  } 
+  }
 
   /**
    * @param message String
@@ -332,7 +354,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
   function sign(message, secretPhrase) {
     return signBytes(converters.stringToHexString(message), converters.stringToHexString(secretPhrase));
   }
-  
+
   /**
    * @param message       Hex String
    * @param secretPhrase  Hex String
@@ -364,7 +386,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
   }
 
   nxt.util = {
-    
+
     convertToNXT: function (amountNQT) {
       var result = commaFormat(convertNQT(amountNQT, 8));
       /* When in trade demo mode format all results to have two decimal places */
@@ -375,7 +397,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
             return parts[0] + '.' + fraction + '0';
           }
           else {
-            return parts[0] + '.' + fraction.substring(0,2); 
+            return parts[0] + '.' + fraction.substring(0,2);
           }
         }
         else {
@@ -384,7 +406,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
       }
       return result;
     },
-    
+
     sign: sign,
     convertNQT: convertNQT,
     convertToNQT: convertToNQT,

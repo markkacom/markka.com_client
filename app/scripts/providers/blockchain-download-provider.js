@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -18,7 +40,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
     this.port           = api.engine.port,
     this.net_name       = api.test?'test-net':'main-net';
     this.test_net       = api.test;
-    this.version        = 0; 
+    this.version        = 0;
     this.application    = '';
     this.destroyed      = false;
     this.genesis        = api.type == 'TYPE_NXT' ? nxt_genesis : fim_genesis;
@@ -32,7 +54,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
     serverService.addListener(api.engine.type, 'start', onstart);
     serverService.addListener(api.engine.type, 'ready', onready);
 
-    $scope.$on("$destroy", function() { 
+    $scope.$on("$destroy", function() {
       self.destroyed    = true;
       serverService.removeListener(api.engine.type, 'exit', onexit);
       serverService.removeListener(api.engine.type, 'start', onstart);
@@ -57,7 +79,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
     load: function () {
       var self = this;
       this.$scope.$evalAsync(function () {
-        $timeout(function () { self.getNetworkData(); }, 1, false);  
+        $timeout(function () { self.getNetworkData(); }, 1, false);
       });
     },
 
@@ -71,7 +93,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
             self.remoteheight = data.height;
           });
         }
-      );      
+      );
 
       /* get local server state */
       if (serverService.isReady(this.api.engine.type)) {
@@ -94,7 +116,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
 
     setCurrentBlockRemote: function (block) {
       var self = this;
-      this.$scope.$evalAsync(function () {      
+      this.$scope.$evalAsync(function () {
         self.remoteheight = block.height;
       });
     },
@@ -134,7 +156,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
         };
         self.api.engine.localSocket().addObserver(observer);
         self.api.engine.localSocket().subscribe('blockPopped', self.onSetCurrentBlockLocal, self.$scope);
-        self.api.engine.localSocket().subscribe('blockPushed', self.onSetCurrentBlockLocal, self.$scope);        
+        self.api.engine.localSocket().subscribe('blockPushed', self.onSetCurrentBlockLocal, self.$scope);
         self.api.engine.localSocket().refresh();
       }, 1000, false);
     },
@@ -147,7 +169,7 @@ module.factory('BlockchainDownloadProvider', function (nxt, $timeout, serverServ
         self.downloading    = false;
         self.setForceLocalSocket(false);
         self.api.engine.localSocket().unsubscribe('blockPopped', self.onSetCurrentBlockLocal);
-        self.api.engine.localSocket().unsubscribe('blockPushed', self.onSetCurrentBlockLocal); 
+        self.api.engine.localSocket().unsubscribe('blockPushed', self.onSetCurrentBlockLocal);
         self.api.engine.localSocket().stop();
       });
     },

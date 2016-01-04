@@ -1,3 +1,25 @@
+<!--
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -->
 <div class="panel panel-primary">
   <div class="panel-heading">
     <h3 class="panel-title">{{items.update?'Edit':'Add'}} Contact</h3>
@@ -10,16 +32,16 @@
       <div class="form-group">
         <label for="contact-add-id-1" class="control-label col-xs-2">Account</label>
         <div class="col-xs-10">
-          <input class="form-control" id="contact-add-id-1" placeholder="Account" name="id_rs" type="text" 
+          <input class="form-control" id="contact-add-id-1" placeholder="Account" name="id_rs" type="text"
             ng-model="items.id_rs" ng-disabled="id_rs_readonly" required
-            ui-validate="{duplicate : 'items.update || idIsUnique($value)', invalid : 'items.update || idIsValid($value)' }" 
+            ui-validate="{duplicate : 'items.update || idIsUnique($value)', invalid : 'items.update || idIsValid($value)' }"
             ui-validate-watch=" 'items.id_rs' ">
         </div>
       </div>
       <div class="form-group">
         <label for="contact-add-name-1" class="control-label col-xs-2">Name</label>
         <div class="col-xs-10">
-          <input class="form-control" id="contact-add-name-1" placeholder="Name" name="name" type="text" 
+          <input class="form-control" id="contact-add-name-1" placeholder="Name" name="name" type="text"
             ng-model="items.name" ng-change="nameChanged()" required ng-disabled="name_readonly"
             ui-validate="{duplicate : 'items.update || nameIsUnique($value)' }" ui-validate-watch=" 'items.name' ">
         </div>
@@ -27,20 +49,20 @@
       <div class="form-group">
         <label for="contact-add-email-1" class="control-label col-xs-2">Email *</label>
         <div class="col-xs-10">
-          <input class="form-control" id="contact-add-email-1" placeholder="Email" name="email" type="text" 
+          <input class="form-control" id="contact-add-email-1" placeholder="Email" name="email" type="text"
             ng-model="items.email">
         </div>
       </div>
       <div class="form-group">
         <label for="contact-add-website-1" class="control-label col-xs-2">Website *</label>
         <div class="col-xs-10">
-          <input class="form-control" id="contact-add-website-1" placeholder="Website" name="website" type="text" 
+          <input class="form-control" id="contact-add-website-1" placeholder="Website" name="website" type="text"
             ng-model="items.website">
         </div>
       </div>
       <div class="form-group">
         <div class="alert alert-danger form-control" role="alert" ng-show="items.errorMessage">{{errorMessage}}</div>
-      </div>      
+      </div>
       <div class="form-group">
         <label class="control-label col-xs-12"></label>
       </div>
@@ -51,7 +73,7 @@
         <div class="col-xs-6">
           <button ng-click="dismiss()" type="button" class="btn btn-block btn-default">Cancel</button>
         </div>
-      </div>  
+      </div>
     </form>
   </div>
 </div>

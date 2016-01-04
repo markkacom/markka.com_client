@@ -1,8 +1,30 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
 module.factory('ActivityProvider', function (nxt, $q, EntityProvider, $rootScope) {
-  
+
   function ActivityProvider(api, $scope, timestamp, account, filter) {
     this.init(api, $scope, timestamp);
     this.account = account;
@@ -30,7 +52,7 @@ module.factory('ActivityProvider', function (nxt, $q, EntityProvider, $rootScope
     sortFunction: function (a, b) { return b.timestamp - a.timestamp },
     uniqueKey: function (entity) { return entity.transaction || entity.id /* for trade */; },
 
-    /* TODO - make this method obey the active transaction filter */ 
+    /* TODO - make this method obey the active transaction filter */
     transactionIterator: function (transactions) {
       /*if (this.account) {
         var self = this;
@@ -40,9 +62,9 @@ module.factory('ActivityProvider', function (nxt, $q, EntityProvider, $rootScope
       for (var i=0, t; i<transactions.length; i++) {
         t               = transactions[i];
         t.renderedHTML  = this.api.renderer.getHTML(t, null, this.account);
-        t.date          = nxt.util.formatTimestamp(t.timestamp);        
+        t.date          = nxt.util.formatTimestamp(t.timestamp);
       }
-      return new Iterator(transactions); 
+      return new Iterator(transactions);
     },
 
     getData: function (timestamp) {
@@ -88,11 +110,11 @@ module.factory('ActivityProvider', function (nxt, $q, EntityProvider, $rootScope
         if ( ! this.filter.assetTransfer) filters = filters.concat('2:1');
         if ( ! this.filter.assetOrder) filters = filters.concat('2:2','2:3','2:4','2:5');
       }
-      if (filters.length) { 
+      if (filters.length) {
         return { transactionFilter: filters.join(',') };
       }
       return {};
-    }     
+    }
   });
   return ActivityProvider;
 });

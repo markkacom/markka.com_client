@@ -1,7 +1,29 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.config(function($routeProvider) {  
+module.config(function($routeProvider) {
   $routeProvider
     .when('/activity/:engine/:section/:period', {
       templateUrl: 'partials/activity.html',
@@ -9,7 +31,7 @@ module.config(function($routeProvider) {
     });
 });
 
-module.controller('ActivityController', function($scope, $location, $routeParams, nxt, $q, $sce, 
+module.controller('ActivityController', function($scope, $location, $routeParams, nxt, $q, $sce,
   ActivityProvider, BlocksProvider, ForgersProvider, StatisticsProvider, AllAssetsProvider, BlockStateProvider,
   $timeout, dateParser, dateFilter, $rootScope) {
 
@@ -24,9 +46,9 @@ module.controller('ActivityController', function($scope, $location, $routeParams
 
   if      ($scope.paramEngine == 'nxt') { var api = nxt.nxt(); }
   else if ($scope.paramEngine == 'fim') { var api = nxt.fim();  }
-  else                                  { 
-    $location.path('/activity/fim/activity/latest'); 
-    return; 
+  else                                  {
+    $location.path('/activity/fim/activity/latest');
+    return;
   }
 
   if (['activity', 'blockchain', 'forgers', 'assets'].indexOf($scope.paramSection) == -1) {
@@ -80,7 +102,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
       $scope.showFilter = false;
       $scope.provider = new AllAssetsProvider(api, $scope, 10);
       $scope.provider.reload();
-      break;      
+      break;
     default:
       throw new Error('Not reached');
   }
@@ -90,7 +112,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
   $scope.dateOptions  = {
     formatYear: 'yy',
     startingDay: 1
-  }; 
+  };
   $scope.openDatePicker = function($event) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -143,7 +165,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
         $scope.filter.assetOrder = on;
         $scope.filter.currencyIssued = on;
         $scope.filter.currencyTransfer = on;
-        $scope.filter.currencyOther = on;     
+        $scope.filter.currencyOther = on;
 
         $scope.filterChanged();
       });
@@ -163,6 +185,6 @@ module.controller('ActivityController', function($scope, $location, $routeParams
       }
       $scope.statistics[engine].load();
     }
-  }  
+  }
 });
 })();

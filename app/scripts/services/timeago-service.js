@@ -8,13 +8,13 @@ module.factory('timeagoService', function ($translate, $rootScope) {
     format: function (timestamp) {
       if (timestamp instanceof Date) {
         return inWords(timestamp);
-      } 
+      }
       else if (typeof timestamp === "string") {
         return inWords(parse(timestamp));
-      } 
+      }
       else if (typeof timestamp === "number") {
         return inWords(new Date(timestamp));
-      } 
+      }
       else {
         return inWords(datetime(timestamp));
       }
@@ -59,7 +59,7 @@ module.factory('timeagoService', function ($translate, $rootScope) {
       }
     };
   }
-  
+
   initSettings();
   $rootScope.$on('$translateChangeSuccess', function () {
     initSettings();
@@ -90,7 +90,7 @@ module.factory('timeagoService', function ($translate, $rootScope) {
     var days = hours / 24;
     var years = days / 365;
 
-    function substitute(stringOrFunction, number) {      
+    function substitute(stringOrFunction, number) {
       return angular.isFunction(stringOrFunction) ? stringOrFunction(number) : stringOrFunction;
     }
 

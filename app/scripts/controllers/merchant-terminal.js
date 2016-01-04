@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -32,8 +54,8 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
   );
 
   $scope.payNow = function () {
-    var args = { 
-      recipient: $scope.paramRecipient, 
+    var args = {
+      recipient: $scope.paramRecipient,
       amountNXT: nxt.util.convertNQT($scope.paramAmountNQT, 8),
       deadline: $scope.paramDeadline
     };
@@ -44,20 +66,15 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
     plugins.get('transaction').get('tipUser').execute(args).then(
       function (items) {
         if (items) {
-          
+
         }
       }
     );
   }
 
   $scope.signin = function () {
-    var navigate_to = ['navigate','merchant',
-        $scope.paramRecipient,
-        $scope.paramAmountNQT,
-        $scope.paramDeadline,
-        $scope.paramDescription,
-        $scope.paramMessage];
-    $location.path('/login-to/' + navigate_to.join('|'));
+    $rootScope.loginWizard('signin', {}, $location.url());
+    $location.path('/start');
   }
 
 });

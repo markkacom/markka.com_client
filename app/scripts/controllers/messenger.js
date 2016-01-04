@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -54,10 +76,10 @@ module.config(function($routeProvider) {
     });
 });
 
-module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope, 
-  $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji, 
+module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope,
+  $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji,
   KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval, AccountAutocompleteProvider) {
-  
+
   $rootScope.unread = false;
 
   var unread_interval = $interval(function() { $rootScope.unread = false }, 5000);
@@ -68,8 +90,8 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   $scope.gossipUI = Gossip.ui;
 
   $scope.id_rs   = $routeParams.id_rs;
-  $scope.message = { 
-    text: '', 
+  $scope.message = {
+    text: '',
     html: '',
     name: '',
     recipient: '',
@@ -88,20 +110,20 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
 
   /* have to login first */
   if (!$rootScope.currentAccount) {
-    $rootScope.destURL = $location.url(); /* TODO use new "navigate" functionality on login-to controller */
-    $location.path('/login-to');
+    $rootScope.loginWizard('signin', {}, $location.url());
+    $location.path('/start');
     return;
   }
 
   var api = nxt.get($rootScope.currentAccount.id_rs);
   if (!api) {
-    $location.path('/login-to');
+    $location.path('/start');
     return;
   }
 
   $scope.accountSearchProvider = new AccountAutocompleteProvider(api);
   $scope.feeCost = api.engine.feeCost + ' ' + api.engine.symbol;
-  
+
   generateSpeechBubbleBootstrapCSS();
   settings.resolve('themes.default.theme', function () {
     $timeout(generateSpeechBubbleBootstrapCSS);
@@ -142,13 +164,13 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
               if (chat.provider && !chat.provider.online) {
                 Gossip.ping(chat.otherRS);
               }
-              /* make sure the public key of our contact was loaded from the network 
+              /* make sure the public key of our contact was loaded from the network
                  if no public key could be found we should not create the GossipChatMessagesProvider
                  but wait until we receive it from a transaction */
               publicKeyService.get($scope.id_rs).then(
                 /* we dont actually use the public key, it just has to be in the cache */
                 function () {
-                  /* create the messages provider */ 
+                  /* create the messages provider */
                   $scope.chatMessagesProvider = new GossipChatMessagesProvider(api, $scope, 8, $rootScope.currentAccount.id_rs, $scope.id_rs);
                   $scope.chatMessagesProvider.reload().then(
                     function () {
@@ -174,9 +196,9 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   }
 
   var unregister = Gossip.addListener(
-                      Gossip.IS_TYPING_TOPIC, 
-                      $scope.id_rs, 
-                      $rootScope.currentAccount.id_rs, 
+                      Gossip.IS_TYPING_TOPIC,
+                      $scope.id_rs,
+                      $rootScope.currentAccount.id_rs,
   function (gossip) {
     $scope.$evalAsync(
       function () {
@@ -249,19 +271,19 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     });
   }
 
-  /* Handler for the New Message button. 
-   * Based on message type (gossip or blockchain) this action has a different effect */ 
+  /* Handler for the New Message button.
+   * Based on message type (gossip or blockchain) this action has a different effect */
   $scope.newMessage = function () {
     $scope.ui.editRecipient = true;
     $scope.slide.offCanvas  = false;
     $scope.chatMessagesProvider = null;
   }
 
-  /* Handler for the Send Message button. 
-   * Based on message type (gossip or blockchain) this action has a different effect */ 
+  /* Handler for the Send Message button.
+   * Based on message type (gossip or blockchain) this action has a different effect */
   $scope.sendDirectMessage = function () {
     if ($scope.ui.sendOffline) {
-      plugins.get('transaction').get('sendMessage').execute($rootScope.currentAccount.id_rs, { 
+      plugins.get('transaction').get('sendMessage').execute($rootScope.currentAccount.id_rs, {
         recipient: $scope.id_rs,
         message: $scope.message.text,
         autoSubmit: true,
@@ -302,7 +324,7 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
   };
 
   $scope.addContact = function (id_rs) {
-    
+
     /* dont add duplicates */
     var provider = $scope.chatListProvider;
     for (var i=0; i<provider.entities.length; i++) {

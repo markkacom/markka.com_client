@@ -1,12 +1,32 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 
 var module = angular.module('fim.base');
-module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db, 
-  settings, $timeout, $sce, serverService, plugins, $interval, 
+module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
+  settings, $timeout, $sce, serverService, plugins, $interval,
   $translate, MofoSocket, Emoji) {
-
-  var FAILED_RETRIES = 0;
 
   var TYPE_FIM  = 'TYPE_FIM';
   var TYPE_NXT  = 'TYPE_NXT';
@@ -38,7 +58,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (arg == TYPE_FIM || arg.toUpperCase().indexOf('FIM')==0) {
         return this.fim().crypto;
       }
-      console.log('Could not determine engine', arg);      
+      console.log('Could not determine engine', arg);
     }
   };
 
@@ -47,7 +67,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
   }
 
   /**
-   * @param _type Engine type 
+   * @param _type Engine type
    * @param _test Boolean for test network
    */
   function AbstractEngine(_type, _test) {
@@ -61,16 +81,12 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.symbol    = _type == TYPE_FIM ? 'FIM' : 'NXT';
     this.symbol_lower = this.symbol.toLowerCase();
 
-    if ($rootScope.TRADE_UI_ONLY) {
-      this.symbol = 'EUR';
-    }
-
     if ($rootScope.forceLocalHost) {
-      this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:'); 
+      this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:');
     }
     else if (this.type == TYPE_FIM) {
       if (this.test) {
-        this.urlPool = new URLPool(this, [/*'188.166.36.203',*/ '188.166.0.145'], false);
+        this.urlPool = new URLPool(this, ['nxtplus1.mofowallet.org' /*'188.166.0.145'*/], true);
       }
       else {
         this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
@@ -115,10 +131,10 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     remoteSocket: function () {
       return this._remoteSocket || (this._remoteSocket = new MofoSocket(this, false, true));
-    }    
+    }
   };
 
-  function URLPool(engine, ips, tls) {
+  function URLPool(engine, ips, tls, port) {
     this.engine = engine;
     this.ips = [];
     for (var i=0; i<ips.length; i++) {
@@ -169,7 +185,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         try {
           var decoded = this.tryToDecryptMessage(transaction);
           return this.persist(id, true, decoded);
-        } 
+        }
         catch (e) {
          console.log(e);
          return null;
@@ -179,16 +195,16 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         if (!transaction.attachment["version.Message"]) {
           try {
             return this.persist(id, false, converters.hexStringToString(transaction.attachment.message));
-          } 
+          }
           catch (err) { //legacy
             if (transaction.attachment.message.indexOf("feff") === 0) {
               return this.persist(id, false, INSTANCE.util.convertFromHex16(transaction.attachment.message));
-            } 
+            }
             else {
               return this.persist(id, false, INSTANCE.util.convertFromHex8(transaction.attachment.message));
             }
           }
-        } 
+        }
         else {
           return this.persist(id, false, String(transaction.attachment.message));
         }
@@ -206,7 +222,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         }
       }
       return obj;
-    },    
+    },
     getPrivateKey: function (id_rs) {
       var privateKey = this.priv[id_rs];
       if (!privateKey && $rootScope.currentAccount) {
@@ -252,7 +268,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           nonce     = converters.hexStringToByteArray(transaction.attachment.encryptedMessage.nonce);
           data      = converters.hexStringToByteArray(transaction.attachment.encryptedMessage.data);
         }
-      } 
+      }
       else if (transaction.attachment.encryptToSelfMessage) {
         privateKey   = this.getPrivateKey(transaction.senderRS);
         if (privateKey) {
@@ -263,7 +279,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         }
       }
       if (privateKey && publicKey && data && nonce) {
-        return this.api.crypto.decryptData(data, { 
+        return this.api.crypto.decryptData(data, {
           privateKey: privateKey,
           publicKey:  publicKey,
           nonce:      nonce
@@ -271,7 +287,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       }
       return null;
     }
-  };  
+  };
 
   function Renderer(api) {
     var self = this;
@@ -321,17 +337,17 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         5: { label: 'Cancel', icon: 'fa fa-thumbs-up', clazz: 'danger' }
       },
       3: {
-        0: { label: 'DGS List', icon: 'fa fa-shopping-cart', clazz: 'success' }, 
-        1: { label: 'DGS Delist', icon: 'fa fa-shopping-cart', clazz: 'danger' }, 
-        2: { label: 'DGS Change', icon: 'fa fa-sliders', clazz: 'info' }, 
-        3: { label: 'DGS Change', icon: 'fa fa-sliders', clazz: 'info' }, 
-        4: { label: 'Purchase', icon: 'fa fa-shopping-cart', clazz: 'primary' }, 
-        5: { label: 'Delivery', icon: 'fa fa-truck', clazz: 'success' }, 
-        6: { label: 'Feedback', icon: 'fa fa-comment-o', clazz: 'info' }, 
+        0: { label: 'DGS List', icon: 'fa fa-shopping-cart', clazz: 'success' },
+        1: { label: 'DGS Delist', icon: 'fa fa-shopping-cart', clazz: 'danger' },
+        2: { label: 'DGS Change', icon: 'fa fa-sliders', clazz: 'info' },
+        3: { label: 'DGS Change', icon: 'fa fa-sliders', clazz: 'info' },
+        4: { label: 'Purchase', icon: 'fa fa-shopping-cart', clazz: 'primary' },
+        5: { label: 'Delivery', icon: 'fa fa-truck', clazz: 'success' },
+        6: { label: 'Feedback', icon: 'fa fa-comment-o', clazz: 'info' },
         7: { label: 'Refund', icon: 'fa fa-meh-o', clazz: 'danger' }
       },
       4: {
-        0: { label: 'Lease Balance', icon: 'fa fa-rocket' } 
+        0: { label: 'Lease Balance', icon: 'fa fa-rocket' }
       },
       40: {
         0: { label: 'Private Alias', icon: 'fa fa-cubes' }
@@ -342,7 +358,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       self.templates[type] = ['<a href__HREF__ data-engine="',self.api.type,'" data-type="',type,'" data-value="__VALUE__" class="txn txn-',
         type,'"','__CLICK__',
         ' ','>__LABEL__</a>'].join('');
-    });    
+    });
   }
   Renderer.prototype = {
     clickHandler: '" onclick="event.preventDefault(); if (angular.element(this).scope().onTransactionIdentifierClick) { angular.element(this).scope().onTransactionIdentifierClick(this) }" ',
@@ -356,8 +372,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (type == this.TYPE.ACCOUNT) {
         label = label||value;
         if (value == accountRS) {
+          if ($rootScope.isCurrentAccount(accountRS)) {
+            return '<b>YOU</b>';
+          }
           return '<b>'+escapeHtml(label)+'</b>';
-        }        
+        }
         href  = '="#/accounts/'+encodeURIComponent(value)+'/activity/latest"';
         click = null;
       }
@@ -390,7 +409,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     /**
      * Renders a transaction for use in a transaction table control. Supports user
      * interaction through clickable identifiers.
-     * To respond to the click on an identifier create an onTransactionIdentifierClick 
+     * To respond to the click on an identifier create an onTransactionIdentifierClick
      * method on the current $scope. The method will be called on identifier click
      * and is provided with the clicked element. See it's @data-type and @data-value
      * attributes for it's value.
@@ -411,7 +430,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       var util = INSTANCE.util;
 
       /* @param type see TYPE
-         @param label String 
+         @param label String
          @param value String optional if not provided label is used
          @returns String */
       function render(type, label, value) {
@@ -473,7 +492,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
       function formatOrderPricePerWholeQNT(priceNQT, decimals) {
         return INSTANCE.util.calculateOrderPricePerWholeQNT(priceNQT, decimals);
-      }      
+      }
 
       function formatOrderTotal(priceNQT, quantityQNT, decimals) {
         return INSTANCE.util.convertToNXT(INSTANCE.util.calculateOrderTotalNQT(priceNQT, quantityQNT));
@@ -490,7 +509,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
             asset:      render(TYPE.ASSET_ID, trade.name, trade.asset),
             seller:     render(TYPE.ACCOUNT, trade.sellerName, trade.sellerRS),
             price:      formatOrderPricePerWholeQNT(trade.priceNQT, trade.decimals),
-            symbol:     api.engine.symbol,
+            symbol:     transaction.buyerColorName||transaction.sellerColorName||api.engine.symbol,
             total:      formatOrderTotal(trade.priceNQT, trade.quantityQNT, trade.getDecimals),
             details:    render(TYPE.JSON,'details',JSON.stringify(transaction))
           });
@@ -503,7 +522,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
             asset:      render(TYPE.ASSET_ID, trade.name, trade.asset),
             buyer:      render(TYPE.ACCOUNT, trade.buyerName, trade.buyerRS),
             price:      formatOrderPricePerWholeQNT(trade.priceNQT, trade.decimals),
-            symbol:     api.engine.symbol,
+            symbol:     transaction.buyerColorName||transaction.sellerColorName||api.engine.symbol,
             total:      formatOrderTotal(trade.priceNQT, trade.quantityQNT, trade.getDecimals),
             details:    render(TYPE.JSON,'details',JSON.stringify(transaction))
           });
@@ -517,7 +536,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               case 0: return $translate.instant('transaction.0.0', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 amount:     util.convertToNXT(transaction.amountNQT),
-                symbol:     api.engine.symbol, 
+                symbol:     transaction.recipientColorName||transaction.senderColorName||api.engine.symbol,
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
@@ -529,14 +548,14 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // {{sender}} sent a message to {{recipient}} {{details}} {{message}}
               case 0: return $translate.instant('transaction.1.0', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
-                recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS), 
+                recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
               // {{sender}} set alias {{aliasName}} to {{aliasURI}} {{details}} {{message}}
               case 1: return $translate.instant('transaction.1.1', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
-                aliasName:  render(TYPE.ALIAS_NAME, transaction.attachment.alias), 
+                aliasName:  render(TYPE.ALIAS_NAME, transaction.attachment.alias),
                 aliasURI:   render(TYPE.ALIAS_URI, transaction.attachment.uri),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
@@ -550,20 +569,20 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               });
               // {{sender}} casted vote for {{pollId}} {{details}} {{message}}
               case 3: return $translate.instant('transaction.1.3', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 pollId:     render(TYPE.POLL_ID, transaction.attachment.pollId),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
               // {{sender}} announced hub {{details}} {{message}}
               case 4: return $translate.instant('transaction.1.4', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              });              
+              });
               // {{sender}} registered name {{name}} {{description}} {{details}} {{message}}
               case 5: return $translate.instant('transaction.1.5', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderRS, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderRS, transaction.senderRS),
                 name:       render(TYPE.ACCOUNT_NAME, transaction.attachment.name),
                 description:render(TYPE.DESCRIPTION,'description',transaction.attachment.description),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
@@ -571,156 +590,156 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               });
               // {{sender}} offered alias {{aliasName}} for sale for {{amount}} {{symbol}} {{details}} {{message}}
               case 6: return $translate.instant('transaction.1.6', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                aliasName:  render(TYPE.ALIAS_NAME, transaction.attachment.alias), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                aliasName:  render(TYPE.ALIAS_NAME, transaction.attachment.alias),
                 amount:     util.convertToNXT(transaction.attachment.priceNQT),
-                symbol:     api.engine.symbol,
+                symbol:     transaction.recipientColorName||transaction.senderColorName||api.engine.symbol,
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
               // {{sender}} bought alias {{aliasName}} from {{recipient}} {{details}} {{message}}
               case 7: return $translate.instant('transaction.1.7', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
-                aliasName:  render(TYPE.ALIAS_NAME, transaction.attachment.alias), 
+                aliasName:  render(TYPE.ALIAS_NAME, transaction.attachment.alias),
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
-            }      
+            }
           }
           case 2: {
             switch (transaction.subtype) {
               // {{sender}} issued asset {{assetName}} {{details}} {{message}}
               case 0: return $translate.instant('transaction.2.0', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.transaction), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.transaction),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              });              
+              });
               // {{sender}} transfered {{quantity}} {{assetName}} to {{recipient}} {{details}} {{message}}
               case 1: return $translate.instant('transaction.2.1', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 quantity:   formatQuantity(transaction.attachment.quantityQNT, transaction.attachment.decimals),
-                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset), 
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset),
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              });                
-              // {{sender}} placed sell order for {{quantity}} {{assetName}} at {{price}} {{symbol}} total {{total}} {{symbol}} {{details}} {{message}} 
+              });
+              // {{sender}} placed sell order for {{quantity}} {{assetName}} at {{price}} {{symbol}} total {{total}} {{symbol}} {{details}} {{message}}
               case 2: return $translate.instant('transaction.2.2', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 quantity:   formatQuantity(transaction.attachment.quantityQNT, transaction.attachment.decimals),
                 assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset),
                 price:      formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, transaction.attachment.decimals),
-                symbol:     api.engine.symbol,
+                symbol:     transaction.senderColorName||api.engine.symbol,
                 total:      formatOrderTotal(transaction.attachment.priceNQT, transaction.attachment.quantityQNT, transaction.attachment.decimals),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              });                
-              // {{sender}} placed buy order for {{quantity}} {{assetName}} at {{price}} {{symbol}} total {{total}} {{symbol}} {{details}} {{message}} 
+              });
+              // {{sender}} placed buy order for {{quantity}} {{assetName}} at {{price}} {{symbol}} total {{total}} {{symbol}} {{details}} {{message}}
               case 3: return $translate.instant('transaction.2.3', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 quantity:   formatQuantity(transaction.attachment.quantityQNT, transaction.attachment.decimals),
                 assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset),
                 price:      formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, transaction.attachment.decimals),
-                symbol:     api.engine.symbol,
+                symbol:     transaction.senderColorName||api.engine.symbol,
                 total:      formatOrderTotal(transaction.attachment.priceNQT, transaction.attachment.quantityQNT, transaction.attachment.decimals),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              });               
+              });
               // {{sender}} cancelled sell order {{order}} {{details}} {{message}}
               case 4: return $translate.instant('transaction.2.4', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 order:      render(TYPE.ASK_ORDER, transaction.attachment.order),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              }); 
+              });
               // {{sender}} cancelled buy order {{order}} {{details}} {{message}}
               case 5: return $translate.instant('transaction.2.5', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 order:      render(TYPE.BID_ORDER, transaction.attachment.order),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              }); 
-            } 
+              });
+            }
           }
           case 3: {
             switch (transaction.subtype) {
               // {{sender}} listed good {{goodsName}} quantity {{quantity}} for {{price}} {{symbol}} {{description}} {{tags}} {{details}} {{message}}
               case 0: return $translate.instant('transaction.3.0', {
-                sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 goodsName: render(TYPE.GOODS_NAME, transaction.attachment.name, transaction),
                 quantity:  util.commaFormat(String(transaction.attachment.quantity)),
                 price:     util.convertToNXT(transaction.attachment.priceNQT),
-                symbol:    api.engine.symbol,
+                symbol:    transaction.senderColorName||api.engine.symbol,
                 description: render(TYPE.DESCRIPTION,'description',transaction.attachment.description),
                 tags:      render(TYPE.TAGS,'tags',transaction.attachment.tags),
                 details:   render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:   message(transaction)
-              });              
+              });
               // {{sender}} delisted good {{goodsName}} {{details}} {{message}}
               case 1: return $translate.instant('transaction.3.1', {
-                sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 goodsName: render(TYPE.GOODS, transaction.attachment.goods),
                 details:   render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:   message(transaction)
-              }); 
+              });
               // {{sender}} changed price of {{goodsName}} to {{price}} {{symbol}} {{details}} {{message}}
               case 2: return $translate.instant('transaction.3.2', {
-                sender:   render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:   render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 goodsName:render(TYPE.GOODS, transaction.attachment.goods),
                 price:    util.convertToNXT(transaction.attachment.priceNQT),
-                symbol:   api.engine.symbol,
+                symbol:   transaction.senderColorName||api.engine.symbol,
                 details:  render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:  message(transaction)
-              }); 
+              });
               // {{sender}} changed quantity of {{goodsName}} by {{deltaQuantity}} {{details}} {{message}}
               case 3: return $translate.instant('transaction.3.3', {
-                sender:        render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:        render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 goodsName:     render(TYPE.GOODS, transaction.attachment.goods),
                 deltaQuantity: escapeHtml(transaction.attachment.deltaQuantity),
                 details:       render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:       message(transaction)
-              }); 
+              });
               // {{sender}} purchased {{quantity}} {{goodsName}} from {{recipient}} for {{price}} {{symbol}} {{deadline}} {{details}} {{message}}
               case 4: return $translate.instant('transaction.3.4', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 quantity:   util.commaFormat(String(transaction.attachment.quantity)),
                 goodsName:  render(TYPE.GOODS, transaction.attachment.goods),
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 price:      util.convertToNXT(transaction.attachment.priceNQT),
-                symbol:     api.engine.symbol,
+                symbol:     transaction.senderColorName||api.engine.symbol,
                 deadline:   render(TYPE.DELIVERY_DEADLINE,'deadline',transaction.attachment.deliveryDeadlineTimestamp),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
-              });               
+              });
               // {{sender}} delivered purchase {{purchase}} to {{recipient}} with discount {{discount}} {{symbol}} {{details}} {{message}}
               case 5: return $translate.instant('transaction.3.5', {
                 sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 purchase:  render(TYPE.PURCHASE, transaction.attachment.purchase),
                 recipient: render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 discount:  util.convertToNXT(transaction.attachment.discountNQT),
-                symbol:    api.engine.symbol,
+                symbol:    transaction.senderColorName||api.engine.symbol,
                 details:   render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:   message(transaction)
-              });               
+              });
               // {{sender}} gave feedback for purchase {{purchase}} {{details}} {{message}}
               case 6: return $translate.instant('transaction.3.6', {
                 sender:   render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 purchase: render(TYPE.PURCHASE, transaction.attachment.purchase),
                 details:  render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:  message(transaction)
-              });              
+              });
               // {{sender}} gave refund of {{discount}} {{symbol}} for {{purchase}} {{details}} {{message}}
               case 7: return $translate.instant('transaction.3.7', {
                 sender:  render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 discount:util.convertToNXT(transaction.attachment.discountNQT),
-                symbol:  api.engine.symbol,
+                symbol:  transaction.senderColorName||api.engine.symbol,
                 purchase:render(TYPE.PURCHASE, transaction.attachment.purchase),
                 details: render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message: message(transaction)
-              });               
-            } 
+              });
+            }
           }
           case 4: {
             switch (transaction.subtype) {
@@ -731,7 +750,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 period:   escapeHtml(transaction.attachment.period),
                 details:  render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:  message(transaction)
-              });               
+              });
             }
           }
           case 5: {
@@ -777,7 +796,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               });
               // {{sender}} claimed {{units}} units of {{code}} {{details}} {{message}}
               // attachment.put("currency", Convert.toUnsignedLong(currencyId));
-              // attachment.put("units", units);              
+              // attachment.put("units", units);
               // json.put("name", currency.getName());
               // json.put("code", currency.getCode());
               // json.put("type", currency.getType());
@@ -799,7 +818,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // json.put("type", currency.getType());
               // json.put("decimals", currency.getDecimals());
               // json.put("issuanceHeight", currency.getIssuanceHeight());
-              // putAccount(json, "issuerAccount", currency.getAccountId());              
+              // putAccount(json, "issuerAccount", currency.getAccountId());
               case 3: return $translate.instant('transaction.5.3', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 units:      transaction.attachment.units,
@@ -816,13 +835,13 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // attachment.put("totalSellLimit", totalSellLimit);
               // attachment.put("initialBuySupply", initialBuySupply);
               // attachment.put("initialSellSupply", initialSellSupply);
-              // attachment.put("expirationHeight", expirationHeight);  
+              // attachment.put("expirationHeight", expirationHeight);
               // json.put("name", currency.getName());
               // json.put("code", currency.getCode());
               // json.put("type", currency.getType());
               // json.put("decimals", currency.getDecimals());
               // json.put("issuanceHeight", currency.getIssuanceHeight());
-              // putAccount(json, "issuerAccount", currency.getAccountId()); 
+              // putAccount(json, "issuerAccount", currency.getAccountId());
               case 4: return $translate.instant('transaction.5.4', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 code:       escapeHtml(transaction.attachment.code),
@@ -841,7 +860,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // json.put("type", currency.getType());
               // json.put("decimals", currency.getDecimals());
               // json.put("issuanceHeight", currency.getIssuanceHeight());
-              // putAccount(json, "issuerAccount", currency.getAccountId());               
+              // putAccount(json, "issuerAccount", currency.getAccountId());
               case 5: return $translate.instant('transaction.5.5', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 units:      escapeHtml(transaction.attachment.units),
@@ -861,7 +880,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // json.put("type", currency.getType());
               // json.put("decimals", currency.getDecimals());
               // json.put("issuanceHeight", currency.getIssuanceHeight());
-              // putAccount(json, "issuerAccount", currency.getAccountId());   
+              // putAccount(json, "issuerAccount", currency.getAccountId());
               case 6: return $translate.instant('transaction.5.6', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 units:      escapeHtml(transaction.attachment.units),
@@ -882,7 +901,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // json.put("type", currency.getType());
               // json.put("decimals", currency.getDecimals());
               // json.put("issuanceHeight", currency.getIssuanceHeight());
-              // putAccount(json, "issuerAccount", currency.getAccountId());  
+              // putAccount(json, "issuerAccount", currency.getAccountId());
               case 7: return $translate.instant('transaction.5.7', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 units:      escapeHtml(transaction.attachment.units),
@@ -896,7 +915,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // json.put("type", currency.getType());
               // json.put("decimals", currency.getDecimals());
               // json.put("issuanceHeight", currency.getIssuanceHeight());
-              // putAccount(json, "issuerAccount", currency.getAccountId());                
+              // putAccount(json, "issuerAccount", currency.getAccountId());
               case 8: return $translate.instant('transaction.5.8', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 name:       escapeHtml(transaction.attachment.name),
@@ -911,31 +930,31 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               // {{sender}} set namespaced alias {{aliasName}} to {{aliasURI}} {{details}} {{message}}
               case 0: return $translate.instant('transaction.40.0', {
                 sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
-                aliasName: render(TYPE.ALIAS_NAME, transaction.attachment.alias), 
+                aliasName: render(TYPE.ALIAS_NAME, transaction.attachment.alias),
                 aliasURI:  render(TYPE.ALIAS_URI, transaction.attachment.uri),
                 details:   render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:   message(transaction)
               });
               // {{sender}} adds {{recipient}} to {{assetName}} allowed accounts {{details}} {{message}}
               case 1: return $translate.instant('transaction.40.1', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset),
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
               // {{sender}} removed {{recipient}} from {{assetName}} allowed accounts {{details}} {{message}}
               case 2: return $translate.instant('transaction.40.2', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset),
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
               // {{sender}} set {{assetName}} order fee {{orderFee}}% trade fee {{tradeFee}}% {{details}} {{message}}
               case 3: return $translate.instant('transaction.40.3', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                assetName:  render(TYPE.ASSET_ID, transaction.attachment.name, transaction.attachment.asset),
                 orderFee:   INSTANCE.util.convertToQNTf(String(transaction.attachment.orderFeePercentage), 6)||'0',
                 tradeFee:   INSTANCE.util.convertToQNTf(String(transaction.attachment.tradeFeePercentage), 6)||'0',
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
@@ -943,29 +962,45 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
               });
               // {{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}
               case 4: return $translate.instant('transaction.40.4', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                identifier: render(TYPE.ACCOUNT, transaction.attachment.identifier, transaction.recipientRS), 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                identifier: render(TYPE.ACCOUNT, transaction.attachment.identifier, transaction.recipientRS),
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
               // {{sender}} made {{recipient}} a verification authority for {{period}} blocks {{details}} {{message}}
               case 5: return $translate.instant('transaction.40.5', {
-                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS), 
-                period:     transaction.attachment.period, 
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                period:     transaction.attachment.period,
                 recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
+              // {{sender}} created account color {{name}} {{details}} {{message}}
+              case 6: return $translate.instant('transaction.40.6', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                name:       transaction.attachment.name,
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
+              // {{sender}} assigned account color {{color}} to {{recipient}} {{details}} {{message}}
+              case 7: return $translate.instant('transaction.40.7', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                color:      transaction.attachment.accountColorId,
+                recipient:  render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS),
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
+
             }
           }
         }
       }
-    } 
+    }
   };
 
   /**
-   * @param _type Engine type 
+   * @param _type Engine type
    * @param _test Boolean for test network
    */
   function ServerAPI(_type, _test) {
@@ -975,7 +1010,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.engine               = new AbstractEngine(_type, _test);
     this.crypto               = new Crypto(_type, this);
     this.renderer             = new Renderer(this);
-    this.decoder              = new MessageDecoder(this);    
+    this.decoder              = new MessageDecoder(this);
   };
   ServerAPI.prototype = {
     lock: function () {
@@ -1016,7 +1051,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           var options = {};
           if (data.recipient) {
             options.account = data.recipient;
-          } 
+          }
           else if (data.encryptedMessageRecipient) {
             options.account = data.encryptedMessageRecipient;
             delete data.encryptedMessageRecipient;
@@ -1027,14 +1062,14 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           }
 
           var encrypted = this.crypto.encryptNote(data.message, options, data.secretPhrase);
-          
+
           data.encryptedMessageData = encrypted.message;
           data.encryptedMessageNonce = encrypted.nonce;
           data.messageToEncryptIsText = "true";
 
           delete data.encrypt_message;
           delete data.message;
-        } 
+        }
 
         /* Encrypt message to self */
         else if (data.note_to_self && data.message) {
@@ -1048,7 +1083,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
           delete data.note_to_self;
           delete data.message;
-        } 
+        }
 
         /* Public message */
         else if (data.public_message && data.message) {
@@ -1157,7 +1192,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         console.log('verifyAndSignTransactionBytes.failed | transaction.referencedTransactionFullHash !== data.referencedTransactionFullHash', transaction, data);
         return false;
       }
-    } 
+    }
     else if (transaction.referencedTransactionFullHash !== "") {
       console.log('verifyAndSignTransactionBytes.failed | transaction.referencedTransactionFullHash !== ""', transaction, data);
       return false;
@@ -1167,11 +1202,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       //has empty attachment, so no attachmentVersion byte...
       if (requestType == "sendMoney" || requestType == "sendMessage") {
         var pos = 176;
-      } 
+      }
       else {
         var pos = 177;
       }
-    } 
+    }
     else {
       var pos = 160;
     }
@@ -1251,9 +1286,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         transaction.optionsAreBinary = String(byteArray[pos]);
         pos++;
 
-        if (transaction.name !== data.name || transaction.description !== data.description || 
-            transaction.minNumberOfOptions !== data.minNumberOfOptions || 
-            transaction.maxNumberOfOptions !== data.maxNumberOfOptions || 
+        if (transaction.name !== data.name || transaction.description !== data.description ||
+            transaction.minNumberOfOptions !== data.minNumberOfOptions ||
+            transaction.maxNumberOfOptions !== data.maxNumberOfOptions ||
             transaction.optionsAreBinary !== data.optionsAreBinary) {
           return false;
         }
@@ -1373,7 +1408,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         transaction.decimals = byteArray[pos];
         pos++;
 
-        if (transaction.name !== data.name || transaction.description !== data.description || 
+        if (transaction.name !== data.name || transaction.description !== data.description ||
             transaction.quantityQNT !== data.quantityQNT || transaction.decimals !== data.decimals) {
           return false;
         }
@@ -1431,10 +1466,10 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       case "placeBidOrder":
         if (transaction.type !== 2) {
           return false;
-        } 
+        }
         else if (requestType == "placeAskOrder" && transaction.subtype !== 2) {
           return false;
-        } 
+        }
         else if (requestType == "placeBidOrder" && transaction.subtype !== 3) {
           return false;
         }
@@ -1446,7 +1481,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         transaction.priceNQT = String(converters.byteArrayToBigInteger(byteArray, pos));
         pos += 8;
 
-        if (transaction.asset !== data.asset || transaction.quantityQNT !== data.quantityQNT || 
+        if (transaction.asset !== data.asset || transaction.quantityQNT !== data.quantityQNT ||
             transaction.priceNQT !== data.priceNQT) {
           return false;
         }
@@ -1455,10 +1490,10 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       case "cancelBidOrder":
         if (transaction.type !== 2) {
           return false;
-        } 
+        }
         else if (requestType == "cancelAskOrder" && transaction.subtype !== 4) {
           return false;
-        } 
+        }
         else if (requestType == "cancelBidOrder" && transaction.subtype !== 5) {
           return false;
         }
@@ -1492,8 +1527,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         transaction.priceNQT = String(converters.byteArrayToBigInteger(byteArray, pos));
         pos += 8;
 
-        if (transaction.name !== data.name || transaction.description !== data.description || 
-            transaction.tags !== data.tags || transaction.quantity !== data.quantity || 
+        if (transaction.name !== data.name || transaction.description !== data.description ||
+            transaction.tags !== data.tags || transaction.quantity !== data.quantity ||
             transaction.priceNQT !== data.priceNQT) {
           return false;
         }
@@ -1553,8 +1588,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         transaction.deliveryDeadlineTimestamp = String(converters.byteArrayToSignedInt32(byteArray, pos));
         pos += 4;
 
-        if (transaction.goods !== data.goods || transaction.quantity !== data.quantity || 
-            transaction.priceNQT !== data.priceNQT || 
+        if (transaction.goods !== data.goods || transaction.quantity !== data.quantity ||
+            transaction.priceNQT !== data.priceNQT ||
             transaction.deliveryDeadlineTimestamp !== data.deliveryDeadlineTimestamp) {
           return false;
         }
@@ -1586,7 +1621,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           return false;
         }
 
-        if (transaction.purchase !== data.purchase || transaction.goodsData !== data.goodsData || 
+        if (transaction.purchase !== data.purchase || transaction.goodsData !== data.goodsData ||
             transaction.goodsNonce !== data.goodsNonce || transaction.discountNQT !== data.discountNQT) {
           return false;
         }
@@ -1670,6 +1705,36 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           return false;
         }
         break;
+      case "accountColorCreate":
+        if (transaction.type !== 40 && transaction.subtype !== 6) {
+          return false;
+        }
+
+        var nameLength = parseInt(byteArray[pos], 10);
+        pos++;
+        transaction.name = converters.byteArrayToString(byteArray, pos, nameLength);
+        pos += nameLength;
+        var descriptionLength = converters.byteArrayToSignedShort(byteArray, pos);
+        pos += 2;
+        transaction.description = converters.byteArrayToString(byteArray, pos, descriptionLength);
+        pos += descriptionLength;
+
+        if (transaction.name !== data.name || transaction.description !== data.description) {
+          return false;
+        }
+        break;
+      case "accountColorAssign":
+        if (transaction.type !== 40 && transaction.subtype !== 7) {
+          return false;
+        }
+
+        transaction.accountColorId = String(converters.byteArrayToBigInteger(byteArray, pos));
+        pos += 8;
+
+        if (transaction.accountColorId !== data.accountColorId) {
+          return false;
+        }
+        break;
       default:
         //invalid requestType..
         return false;
@@ -1691,7 +1756,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       pos += 4;
       if (transaction.messageIsText) {
         transaction.message = converters.byteArrayToString(byteArray, pos, messageLength);
-      } 
+      }
       else {
         var slice = byteArray.slice(pos, pos + messageLength);
         transaction.message = converters.byteArrayToHexString(slice);
@@ -1706,7 +1771,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (transaction.message !== data.message) {
         return false;
       }
-    } 
+    }
     else if (data.message) {
       return false;
     }
@@ -1737,7 +1802,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (transaction.encryptedMessageData !== data.encryptedMessageData || transaction.encryptedMessageNonce !== data.encryptedMessageNonce) {
         return false;
       }
-    } 
+    }
     else if (data.encryptedMessageData) {
       return false;
     }
@@ -1752,7 +1817,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         return false;
       }
       pos += 32;
-    } 
+    }
     else if (data.recipientPublicKey) {
       return false;
     }
@@ -1780,11 +1845,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         return false;
       }
 
-      if (transaction.encryptToSelfMessageData !== data.encryptToSelfMessageData || 
+      if (transaction.encryptToSelfMessageData !== data.encryptToSelfMessageData ||
           transaction.encryptToSelfMessageNonce !== data.encryptToSelfMessageNonce) {
         return false;
       }
-    } 
+    }
     else if (data.encryptToSelfMessageData) {
       return false;
     }
@@ -1818,7 +1883,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     /**
      * @param unsignedTransaction hex-string
      * @param signature hex-string
-     * @returns hex-string 
+     * @returns hex-string
      */
     this.calculateFullHash = function (unsignedTransaction, signature) {
       var unsignedTransactionBytes = converters.hexStringToByteArray(unsignedTransaction);
@@ -1827,9 +1892,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
       _hash.init();
       _hash.update(unsignedTransactionBytes);
-      _hash.update(signatureHash);      
+      _hash.update(signatureHash);
       var fullHash = _hash.getBytes();
-      
+
       return converters.byteArrayToHexString(fullHash);
     }
 
@@ -1845,7 +1910,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     /**
      * @param secretPhrase Ascii String
-     * @returns hex-string 
+     * @returns hex-string
      */
     this.secretPhraseToPublicKey = function (secretPhrase) {
       var secretHex = converters.stringToHexString(secretPhrase);
@@ -1856,7 +1921,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     /**
      * @param secretPhrase Ascii String
-     * @returns hex-string 
+     * @returns hex-string
      */
     this.getPrivateKey = function (secretPhrase) {
       SHA256_init();
@@ -1866,7 +1931,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     /**
      * @param secretPhrase Ascii String
-     * @returns String 
+     * @returns String
      */
     this.getAccountId = function (secretPhrase, RSFormat) {
       var publicKey = this.secretPhraseToPublicKey(secretPhrase);
@@ -1875,8 +1940,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     /**
      * @param secretPhrase Hex String
-     * @returns String 
-     */  
+     * @returns String
+     */
     this.getAccountIdFromPublicKey = function (publicKey, RSFormat) {
       _hash.init();
       _hash.update(converters.hexStringToByteArray(publicKey));
@@ -1888,18 +1953,18 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (RSFormat) {
         var address = api.createAddress();
         return address.set(accountId) ? address.toString() : '';
-      } 
+      }
       return accountId;
     }
 
     /**
      * @param key1 ByteArray
      * @param key2 ByteArray
-     * @returns ByteArray 
+     * @returns ByteArray
      */
     function getSharedKey(key1, key2) {
       return converters.shortArrayToByteArray(
-                curve25519_(converters.byteArrayToShortArray(key1), 
+                curve25519_(converters.byteArrayToShortArray(key1),
                             converters.byteArrayToShortArray(key2), null));
     }
     this.getSharedKey = getSharedKey;
@@ -1970,7 +2035,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     /**
      * @param bytes1 ByteArray
-     * @param bytes2 ByteArray   
+     * @param bytes2 ByteArray
      * @returns Boolean
      */
     function areByteArraysEqual(bytes1, bytes2) {
@@ -2013,7 +2078,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     function aesEncrypt(plaintext, options) {
       if (!window.crypto && !window.msCrypto) {
-        throw new Error('FIX ME !! Should use mouse initiated seed!!!'); // 
+        throw new Error('FIX ME !! Should use mouse initiated seed!!!'); //
       }
 
       // CryptoJS likes WordArray parameters
@@ -2092,7 +2157,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (!window.crypto && !window.msCrypto) {
         throw {
           "errorCode": -1,
-          "message": $.t("error_encryption_browser_support")
+          "message": "Browser not supported"
         };
       }
 
@@ -2132,8 +2197,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.decryptData = decryptData;
 
     /**
-     * @param message String 
-     * @param options Object { 
+     * @param message String
+     * @param options Object {
      *    account: String,    // recipient account id
      *    publicKey: String,  // recipient public key
      * }
@@ -2147,7 +2212,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         }
         if (!options.publicKey) {
           throw new Error('Missing publicKey argument');
-        } 
+        }
         else if (typeof options.publicKey == "string") {
           options.publicKey = converters.hexStringToByteArray(options.publicKey);
         }

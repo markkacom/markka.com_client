@@ -1,8 +1,30 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
 module.run(function (plugins, modals, $q, $rootScope, nxt) {
-  
+
   var plugin = plugins.get('transaction');
 
   plugin.add({
@@ -14,7 +36,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       return plugin.create(angular.extend(args, {
         title: 'Set Alias',
         message: 'Set or update an alias',
-        senderRS: senderRS,      
+        senderRS: senderRS,
         requestType: 'setAlias',
         canHaveRecipient: false,
         createArguments: function (items) {
@@ -28,7 +50,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'aliasName',
           type: 'text',
           value: args.aliasName||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -41,7 +63,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'aliasURI',
           type: 'textarea',
           value: args.aliasURI||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if (plugin.getByteLen(text) > 1000) { this.errorMsg = 'To much characters'; }
@@ -83,7 +105,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'alias',
           type: 'text',
           value: args.alias||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -95,7 +117,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'aliasName',
           type: 'text',
           value: args.aliasName||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -137,7 +159,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'alias',
           type: 'text',
           value: args.alias||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -149,7 +171,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'aliasName',
           type: 'text',
           value: args.aliasName||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -195,7 +217,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'alias',
           type: 'text',
           value: args.alias||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -207,7 +229,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'aliasName',
           type: 'text',
           value: args.aliasName||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -223,7 +245,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   /* Delete alias */
   // plugins.add();
 
-  /* Note: An alias can be transferred rather than sold by setting priceNQT to zero. 
+  /* Note: An alias can be transferred rather than sold by setting priceNQT to zero.
      A pending sale can be canceled by selling again to self for a price of zero. */
 
   /* Cancel sell */
@@ -250,7 +272,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'alias',
           type: 'text',
           value: args.alias||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }
@@ -262,7 +284,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'aliasName',
           type: 'text',
           value: args.aliasName||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else if ( ! plugin.ALPHABET.test(text)) { this.errorMsg = 'Invalid character'; }

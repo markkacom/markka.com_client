@@ -1,19 +1,41 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 // set account info
 (function () {
 'use strict';
 var module = angular.module('fim.base');
 module.run(function (plugins, modals, $q, $rootScope, nxt) {
-  
+
   var plugin = plugins.get('transaction');
 
   /**
-   * Account identifiers can be set for your own account. But only 'standard' ids can 
-   * can be set just like that. These involve names that end with @fimk.fi you can 
+   * Account identifiers can be set for your own account. But only 'standard' ids can
+   * can be set just like that. These involve names that end with @fimk.fi you can
    * either assign that name to your account. Or if you prefer get a secret
    * that another account can use to assign that name to your account.
    *
    * If you want a 'non-standard' name that ends in something else then @fimk.fi you
-   * need to provide the secret to an verification authority. The verification authority 
+   * need to provide the secret to an verification authority. The verification authority
    * will verify that the email address you provide actually belongs to you and if it
    * does provide you with a secret that you must provide when registering the
    * identifier for your account.
@@ -55,7 +77,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           }
         },
         fields: [
-          plugin.fields('text').create('identifier', { label: 'Name', required: true, 
+          plugin.fields('text').create('identifier', { label: 'Name', required: true,
             validate: function (text, fields) {
               this.warnMsg = null;
               this.errorMsg = null;
@@ -76,7 +98,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
    */
 
   /**
-   * Create a custom name request 
+   * Create a custom name request
    **/
   plugin.add({
     id: 'setStandardAccountIdentifier',
@@ -94,7 +116,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           }
         },
         fields: [
-          plugin.fields('text').create('identifier', { label: 'Name', required: true, 
+          plugin.fields('text').create('identifier', { label: 'Name', required: true,
             validate: function (text, fields) {
               this.warnMsg = null;
               this.errorMsg = null;
@@ -105,13 +127,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
               }
             }
           }),
-          plugin.fields('checkbox').create('showAuthorizationRequest', { value: false, label: 'Request free account name (names cost 0.1 FIM)', 
+          plugin.fields('checkbox').create('showAuthorizationRequest', { value: false, label: 'Request free account name (names cost 0.1 FIM)',
             onchange: function (fields) {
               fields.authorizationRequest.hide = !this.value;
               fields.authorizationRequestMsg.hide = !this.value;
             }
           }),
-          plugin.fields('static').create('authorizationRequestMsg', { hide: true, 
+          plugin.fields('static').create('authorizationRequestMsg', { hide: true,
             value: 'Hello <b>world</b><br>How are you?'
           }),
           plugin.fields('textarea').create('authorizationRequest', { label: 'Authorization request', hide: true })
@@ -155,7 +177,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   //         }
   //       },
   //       fields: [
-  //         plugin.fields('text').create('identifier', { label: 'Name', required: true, 
+  //         plugin.fields('text').create('identifier', { label: 'Name', required: true,
   //           validate: function (text, fields) {
   //             this.warnMsg = null;
   //             this.errorMsg = null;
@@ -172,7 +194,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   //             }
   //           }
   //         }),
-  //         plugin.fields('checkbox').create('useStandardName', { value: true, label: 'Use standard @fimk.fi name (unselect for custom name)', 
+  //         plugin.fields('checkbox').create('useStandardName', { value: true, label: 'Use standard @fimk.fi name (unselect for custom name)',
   //           onchange: function (fields) {
   //             fields.identifier.changed();
   //             fields.authorizationRequest.hide = true;
@@ -188,7 +210,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   //             fields.nameIsAuthorized.changed();
   //           }
   //         }),
-  //         plugin.fields('checkbox').create('nameIsAuthorized', { value: true, label: 'I have an authorization for this name', hide: true, 
+  //         plugin.fields('checkbox').create('nameIsAuthorized', { value: true, label: 'I have an authorization for this name', hide: true,
   //           onchange: function (fields) {
   //             fields.authorizationRequest.hide = true;
   //             fields.authorizationResponse.hide = true;
@@ -222,7 +244,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         editRecipient: true,
         recipient: $rootScope.currentAccount.id_rs,
         createArguments: function (items) {
-          return { 
+          return {
             recipient: nxt.util.convertRSAddress(items.recipient),
             identifier: items.identifier, // String
             signatory: items.signatory ? nxt.util.convertRSAddress(items.signatory) : '0', // numeric address
@@ -234,7 +256,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'identifier',
           type: 'text',
           value: args.identifier||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else {
@@ -249,7 +271,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'signatory',
           type: 'text',
           value: args.signatory||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else {
@@ -263,7 +285,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'signature',
           type: 'textarea',
           value: args.signature||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else {
@@ -289,7 +311,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
         canHaveRecipient: true,
         editRecipient: true,
         createArguments: function (items) {
-          return { 
+          return {
             recipient: nxt.util.convertRSAddress(items.recipient),
             period: parseInt(items.period)
           }
@@ -317,12 +339,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           var deferred = $q.defer();
           modals.open('account-identifier', {
             resolve: {
-              items: function () { 
+              items: function () {
                 return {
                   identifier: items.identifier,
                   signatory: $rootScope.currentAccount.id_rs,
                   signature: nxt.util.sign(items.identifier, $rootScope.currentAccount.secretPhrase)
-                }; 
+                };
               }
             },
             close: function (ok) {
@@ -336,7 +358,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
           name: 'identifier',
           type: 'text',
           value: args.identifier||'',
-          validate: function (text) { 
+          validate: function (text) {
             this.errorMsg = null;
             if (!text) { this.errorMsg = null; }
             else {

@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
 (function () {
 'use strict';
 var module = angular.module('fim.base');
@@ -54,7 +76,7 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
         self.chartdata.length = 0;
         self.isLoading        = true;
         self.chart            = null;
-        $timeout(function () { self.getNetworkData(); }, 1, false);        
+        $timeout(function () { self.getNetworkData(); }, 1, false);
       });
     },
 
@@ -88,12 +110,12 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
               self.buildChart().then(function (chart) {
                 self.chart = chart;
                 self.layout();
-              });              
+              });
             }
             else {
               self.chart.dataSets[0].dataProvider = self.chartdata;
               self.chart.validateData();
-              self.layout();              
+              self.layout();
             }
             //console.log('chartdata', data);
           });
@@ -169,7 +191,7 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
         type: "stock",
         theme: "none",
         pathToImages: "/images/",
-          
+
         categoryAxesSettings: {
           minPeriod: "15ss",
           equalSpacing: true,
@@ -184,11 +206,11 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
           //color: colors.color,
 
           fieldMappings: [
-            { fromField: "value", toField: "value" }, 
-            { fromField: "volume", toField: "volume" }, 
-            { fromField: "open", toField: "open" }, 
-            { fromField: "low", toField: "low" }, 
-            { fromField: "close", toField: "close" }, 
+            { fromField: "value", toField: "value" },
+            { fromField: "volume", toField: "volume" },
+            { fromField: "open", toField: "open" },
+            { fromField: "low", toField: "low" },
+            { fromField: "close", toField: "close" },
             { fromField: "high", toField: "high" }
           ],
 
@@ -200,7 +222,7 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
           showCategoryAxis: false,
           title: "Value",
           percentHeight: 60,
-          lineColor: colors.lineColor,  
+          lineColor: colors.lineColor,
           color: colors.color,
           stockGraphs: [{
             id: "g1",
@@ -208,7 +230,7 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
             type: "line",
             lineThickness: 2,
             bullet: "round",
-            lineColor: colors.lineColor,  
+            lineColor: colors.lineColor,
             color: colors.color
           }],
           stockLegend: {
@@ -220,7 +242,7 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
         }, {
           title: "Volume",
           percentHeight: 40,
-          lineColor: colors.lineColor,  
+          lineColor: colors.lineColor,
           color: colors.color,
           stockGraphs: [{
             valueField: "volume",
@@ -228,13 +250,13 @@ module.factory('ChartsProvider', function (nxt, $q, $timeout) {
             cornerRadiusTop: 2,
             fillAlphas: 1,
             lineColor: colors.lineColor,
-            color: colors.color            
+            color: colors.color
           }],
           stockLegend: {
             valueTextRegular: " ",
             markerType: "none",
             lineColor: colors.lineColor,
-            color: colors.color            
+            color: colors.color
           }
         }],
 
