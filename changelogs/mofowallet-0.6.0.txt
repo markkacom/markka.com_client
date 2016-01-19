@@ -1,0 +1,14 @@
+Embeds FIMK 0.6.1 (based on NXT 1.5.10).
+
+Various bug fixes.
+
+Adds support for the new FIMK account identifiers, which are email addresses.
+Integrates the account creation with the hosted verification service.
+
+Free account identifiers available. Use either name@lompsa.com or name@fimk.fi
+or use your custom real email address.
+
+To use your real email address (not ending in @lompsa.com or @fimk.fi) you need
+to confirm an email we send to your real email address.
+
+All new accounts are given 1 FIMK if using the hosted service.
