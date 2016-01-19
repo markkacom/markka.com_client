@@ -31,9 +31,10 @@ module.factory('AccountProvider', function (nxt, $q, $timeout, db, $rootScope, U
     this.account                = account;
     this.isLoading              = true;
 
-    this.symbol                 = 'AA';
+    this.symbol                 = '';
     this.name                   = '';
     this.description            = '';
+    this.email                  = '';
     this.balanceNXT             = '0';
     this.unconfirmedBalanceNXT  = '0';
     this.effectiveBalanceNXT    = '0';
@@ -75,6 +76,9 @@ module.factory('AccountProvider', function (nxt, $q, $timeout, db, $rootScope, U
             self.symbol                 = a.accountColorName||self.api.engine.symbol;
             self.name                   = a.accountName;
             self.description            = a.description;
+            if (a.accountEmail != a.accountRS) {
+              self.email                = a.accountEmail;
+            }
             self.balanceNXT             = nxt.util.convertToNXT(a.balanceNQT);
             self.unconfirmedBalanceNXT  = nxt.util.convertToNXT(a.unconfirmedBalanceNQT);
             self.effectiveBalanceNXT    = nxt.util.commaFormat(String(a.effectiveBalanceNXT));
