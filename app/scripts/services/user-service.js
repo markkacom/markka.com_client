@@ -96,37 +96,36 @@ module.factory('UserService', function ($q, nxt, KeyService, $rootScope) {
       try {
         var account = iterator.next();
         var api = nxt.get(account.id_rs);
-        api.engine.socket().callAPIFunction({ requestType: 'getAccount', account: account.id_rs }).then(
-          function (a) {
-            $rootScope.$evalAsync(function () {
+        var socket = api.engine.socket();
+        if (!socket) {
+          this.loadAccountData(iterator);
+          return;
+        }
+        else {
+          socket.callAPIFunction({ requestType: 'getAccount', account: account.id_rs }).then(
+            function (a) {
+              $rootScope.$evalAsync(function () {
 
-              account.name = a.accountName;
-              account.description = a.description;
-              account.balance = nxt.util.convertToNXT(a.unconfirmedBalanceNQT);
-              if (a.accountColorName) {
-                account.balance += ' '+a.accountColorName;
-                account.symbol = a.accountColorName;
-                account.accountColorId = a.accountColorId;
-              }
-              else {
-                account.balance += ' '+api.engine.symbol;
-                account.symbol = api.engine.symbol;
-                account.accountColorId = '0';
-              }
-              account.label = account.name || account.id_rs;
+                account.name = a.accountName;
+                account.description = a.description;
+                account.balance = nxt.util.convertToNXT(a.unconfirmedBalanceNQT);
+                if (a.accountColorName) {
+                  account.balance += ' '+a.accountColorName;
+                  account.symbol = a.accountColorName;
+                  account.accountColorId = a.accountColorId;
+                }
+                else {
+                  account.balance += ' '+api.engine.symbol;
+                  account.symbol = api.engine.symbol;
+                  account.accountColorId = '0';
+                }
+                account.label = account.name || account.id_rs;
+              });
 
-              // db.accounts.put({
-              //   id_rs: account.id_rs,
-              //   engine: api.engine.type,
-              //   name: account.name,
-              //   excluded: false,
-              //   symbol: account.symbol
-              // });
-            });
-
-            this.loadAccountData(iterator);
-          }.bind(this)
-        );
+              this.loadAccountData(iterator);
+            }.bind(this)
+          );
+        }
       }
       catch (e) {
         console.log('Error UserService.loadAccountData()', e);
