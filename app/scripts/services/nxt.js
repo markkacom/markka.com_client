@@ -95,7 +95,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     else if (this.type == TYPE_NXT) {
       if (this.test) {
         console.log('There are no nxt testnet servers');
-        this.urlPool = new URLPool(this, [], false);
+        this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], false);
       }
       else {
         this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
@@ -465,15 +465,16 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         if (decoded) {
           var html = ['&nbsp;<span>'];
           if (transaction.attachment.encryptToSelfMessage) {
-            html.push('<i class="fa fa-key"></i>');
+            html.push('<i class="fa fa-key fa-fw"></i>');
           }
           else if (transaction.attachment.encryptedMessage) {
-            html.push('<i class="fa fa-key"></i>');
+            html.push('<i class="fa fa-key fa-fw"></i>');
           }
           else {
-            html.push('<i class="fa fa-unlock"></i>');
+            html.push('<i class="fa fa-unlock fa-fw"></i>');
           }
           if (decoded.text) {
+            html.push('&nbsp;<a href="#/messenger/',transaction.senderRS,'"><b><i class="fa fa-comments-o fa-fw"></i></b></a>&nbsp;');
             var text = escapeHtml(decoded.text);
             html.push('&nbsp;<span data-text="',text,'" data-sender="',transaction.senderRS,'" data-recipient="',transaction.recipientRS,'" ',
             '>',Emoji.emojifi(text),'</span></span>');
