@@ -24,59 +24,62 @@
 'use strict';
 var module = angular.module('fim.base');
 module.factory('SearchProvider', function (nxt, $q, IndexedEntityProvider) {
-
-  var categories = {
-    "accounts": {
-      uniqueKey: function (a) {
-        return a.accountRS;
-      },
-      process: function (a, index) {
-        a.balanceNXT = nxt.util.convertToNXT(a.balanceNQT);
-        a.effectiveBalanceNXT = nxt.util.commaFormat(a.effectiveBalanceNXT);
-        a.index      = index;
-      }
-    },
-    "assets": {
-      uniqueKey: function (a) {
-        return a.asset;
-      },
-      process: function (a, index) {
-        a.index      = index;
-      }
-    },
-    "currencies": {
-      uniqueKey: function (a) {
-        return a.code;
-      },
-      process: function (a, index) {
-        a.units      = nxt.util.convertToQNTf(a.units, a.decimals);
-        a.totalUnits = nxt.util.convertToQNTf(a.currentSupply, a.decimals);
-        a.index      = index;
-      }
-    },
-    "market": {
-      uniqueKey: function (a) {
-        return a.goods;
-      },
-      process: function (a, index) {
-        a.index      = index;
-      }
-    },
-    "aliases": {
-      uniqueKey: function (a) {
-        return a.aliasName;
-      },
-      process: function (a, index) {
-        a.index      = index;
-      }
-    }
-  };
-
   function SearchProvider(api, $scope, pageSize, category, query) {
     this.init(api, $scope, pageSize);
     this.category = category;
     this.query    = query;
-    this.impl     = categories[this.category];
+
+    this.categories = {
+      "accounts": {
+        uniqueKey: function (a) {
+          return a.accountRS;
+        },
+        process: function (a, index) {
+          a.balanceNXT = nxt.util.convertToNXT(a.balanceNQT);
+          a.effectiveBalanceNXT = nxt.util.commaFormat(a.effectiveBalanceNXT);
+          a.index      = index;
+          if (a.accountEmail == a.accountRS) {
+            a.accountEmail = '';
+          }
+        }
+      },
+      "assets": {
+        uniqueKey: function (a) {
+          return a.asset;
+        },
+        process: function (a, index) {
+          a.index      = index;
+        }
+      },
+      "currencies": {
+        uniqueKey: function (a) {
+          return a.code;
+        },
+        process: function (a, index) {
+          a.units      = nxt.util.convertToQNTf(a.units, a.decimals);
+          a.totalUnits = nxt.util.convertToQNTf(a.currentSupply, a.decimals);
+          a.index      = index;
+        }
+      },
+      "market": {
+        uniqueKey: function (a) {
+          return a.goods;
+        },
+        process: function (a, index) {
+          a.index      = index;
+        }
+      },
+      "aliases": {
+        uniqueKey: function (a) {
+          return a.aliasName;
+        },
+        process: function (a, index) {
+          a.index      = index;
+        }
+      }
+    };
+
+    this.impl     = this.categories[this.category];
 
     if (!this.impl) {
       throw new Error('Unsupported category ' +this.category);
@@ -110,6 +113,10 @@ module.factory('SearchProvider', function (nxt, $q, IndexedEntityProvider) {
           delete args.category;
           args.requestType = 'searchAccountIdentifiers';
           args.query = args.query.replace(/\*$/,'');
+
+          /* If search starts with FIM- remove that from the query */
+          args.query = args.query.replace(/^FIM-/,'');
+
           this.api.engine.socket().callAPIFunction(args).then(deferred.resolve, deferred.reject);
         }
         /* use getAliasesLike API for nxt 1.5+ */
