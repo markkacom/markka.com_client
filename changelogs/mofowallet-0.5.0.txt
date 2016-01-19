@@ -1,5 +1,9 @@
 Embeds FIMK 0.6.0 (based on NXT 1.5.10) no longer includes NXT.
 
+FIMK 0.6.0 is a mandatory update, you must update to this version before:
+
+                    Jan 18th 2016 - 21.00 GMT
+
 This is probably the last release under the old mofowallet brand name,
 throughout the client you'll notice the use of the new Lompsa brand.
 
