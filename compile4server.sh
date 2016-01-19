@@ -6,7 +6,7 @@ var VERSION='#VERSION#';
 var ENABLE_DUAL_ENGINES=false;
 var IS_TEST_NET=window.location.port == "6886";
 var FORCE_LOCAL_HOST=true;
-var WALLET_NAME='FIMKrypto';
+var WALLET_NAME='Lompsa.com';
 var TRADE_UI_ONLY=false;
 var DEBUG=false;
 var BUILD_TIMESTAMP=#TIMESTAMP#;
