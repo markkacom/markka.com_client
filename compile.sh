@@ -25,7 +25,7 @@
 #   a directory. That directory is then zipped.
 #
 # ##############################################################################
-DEBUG=true
+DEBUG=false
 WITH_NEXT=false
 VERSION=`cat VERSION`
 BASE=lompsa
@@ -105,6 +105,7 @@ fi
 
 # Copy over the lompsa files
 cp -r -p dist/lompsa/linux32/* $BUILD
+cp LICENSE.txt $BUILD
 
 if [ "$DEBUG" = "true" ]; then
   exit 0
@@ -142,6 +143,7 @@ fi
 
 # Copy over the lompsa files
 cp -r -p dist/lompsa/linux64/* $BUILD
+cp LICENSE.txt $BUILD
 
 # create the release zip
 cd $BUILD
@@ -175,6 +177,7 @@ fi
 
 # Copy over the lompsa files
 cp -r -p dist/lompsa/win32/* $BUILD
+cp LICENSE.txt $BUILD
 
 # Remove pdf.dll
 rm -f $BUILD/pdf.dll
@@ -211,6 +214,7 @@ fi
 
 # Copy over the lompsa files
 cp -r -p dist/lompsa/win64/* $BUILD
+cp LICENSE.txt $BUILD
 
 # Remove pdf.dll
 rm -f $BUILD/pdf.dll
@@ -247,6 +251,7 @@ fi
 
 # Copy over the lompsa files
 cp -r -p dist/lompsa/osx32/* $BUILD
+cp LICENSE.txt $BUILD
 
 # create the release zip
 cd $BUILD
@@ -280,6 +285,7 @@ fi
 
 # Copy over the lompsa files
 cp -r -p dist/lompsa/osx64/* $BUILD
+cp LICENSE.txt $BUILD
 
 # create the release zip
 cd $BUILD
@@ -344,7 +350,7 @@ BANNER=$(cat <<'END_HEREDOC'
 █████╗  ██║██╔████╔██║█████╔╝           http://fimk.fi
 ██╔══╝  ██║██║╚██╔╝██║██╔═██╗           http://forum.fimk.fi
 ██║     ██║██║ ╚═╝ ██║██║  ██╗          https://github.com/fimkrypto/mofowallet
-╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝          https://mofowallet.com
+╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝          https://lompsa.com
 
                          presents:
 
