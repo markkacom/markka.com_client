@@ -103,7 +103,7 @@ module.factory('Emoji', function () {
         });
       }
       var lines = result.split(/\r?\n/);
-      return '<span>' + lines.join('</span><br><span>') + '</span>';
+      return '<span class="speech-balloon-span">' + lines.join('</span><br><span class="speech-balloon-span">') + '</span>';
     },
     toBase32: function (id) {
       return to_base32[id] || id;
