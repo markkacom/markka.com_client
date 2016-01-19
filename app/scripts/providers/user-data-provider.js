@@ -45,7 +45,7 @@ module.factory('UserDataProvider', function (nxt, $q, $rootScope, UserService) {
 
     var self = this;
     this.lazy_reload = function () {
-      this.reload();
+      self.reload();
     }.debounce(500);
   }
   UserDataProvider.prototype = {
