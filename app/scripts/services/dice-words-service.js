@@ -72,7 +72,7 @@ module.factory('diceWords', function ($q, $http, $rootScope) {
     var duplicates = {}, key;
     for (var i=0; i<array.length; i++) {
       key = array[i];
-      if (duplicates[key]) {
+      if (duplicates.hasOwnProperty(key)) {
         console.log('Duplicate: '+key);
         return true;
       }
