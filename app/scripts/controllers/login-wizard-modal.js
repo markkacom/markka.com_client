@@ -41,7 +41,7 @@ module.run(function (modals, settings) {
   });
 });
 module.controller('LoginWizardController', function (items, $scope, $modalInstance, $q, UserService,
-  plugins, KeyService, $templateCache, $location, $rootScope, diceWords, nxt, $http, $translate) {
+  plugins, KeyService, $templateCache, $location, $rootScope, diceWords, nxt, $http, $translate, $timeout) {
 
 $scope.items = items;
 $scope.step = null;
@@ -221,7 +221,7 @@ function identifierIsAvailable(api, identifier) {
 }
 
 function createRegistrationURL(identifier, signature, signatory, publicKey, captcha) {
-  return 'http://107.170.73.9:3000/api/register/'+identifier+'/'+signature+'/'+signatory+'/'+publicKey+'/'+captcha;
+  return 'https://cloud.mofowallet.org:3001/api/register/'+identifier+'/'+signature+'/'+signatory+'/'+publicKey+'/'+captcha;
 }
 
 function registerIdentifier(api, secretPhrase, identifier, captcha) {
@@ -241,8 +241,29 @@ function registerIdentifier(api, secretPhrase, identifier, captcha) {
   return deferred.promise;
 }
 
+function createRegisterCustomEmailURL(identifier, signature, signatory, publicKey, captcha) {
+  return 'https://cloud.mofowallet.org:3001/api/registercustom/'+identifier+'/'+signature+'/'+signatory+'/'+publicKey+'/'+captcha;
+}
+
+function registerCustomEmail(api, secretPhrase, identifier, captcha) {
+  var deferred = $q.defer();
+  var signatory = api.crypto.getAccountId(secretPhrase, true);
+  var signature = nxt.util.sign(identifier, secretPhrase);
+  var publicKey = api.crypto.secretPhraseToPublicKey(secretPhrase);
+  var url       = createRegisterCustomEmailURL(identifier, signature, signatory, publicKey, captcha);
+
+  $http({ url: url, method: 'GET' }).success(
+    function (data) {
+      console.log(data);
+      deferred.resolve(data);
+    }
+  ).error(deferred.reject);
+
+  return deferred.promise;
+}
+
 function createFaucetURL(email, account, publickey) {
-  return 'http://107.170.73.9:3000/api/faucet/'+email+'/'+account+'/'+publickey;
+  return 'https://cloud.mofowallet.org:3001/api/faucet/'+email+'/'+account+'/'+publickey;
 }
 
 function applyForFaucet(api, secretPhrase, email) {
@@ -313,7 +334,7 @@ addStep({
     $scope.walletExists = KeyService.walletExists();
     $scope.walletUnlocked = KeyService.wallet && !KeyService.wallet.fileName;
     $scope.stage = 0;
-    $scope.advanced = true; // Set 'advanced' to true to enable 'normal' account creation
+    $scope.advanced = false; // Set 'advanced' to true to enable 'normal' account creation
     $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage0 : $scope.descriptionStandardStage0;
     if (KeyService.wallet && !KeyService.wallet.fileName) {
       $scope.input.password = KeyService.wallet.password;
@@ -340,14 +361,19 @@ addStep({
       nameIsNotAvailable: undefined,
       nameLookupInProgress: false,
       captcha: '',
-      verification_email: ''
+      verification_email: '',
+      standardEmail: true,
+      customEmail: '',
+      invalidEmail: false
     },
     advanced: false,
     stage: 0,
     showSaveSuccess: false,
     showBackupWalletControls: false,
     showWrongPasswordAlert: false,
+    invalidEmailWarningLabel: $translate.instant('translate.invalid_email'),
     nameFieldPlaceholder: $translate.instant('translate.newAccount_name'),
+    customEmailFieldPlaceholder: $translate.instant('translate.custom_email_address'),
     passwordFieldPlaceHolder: $translate.instant('translate.newAccount_password'),
     passwordConfirmFieldPlaceHolder: $translate.instant('translate.newAccount_passwordConfirm'),
     verificationEmailFieldPlaceholder: $translate.instant('translate.newAccount_verificationEmail'),
@@ -361,7 +387,7 @@ addStep({
     applyForFaucetErrorMessage: null,
     descriptionStandardStage0: $translate.instant('translate.newAccount_descriptionStandardStage0'),
     descriptionStandardStage1: $translate.instant('translate.newAccount_descriptionStandardStage1'),
-    descriptionStandardStage2: $translate.instant('translate.newAccount_descriptionStandardStage2'),
+    //descriptionStandardStage2: $translate.instant('translate.newAccount_descriptionStandardStage2'),
     descriptionAdvancedStage0: $translate.instant('translate.newAccount_descriptionAdvancedStage0'),
     descriptionAdvancedStage1: null,
     descriptionAdvancedStage2: null,
@@ -375,11 +401,20 @@ addStep({
     backupWalletButtonLabel: $translate.instant('translate.newAccount_backupWallet'),
     savedSuccessAlertContents: $translate.instant('translate.newAccount_savedSuccess'),
     getIdentifier: function () {
-      var identifier = $scope.input.name + '@' + $scope.input.host;
-      return identifier;
+      if ($scope.input.standardEmail) {
+        return $scope.input.name + '@' + $scope.input.host;
+      }
+      return $scope.input.customEmail;
     },
     nameChanged: function () {
       $scope.input.nameIsNotAvailable = undefined;
+      $scope.input.invalidEmail = undefined;
+      if (!$scope.input.standardEmail) {
+        if (!/(.+)@(.+)\.(.+){2,}/.test($scope.input.customEmail)) {
+          $scope.input.invalidEmail = true;
+          return;
+        }
+      }
       $scope.input.nameLookupInProgress = true;
       var api = nxt.fim();
       identifierIsAvailable(api, $scope.getIdentifier()).then(function (available) {
@@ -398,8 +433,14 @@ addStep({
         return $scope.advanced ? $scope.nextButtonDisabledAdvancedStage2() : $scope.nextButtonDisabledStandardStage2();
     },
     nextButtonDisabledStandardStage0: function () {
-      if (!$scope.input.password || !$scope.input.name)
-        return true;
+      if ($scope.input.standardEmail) {
+        if (!$scope.input.password || !$scope.input.name)
+          return true;
+      }
+      else {
+        if (!$scope.input.password || !$scope.input.customEmail || $scope.input.invalidEmail)
+          return true;
+      }
       if (!$scope.walletExists && $scope.input.password!=$scope.input.passwordConfirm)
         return true;
       if ($scope.input.nameIsNotAvailable !== false)
@@ -409,7 +450,7 @@ addStep({
       return !$scope.input.secretPhrase || !$scope.input.secretStoredConfirmed || !$scope.input.captcha;
     },
     nextButtonDisabledStandardStage2: function () {
-      return !$scope.input.verification_email;
+      return false; //!$scope.input.verification_email;
     },
     nextButtonDisabledAdvancedStage0: function () {
       return !$scope.input.secretPhrase || !$scope.input.secretStoredConfirmed
@@ -480,43 +521,71 @@ addStep({
       KeyService.wallet.add($scope.input.id_rs, $scope.input.secretPhrase);
       UserService.refresh($scope.input.id_rs);
 
-      /* Register the identifier */
-      $scope.registerIdentifierErrorMessage = null;
-      var api = nxt.fim();
-      registerIdentifier(api, $scope.input.secretPhrase, $scope.getIdentifier(), $scope.input.captcha).then(
-        function (data) {
-          $scope.$evalAsync(function () {
-            if (data.success) {
-              $scope.stage=2;
-              $scope.updateDescription();
-            }
-            else {
-              $scope.registerIdentifierErrorMessage = data.error || JSON.stringify(data);
-            }
-          });
-        }
-      );
+
+      if ($scope.input.standardEmail) {
+        /* Register the identifier */
+        $scope.registerIdentifierErrorMessage = null;
+        var api = nxt.fim();
+        registerIdentifier(api, $scope.input.secretPhrase, $scope.getIdentifier(), $scope.input.captcha).then(
+          function (data) {
+            $scope.$evalAsync(function () {
+              if (data.success) {
+                $scope.stage=2;
+                $scope.$nextButtonLabel = 'Sign in';
+                $scope.updateDescription();
+              }
+              else {
+                $scope.registerIdentifierErrorMessage = data.error || JSON.stringify(data);
+              }
+            });
+          }
+        );
+      }
+      else {
+        /* Request that a verification is being send to the custom email */
+        var api = nxt.fim();
+        registerCustomEmail(api, $scope.input.secretPhrase, $scope.getIdentifier(), $scope.input.captcha).then(
+          function (data) {
+            $scope.$evalAsync(function () {
+              if (data.success) {
+                $scope.stage=2;
+                $scope.$nextButtonLabel = 'Sign in';
+                $scope.updateDescription();
+              }
+              else {
+                $scope.registerIdentifierErrorMessage = data.error || JSON.stringify(data);
+              }
+            });
+          }
+        );
+      }
+    },
+    $backButtonDisabled: function () {
+      return $scope.stage==2 && !$scope.advanced;
     },
     nextButtonClickStandardStage2: function () {
-      /* Contact the faucet for free FIMK */
-      $scope.applyForFaucetErrorMessage = null;
-      var api = nxt.fim();
-      applyForFaucet(api, $scope.input.secretPhrase, $scope.input.verification_email).then(
-        function (data) {
-          console.log('faucet response', data);
-          $scope.$evalAsync(function () {
-            if (data.success) {
-              $scope.description = $translate.instant('translate.newAccount_checkemail');
-              $scope.$nextButtonLabel = $translate.instant('translate.close');
-              $scope.$nextButtonClick = $scope.$cancelButtonClick;
-              $scope.$backButtonDisabled = function () { return true }
-            }
-            else {
-              $scope.applyForFaucetErrorMessage = data.error || JSON.stringify(data);
-            }
-          });
-        }
-      );
+      UserService.setCurrentAccount({id_rs: $scope.input.id_rs, secretPhrase: $scope.input.secretPhrase});
+      close('/accounts/'+$scope.input.id_rs+'/activity/latest');
+      //close('/messenger/FIM-R4X4-KMHT-RCXD-CLGFZ');
+      // /* Contact the faucet for free FIMK */
+      // $scope.applyForFaucetErrorMessage = null;
+      // var api = nxt.fim();
+      // applyForFaucet(api, $scope.input.secretPhrase, $scope.input.verification_email).then(
+      //   function (data) {
+      //     console.log('faucet response', data);
+      //     $scope.$evalAsync(function () {
+      //       if (data.success) {
+      //         $scope.description = $translate.instant('translate.newAccount_checkemail');
+      //         $scope.$nextButtonLabel = $translate.instant('translate.close');
+      //         $scope.$nextButtonClick = $scope.$cancelButtonClick;
+      //         $scope.$backButtonDisabled = function () { return true }
+      //       }
+      //       else {
+      //         $scope.applyForFaucetErrorMessage = data.error || JSON.stringify(data);
+      //       }
+      //     });
+      //   }
+      // );
     },
     nextButtonClickAdvancedStage0: function () {
       $scope.stage=1;
@@ -543,6 +612,7 @@ addStep({
       }
       else {
         $scope.stage=1;
+        $scope.$nextButtonLabel = scopeDefaults.$nextButtonLabel;
         $scope.updateDescription();
       }
     },
@@ -555,8 +625,18 @@ addStep({
         $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage0 : $scope.descriptionStandardStage0;
       else if ($scope.stage==1)
         $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage1 : $scope.descriptionStandardStage1;
-      else
-        $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage2 : $scope.descriptionStandardStage2;
+      else {
+        if ($scope.input.standardEmail) {
+          $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage2 : $translate.instant('translate.newAccount_descriptionStandardStage2', {
+            accountRS: $scope.input.id_rs, accountEmail: $scope.getIdentifier()
+          });
+        }
+        else {
+          $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage2 : $translate.instant('translate.newCustomAccount_descriptionStandardStage2', {
+            accountRS: $scope.input.id_rs, accountEmail: $scope.getIdentifier()
+          });
+        }
+      }
     },
     nextSecretPhrase: function () {
       $scope.input.secret_clipped = false;
@@ -621,11 +701,12 @@ addStep({
             '<div class="form-group">',
               '<span class="pull-right">',
                 '<span class="text-danger" ng-bind="nameNotAvailableWarningLabel" ng-show="input.nameIsNotAvailable"></span>',
+                '<span class="text-danger" ng-bind="invalidEmailWarningLabel" ng-show="input.invalidEmail"></span>',
                 '<span class="text-success" ng-show="input.nameIsNotAvailable===false"><i class="fa fa-check"></i></span>',
                 '<span ng-show="input.nameLookupInProgress"><i class="fa fa-refresh fa-spin"></i></span>',
               '</span>',
               '<label>User name</label>',
-              '<div class="input-group">',
+              '<div class="input-group" ng-if="input.standardEmail">',
                 '<input type="text" class="form-control" ng-model="input.name" placeholder="{{nameFieldPlaceholder}}" ng-change="nameChanged()">',
                 '<span class="input-group-addon font-bold" style="width:40%;text-align:left">@<span ng-bind="input.host"></span></span>',
                 '<div class="input-group-btn">',
@@ -639,6 +720,13 @@ addStep({
                     '</ul>',
                   '</div>',
                 '</div>',
+              '</div>',
+              '<div ng-if="!input.standardEmail">',
+                '<input type="text" class="form-control" ng-model="input.customEmail" placeholder="{{customEmailFieldPlaceholder}}" ng-change="nameChanged()">',
+              '</div>',
+              '<div>',
+                '<a href ng-click="input.standardEmail=true" translate="translate.use_standard_email" ng-show="!input.standardEmail"></a>',
+                '<a href ng-click="input.standardEmail=false" translate="translate.use_custom_email" ng-show="input.standardEmail"></a>',
               '</div>',
             '</div>',
             '<div class="form-group">',
@@ -695,7 +783,7 @@ addStep({
           '<no-captcha expired-callback="captchaExpiredCallback" g-recaptcha-response="input.captcha" theme="light" style="margin-top: 8px"></no-captcha>',
         '</div>',
       '</div>',
-      // Stage 1
+      // Stage 2
       // enter email address get free FIMK
       '<div ng-show="stage==2">',
         '<div class="row">',
@@ -705,14 +793,14 @@ addStep({
             '</div>',
           '</div>',
         '</div>',
-        '<div class="row">',
-          '<div class="col-md-12">',
-            '<div class="form-group">',
-              '<label>Email address</label>',
-              '<input type="text" class="form-control" ng-model="input.verification_email" placeholder="{{verificationEmailFieldPlaceholder}}">',
-            '</div>',
-          '</div>',
-        '</div>',
+        // '<div class="row">',
+        //   '<div class="col-md-12">',
+        //     '<div class="form-group">',
+        //       '<label>Email address</label>',
+        //       '<input type="text" class="form-control" ng-model="input.verification_email" placeholder="{{verificationEmailFieldPlaceholder}}">',
+        //     '</div>',
+        //   '</div>',
+        // '</div>',
       '</div>',
     '</div>',
     // Advanced create account
