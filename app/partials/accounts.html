@@ -104,11 +104,6 @@
           <i class="fa fa-tachometer fa-fw"></i>&nbsp;&nbsp;<span translate="translate.dashboard"/>
         </a>
       </li>
-      <li role="presentation">
-        <a href ng-click="executeTransaction('sendMoney')" class="font-bold">
-          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.send_money" translate-values="{symbol:currentAccount.symbol}"></span>
-        </a>
-      </li>
       <li role="presentation" ng-if="!TRADE_UI_ONLY">
         <a href="#/accounts/{{id_rs}}/pulse/{{paramPeriod}}" class="font-bold">
           <i class="fa fa-heartbeat fa-fw"></i>&nbsp;&nbsp;<span translate="translate.pulse"/>
@@ -119,14 +114,19 @@
           <i class="fa fa-book fa-fw"></i>&nbsp;&nbsp;<span translate="translate.account"></span>&nbsp;<span class="caret"></span>
         </a>
         <ul class="nav navbar-stacked" collapse="!collapse['account']">
-          <!-- <li role="presentation">
-            <a href="#/accounts/{{id_rs}}/activity/{{paramPeriod}}">
-              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.activity"></span>
+          <li role="presentation">
+            <a href ng-click="executeTransaction('sendMoney')" class="font-bold">
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.send_money" translate-values="{symbol:currentAccount.symbol}"></span>
             </a>
-          </li> -->
+          </li>
+          <li role="presentation">
+            <a href="#/accounts/{{id_rs}}/activity/{{paramPeriod}}">
+              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.history"/>
+            </a>
+          </li>
           <li role="presentation" ng-hide="TRADE_UI_ONLY">
             <a href="#/accounts/{{id_rs}}/payments/{{paramPeriod}}">
-              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.payments"></span>
+              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.mass_pay"></span>
             </a>
           </li>
           <li role="presentation">
@@ -153,12 +153,12 @@
       </li>
       <li ng-if="!TRADE_UI_ONLY">
         <a href ng-click="toggleMenuCollapse('messages')" class="font-bold">
-          <i class="fa fa-comments-o fa-fw"></i>&nbsp;&nbsp;<span translate="translate.messages"></span>&nbsp;<span class="caret"></span>
+          <i class="fa fa-comments-o fa-fw"></i>&nbsp;&nbsp;<span translate="translate.messenger"></span>&nbsp;<span class="caret"></span>
         </a>
         <ul class="nav navbar-stacked" collapse="!collapse['messages']">
           <li role="presentation">
             <a href="#/accounts/{{id_rs}}/messages/{{paramPeriod}}">
-              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.messages"/>
+              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.message_log"/>
             </a>
           </li>
           <li role="presentation">
@@ -180,11 +180,16 @@
       </li>
       <li>
         <a href ng-click="toggleMenuCollapse('ae')" class="font-bold">
-          <i class="fa fa-line-chart fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assets"></span>&nbsp;<span class="caret"></span>
+          <i class="fa fa-line-chart fa-fw"></i>&nbsp;&nbsp;<span translate="translate.asset_exchange"></span>&nbsp;<span class="caret"></span>
         </a>
         <ul class="nav navbar-stacked" collapse="!collapse['ae']">
           <li role="presentation">
             <a href="#/accounts/{{id_rs}}/assets/{{paramPeriod}}">
+              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.my_assets"/>
+            </a>
+          </li>
+          <li role="presentation">
+            <a href="#/activity/{{symbol_lower}}/assets/latest">
               <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assets"/>
             </a>
           </li>
@@ -226,8 +231,13 @@
         </a>
         <ul class="nav navbar-stacked" collapse="!collapse['goods']">
           <li role="presentation">
+            <a href="#/goods/{{symbol_lower}}/listing">
+              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.view_all_items"/>
+            </a>
+          </li>
+          <li role="presentation">
             <a href="#/accounts/{{id_rs}}/listing/{{paramPeriod}}">
-              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.view_listing"/>
+              <i class="fa fa-angle-double-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.view_own_listing"/>
             </a>
           </li>
           <li role="presentation">
@@ -732,27 +742,35 @@
         <div>
           <table class="table table-condensed">
             <tr>
-              <td>Bookmark&nbsp;<i class="fa fa-bookmark-o"></i></td>
+              <td translate="translate.account"></td>
               <td>
                 <a ng-href="#/accounts/{{id_rs}}/activity/latest">{{id_rs}}</a>
-                <!-- &nbsp;
-                <button class="btn btn-default btn-xs"><i class="fa fa-clipboard"></i></button> -->
               </td>
               <td>Forged</td>
               <td>{{account.forgedBalanceNXT}}</td>
             </tr>
             <tr>
-              <td>Balance (unconfirmed)</td>
-              <td><b>{{account.unconfirmedBalanceNXT}}</b></td>
+              <td>Email</td>
+              <td>
+                <b>{{account.email}}</b>
+              </td>
               <td>Effective</td>
               <td>{{account.effectiveBalanceNXT}}</td>
             </tr>
             <tr>
-              <td>Balance (confirmed)</td>
-              <td>{{account.balanceNXT}}</td>
+              <td>Name</td>
+              <td><b>{{account.name}}</b></td>
               <td>Guaranteed</td>
               <td>{{account.guaranteedBalanceNXT}}</td>
             </tr>
+            <tr>
+              <td>Balance (unconfirmed)</td>
+              <td><b>{{account.unconfirmedBalanceNXT}}</b></td>
+              <td>Balance (confirmed)</td>
+              <td>{{account.balanceNXT}}</td>
+            </tr>
+
+
             <tr ng-if="account.lesseeIdRS">
               <td>Lease</td>
               <td>{{account.leaseRemaining}} remain</td>
@@ -765,13 +783,6 @@
               <td>Forging</td>
               <td><i class="fa fa-circle-o-notch fa-spin text-success"></i></td>
               <td colspan="2">Expected to forge block in {{forger.remaining}}&nbsp;|&nbsp;<a ng-href="#/accounts/{{id_rs}}/blocks/latest">history</a></td>
-            </tr>
-            <tr ng-show="account.publicKey">
-              <td>Public Key</td>
-              <td colspan="3">
-                {{account.publicKey}}<!-- &nbsp;
-                <button class="btn btn-default btn-xs"><i class="fa fa-clipboard"></i></button> -->
-              </td>
             </tr>
           </table>
         </div>
