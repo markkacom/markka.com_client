@@ -195,7 +195,7 @@
 
               <div ng-show="ui.isTyping">
                 <div class="fromThem" style="margin-bottom: 10px;">
-                  <span style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                  <span class="speech-balloon-span">
                     ... is typing ...
                   </span>
                 </div>
@@ -205,7 +205,7 @@
               <div ng-show="message.text">
                 <div class="fromMe" style="margin-bottom: 10px;">
                   <span><i class="fa fa-pencil-square-o"></i>&nbsp;</span>
-                  <span ng-bind-html="message.html" style="word-wrap: break-word; word-break: break-all; white-space: normal;"></span>
+                  <span ng-bind-html="message.html" class="speech-balloon-span"></span>
                 </div>
                 <div class="clear"></div>
               </div>
@@ -229,7 +229,7 @@
                   </span>
                   <span><i class="fa" ng-class="{'fa-key':e.encrypted}"></i>&nbsp;</span>
                   <span ng-bind-html="e.text || '[encrypted]'"
-                        style="word-wrap: break-word; word-break: break-all; white-space: normal;"></span><br>
+                        class="speech-balloon-span"></span><br>
                   <small class="{{e.pull_clazz}}">{{e.date}}</small>
                 </div>
                 <div class="clear"></div>
