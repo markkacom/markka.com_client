@@ -40,15 +40,15 @@ module.factory('AccountAutocompleteProvider', function (nxt, $q, $rootScope) {
         function (data) {
           var accounts = data.accounts||[];
           if (accounts.length == 1 &&
-              accounts[0].identifier == accounts[0].accountRS &&
-              accounts[0].identifier == query) {
+              accounts[0].accountEmail == accounts[0].accountRS &&
+              accounts[0].accountEmail == query) {
             deferred.resolve([]);
           }
           else {
             deferred.resolve(accounts.map(
               function (obj) {
                 var v = {
-                  label: obj.identifier,
+                  label: obj.accountEmail,
                   id_rs: obj.accountRS
                 };
                 if ("FIM-"+v.label==v.id_rs) {
