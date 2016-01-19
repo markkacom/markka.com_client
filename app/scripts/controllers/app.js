@@ -57,6 +57,9 @@ module.run(function ($rootScope, $location) {
   else if ("fimkrypto.github.io" == window.location.host) {
     window.location = "https://www.mofowallet.com/launch.html" + window.location.hash;
   }
+  else if ("lompsa.com" == window.location.host && window.location.protocol != "https:") {
+    window.location = "https://lompsa.com/" + window.location.hash;
+  }
 
   // if ($rootScope.isTestnet) {
   //   if ($location.path().indexOf('/start') != 0) {
@@ -99,6 +102,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   $rootScope.logout = function () {
     $rootScope.$evalAsync(function () {
       UserService.logout();
+      $location.path('start');
     });
   }
 
