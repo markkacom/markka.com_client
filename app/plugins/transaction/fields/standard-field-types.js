@@ -451,15 +451,15 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
             function (data) {
               var accounts = data.accounts||[];
               if (accounts.length == 1 &&
-                  accounts[0].identifier == accounts[0].accountRS &&
-                  accounts[0].identifier == query) {
+                  accounts[0].accountEmail == accounts[0].accountRS &&
+                  accounts[0].accountEmail == query) {
                 deferred.resolve([]);
               }
               else {
                 deferred.resolve(accounts.map(
                   function (obj) {
                     var v = {
-                      label: obj.identifier,
+                      label: obj.accountEmail,
                       value: obj.accountRS
                     };
                     if ("FIM-"+v.label==v.value || "NXT-"+v.label==v.value) {
