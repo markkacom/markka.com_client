@@ -1,6 +1,8 @@
 {
   "force_translate": [
-    "translate.must.exist"
+    "translate.must.exist",
+    "translate.newAccount_descriptionStandardStage2",
+    "translate.newCustomAccount_descriptionStandardStage2"
   ],
   "translate": {
     "about":                "About",
@@ -75,7 +77,9 @@
     "send_message":         "Send message",
     "peers":                "Peers",
     "payments":             "Payments",
+    "mass_pay":             "Mass pay",
     "asset":                "Asset",
+    "released":             "Released / Updated",
     "lessor":               "Lessor",
     "server":               "Server",
     "run_local_server":     "Run local server",
@@ -98,6 +102,7 @@
     "passphrase_not_needed": "passphrase <u>not</u> required",
     "let_me_browse":        "No thanks, just let me browse around",
     "dashboard":            "Dashboard",
+    "history":              "History",
     "explorer":             "Explorer",
     "activity":             "Activity",
     "balance":              "Balance",
@@ -124,7 +129,10 @@
     "block_count_month":    "Total blocks this month",
     "messages":             "Messages",
     "messenger":            "Messenger",
+    "message_log":          "Message Log",
     "assets":               "Assets",
+    "my_assets":            "My Assets",
+    "asset_exchange":       "Asset Exchange",
     "currencies":           "Currencies",
     "blocks_forged":        "Blocks forged",
     "aliases":              "Aliases",
@@ -264,6 +272,7 @@
     "price_per_share":      "Price per share?",
     "enter_price":          "Enter price",
     "view_own_listing":     "View own listing",
+    "view_all_items":       "View All Items",
     "past_orders":          "Past Orders",
     "sold_items":           "Sold Items",
     "cart":                 "Cart",
@@ -351,7 +360,8 @@
     "newAccount_nameNotAvailableWarning": "Not available",
     "newAccount_descriptionStandardStage0": "Select a user name and wallet password in the fields below. In case you already have a wallet enter its password to continue.",
     "newAccount_descriptionStandardStage1": "This is your secret phrase. The FIMK network is decentralized, only you have this key to access your account. <b>Please write down and store these words!</b>",
-    "newAccount_descriptionStandardStage2": "Congratulations your account was successfully created.<br>Please enter your emaill address below to receive some free FIMK.",
+    "newAccount_descriptionStandardStage2": "<b>Success!</b><br>Your new FIMK account number is <b>{{accountRS}}</b><br>Your new account identifier is <b>{{accountEmail}}</b><br><br>To receive 1 FIMK starter please click on the link sent to your new account as a private message. Sign in to Lompsa and find your way!",
+    "newCustomAccount_descriptionStandardStage2": "<b>Success!</b><br>Your new FIMK account number is <b>{{accountRS}}</b><br>Your new account identifier will be <b>{{accountEmail}}</b> (but not before you confirm the email we send you)<br><br>To register your account and receive 1 FIMK starter please click on the link sent to {{accountEmail}}.",
     "newAccount_descriptionAdvancedStage0": "<b>Extremely important!</b><br>This is your secret phrase.<br>The FIMK network is decentralized, only you have this key to access your account.<br><b>Please write down and store these words!</b>",
     "newAccount_createWalletDescription": "Please choose a password with which we will create your wallet<br>Your wallet holds your account keys and is stored on this device<br>We advise to <b>make a backup</b> of your wallet each time you add an account to it",
     "newAccount_unlockWalletDescription": "Enter wallet password and click <b>Save</b> to save your account secret phrase to your local wallet file.<br>We advise to <b>make a backup</b> of your wallet each time you add an account to it",
@@ -404,7 +414,11 @@
     "openWallet_unlock": "Save",
     "openWallet_create": "Create wallet",
     "openWallet_backup": "Backup wallet",
-    "openWallet_savedSuccessAlert": "Secret phrase successfully saved to your local wallet file"
+    "openWallet_savedSuccessAlert": "Secret phrase successfully saved to your local wallet file",
+    "custom_email_address": "Custom email address",
+    "use_standard_email": "I want to use a FIMK email address",
+    "use_custom_email": "I want to use my own email address",
+    "invalid_email": "Inavlid email address"
   },
 
   "time": {
