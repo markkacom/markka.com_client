@@ -186,17 +186,16 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
     /* Obtain server version for local FIMK connection only */
     _maybeGetServerVersion: function () {
       if (this.engine.type == 'TYPE_FIM') {
-        if (this.force_local || $rootScope.forceLocalHost) {
-          if (!$rootScope.FIM_SERVER_VERSION) {
-            this.callAPIFunction({requestType:'getState'}).then(
-              function (data) {
-                $rootScope.$evalAsync(function () {
-                  $rootScope.FIM_SERVER_VERSION = ' (FIMK '+data.version+')';
-                  $rootScope.TITLE += $rootScope.FIM_SERVER_VERSION;
-                });
-              }
-            );
-          }
+        if (!this.server_version) {
+          var _this = this;
+          this.callAPIFunction({requestType:'getState'}).then(
+            function (data) {
+              $rootScope.$evalAsync(function () {
+                _this.server_version = 'FIMK '+data.version;
+                $rootScope.FIM_SERVER_VERSION = _this.server_version;
+              });
+            }
+          );
         }
       }
     },
