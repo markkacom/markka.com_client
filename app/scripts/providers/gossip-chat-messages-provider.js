@@ -436,7 +436,6 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
               function (merged_entities) {
                 self.$scope.$evalAsync(
                   function () {
-                    //console.log('merged result');
                     merged_entities.forEach(function (entity) {
                       self.push(entity);
                       // if (entity.attachment) {
@@ -446,6 +445,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
                       //   console.log('gossip '+entity.timestamp);
                       // }
                     });
+                    deferred.resolve();
                   }
                 );
               }
@@ -476,6 +476,9 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
 
     advance: function (output_array, iterator) {
       var deferred = $q.defer();
+      if (output_array.length >= (this.pageSize-1)) {
+        deferred.reject();
+      }
       var self = this;
       this.provider.peek().then(function (transaction) {
         var gossip = iterator.peek();
@@ -598,6 +601,10 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
                 continue;
               }
               self.provider.translate(transaction);
+              if (transaction.recipientRS == $rootScope.currentAccount.id_rs) {
+                new Audio('images/beep.wav').play();
+                $rootScope.unread = true;
+              }
               self.unshift(transaction);
             }
           }
