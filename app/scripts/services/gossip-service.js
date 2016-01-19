@@ -50,7 +50,7 @@ module.run(function (Gossip, $rootScope, db) {
     function onMessageStored() {
       new Audio('images/beep.wav').play();
       this.sendGossip(gossip.senderRS, gossip.id, this.MESSAGE_RECEIVED_TOPIC);
-      $rootScope.unread = true;
+      $rootScope.$evalAsync(function () { $rootScope.unread = true });
     }
 
     this.getSenderIsWhitelisted(gossip.senderRS).then(
@@ -378,7 +378,7 @@ module.factory('Gossip', function ($q, nxt, $rootScope, $timeout, db, publicKeyS
     setEnabled: function () {
       if (this.ui.isDisabled && $rootScope.currentAccount) {
         this.ui.isDisabled = false;
-        delete this.allowed.allowed[$rootScope.currentAccount.id_rs];
+        this.allowed.allowed[$rootScope.currentAccount.id_rs] = true;
         this.onOpenCurrentAccount(null, $rootScope.currentAccount);
       }
     },
