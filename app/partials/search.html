@@ -107,14 +107,15 @@
 
         <!-- search accounts -->
         <div ng-if="paramCategory == 'accounts'">
-          <div ng-if="provider.entities == 0 && paramQuery">
+          <div ng-if="provider.entities.length == 0 && paramQuery">
             <div translate="translate.no_search_results"></div>
           </div>
           <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
             <div ng-repeat="o in provider.entities" class="well well-sm">
               <div>
-                <big><span ng-if="o.name">{{o.name}}&nbsp;&nbsp;</span></big>
-                <a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.identifier || o.accountRS}}</a>
+                <span ng-if="o.accountName"><big>{{o.accountName}}</big><br></span>
+                <a href="#/accounts/{{o.accountRS}}/activity/latest">{{o.accountRS}}</a>
+                <span ng-if="o.accountEmail!=o.accountRS"><br>{{o.accountEmail}}</span>
               </div>
               <div>{{o.description}}</div>
             </div>
@@ -129,7 +130,7 @@
 
         <!-- search assets -->
         <div ng-if="paramCategory == 'assets'">
-          <div ng-if="provider.entities == 0 && paramQuery">
+          <div ng-if="provider.entities.length == 0 && paramQuery">
             <div translate="translate.no_search_results"></div>
           </div>
           <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
@@ -151,7 +152,7 @@
 
         <!-- search aliases -->
         <div ng-if="paramCategory == 'aliases'">
-          <div ng-if="provider.entities == 0 && paramQuery">
+          <div ng-if="provider.entities.length == 0 && paramQuery">
             <div translate="translate.no_search_results"></div>
           </div>
           <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
@@ -173,7 +174,7 @@
 
         <!-- search goods -->
         <div ng-if="paramCategory == 'market'">
-          <div ng-if="provider.entities == 0 && paramQuery">
+          <div ng-if="provider.entities.length == 0 && paramQuery">
             <div translate="translate.no_search_results"></div>
           </div>
           <div ng-if="provider.entities.length > 0" infinite-scroll="provider.loadMore()" infinite-scroll-distance="0">
