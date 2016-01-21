@@ -440,10 +440,10 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   $rootScope.executeTransaction = function (id, arg) {
     arg = arg||{};
     if (plugins.get('transaction').get(id).execute.length == 1) {
-      plugins.get('transaction').get(id).execute(arg);
+      return plugins.get('transaction').get(id).execute(arg);
     }
     else {
-      plugins.get('transaction').get(id).execute($scope.id_rs, arg);
+      return plugins.get('transaction').get(id).execute($scope.id_rs, arg);
     }
   }
 });
