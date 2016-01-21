@@ -41,6 +41,7 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
 
   $scope.amountNXT          = nxt.util.convertToNXT($scope.paramAmountNQT);
   $scope.recipientName      = '';
+  $scope.success            = false;
 
   var api                   = nxt.get($scope.paramRecipient);
   $scope.symbol             = api.engine.symbol;
@@ -48,7 +49,10 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
   api.engine.socket().getAccount({account: $scope.paramRecipient}).then(
     function (data) {
       $scope.$evalAsync(function () {
-        $scope.recipientName = data.accountName;
+        $scope.recipientName = data.accountName||data.accountEmail;
+        if ($scope.recipientName == $scope.paramRecipient) {
+          $scope.recipientName = '';
+        }
       });
     }
   );
@@ -63,10 +67,12 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
       args.txnMessage = $scope.paramMessage;
       args.txnMessageType = 'to_recipient';
     }
-    plugins.get('transaction').get('tipUser').execute(args).then(
+    $rootScope.executeTransaction('sendMoney', args).then(
       function (items) {
         if (items) {
-
+          $scope.$evalAsync(function () {
+            $scope.success = true;
+          });
         }
       }
     );
@@ -74,7 +80,6 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
 
   $scope.signin = function () {
     $rootScope.loginWizard('signin', {}, $location.url());
-    $location.path('/start');
   }
 
 });
