@@ -60,7 +60,9 @@
         var args = {
           firstIndex: firstIndex,
           lastIndex: firstIndex + this.pageSize,
-          includeCounts: true,
+          includeCounts: 'true',
+          inStockOnly: 'true',
+          hideDelisted: 'true',
           requestType: 'getDGSGoods'
         }
         if (this.account) {
