@@ -1177,9 +1177,35 @@
               <table class="table table-striped" style="width: 100%">
                 <thead>
                   <tr translate-cloak>
-                    <th style="padding-left: 0px" translate="translate.last_update"></th>
-                    <th translate="translate.name"></th>
-                    <th colspan="2" translate="translate.uri"></th>
+                    <th style="padding-left: 0px">
+                      <a href ng-click="provider.sortBy = 'height'; provider.sortAsc = !provider.sortAsc; provider.reload()">
+                        <span translate="translate.last_update"></span>
+                        <span ng-show="provider.sortBy == 'height'">
+                          <span ng-show="provider.sortAsc">
+                            <i class="fa fa-caret-up"></i>
+                          </span>
+                          <span ng-show="!provider.sortAsc">
+                            <i class="fa fa-caret-down"></i>
+                          </span>
+                        </span>
+                      </a>
+                    </th>
+                    <th>
+                      <a href ng-click="provider.sortBy = 'name'; provider.sortAsc = !provider.sortAsc; provider.reload()">
+                        <span translate="translate.name"></span>
+                        <span ng-show="provider.sortBy == 'name'">
+                          <span ng-show="provider.sortAsc">
+                            <i class="fa fa-caret-up"></i>
+                          </span>
+                          <span ng-show="!provider.sortAsc">
+                            <i class="fa fa-caret-down"></i>
+                          </span>
+                        </span>
+                      </a>
+                    </th>
+                    <th colspan="2">
+                      <span translate="translate.uri"></span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
