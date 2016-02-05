@@ -65,7 +65,9 @@ function ready() {
  * argument provided by caller.
  */
 function close(path) {
-  $location.path($scope.items.path || path);
+  if ($scope.items.path !== false) {
+    $location.path($scope.items.path || path);
+  }
   $modalInstance.close();
 }
 
@@ -334,7 +336,7 @@ addStep({
     $scope.walletExists = KeyService.walletExists();
     $scope.walletUnlocked = KeyService.wallet && !KeyService.wallet.fileName;
     $scope.stage = 0;
-    $scope.advanced = false; // Set 'advanced' to true to enable 'normal' account creation
+    $scope.advanced = true; // Set 'advanced' to true to enable 'normal' account creation
     $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage0 : $scope.descriptionStandardStage0;
     if (KeyService.wallet && !KeyService.wallet.fileName) {
       $scope.input.password = KeyService.wallet.password;
@@ -848,13 +850,13 @@ addStep({
             '</div>',
           '</div>',
         '</div>',
-        '<div class="row">',
-          '<div class="col-md-12">',
-            '<div class="form-group">',
-              '<a href class="pull-right" ng-click="toggleAdvanced()" ng-bind="normalLabel"></a>',
-            '</div>',
-          '</div>',
-        '</div>',
+        // '<div class="row">',
+        //   '<div class="col-md-12">',
+        //     '<div class="form-group">',
+        //       '<a href class="pull-right" ng-click="toggleAdvanced()" ng-bind="normalLabel"></a>',
+        //     '</div>',
+        //   '</div>',
+        // '</div>',
       '</div>',
       // Stage 1
       // Save secret to wallet
