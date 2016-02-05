@@ -1,0 +1,4 @@
+Embeds FIMK 0.6.2 (based on NXT 1.5.10).
+
+Please look here for details on  FIMK 0.6.2
+https://github.com/fimkrypto/fimk/releases/tag/v0.6.2
