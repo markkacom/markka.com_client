@@ -28,6 +28,8 @@ module.factory('NamespacedAliasProvider', function (nxt, $q, IndexedEntityProvid
   function NamespacedAliasProvider(api, $scope, pageSize, account, filter) {
     this.init(api, $scope, pageSize, account);
     this.filter = filter || null;
+    this.sortBy = "height";
+    this.sortAsc = false;
   }
   angular.extend(NamespacedAliasProvider.prototype, IndexedEntityProvider.prototype, {
 
@@ -40,6 +42,8 @@ module.factory('NamespacedAliasProvider', function (nxt, $q, IndexedEntityProvid
         account:     this.account,
         firstIndex:  firstIndex,
         lastIndex:   firstIndex + this.pageSize,
+        sortBy:      this.sortBy,
+        sortAsc:     this.sortAsc ? 'true' : 'false',
         requestType: 'getNamespacedAliases'
       }
       if (angular.isString(this.filter)) {
