@@ -79,7 +79,7 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
   }
 
   $scope.signin = function () {
-    $rootScope.loginWizard('signin', {}, $location.url());
+    $rootScope.loginWizard('signin', {}, false /* stay on same url */);
   }
 
 });
