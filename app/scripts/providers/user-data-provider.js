@@ -56,17 +56,20 @@ module.factory('UserDataProvider', function (nxt, $q, $rootScope, UserService) {
       this.api        = nxt.get(this.account);
 
       var account_id  = nxt.util.convertRSAddress(this.account);
-      this.topic      = 'addedUnConfirmedTransactions-'+account_id;
+      this.topic1     = 'addedUnConfirmedTransactions-'+account_id;
+      this.topic2     = 'addedConfirmedTransactions-'+account_id;
       this.handler    = angular.bind(this, this.addedUnConfirmedTransactions);
       var socket      = this.api.engine.socket();
-      socket.subscribe(this.topic, this.handler, this.$scope);
+      socket.subscribe(this.topic1, this.handler, this.$scope);
+      socket.subscribe(this.topic2, this.handler, this.$scope);
 
       this.reload();
     },
 
     onCloseCurrentAccount: function (e, currentAccount) {
       var socket      = this.api.engine.socket();
-      socket.unsubscribe(this.topic, this.handler);
+      socket.unsubscribe(this.topic1, this.handler);
+      socket.unsubscribe(this.topic2, this.handler);
 
       this.account = null;
       this.api     = null;
