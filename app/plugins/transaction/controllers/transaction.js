@@ -25,7 +25,6 @@
 var module = angular.module('fim.base');
 module.controller('TransactionCreateModalController', function(items, $modalInstance, $scope, nxt,
   modals, $sce, $q, plugins, i18n, $timeout, accountsService, $rootScope, Emoji, AccountAutocompleteProvider, AssetAutocompleteProvider) {
-
   $scope.sendSuccess          = false;
   $scope.show                 = {};
   $scope.show.advanced        = false;
