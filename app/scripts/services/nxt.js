@@ -86,7 +86,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     }
     else if (this.type == TYPE_FIM) {
       if (this.test) {
-        this.urlPool = new URLPool(this, ['nxtplus1.mofowallet.org' /*'188.166.0.145'*/], true);
+        this.urlPool = new URLPool(this, ['cloud.mofowallet.org' /*'188.166.0.145'*/], true);
       }
       else {
         this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
