@@ -38,7 +38,7 @@ module.config(function($routeProvider) {
  * address bar. Enter javascript:encodeURIComponent("http://google.com/search?q=redirect")
  * in the address bar and hit enter.
  *
- * Optionally you can include these two variables in the status message, each variable will
+ * Optionally you can include these two variables in the status URL, each variable will
  * be replaced with the correct details.
  *
  * ${SENDER}   - will be replaced with the sender address in RS format

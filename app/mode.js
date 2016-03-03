@@ -5,5 +5,5 @@ var IS_TEST_NET=false;
 var FORCE_LOCAL_HOST=false;
 var TRADE_UI_ONLY=false;
 var DEBUG=false;
-var BUILD_TIMESTAMP=1457002269;
+var BUILD_TIMESTAMP=1457003792;
 var WALLET_NAME='Lompsa.com';
