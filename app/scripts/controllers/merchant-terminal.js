@@ -25,19 +25,21 @@
 var module = angular.module('fim.base');
 
 module.config(function($routeProvider) {
-  $routeProvider.when('/merchant/:recipient?/:amountNQT?/:deadline?/:description?/:message?', {
+  $routeProvider.when('/merchant/:recipient?/:amountNQT?/:deadline?/:description?/:message?/:assetId?/', {
     templateUrl: 'partials/merchant-terminal.html',
     controller: 'MerchantTerminalController'
   });
 });
 
-module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins, $location) {
+module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins) {
 
   $scope.paramRecipient     = $routeParams.recipient;
   $scope.paramAmountNQT     = $routeParams.amountNQT;
   $scope.paramDeadline      = $routeParams.deadline;
   $scope.paramDescription   = $routeParams.description;
   $scope.paramMessage       = $routeParams.message;
+  $scope.assetId            = $routeParams.assetId;
+
 
   $scope.amountNXT          = nxt.util.convertToNXT($scope.paramAmountNQT);
   $scope.recipientName      = '';
@@ -46,36 +48,79 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
   var api                   = nxt.get($scope.paramRecipient);
   $scope.symbol             = api.engine.symbol;
 
-  api.engine.socket().getAccount({account: $scope.paramRecipient}).then(
-    function (data) {
-      $scope.$evalAsync(function () {
-        $scope.recipientName = data.accountName||data.accountEmail;
-        if ($scope.recipientName == $scope.paramRecipient) {
-          $scope.recipientName = '';
-        }
-      });
-    }
-  );
 
-  $scope.payNow = function () {
-    var args = {
-      recipient: $scope.paramRecipient,
-      amountNXT: nxt.util.convertNQT($scope.paramAmountNQT, 8),
-      deadline: $scope.paramDeadline
-    };
-    if ($scope.paramMessage) {
-      args.txnMessage = $scope.paramMessage;
-      args.txnMessageType = 'to_recipient';
-    }
-    $rootScope.executeTransaction('sendMoney', args).then(
-      function (items) {
-        if (items) {
+  $scope.loading = true;
+  async.parallel([
+    function(cb){
+      if (!$scope.assetId) return cb()
+      api.engine.socket().callAPIFunction({requestType:'getAsset', asset: $scope.assetId}).then(function (data) {
+        $scope.asset = data;
+        console.log(data)
+        cb()
+      });
+    },
+    function(cb){
+      api.engine.socket().getAccount({account: $scope.paramRecipient}).then(
+        function (data) {
           $scope.$evalAsync(function () {
-            $scope.success = true;
+            $scope.recipientName = data.accountName||data.accountEmail;
+            if ($scope.recipientName == $scope.paramRecipient) {
+              $scope.recipientName = '';
+            }
+            cb()
           });
         }
+      );
+    }
+  ],function(){
+    $scope.loading = false;
+  });
+
+
+  $scope.payNow = function () {
+    var args = {};
+    if ($scope.asset){
+      args = {
+        asset: $scope.asset.asset,
+        recipient: $scope.paramRecipient,
+        quantity:nxt.util.convertNQT($scope.paramAmountNQT, 8)
+      };
+      if ($scope.paramMessage) {
+        args.txnMessage = $scope.paramMessage;
+        args.txnMessageType = 'to_recipient';
       }
-    );
+
+      $rootScope.executeTransaction('transferAsset', args).then(
+        function (items) {
+          console.log(items)
+          if (items) {
+            $scope.$evalAsync(function () {
+              $scope.success = true;
+            });
+          }
+        }
+      );
+    }else{
+      args = {
+        recipient: $scope.paramRecipient,
+        amountNXT: nxt.util.convertNQT($scope.paramAmountNQT, 8),
+        deadline: $scope.paramDeadline
+      };
+      if ($scope.paramMessage) {
+        args.txnMessage = $scope.paramMessage;
+        args.txnMessageType = 'to_recipient';
+      }
+
+      $rootScope.executeTransaction('sendMoney', args).then(
+        function (items) {
+          if (items) {
+            $scope.$evalAsync(function () {
+              $scope.success = true;
+            });
+          }
+        }
+      );
+    }
   }
 
   $scope.signin = function () {

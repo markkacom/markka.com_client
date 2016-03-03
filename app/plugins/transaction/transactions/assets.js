@@ -255,7 +255,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
       }
       return plugin.create(angular.extend(args, {
         title: 'Buy Asset',
-        message: 'Place buy order for asset',
+        message: args.description || 'Place buy order for asset',
         requestType: 'placeBidOrder',
         createArguments: function (items, fields) {
           var decimals    = fields.asset.asset ? fields.asset.asset.decimals : fields.decimals.value;

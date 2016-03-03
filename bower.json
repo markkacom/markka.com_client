@@ -26,7 +26,8 @@
     "angular-nvd3": "1.0.0-beta",
     "zeroclipboard": "2.2.0",
     "ng-clip": "0.2.6",
-    "dexie": "1.1.0"
+    "dexie": "1.1.0",
+    "async": "latest"
   },
   "devDependencies": {
     "angular-scenario": "1.4.3"

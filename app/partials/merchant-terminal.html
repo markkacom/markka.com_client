@@ -27,44 +27,38 @@
         <h3 class="panel-title">Merchant terminal</h3>
       </div>
       <div class="panel-body">
-        <h2>Amount <b>{{amountNXT}}</b> {{symbol}}</h2>
-        <p></p>
-        <p>
+        <section ng-if="loading" style="text-align: center">
+          <img src="/images/loading.gif" />
+        </section>
+        <section ng-if="!loading">
+          <h2>Amount <b>{{amountNXT}}</b> {{asset.name || symbol}}</h2>
           <div class="form-group">
-            <span class="form-control-static">
+            <div class="form-control-static">
               <!-- <label class="control-label">Recipient</label> -->
-              <div>
                 <span ng-if="recipientName">{{recipientName}}<br><span class="text-muted">{{paramRecipient}}</span></span>
                 <span ng-if="!recipientName">{{paramRecipient}}</span>
-              </div>
-            </span>
+            </div>
           </div>
-        </p>
-        <p>
           <div class="form-group">
             <span class="form-control-static">
-              <!-- <label class="control-label">Message</label> -->
-              <div>{{paramDescription}}</div>
+              {{paramDescription}}
             </span>
           </div>
-        </p>
-        <p>
           <div class="form-group">
             <span class="form-control-static">
-              <!-- <label class="control-label">Message</label> -->
-              <div>{{paramMessage}}</div>
+              {{paramMessage}}
             </span>
           </div>
-        </p>
-        <p>
-          <a class="btn btn-lg pull-right" ng-class="{'btn-success':!success,'btn-default':success}" href
-            ng-click="payNow()" ng-show="currentAccount" ng-disabled="success">
-            <span ng-show="!success"><i class="fa fa-1x fa-paper-plane-o fa-fw"></i>&nbsp;&nbsp;<span>Pay</span></span>
-            <span ng-show="success"><i class="fa fa-1x fa-check fa-fw"></i></span>
-          </a>
-          <a class="btn btn-lg btn-success pull-right" href ng-click="signin()" ng-show="!currentAccount">
-            <i class="fa fa-1x fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span></a>
-        </p>
+          <p>
+            <a class="btn btn-lg pull-right" ng-class="{'btn-success':!success,'btn-default':success}" href
+               ng-click="payNow()" ng-show="currentAccount" ng-disabled="success">
+              <span ng-show="!success"><i class="fa fa-1x fa-paper-plane-o fa-fw"></i>&nbsp;&nbsp;<span>Pay</span></span>
+              <span ng-show="success"><i class="fa fa-1x fa-check fa-fw"></i></span>
+            </a>
+            <a class="btn btn-lg btn-success pull-right" href ng-click="signin()" ng-show="!currentAccount">
+              <i class="fa fa-1x fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span></a>
+          </p>
+        </section>
       </div>
     </div>
   </div>
