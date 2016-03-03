@@ -38,19 +38,25 @@ module.config(function($routeProvider) {
  * address bar. Enter javascript:encodeURIComponent("http://google.com/search?q=redirect")
  * in the address bar and hit enter.
  *
+ * Optionally you can include these two variables in the status message, each variable will
+ * be replaced with the correct details.
+ *
+ * ${SENDER}   - will be replaced with the sender address in RS format
+ * ${AMOUNT}   - will be replaced with the amount of FIM or the asset quantity
+ *
  * Example: urls with redirect and status.
  *
- * http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
+ * http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}-${AMOUNT}
  *
  * Example: urls with only a status
  *
  * |http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
  *
  * Example: redirect and status
- * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
+ * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}-${AMOUNT}
  *
  * Example: status only
- * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
+ * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}-${AMOUNT}
  **/
 
 module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins, $q, $http) {
@@ -114,7 +120,10 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
           if (items) {
             $scope.$evalAsync(function () {
               $scope.success = true;
-              sendTransactionStatus();
+              sendTransactionStatus({
+                sender:items.senderRS,
+                amount:items.quantity
+              });
             });
           }
         }
@@ -135,7 +144,10 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
           if (items) {
             $scope.$evalAsync(function () {
               $scope.success = true;
-              sendTransactionStatus();
+              sendTransactionStatus({
+                sender:items.senderRS,
+                amount:items.quantity
+              });
             });
           }
         }
@@ -147,9 +159,11 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
     $rootScope.loginWizard('signin', {}, false /* stay on same url */);
   }
 
-  function sendTransactionStatus() {
+  function sendTransactionStatus(data) {
     var url = ($routeParams.urls||"").split('|')[1];
     if (url) {
+      url = url.replace("${SENDER}",data.sender);
+      url = url.replace("${AMOUNT}",data.amount);
       $http({method:'GET',url:url}).finally(function () {
         maybeRedirect();
       })
