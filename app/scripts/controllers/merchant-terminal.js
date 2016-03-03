@@ -31,7 +31,7 @@ module.config(function($routeProvider) {
   });
 });
 
-module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins) {
+module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins,$q) {
 
   $scope.paramRecipient     = $routeParams.recipient;
   $scope.paramAmountNQT     = $routeParams.amountNQT;
@@ -50,32 +50,32 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
 
 
   $scope.loading = true;
-  async.parallel([
-    function(cb){
-      if (!$scope.assetId) return cb()
-      api.engine.socket().callAPIFunction({requestType:'getAsset', asset: $scope.assetId}).then(function (data) {
-        $scope.asset = data;
-        console.log(data)
-        cb()
-      });
-    },
-    function(cb){
-      api.engine.socket().getAccount({account: $scope.paramRecipient}).then(
-        function (data) {
-          $scope.$evalAsync(function () {
-            $scope.recipientName = data.accountName||data.accountEmail;
-            if ($scope.recipientName == $scope.paramRecipient) {
-              $scope.recipientName = '';
-            }
-            cb()
-          });
-        }
-      );
-    }
-  ],function(){
-    $scope.loading = false;
-  });
 
+  var promises = [
+    api.engine.socket().getAccount({account: $scope.paramRecipient}).then(function (data) {
+      $scope.$evalAsync(function () {
+        $scope.recipientName = data.accountName||data.accountEmail;
+        if ($scope.recipientName == $scope.paramRecipient) {
+          $scope.recipientName = '';
+        }
+      });
+    })
+  ];
+  if ($scope.assetId) {
+    promises.push(
+      api.engine.socket().callAPIFunction({requestType:'getAsset', asset: $scope.assetId}).then(function (data) {
+        $scope.$evalAsync(function () {
+          $scope.asset = data;
+          console.log(data)
+        });
+      })
+    );
+  }
+  $q.all(promises).then(function () {
+    $scope.$evalAsync(function () {
+      $scope.loading = false;
+    });
+  });
 
   $scope.payNow = function () {
     var args = {};
