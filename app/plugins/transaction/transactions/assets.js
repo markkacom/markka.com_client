@@ -281,7 +281,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
               reCalculateOrderTotal(fields);
             }
           }),
-          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precission: 8,
+          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precision: 8,
             onchange: function (fields) {
               reCalculateOrderTotal(fields);
             }
@@ -376,7 +376,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
               reCalculateOrderTotal(fields);
             }
           }),
-          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precission: 8,
+          plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precision: 8,
             onchange: function (fields) {
               reCalculateOrderTotal(fields);
             }
