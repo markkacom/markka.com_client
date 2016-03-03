@@ -78,7 +78,7 @@ module.factory('AskOrderProvider', function (nxt, $q, IndexedEntityProvider) {
       if (order.priceNQT) {
         order.price = nxt.util.calculateOrderPricePerWholeQNT(order.priceNQT, this.decimals);
         order.total = nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(order.priceNQT, order.quantityQNT));
-        order.priceNum = parseFloat(order.price.replace(',',''));
+        order.priceNum = parseFloat(order.price.replace(/,/g,''));
       }
       else {
         console.log('Missing priceNQT (ask)', order);
