@@ -78,12 +78,17 @@ module.config(function($routeProvider) {
 
 module.controller('MessengerController', function($location, $q, $scope, modals, $rootScope,
   $routeParams, nxt, plugins, GossipChatMessagesProvider, Gossip, Emoji,
-  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval, AccountAutocompleteProvider) {
+  KeyService, $timeout, settings, publicKeyService, GossipChatListProvider, $interval, AccountAutocompleteProvider, $route) {
 
   $rootScope.unread = false;
 
   var unread_interval = $interval(function() { $rootScope.unread = false }, 5000);
-  $scope.$on('$destroy', function () {  $interval.cancel(unread_interval) });
+  $scope.$on('$destroy', function () { $interval.cancel(unread_interval) });
+  $scope.$on('$destroy', function () { $rootScope.$on('onOpenCurrentAccount',
+    function () {
+      $route.reload();
+    }
+  )});
 
   /* might not have been started */
   Gossip.onActivated();
@@ -218,6 +223,13 @@ module.controller('MessengerController', function($location, $q, $scope, modals,
     if ($scope.chatMessagesProvider) {
       $scope.chatMessagesProvider.reload();
     }
+  }
+
+  $scope.validateMessageLength = function (text) {
+    if (text.length > 999) {
+      return false;
+    }
+    return true;
   }
 
   $scope.messageChanged = function () {
