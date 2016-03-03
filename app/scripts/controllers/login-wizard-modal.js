@@ -336,7 +336,7 @@ addStep({
     $scope.walletExists = KeyService.walletExists();
     $scope.walletUnlocked = KeyService.wallet && !KeyService.wallet.fileName;
     $scope.stage = 0;
-    $scope.advanced = true; // Set 'advanced' to true to enable 'normal' account creation
+    $scope.advanced = false; // Set 'advanced' to true to enable 'normal' account creation
     $scope.description = $scope.advanced ? $scope.descriptionAdvancedStage0 : $scope.descriptionStandardStage0;
     if (KeyService.wallet && !KeyService.wallet.fileName) {
       $scope.input.password = KeyService.wallet.password;
