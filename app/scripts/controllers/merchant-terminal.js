@@ -25,13 +25,35 @@
 var module = angular.module('fim.base');
 
 module.config(function($routeProvider) {
-  $routeProvider.when('/merchant/:recipient?/:amountNQT?/:deadline?/:description?/:message?/:assetId?/', {
+  $routeProvider.when('/merchant/:recipient?/:amountNQT?/:deadline?/:description?/:message?/:assetId?/:urls*', {
     templateUrl: 'partials/merchant-terminal.html',
     controller: 'MerchantTerminalController'
   });
 });
 
-module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins,$q) {
+/**
+ * The final urls parameter consists of a redirect url and status url delimitted by a |
+ *
+ * Included urls must be escaped with encodeURIComponent, this can be done from the browser
+ * address bar. Enter javascript:encodeURIComponent("http://google.com/search?q=redirect")
+ * in the address bar and hit enter.
+ *
+ * Example: urls with redirect and status.
+ *
+ * http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
+ *
+ * Example: urls with only a status
+ *
+ * |http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
+ *
+ * Example: redirect and status
+ * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
+ *
+ * Example: status only
+ * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
+ **/
+
+module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins, $q, $http) {
 
   $scope.paramRecipient     = $routeParams.recipient;
   $scope.paramAmountNQT     = $routeParams.amountNQT;
@@ -40,14 +62,12 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
   $scope.paramMessage       = $routeParams.message;
   $scope.assetId            = $routeParams.assetId;
 
-
   $scope.amountNXT          = nxt.util.convertToNXT($scope.paramAmountNQT);
   $scope.recipientName      = '';
   $scope.success            = false;
 
   var api                   = nxt.get($scope.paramRecipient);
   $scope.symbol             = api.engine.symbol;
-
 
   $scope.loading = true;
 
@@ -66,7 +86,6 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
       api.engine.socket().callAPIFunction({requestType:'getAsset', asset: $scope.assetId}).then(function (data) {
         $scope.$evalAsync(function () {
           $scope.asset = data;
-          console.log(data)
         });
       })
     );
@@ -92,10 +111,10 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
 
       $rootScope.executeTransaction('transferAsset', args).then(
         function (items) {
-          console.log(items)
           if (items) {
             $scope.$evalAsync(function () {
               $scope.success = true;
+              sendTransactionStatus();
             });
           }
         }
@@ -116,6 +135,7 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
           if (items) {
             $scope.$evalAsync(function () {
               $scope.success = true;
+              sendTransactionStatus();
             });
           }
         }
@@ -125,6 +145,25 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
 
   $scope.signin = function () {
     $rootScope.loginWizard('signin', {}, false /* stay on same url */);
+  }
+
+  function sendTransactionStatus() {
+    var url = ($routeParams.urls||"").split('|')[1];
+    if (url) {
+      $http({method:'GET',url:url}).finally(function () {
+        maybeRedirect();
+      })
+    }
+    else {
+      maybeRedirect();
+    }
+  }
+
+  function maybeRedirect() {
+    var url = ($routeParams.urls||"").split('|')[0];
+    if (url) {
+      window.location = url;
+    }
   }
 
 });
