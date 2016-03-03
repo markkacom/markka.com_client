@@ -49,9 +49,17 @@
           </div>
         </p>
         <p>
+          <div class="form-group">
+            <span class="form-control-static">
+              <!-- <label class="control-label">Message</label> -->
+              <div>{{paramMessage}}</div>
+            </span>
+          </div>
+        </p>
+        <p>
           <a class="btn btn-lg pull-right" ng-class="{'btn-success':!success,'btn-default':success}" href
             ng-click="payNow()" ng-show="currentAccount" ng-disabled="success">
-            <span ng-show="!success"><i class="fa fa-1x fa-paper-plane-o fa-fw"></i>&nbsp;&nbsp;<span>Pay now</span></span>
+            <span ng-show="!success"><i class="fa fa-1x fa-paper-plane-o fa-fw"></i>&nbsp;&nbsp;<span>Pay</span></span>
             <span ng-show="success"><i class="fa fa-1x fa-check fa-fw"></i></span>
           </a>
           <a class="btn btn-lg btn-success pull-right" href ng-click="signin()" ng-show="!currentAccount">

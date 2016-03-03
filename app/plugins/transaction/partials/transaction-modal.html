@@ -372,7 +372,7 @@
             </tab>
           </tabset>
         </div>
-        <div class="radio">
+        <div class="radio" ng-init="items.txnMessageType='note'">
           <label ng-if= "items.abc">
             <input type="radio" name="type" ng-model="items.txnMessageType" value="note"
               ng-disabled="sendSuccess">Private Note&nbsp;
@@ -436,7 +436,7 @@
     <div class="form-group">
       <div class="col-xs-6">
         <button ng-show="!sendSuccess && !isSending" class="btn btn-block btn-primary" ng-click="close()"
-          ng-disabled="!transactionCreateForm.$valid">Send</button>
+          ng-disabled="!transactionCreateForm.$valid">Pay Now</button>
         <button ng-show="isSending" class="btn btn-block btn-success" disabled>
           <i class="fa fa-circle-o-notch fa-spin pull-left"></i>&nbsp;&nbsp;Sending
         </button>
