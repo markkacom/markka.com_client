@@ -42,21 +42,20 @@ module.config(function($routeProvider) {
  * be replaced with the correct details.
  *
  * ${SENDER}   - will be replaced with the sender address in RS format
- * ${AMOUNT}   - will be replaced with the amount of FIM or the asset quantity
  *
  * Example: urls with redirect and status.
  *
- * http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}-${AMOUNT}
+ * http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}
  *
  * Example: urls with only a status
  *
  * |http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus
  *
  * Example: redirect and status
- * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}-${AMOUNT}
+ * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dredirect|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}
  *
  * Example: status only
- * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}-${AMOUNT}
+ * http://localhost:9001/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/|http%3A%2F%2Fgoogle.com%2Fsearch%3Fq%3Dstatus-${SENDER}
  **/
 
 module.controller('MerchantTerminalController', function ($scope, $rootScope, nxt, $routeParams, plugins, $q, $http) {
@@ -121,8 +120,7 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
           if (items) {
             $scope.$evalAsync(function () {
               sendTransactionStatus({
-                sender:items.senderRS,
-                amount:items.quantity
+                sender:items.senderRS
               });
             });
           }
@@ -144,8 +142,7 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
           if (items) {
             $scope.$evalAsync(function () {
               sendTransactionStatus({
-                sender:items.senderRS,
-                amount:items.quantity
+                sender:items.senderRS
               });
             });
           }
@@ -162,7 +159,6 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
     var url = ($routeParams.urls||"").split('|')[1];
     if (url) {
       url = url.replace("${SENDER}",data.sender);
-      url = url.replace("${AMOUNT}",data.amount);
       $http({method:'GET',url:url}).finally(function () {
         $scope.$evalAsync(function () {
           $scope.success = true;
