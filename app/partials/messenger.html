@@ -127,20 +127,25 @@
        * ***************************************************** -->
 
       <div class="row" ng-show="(ui.chat && ui.chat.provider && ui.chat.provider.online) || ui.sendOffline">
-        <div class="col-md-12">
-          <div class="input-group">
-            <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
-            <textarea class="form-control" rows="2" ng-model="message.text" ng-change="messageChanged()"
-              enter-submit="sendDirectMessage()" ng-click= "activateTextbox()"></textarea>
-            <span ng-show="message.text && IS_SMALL_DEVICE" class="input-group-addon"
-              ng-click="sendDirectMessage()" translate="translate.send"></span>
+        <form name="messageCreateForm" novalidate>
+          <div class="form-group col-md-12"
+                ng-class="{ 'has-error' : messageCreateForm.messageField.$invalid && ! messageCreateForm.messageField.$pristine }">
+            <div class="input-group">
+              <span class="input-group-addon" ng-click="ui.emojiCollapse=!ui.emojiCollapse"><i class="fa fa-smile-o"></i></span>
+              <textarea class="form-control" rows="2" ng-model="message.text" ng-change="messageChanged()"
+                enter-submit="!messageCreateForm.messageField.$invalid && sendDirectMessage()" ng-click= "activateTextbox()"
+                ui-validate="'validateMessageLength($value)'"
+                required name="messageField"></textarea>
+              <span ng-show="message.text && IS_SMALL_DEVICE" class="input-group-addon"
+                ng-click="!messageCreateForm.messageField.$invalid && sendDirectMessage()" translate="translate.send"></span>
+            </div>
+            <a href ng-click="ui.sendOffline=true" style="margin-bottom: 8px;"
+              ng-show="(ui.chat && ui.chat.provider && ui.chat.provider.online) && !ui.sendOffline">
+              Send <b>Offline</b> Message
+            </a>
+            <!-- <a class="pull-right" href style="margin-bottom: 8px;" ng-show="ui.isTyping">.. is typing ..</a> -->
           </div>
-          <a href ng-click="ui.sendOffline=true" style="margin-bottom: 8px;"
-            ng-show="(ui.chat && ui.chat.provider && ui.chat.provider.online) && !ui.sendOffline">
-            Send <b>Offline</b> Message
-          </a>
-          <!-- <a class="pull-right" href style="margin-bottom: 8px;" ng-show="ui.isTyping">.. is typing ..</a> -->
-        </div>
+        </form>
       </div>
       <div class="row" collapse="ui.emojiCollapse" style="margin-top: 8px">
         <div class="col-md-12">
