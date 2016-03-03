@@ -25,7 +25,7 @@
 #   a directory. That directory is then zipped.
 #
 # ##############################################################################
-DEBUG=false
+DEBUG=true
 WITH_NEXT=false
 VERSION=`cat VERSION`
 BASE=lompsa
@@ -52,6 +52,7 @@ timestamp=$(date +%s)
 sed -i "s/${orig}/${timestamp}/g" $MODE_JS_FILE
 
 export WINEARCH="win32"
+export WINEPREFIX=/home/dirk/.wine32
 grunt nwjs
 
 # This compiles NXT
@@ -61,10 +62,10 @@ grunt nwjs
 #   cd ../mofowallet
 # fi
 
-/bin/rm -r -f dist/build/linux32
+/bin/rm -r -f dist/build/linux64
 
 if [ "$DEBUG" = "false" ]; then
-  /bin/rm -r -f dist/build/linux64
+  /bin/rm -r -f dist/build/linux32
   /bin/rm -r -f dist/build/win32
   /bin/rm -r -f dist/build/win64
   /bin/rm -r -f dist/build/osx32
@@ -80,44 +81,6 @@ FIM_FILES_CONF="../fimk/conf/nxt-default.properties ../fimk/conf/logging-default
 
 NXT_FILES="../nxt-plus/html/ ../nxt-plus/lib/ ../nxt-plus/nxt.jar ../nxt-plus/README.txt ../nxt-plus/run.bat ../nxt-plus/run.sh"
 NXT_FILES_CONF="../nxt-plus/conf/nxt-default.properties ../nxt-plus/conf/logging-default.properties"
-
-# ==============================================================================
-# Linux 32
-# ==============================================================================
-
-# Copy FIM to the fim dir to allow addition of other servers later
-BUILD=dist/build/linux32
-mkdir -p $BUILD
-
-# FIM embedded in lompsa
-mkdir -p $BUILD/fim
-mkdir -p $BUILD/fim/conf
-cp -r -p $FIM_FILES $BUILD/fim
-cp -p $FIM_FILES_CONF $BUILD/fim/conf
-
-# NXT embedded in lompsa
-if [ "$WITH_NEXT" = "true" ]; then
-  mkdir -p $BUILD/nxt
-  mkdir -p $BUILD/nxt/conf
-  cp -r -p $NXT_FILES $BUILD/nxt
-  cp -p $NXT_FILES_CONF $BUILD/nxt/conf
-fi
-
-# Copy over the lompsa files
-cp -r -p dist/lompsa/linux32/* $BUILD
-cp LICENSE.txt $BUILD
-
-if [ "$DEBUG" = "true" ]; then
-  exit 0
-fi
-
-# create the release zip
-cd $BUILD
-/bin/rm -f ../../../dist/releases/$BASE.linux32-$VERSION.zip
-zip -qr -9 ../../../dist/releases/$BASE.linux32-$VERSION.zip .
-cd ../../..
-
-echo "$BASE.linux32-$VERSION.zip generated successfully"
 
 # ==============================================================================
 # Linux 64
@@ -145,6 +108,10 @@ fi
 cp -r -p dist/lompsa/linux64/* $BUILD
 cp LICENSE.txt $BUILD
 
+if [ "$DEBUG" = "true" ]; then
+  exit 0
+fi
+
 # create the release zip
 cd $BUILD
 /bin/rm -f ../../../dist/releases/$BASE.linux64-$VERSION.zip
@@ -152,6 +119,40 @@ zip -qr -9 ../../../dist/releases/$BASE.linux64-$VERSION.zip .
 cd ../../..
 
 echo "$BASE.linux64-$VERSION.zip generated successfully"
+
+# ==============================================================================
+# Linux 32
+# ==============================================================================
+
+# Copy FIM to the fim dir to allow addition of other servers later
+BUILD=dist/build/linux32
+mkdir -p $BUILD
+
+# FIM embedded in lompsa
+mkdir -p $BUILD/fim
+mkdir -p $BUILD/fim/conf
+cp -r -p $FIM_FILES $BUILD/fim
+cp -p $FIM_FILES_CONF $BUILD/fim/conf
+
+# NXT embedded in lompsa
+if [ "$WITH_NEXT" = "true" ]; then
+  mkdir -p $BUILD/nxt
+  mkdir -p $BUILD/nxt/conf
+  cp -r -p $NXT_FILES $BUILD/nxt
+  cp -p $NXT_FILES_CONF $BUILD/nxt/conf
+fi
+
+# Copy over the lompsa files
+cp -r -p dist/lompsa/linux32/* $BUILD
+cp LICENSE.txt $BUILD
+
+# create the release zip
+cd $BUILD
+/bin/rm -f ../../../dist/releases/$BASE.linux32-$VERSION.zip
+zip -qr -9 ../../../dist/releases/$BASE.linux32-$VERSION.zip .
+cd ../../..
+
+echo "$BASE.linux32-$VERSION.zip generated successfully"
 
 # ==============================================================================
 # Windows 32
@@ -348,9 +349,9 @@ BANNER=$(cat <<'END_HEREDOC'
 ███████╗██╗███╗   ███╗██╗  ██╗          Release : #VERSION#
 ██╔════╝██║████╗ ████║██║ ██╔╝          Date    : #DATE#
 █████╗  ██║██╔████╔██║█████╔╝           http://fimk.fi
-██╔══╝  ██║██║╚██╔╝██║██╔═██╗           http://forum.fimk.fi
-██║     ██║██║ ╚═╝ ██║██║  ██╗          https://github.com/fimkrypto/mofowallet
-╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝          https://lompsa.com
+██╔══╝  ██║██║╚██╔╝██║██╔═██╗           https://github.com/fimkrypto/mofowallet
+██║     ██║██║ ╚═╝ ██║██║  ██╗          https://lompsa.com
+╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝
 
                          presents:
 
@@ -360,7 +361,6 @@ BANNER=$(cat <<'END_HEREDOC'
 ██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ╚════██║██╔══██║
 ███████╗╚██████╔╝██║ ╚═╝ ██║██║     ███████║██║  ██║
 ╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝
-
 END_HEREDOC
 )
 
