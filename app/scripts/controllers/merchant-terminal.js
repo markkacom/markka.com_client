@@ -71,6 +71,7 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
   $scope.amountNXT          = nxt.util.convertToNXT($scope.paramAmountNQT);
   $scope.recipientName      = '';
   $scope.success            = false;
+  $scope.redirect           = ($routeParams.urls||"").split('|')[0];
 
   var api                   = nxt.get($scope.paramRecipient);
   $scope.symbol             = api.engine.symbol;
@@ -119,7 +120,6 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
         function (items) {
           if (items) {
             $scope.$evalAsync(function () {
-              $scope.success = true;
               sendTransactionStatus({
                 sender:items.senderRS,
                 amount:items.quantity
@@ -143,7 +143,6 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
         function (items) {
           if (items) {
             $scope.$evalAsync(function () {
-              $scope.success = true;
               sendTransactionStatus({
                 sender:items.senderRS,
                 amount:items.quantity
@@ -165,18 +164,13 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
       url = url.replace("${SENDER}",data.sender);
       url = url.replace("${AMOUNT}",data.amount);
       $http({method:'GET',url:url}).finally(function () {
-        maybeRedirect();
+        $scope.$evalAsync(function () {
+          $scope.success = true;
+        });
       })
     }
     else {
-      maybeRedirect();
-    }
-  }
-
-  function maybeRedirect() {
-    var url = ($routeParams.urls||"").split('|')[0];
-    if (url) {
-      window.location = url;
+      $scope.success = true;
     }
   }
 

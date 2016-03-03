@@ -55,6 +55,7 @@
               <span ng-show="!success"><i class="fa fa-1x fa-paper-plane-o fa-fw"></i>&nbsp;&nbsp;<span>Pay</span></span>
               <span ng-show="success"><i class="fa fa-1x fa-check fa-fw"></i></span>
             </a>
+            <a class="btn btn-lg pull-right" href="{{redirect}}" ng-show="redirect && success">Back to Merchant</a>
             <a class="btn btn-lg btn-success pull-right" href ng-click="signin()" ng-show="!currentAccount">
               <i class="fa fa-1x fa-sign-in"></i>&nbsp;&nbsp;<span translate="translate.sign_in"></span></a>
           </p>
