@@ -25,7 +25,7 @@
 #   a directory. That directory is then zipped.
 #
 # ##############################################################################
-DEBUG=true
+DEBUG=false
 WITH_NEXT=false
 VERSION=`cat VERSION`
 BASE=lompsa
