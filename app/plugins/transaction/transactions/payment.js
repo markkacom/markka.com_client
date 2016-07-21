@@ -50,7 +50,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, UserService) {
           plugin.fields('account').create('recipient', { value: args.recipient||'', label: 'Recipient', required: true,
             api:api, accountColorId: UserService.currentAccount.accountColorId }
           ),
-          plugin.fields('money').create('amountNXT', { value: args.amountNXT||'', label: 'Amount ('+UserService.currentAccount.symbol+')', required: true }),
+          plugin.fields('money').create('amountNXT', {
+            value: args.amountNXT||'',
+            label: 'Amount ('+UserService.currentAccount.symbol+')',
+            required: true,
+            precision: 8
+          }),
           {
             label: 'Recipient public key',
             name: 'recipientPublicKey',
