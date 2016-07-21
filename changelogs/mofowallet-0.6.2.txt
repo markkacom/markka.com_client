@@ -1,0 +1,23 @@
+Embeds FIMK 0.6.4 (based on NXT 1.5.10).
+
+Includes a fix that allows to send FIMK fractions again (0.00000001 minimum),
+this functionality got lost during a refactoring of transaction dialogs.
+
+Includes a fix for the merchant/pay me FIMK link functionality, merchant url
+now supoprts payments in asset as well as FIMK. Includes option for a callback
+url to notify merchant of payment and a redirect link to send customer back
+to merchant website.
+
+Example:
+
+https://lompsa.com/#/merchant/FIM-BA8U-LVXC-WBFT-49C4S/100000000/1440/Send%20money/Message%20text/15249019093105168329/http://google.com/search%3Fq=redirect%7Chttp://google.com/search%3Fq=status
+
+Specs are in the source for now:
+
+https://github.com/fimkrypto/mofowallet/blob/a7e4d78baac08549c0aeed4f7ef6574b7031af0a/app/scripts/controllers/merchant-terminal.js#L27-L59
+
+Fixes for messenger, reloads messages now when you switch users.
+
+User balance displayed in toolbar now updates in real-time.
+
+Various marketplace smaller fixes, now hides delisted and no longer in stock items.
