@@ -31,9 +31,9 @@ module.run(function ($rootScope, $location) {
   }
 
   $rootScope.isTestnet = window.localStorage.getItem("lompsa.testnet")=="true";
-  if (TRADE_UI_ONLY) {
+  /*if (TRADE_UI_ONLY) {
     $rootScope.isTestnet = true;
-  }
+  }*/
   if ($rootScope.isTestnet) {
     ENABLE_DUAL_ENGINES=false;
   }
