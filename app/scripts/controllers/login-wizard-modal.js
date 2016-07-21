@@ -739,6 +739,7 @@ addStep({
             '</div>',
           '</div>',
         '</div>',
+        /* THIS HIDES THE ADVANCED TOGGLE BUTTON, RE_ENABLE TO SHOW ADVANCED BUTTON AGAIN */
         '<div class="row">',
           '<div class="col-md-12">',
             '<div class="form-group">',
