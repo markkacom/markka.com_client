@@ -350,7 +350,7 @@ addStep({
   $scope: {
     title: $translate.instant('translate.newAccount_title'),
     input: {
-      host: 'fimk.fi',
+      host: 'markka.com',
       name: '',
       password: '',
       passwordConfirm: '',
@@ -717,7 +717,7 @@ addStep({
                       '<span class="pull-right"><span class="caret"></span></span>',
                     '</button>',
                     '<ul class="uib-dropdown-menu dropdown-menu-right" role="menu">',
-                      '<li role="menuitem"><a href ng-click="input.host=\'fimk.fi\';nameChanged()">{{input.name}}@fimk.fi</a></li>',
+                      '<li role="menuitem"><a href ng-click="input.host=\'markka.com\';nameChanged()">{{input.name}}@markka.com</a></li>',
                       '<li role="menuitem"><a href ng-click="input.host=\'lompsa.com\';nameChanged()">{{input.name}}@lompsa.com</a></li>',
                     '</ul>',
                   '</div>',
@@ -765,13 +765,17 @@ addStep({
           '</span>',
           '<label ng-bind="secretPhraseLabel"></label>',
           '<div class="input-group">',
-            '<textarea class="form-control monospace" rows="2" ng-model="input.secretPhrase" readonly></textarea>',
-            // browser clipboard
+            '<textarea id="secret-phrase-textarea" class="form-control monospace" rows="2" ng-model="input.secretPhrase" readonly></textarea>',
+
+            '<span id="copy-0" data-clipboard-target="#secret-phrase-textarea" class="input-group-addon btn btn-default" type="button">',
+            '<i class="fa fa-fw" ng-class="{\'fa-check\':input.secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+
+            /*// browser clipboard
             '<span class="input-group-addon btn btn-default" type="button" ng-if="!isNodeJS" clip-copy="input.secretPhrase" clip-click="input.secret_clipped=true;">',
               '<i class="fa fa-fw" ng-class="{\'fa-check\':input.secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
             // nwjs clipboard
             '<span class="input-group-addon btn btn-default" type="button" ng-if="isNodeJS" ng-click="clipboardCopy(input.secretPhrase); input.secret_clipped=true;">',
-              '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+              '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',*/
           '</div>',
         '</div>',
         '<div class="form-group">',
@@ -820,25 +824,33 @@ addStep({
               '</span>',
               '<label ng-bind="secretPhraseLabel"></label>',
               '<div class="input-group">',
-                '<textarea class="form-control monospace" rows="2" ng-model="input.secretPhrase" readonly></textarea>',
-                // browser clipboard
+                '<textarea id="secret-phrase-textarea-1" class="form-control monospace" rows="2" ng-model="input.secretPhrase" readonly></textarea>',
+
+                '<span id="copy-1" data-clipboard-target="#secret-phrase-textarea-1" class="input-group-addon btn btn-default" type="button">',
+                '<i  class="fa fa-fw" ng-class="{\'fa-check\':input.secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+
+                /*// browser clipboard
                 '<span class="input-group-addon btn btn-default" type="button" ng-if="!isNodeJS" clip-copy="input.secretPhrase" clip-click="input.secret_clipped=true;">',
-                  '<i class="fa fa-fw" ng-class="{\'fa-check\':input.secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+                  '<i class="fa fa-fw" ng-class="{\'fa-check\':input.secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span>xxx2</span>',
                 // nwjs clipboard
                 '<span class="input-group-addon btn btn-default" type="button" ng-if="isNodeJS" ng-click="clipboardCopy(input.secretPhrase); input.secret_clipped=true;">',
-                  '<i class="fa fa-fw" ng-class="{\'fa-check\':input.secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+                  '<i class="fa fa-fw" ng-class="{\'fa-check\':input.secret_clipped,\'fa-clipboard\':!input.secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span>xxx2</span>',*/
               '</div>',
             '</div>',
             '<div class="form-group">',
               '<label ng-bind="accountIdLabel"></label>',
               '<div class="input-group">',
-                '<span class="form-control monospace" ng-bind="input.id_rs"></span>',
-                // browser clipboard
+                '<span id="account_id-1" class="form-control monospace" ng-bind="input.id_rs"></span>',
+
+                '<span id="copy-2" data-clipboard-target="#account_id-1" class="input-group-addon btn btn-default" type="button">',
+                '<i class="fa fa-fw" ng-class="{\'fa-check\':input.id_rs_clipped,\'fa-clipboard\':!input.id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+
+                /*// browser clipboard
                 '<span class="input-group-addon btn btn-default" type="button" ng-if="!isNodeJS" clip-copy="input.id_rs" clip-click="input.id_rs_clipped=true;">',
                   '<i class="fa fa-fw" ng-class="{\'fa-check\':input.id_rs_clipped,\'fa-clipboard\':!input.id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
                 // nwjs clipboard
                 '<span class="input-group-addon btn btn-default" type="button" ng-if="isNodeJS" ng-click="clipboardCopy(input.id_rs); input.id_rs_clipped=true;">',
-                  '<i class="fa fa-fw" ng-class="{\'fa-check\':input.id_rs_clipped,\'fa-clipboard\':!input.id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+                  '<i class="fa fa-fw" ng-class="{\'fa-check\':input.id_rs_clipped,\'fa-clipboard\':!input.id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',*/
               '</div>',
             '</div>',
             '<div class="form-group">',
@@ -1225,37 +1237,49 @@ addStep({
               '<div class="form-group">',
                 '<label ng-bind="secretPhraseLabel"></label>',
                 '<div class="input-group">',
-                  '<textarea class="form-control monospace" rows="2" ng-model="a.secretPhrase" readonly></textarea>',
-                  // browser clipboard
+                  '<textarea id="secret-phrase-textarea-3" class="form-control monospace" rows="2" ng-model="a.secretPhrase" readonly></textarea>',
+
+                  '<span id="copy-3" data-clipboard-target="#secret-phrase-textarea-3" class="input-group-addon btn btn-default" type="button">',
+                  '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__secret_clipped,\'fa-clipboard\':!a.__secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+
+                  /*// browser clipboard
                   '<span class="input-group-addon btn btn-default" type="button" ng-if="!isNodeJS" clip-copy="a.secretPhrase" clip-click="a.__secret_clipped=true;">',
                     '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__secret_clipped,\'fa-clipboard\':!a.__secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
                   // nwjs clipboard
                   '<span class="input-group-addon btn btn-default" type="button" ng-if="isNodeJS" ng-click="clipboardCopy(a.secretPhrase); a.__secret_clipped=true;">',
-                    '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__secret_clipped,\'fa-clipboard\':!a.__secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+                    '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__secret_clipped,\'fa-clipboard\':!a.__secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',*/
                 '</div>',
               '</div>',
               '<div class="form-group">',
                 '<label ng-bind="accountIdLabel"></label>',
                 '<div class="input-group">',
-                  '<input class="form-control monospace" ng-model="a.id_rs" readonly>',
-                  // browser clipboard
+                  '<input id="account-id-5" class="form-control monospace" ng-model="a.id_rs" readonly>',
+
+                  '<span id="copy-5" data-clipboard-target="#account-id-5" class="input-group-addon btn btn-default" type="button">',
+                  '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__id_rs_clipped,\'fa-clipboard\':!a.__id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+
+                  /*// browser clipboard
                   '<span class="input-group-addon btn btn-default" type="button" ng-if="!isNodeJS" clip-copy="a.id_rs" clip-click="a.__id_rs_clipped=true;">',
                     '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__id_rs_clipped,\'fa-clipboard\':!a.__id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
                   // nwjs clipboard
                   '<span class="input-group-addon btn btn-default" type="button" ng-if="isNodeJS" ng-click="clipboardCopy(a.id_rs); a.__id_rs_clipped=true;">',
-                    '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__id_rs_clipped,\'fa-clipboard\':!a.__id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+                    '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__id_rs_clipped,\'fa-clipboard\':!a.__id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',*/
                 '</div>',
               '</div>',
               '<div class="form-group">',
                 '<label ng-bind="publicKeyLabel"></label>',
                 '<div class="input-group">',
-                  '<input class="form-control monospace" ng-model="a.publicKey" readonly>',
-                  // browser clipboard
+                  '<input id="public-key-6" class="form-control monospace" ng-model="a.publicKey" readonly>',
+
+                  '<span id="copy-6" data-clipboard-target="#public-key-6" class="input-group-addon btn btn-default" type="button">',
+                    '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__publickey_clipped,\'fa-clipboard\':!a.__publickey_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+
+                  /*// browser clipboard
                   '<span class="input-group-addon btn btn-default" type="button" ng-if="!isNodeJS" clip-copy="a.publicKey" clip-click="a.__publickey_clipped=true;">',
                     '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__publickey_clipped,\'fa-clipboard\':!a.__publickey_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
                   // nwjs clipboard
                   '<span class="input-group-addon btn btn-default" type="button" ng-if="isNodeJS" ng-click="clipboardCopy(a.publicKey); a.__publickey_clipped=true;">',
-                    '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__publickey_clipped,\'fa-clipboard\':!a.__publickey_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
+                    '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__publickey_clipped,\'fa-clipboard\':!a.__publickey_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',*/
                 '</div>',
               '</div>',
               /*
@@ -1602,5 +1626,8 @@ addStep({
 });
 
 ready();
+
+new ClipboardJS("#copy-0, #copy-1, #copy-2, #copy-3, #copy-5, #copy-6");
+
 });
 })();
