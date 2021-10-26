@@ -29,6 +29,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>.ng-cloak { display:none; }</style>
     <script src="mode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"
+            integrity="sha512-sIqUEnRn31BgngPmHt2JenzleDDsXwYO+iyvQ46Mw6RL+udAUZj2n/u/PGY80NxRxynO7R9xIGx5LEzw4INWJQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link rel="shortcut icon" href="/favicon.ico?v=7" />
@@ -77,9 +80,6 @@
     <script src="bower_components/ng-table/dist/ng-table.js"></script><!-- depracated - dont use-->
     <script src="bower_components/d3/d3.js"></script>
     <script src="bower_components/pako/dist/pako.min.js"></script>
-    <script src="bower_components/ng-clip/dest/ng-clip.min.js"></script>
-    <script src="bower_components/zeroclipboard/dist/ZeroClipboard.min.js"></script>
-    <script src="bower_components/clipboard/dist/clipboard.min.js"></script>
     <script src="bower_components/dexie/dist/latest/Dexie.js"></script>
     <script src="bower_components/dexie/addons/Dexie.Observable/Dexie.Observable.js"></script>
 
@@ -503,14 +503,14 @@
     <nav class="navbar navbar-default navbar-fixed-bottom" ng-if="TRADE_UI_ONLY && isTestnet">
       <div class="container-fluid text-muted">
         <div>
-          <span ng-init="demoSecret='picture impossible creak beard bliss ready guy shape yell burn tremble loss';demoClipped=false">
+          <span ng-init="demoSecret='picture impossible creak beard bliss ready guy shape yell burn tremble loss'">
            <b>This is a blockchain testnet demo with trading bots. <br>
            Use this passphrase to access funded demo account:</b>
            {{demoSecret}}&nbsp;
-           <a href clip-copy="demoSecret" clip-click="demoClipped=true;">
+           <!--<a href clip-copy="demoSecret" clip-click="demoClipped=true;">
               <i class="fa fa-clipboard" ng-if="!demoClipped"></i>
               <span ng-if="demoClipped"><i class="fa fa-check text-success"></i>&nbsp;copied!</span>
-           </a>
+           </a>-->
           </span>
         </div>
       </div>
