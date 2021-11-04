@@ -343,17 +343,22 @@
         <ul class="nav navbar-stacked" collapse="!collapse['advanced']">
           <li role="presentation">
             <a href ng-click="executeTransaction('accountColorCreate')">
-              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.create_account_color"/><span>
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.create_account_color"/>
             </a>
           </li>
           <li role="presentation">
             <a href ng-click="executeTransaction('accountColorAssign')">
-              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign_account_color"/><span>
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign_account_color"/>
             </a>
           </li>
           <li role="presentation">
             <a href ng-click="executeTransaction('issueAsset')">
               <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.issue_asset"/>
+            </a>
+          </li>
+          <li role="presentation">
+            <a href ng-click="executeTransaction('assignExpiry')">
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign-expiry"/>
             </a>
           </li>
           <li role="presentation" ng-show="privateEnabled">
