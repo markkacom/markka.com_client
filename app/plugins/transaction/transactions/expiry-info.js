@@ -42,7 +42,7 @@
           requestType: 'setNamespacedAlias',
           createArguments: function (items) {
             return {
-              aliasName: `(FTR)`,
+              aliasName: `(FTR.0.0)`,
               aliasURI: `${items.asset}|${items.expiry}`
             }
           },
@@ -51,12 +51,12 @@
               value: args.asset || '',
               label: 'Asset',
               required: true,
-              //account: $rootScope.currentAccount.id_rs,  //todo revert this
+              account: $rootScope.currentAccount.id_rs,
               api: api
             }),
             plugin.fields('text').create('expiry', {
               value: args.expiry || epochTimeNow,
-              label: 'Expiration time', required: true,
+              label: 'Expiration time (in blockchain time, seconds)', required: true,
               validate: function (text) {
                 if (text && !plugin.isNumeric(text)) throw 'Must be a number';
               },

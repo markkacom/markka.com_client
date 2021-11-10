@@ -215,7 +215,11 @@
       }
     </style>
 
-    <div ng-if="paramSection=='trade'">
+    <div ng-if="paramSection=='trade' && isExpired">
+      <p><code>Asset "{{assetName}}" is expired</code></p>
+    </div>
+
+    <div ng-if="paramSection=='trade' && !isExpired">
 
       <!-- Chart + Description -->
 

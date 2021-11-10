@@ -223,6 +223,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
           fields.orderFeeNXT.value  = '';
           if (fields.asset.asset) {
             var asset    = fields.asset.asset;
+
+            let assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
+            if (assetIsExpired) {
+              fields.asset.errorMsg = "Disabled. Asset is expired";
+              fields.quantity.value = null;  // to disable button "Pay now"
+              return
+            }
+
             var decimals = asset.decimals;
             var orderFee = nxt.util.convertToQNTf(asset.orderFeePercentage, 6);
             var provider = new OrderEntryProvider(api, null, asset.asset, decimals, null, {
@@ -279,7 +287,11 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
                 fields.quantity.precision = this.asset.decimals;
               }
               reCalculateOrderTotal(fields);
-            }
+            },
+            validate: function (text) {
+              //if (!text) { this.errorMsg = null; }
+              return !this.errorMsg;
+            },
           }),
           plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precision: 8,
             onchange: function (fields) {
@@ -319,6 +331,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
 
           if (fields.asset.asset) {
             var asset    = fields.asset.asset;
+
+            let assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
+            if (assetIsExpired) {
+              fields.asset.errorMsg = "Disabled. Asset is expired";
+              fields.quantity.value = null;  // to disable button "Pay now"
+              return
+            }
+
             var decimals = asset.decimals;
             var orderFee = nxt.util.convertToQNTf(asset.orderFeePercentage, 6);
             var provider = new OrderEntryProvider(api, null, asset.asset, decimals, null, {

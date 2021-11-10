@@ -149,6 +149,8 @@ module.controller('AssetsController', function($scope, $rootScope, $location, $r
         $scope.assetTransfers   = asset.numberOfTransfers;
         $scope.isPrivate        = asset.type == 1;
         $scope.showPrivate      = $rootScope.currentAccount ? (asset.issuerRS == $rootScope.currentAccount.id_rs) : false;
+        $scope.expiry = asset.expiry;
+        $scope.isExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
 
         if ($scope.isPrivate) {
           $scope.privateAsset = {

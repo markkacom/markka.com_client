@@ -421,6 +421,7 @@
                     <th>{{ 'translate.transfers' | translate }}</th>
                     <th>{{ 'translate.accounts' | translate }}</th>
                     <th>{{ 'translate.private' | translate }}</th>
+                    <th>{{ 'translate.expiry' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -433,6 +434,7 @@
                     <td>{{a.numberOfTransfers}}</td>
                     <td>{{a.numberOfAccounts}}</td>
                     <td><span class="text-success" ng-show="a.isPrivate"><i class="fa fa-lock"></i></span></td>
+                    <td>{{a.expiry}} <code ng-if="a.isExpired">expired</code></td>
                   </tr>
                 </tbody>
               </table>

@@ -1000,6 +1000,7 @@
                     <th translate="translate.amount"></th>
                     <th translate="translate.total_supply"></th>
                     <th translate="translate.issuer"></th>
+                    <th translate="translate.expiry"></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -1011,6 +1012,7 @@
                     <td>{{a.quantity}}</td>
                     <td>{{a.totalQuantity}}</td>
                     <td><a ng-href="#/accounts/{{a.issuer}}/activity/latest">{{a.issuer}}</a></td>
+                    <td>{{a.expiry}} <code ng-if="a.isExpired">expired</code></td>
                     <td>
                       <a href ng-show="id_rs == a.issuerRS && isCurrentAccount(id_rs)"
                         ng-click="executeTransaction('sellAsset',{asset:a.asset,quantity:0})"
