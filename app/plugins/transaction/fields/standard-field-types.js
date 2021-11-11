@@ -594,6 +594,114 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
   });
 
   /**
+   * Generic marketplace field.
+   * @inherits from CreateStandardField
+   *
+   * Required arguments:
+   *
+   *  - api (either nxt.nxt() or nxt.fim())
+   *
+   * Optional arguments:
+   *
+   *  - account (String||Function||Promise)
+   *    Limits results to items owned by this account
+   */
+  plugin.addField('goods', {
+    create: function (name, opts) {
+      let scope = opts.$scope || $rootScope;
+      let format_goods_label = function (data) {
+        return [
+          '<a class="font-bold" href="#/goods/', opts.api.engine.symbol_lower, '/" target="_blank">', data.name, '</a> (',
+          '<a href="#/accounts/', data.accountRS, '/activity/latest" target="_blank">', data.accountName || data.accountRS, '</a>)'
+        ].join('');
+      };
+      let lazy_lookup_goods = debounce(
+        function (field) {
+          field.goods = null;
+          scope.$evalAsync(function () {
+            field.errorMsg = null;
+            field.__label = '';
+          });
+          opts.api.engine.socket().callAPIFunction({requestType: 'getDGSGood', goods: field.value}).then(
+            function (data) {
+              scope.$evalAsync(function () {
+                if (data.goods == field.value) {
+                  field.goods = data;
+                  field.__label = format_goods_label(data);
+                } else {
+                  field.errorMsg = 'Goods does not exist';
+                }
+                field.changed(true);
+              });
+            }
+          );
+        },
+        500);
+      let account_goods_promise = null;
+      let get_account_goods = function (account) {
+        if (account_goods_promise) {
+          return account_goods_promise;
+        }
+        let deferred = $q.defer();
+        opts.api.engine.socket().callAPIFunction({
+          requestType: 'getDGSGoods',
+          seller: account
+        }).then(deferred.resolve);
+        return account_goods_promise = deferred.promise;
+      };
+      let field = plugin.fields('autocomplete').create(name, angular.extend(opts, {
+        wait: 500,
+        label: opts.label,
+        template: [
+          '<a class="monospace">',
+          '<span class="font-bold">{{match.model.value + "&nbsp;" + match.model.name}}</span>&nbsp;&nbsp;',
+          '<span class="pull-right" ng-bind="match.model.accountName||match.model.accountRS"></span>',
+          '</a>'
+        ].join(''),
+        validate: function (text) {
+          if (text && !/\d+/.test) {
+            throw "Not a valid goods identifier";
+          }
+          if (text) {
+            lazy_lookup_goods(this);
+          }
+        },
+        getResults: function (query) {
+          let deferred = $q.defer();
+          let promise;
+          if (opts.account) {
+            promise = get_account_goods(opts.account);
+          } else {
+            promise = opts.api.engine.socket().callAPIFunction({
+              requestType: 'searchDGSGoods',
+              query: 'NAME:' + query + '*',
+              firstIndex: 0,
+              lastIndex: 15
+            });
+          }
+          promise.then(
+            function (data) {
+              let goods = data.goods || data.accountGoods || [];
+              deferred.resolve(goods.map(
+                function (d) {
+                  return {
+                    value: d.goods,
+                    name: d.name,
+                    accountName: d.seller,
+                    accountRS: d.sellerRS
+                  };
+                }
+              ));
+            }
+          );
+          return deferred.promise;
+        }
+      }));
+      return field;
+    }
+  });
+
+  /**
    * Generic alias field.
    * @inherits from CreateStandardField
    *
