@@ -285,6 +285,7 @@
     "goods_tags":           "Tags",
     "goods_quantity":       "Quantity",
     "goods_price":          "Price {{symbol}}",
+    "goods_expiry":         "Expiry",
     "load_more_products":   "Load more products",
     "delete_good":          "Delete",
     "show_all_items":       "Show All Items",

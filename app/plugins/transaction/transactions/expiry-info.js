@@ -34,7 +34,7 @@
       //exclude: $rootScope.TRADE_UI_ONLY,
       execute: function (args) {
         args = args || {};
-        let epochTimeNow = nxt.util.convertToEpochTimestamp(Date.now())
+        let epochTimeNow = nxt.util.convertToEpochTimestamp(Date.now()) - 1
         let api = nxt.get($rootScope.currentAccount.id_rs);
         return plugin.create(angular.extend(args, {
           title: 'Assign Expiry',
@@ -43,22 +43,38 @@
           createArguments: function (items) {
             return {
               aliasName: `(FTR.0.0)`,
-              aliasURI: `${items.asset}|${items.expiry}`
+              aliasURI: `${items.asset}|${items.expiry}|${items.goods}|${items.expiry}`
             }
           },
           fields: [
             plugin.fields('asset').create('asset', {
               value: args.asset || '',
               label: 'Asset',
-              required: true,
+              required: false,
               account: $rootScope.currentAccount.id_rs,
-              api: api
+              api: api,
+              onchange: function (fields) {
+                fields.formValid.value = this.value || fields.goods.value || '';
+              }
+            }),
+            plugin.fields('goods').create('goods', {
+              value: args.goods || '',
+              label: 'Goods',
+              required: false,
+              account: $rootScope.currentAccount.id_rs,
+              api: api,
+              onchange: function (fields) {
+                fields.formValid.value = this.value || fields.asset.value || '';
+              }
             }),
             plugin.fields('text').create('expiry', {
               value: args.expiry || epochTimeNow,
               label: 'Expiration time (in blockchain time, seconds)', required: true,
               validate: function (text) {
                 if (text && !plugin.isNumeric(text)) throw 'Must be a number';
+                if (nxt.util.convertToEpochTimestamp(Date.now()) > text) {
+                  throw 'Timestamp should be greater than transaction time (should be in future)'
+                }
               },
               onchange: function (fields) {
                 fields.expiryDisplayed.hide = !this.value;
@@ -70,7 +86,9 @@
             plugin.fields('static').create('expiryDisplayed', {
               hide: false,
               value: nxt.util.formatTimestamp(epochTimeNow)
-            })
+            }),
+            //field formValid is trick to disable button OK until at least one of fields "asset" or "goods" will be filled
+            plugin.fields('text').create('formValid', {value: '', hide: true, required: true})
           ]
         }));
       }

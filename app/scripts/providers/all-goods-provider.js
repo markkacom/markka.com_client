@@ -86,6 +86,8 @@
       translate: function (item) {
         item.priceNXT = nxt.util.convertNQT(item.priceNQT);
         item.date = nxt.util.formatTimestamp(item.timestamp);
+        item.isExpired = item.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > item.expiry : false;
+        item.expiry = item.expiry === 2147483647 ? null : nxt.util.formatTimestamp(item.expiry);
         if (item.tags) {
           var tags = item.tags.split(',');
           item.tagsHTML = '';

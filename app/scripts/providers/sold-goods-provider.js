@@ -62,6 +62,11 @@
           a.deliveryTime = String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168);
           a.totalTime = a.deliveryTime - a.deliveryDeadlineTimestamp;
           a.totalDeliveryDeadlineTimestamp = Math.floor(a.totalTime / 3600);
+
+          let now = new Date();
+          a.isExpired = a.timestamp < nxt.util.convertToEpochTimestamp(now.setFullYear(now.getFullYear() - 2));
+          a.isExpired = a.isExpired || (a.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > a.expiry : false);
+          a.expiry = a.expiry === 2147483647 ? null : nxt.util.formatTimestamp(a.expiry);
         }
         return new Iterator(goods);
       }
