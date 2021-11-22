@@ -608,14 +608,14 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
    */
   plugin.addField('goods', {
     create: function (name, opts) {
-      let scope = opts.$scope || $rootScope;
-      let format_goods_label = function (data) {
+      var scope = opts.$scope || $rootScope;
+      var format_goods_label = function (data) {
         return [
           '<a class="font-bold" href="#/goods/', opts.api.engine.symbol_lower, '/" target="_blank">', data.name, '</a> (',
           '<a href="#/accounts/', data.accountRS, '/activity/latest" target="_blank">', data.accountName || data.accountRS, '</a>)'
         ].join('');
       };
-      let lazy_lookup_goods = debounce(
+      var lazy_lookup_goods = debounce(
         function (field) {
           field.goods = null;
           scope.$evalAsync(function () {
@@ -637,19 +637,19 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           );
         },
         500);
-      let account_goods_promise = null;
-      let get_account_goods = function (account) {
+      var account_goods_promise = null;
+      var get_account_goods = function (account) {
         if (account_goods_promise) {
           return account_goods_promise;
         }
-        let deferred = $q.defer();
+        var deferred = $q.defer();
         opts.api.engine.socket().callAPIFunction({
           requestType: 'getDGSGoods',
           seller: account
         }).then(deferred.resolve);
         return account_goods_promise = deferred.promise;
       };
-      let field = plugin.fields('autocomplete').create(name, angular.extend(opts, {
+      var field = plugin.fields('autocomplete').create(name, angular.extend(opts, {
         wait: 500,
         label: opts.label,
         template: [
@@ -667,8 +667,8 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           }
         },
         getResults: function (query) {
-          let deferred = $q.defer();
-          let promise;
+          var deferred = $q.defer();
+          var promise;
           if (opts.account) {
             promise = get_account_goods(opts.account);
           } else {
@@ -681,7 +681,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           }
           promise.then(
             function (data) {
-              let goods = data.goods || data.accountGoods || [];
+              var goods = data.goods || data.accountGoods || [];
               deferred.resolve(goods.map(
                 function (d) {
                   return {

@@ -34,16 +34,16 @@
       //exclude: $rootScope.TRADE_UI_ONLY,
       execute: function (args) {
         args = args || {};
-        let epochTimeNow = nxt.util.convertToEpochTimestamp(Date.now()) - 1
-        let api = nxt.get($rootScope.currentAccount.id_rs);
+        var epochTimeNow = nxt.util.convertToEpochTimestamp(Date.now()) - 1
+        var api = nxt.get($rootScope.currentAccount.id_rs);
         return plugin.create(angular.extend(args, {
           title: 'Assign Expiry',
           message: 'Assign expiry to asset, marketplace',
           requestType: 'setNamespacedAlias',
           createArguments: function (items) {
             return {
-              aliasName: `(FTR.0.0)`,
-              aliasURI: `${items.asset}|${items.expiry}|${items.goods}|${items.expiry}`
+              aliasName: "(FTR.0.0)",
+              aliasURI: items.asset + "|" + items.expiry + "|" + items.goods + "|" + items.expiry
             }
           },
           fields: [

@@ -224,7 +224,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
           if (fields.asset.asset) {
             var asset    = fields.asset.asset;
 
-            let assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
+            var assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
             if (assetIsExpired) {
               fields.asset.errorMsg = "Disabled. Asset is expired";
               fields.quantity.value = null;  // to disable button "Pay now"
@@ -332,7 +332,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
           if (fields.asset.asset) {
             var asset    = fields.asset.asset;
 
-            let assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
+            var assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
             if (assetIsExpired) {
               fields.asset.errorMsg = "Disabled. Asset is expired";
               fields.quantity.value = null;  // to disable button "Pay now"
