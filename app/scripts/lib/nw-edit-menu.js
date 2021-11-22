@@ -62,18 +62,18 @@ angular.element(document).ready(function() {
   }
 
   try {
-    if (isNodeJS) {
-      var menu = new Menu(/* pass cut, copy, paste labels if you need i18n*/);
+    /*if (isNodeJS) {
+      var menu = new Menu(/!* pass cut, copy, paste labels if you need i18n*!/);
       $(document).on("contextmenu", function(e) {
         if (!isDisabled(e.target)) {
           e.preventDefault();
           menu.popup(e.originalEvent.x, e.originalEvent.y);
         }
       });
-      /*if (navigator.appVersion.indexOf("Win")!=-1) {
+      /!*if (navigator.appVersion.indexOf("Win")!=-1) {
         installMinimizeToTray();
-      }*/
-    }
+      }*!/
+    }*/
   } catch (e) {
     console.log('nodewebkit-specific', e);
   }
