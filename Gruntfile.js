@@ -485,6 +485,7 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>',
           dest: '<%= yeoman.dist %>',
           src: [
+            'package.json',
             '*.{csv,ico,png,txt,js,swf}',
             '.htaccess',
             '*.html',
@@ -642,7 +643,7 @@ module.exports = function (grunt) {
     // 'nodewebkit',
     'copy:dist',
     // 'cdnify',
-    'sass:dist',
+    //'sass:dist',
     'less:dist',
     'cssmin',
     'uglify',

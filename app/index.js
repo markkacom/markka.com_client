@@ -1,18 +1,18 @@
 const { app, BrowserWindow } = require('electron')
 
-const { is, setContentSecurityPolicy } = require('electron-util');
+//const { is, setContentSecurityPolicy } = require('electron-util');
 // set the CSP in production mode
-if (!is.development) {
-  setContentSecurityPolicy(`
-    default-src 'none';
-    script-src 'self';
-    style-src 'self' 'unsafe-inline';
-    font-src 'self';
-    base-uri 'none';
-    form-action 'none';
-    frame-ancestors 'none';
-  `);
-}
+// if (!is.development) {
+//   setContentSecurityPolicy(`
+//     default-src 'none';
+//     script-src 'self';
+//     style-src 'self' 'unsafe-inline';
+//     font-src 'self';
+//     base-uri 'none';
+//     form-action 'none';
+//     frame-ancestors 'none';
+//   `);
+// }
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -23,7 +23,7 @@ function createWindow () {
       contextIsolation: false
     }
   })
-  win.loadFile('app/index.html')
+  win.loadFile('index.html')
 }
 
 app.whenReady().then(createWindow)

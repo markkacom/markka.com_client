@@ -1,0 +1,37 @@
+appId: "mofowallet"
+
+asar: false
+
+#extends: null
+
+#files:
+#  - "dist/"
+
+extraFiles:
+  - {from: "node_modules/java-properties/", to: "resources/app/node_modules/java-properties/"}
+
+directories:
+  app: dist
+  output: out
+#  buildResources: xxx
+
+win:
+#  icon: "src/app/assets/images/icon.ico"
+  target:
+    - "zip"
+#    - "nsis"
+
+# Config for the windows installer
+#nsis:
+#  oneClick: true
+#  perMachine: true
+
+#extraResources:
+#  - from: "python/dist/main"
+#    to: "python-rpc"
+#    filter:
+#      - "**/*"
+#  - "ThirdPartyNotices.txt"
+#  - "data"
+#  - "i18n"
+#  - "node_modules/jschardet/"
