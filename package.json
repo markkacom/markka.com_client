@@ -5,9 +5,6 @@
   "description": "qwerty",
   "main": "app/index.js",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
@@ -18,11 +15,6 @@
     "java-properties": "0.2.5"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.61",
-    "@electron-forge/maker-deb": "^6.0.0-beta.61",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
-    "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "electron": "^16.0.1",
     "electron-builder": "^22.14.5",
     "grunt": "^0.4.1",

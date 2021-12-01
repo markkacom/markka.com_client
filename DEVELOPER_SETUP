@@ -11,3 +11,16 @@ sudo apt-get install wine1.7-i386
 
 # Then when running *grunt nwjs* set the following
 export WINEARCH="win32"
+
+# In order to build Electron app
+setup project:
+npm install -g yarn
+yarn add electron-builder --dev
+
+grunt build
+# build executable app (for test)
+yarn run pack
+# build app distr (for production)
+yarn dist
+# other useful commands
+electron ./dist

@@ -1,6 +1,6 @@
 appId: "mofowallet"
 
-asar: false
+# asar: false
 
 extraResources:
   - "node_modules/java-properties/"
