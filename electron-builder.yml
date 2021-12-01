@@ -1,9 +1,15 @@
 appId: "mofowallet"
 
-#asar: false
+asar: false
 
 extraResources:
   - "node_modules/java-properties/"
+
+extraFiles:
+  - from: "../fimk.fimkrypto/dist/"   #add embedded fimk server
+    to: "fim/"
+  - from: "../fimk.fimkrypto/installer/jre/"   #add JRE for embedded fimk server
+    to: "fim/jre"
 
 directories:
   app: dist
@@ -26,7 +32,4 @@ win:
 #files:
 #  - "dist/"
 
-extraFiles:
-  - from: "../fimk.fimkrypto/dist/"
-    to: "fim/"
 

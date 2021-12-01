@@ -31,6 +31,18 @@ function getOS() {
   throw new Error('Could not detect OS');
 }
 
+function commandToRunJava(embeddedJREVariant, systemJREVariant) {
+  //curried function, should be resolved on invoking
+  return function(serverDir) {
+    serverDir = serverDir | ".";
+    var fs = require('fs');
+    var path = require('path');
+    var jreDir = path.join(serverDir, "jre");
+    console.log("embedded jre '" + jreDir + "' exists: " + fs.existsSync(jreDir));
+    return fs.existsSync(jreDir) ? embeddedJREVariant : systemJREVariant
+  }
+}
+
 var engine = {
   TYPE_NXT: {
     commands: {
@@ -62,19 +74,19 @@ var engine = {
     commands: {
       WIN: {
         start: {
-          command: 'java',
-          args: ['-cp', 'fim.jar;lib\\*;conf', 'nxt.Nxt']
+          command: commandToRunJava("jre/bin/java.exe", "java"),
+          args: ['-cp', 'fim.jar;lib/*;conf', 'nxt.Nxt']
         }
       },
       LINUX: {
         start: {
-          command: 'java',
+          command: commandToRunJava("jre/bin/java", "java"),
           args: ['-cp', 'fim.jar:lib/*:conf', 'nxt.Nxt']
         }
       },
       MAC: {
         start: {
-          command: 'java',
+          command: commandToRunJava("jre/bin/java", "java"),
           args: ['-cp', 'fim.jar:lib/*:conf', 'nxt.Nxt'],
           extra: '../../../../Resources/'
         }
@@ -185,7 +197,8 @@ return {
       throw new Error('Server '+id+' already running');
     }
     var self      = this;
-    var start_options = {  cwd: this.getDir(id) };
+    var serverDir = this.getDir(id);
+    var start_options = {  cwd: serverDir };
 
     engine[id].isReady = false;
 
@@ -194,7 +207,7 @@ return {
     notifyListeners(engine[id].listeners.stdout, 'Starting mofowallet in '+start_options.cwd);
 
     var spawn     = require('child_process').spawn;
-    var child     = engine[id].server = spawn(engine[id].commands[os].start.command, engine[id].commands[os].start.args, start_options);
+    var child     = engine[id].server = spawn(engine[id].commands[os].start.command(serverDir), engine[id].commands[os].start.args, start_options);
 
     child.shutdown = function () {
       try {
