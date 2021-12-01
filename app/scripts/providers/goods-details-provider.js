@@ -61,7 +61,7 @@
 
 
         data.priceNXT = nxt.util.convertNQT(data.priceNQT);
-        let now = new Date();
+        var now = new Date();
         data.isExpired = data.timestamp < nxt.util.convertToEpochTimestamp(now.setFullYear(now.getFullYear() - 2));
         data.isExpired = data.isExpired || (data.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > data.expiry : false);
         data.expiry = data.expiry === 2147483647 ? null : nxt.util.formatTimestamp(data.expiry);
