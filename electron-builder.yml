@@ -6,9 +6,9 @@ extraResources:
   - "node_modules/java-properties/"
 
 extraFiles:
-  - from: "../fimk.fimkrypto/dist/"   #add embedded fimk server
+  - from: "../fimk/dist/"   #add embedded fimk server
     to: "fim/"
-  - from: "../fimk.fimkrypto/installer/jre/"   #add JRE for embedded fimk server
+  - from: "../fimk/installer/jre/"   #add JRE for embedded fimk server
     to: "fim/jre"
 
 directories:
@@ -21,15 +21,16 @@ win:
      - "nsis"
 #    - "zip"
 
+linux:
+  target:
+    - "deb"
+
+
 # Config for the windows installer
 #nsis:
 #  oneClick: true
 #  perMachine: true
 
-
 #extends: null
-
-#files:
-#  - "dist/"
 
 
