@@ -12,7 +12,7 @@ extraFiles:
     to: "fim/jre"
 
 directories:
-  app: dist
+  app: dist  # if you want to use original sources for debug: comment out this line (and uncomment out the "asar: false")
   output: out
 
 win:

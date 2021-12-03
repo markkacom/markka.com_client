@@ -34,7 +34,7 @@ function getOS() {
 function commandToRunJava(embeddedJREVariant, systemJREVariant) {
   //curried function, should be resolved on invoking
   return function(serverDir) {
-    serverDir = serverDir | ".";
+    serverDir = serverDir || ".";
     var fs = require('fs');
     var path = require('path');
     var jreDir = path.join(serverDir, "jre");
