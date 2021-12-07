@@ -345,8 +345,16 @@
           <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount && !TRADE_UI_ONLY">
             <a href="#/messenger">
               <i class="fa fa-comment-o"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.messenger' | translate}}</span>
             </a>
             <i class="fa fa-circle unread" ng-show="unread"></i>
+          </li>
+
+          <li role="presentation" ng-show="currentAccount && !TRADE_UI_ONLY">
+            <a href ng-click="executeTransaction('transferAsset',{ asset:asset })">
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm" translate="translate.transfer_asset"/>
+            </a>
           </li>
 
           <!-- <li route-active="home/" ng-hide="TRADE_UI_ONLY">
@@ -356,13 +364,17 @@
           </li> -->
 
           <li route-active="activity/" ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/activity/latest"><i class="fa fa-cloud"></i>
-              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.explorer' | translate}}</span></a>
+            <a ng-href="#/activity/{{paramEngine}}/activity/latest">
+              <i class="fa fa-cloud"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.explorer' | translate}}</span>
+            </a>
           </li>
 
           <li ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart"></i>
-              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span></a>
+            <a ng-href="#/activity/{{paramEngine}}/assets/latest">
+              <i class="fa fa-line-chart"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span>
+            </a>
           </li>
 
           <li ng-hide="TRADE_UI_ONLY">
