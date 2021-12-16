@@ -16,14 +16,25 @@ const { app, BrowserWindow } = require('electron')
 
 function createWindow () {
   const win = new BrowserWindow({
+    show: false,
     width: 1024,
     height: 800,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   })
+
+  // create a temporary splash window
+  let splash = new BrowserWindow({width: 810, height: 610, transparent: true, frame: false, alwaysOnTop: true, autoHideMenuBar: true});
+  splash.loadFile('splash-electron.html');
+
   win.loadFile('index.html')
+  win.once('ready-to-show', () => {
+    splash.destroy()
+    win.show()
+  })
 }
 
 app.whenReady().then(createWindow)
