@@ -15,25 +15,29 @@ const { app, BrowserWindow } = require('electron')
 // }
 
 function createWindow () {
+  const path = require('path')
+
   const win = new BrowserWindow({
     show: false,
     width: 1024,
     height: 800,
+    icon: path.join(__dirname, "images/fimk-coin.png"),
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   })
+  win.loadFile('index.html')
 
   // create a temporary splash window
-  let splash = new BrowserWindow({width: 810, height: 610, transparent: true, frame: false, alwaysOnTop: true, autoHideMenuBar: true});
+  let splash = new BrowserWindow({width: 450, height: 350, transparent: true, frame: false, alwaysOnTop: false, autoHideMenuBar: true});
   splash.loadFile('splash-electron.html');
 
-  win.loadFile('index.html')
   win.once('ready-to-show', () => {
     splash.destroy()
-    win.show()
+    //show main window with delay to eliminate splash css animation render side effects
+    setTimeout(() => win.show(), 200)
   })
 }
 
