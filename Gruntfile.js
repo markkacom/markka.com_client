@@ -102,6 +102,8 @@ module.exports = function (grunt) {
   ];
   var restrictToLanguages = languages.map(function (language) { return language.c });
 
+  var serveStatic = require('serve-static');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -212,13 +214,18 @@ module.exports = function (grunt) {
           open: false,
           middleware: function (connect) {
             return [
+              serveStatic('.tmp'),
+              connect().use('/bower_components', serveStatic('./bower_components')),
+              serveStatic(appConfig.app)
+            ];
+            /*return [
               connect.static('.tmp'),
               connect().use(
                 '/bower_components',
                 connect.static('./bower_components')
               ),
               connect.static(appConfig.app)
-            ];
+            ];*/
           }
         }
       },
