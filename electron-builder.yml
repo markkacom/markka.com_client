@@ -16,7 +16,7 @@ directories:
   output: out
 
 win:
-#  icon: "src/app/assets/images/icon.ico"
+  icon: "./app/images/fimk-coin-256x256.png"
   target:
      - "nsis"
 #    - "zip"
