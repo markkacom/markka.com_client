@@ -134,6 +134,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
       this.api        = api;
       this.$scope     = $scope;
       this.entities   = [];
+      this.entities.filteredLength = 0;
       this.keys       = {};
       this.isLoading  = true;
       this.hasMore    = true;
@@ -159,6 +160,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
       var deferred = $q.defer();
       this.$scope.$evalAsync(function () {
         self.entities.length  = 0;
+        self.entities.filteredLength = 0;
         self.keys             = {};
         self.isLoading        = true;
         self.hasMore          = true;
@@ -171,6 +173,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
       var self = this;
       this.$scope.$evalAsync(function () {
         self.entities.length  = 0;
+        self.entities.filteredLength = 0;
         self.keys             = {};
       });
     },
@@ -192,7 +195,7 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
 
         this.$scope.$evalAsync(function () {
           self.isLoading = true;
-          self.getNetworkData(self.entities.length).then(self.loadMoreBusy.resolve);
+          self.getNetworkData(self.entities.length + self.entities.filteredLength).then(self.loadMoreBusy.resolve);
         });
       }
     },
@@ -230,6 +233,10 @@ module.factory('IndexedEntityProvider', function (nxt, $timeout, $q, $interval) 
       var entity, key;
       while (iterator.hasMore()) {
         entity = iterator.next();
+        if (entity == null) {
+          this.entities.filteredLength++;
+          continue; //filtered by iterator
+        }
         key = this.uniqueKey(entity);
         if (!this.keys[key]) {
           this.keys[key] = entity;
