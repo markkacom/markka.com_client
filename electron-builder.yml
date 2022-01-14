@@ -1,0 +1,36 @@
+appId: "mofowallet"
+
+# asar: false
+
+extraResources:
+  - "node_modules/java-properties/"
+
+extraFiles:
+  - from: "../fimk/dist/"   #add embedded fimk server
+    to: "fim/"
+  - from: "../fimk/installer/jre/"   #add JRE for embedded fimk server
+    to: "fim/jre"
+
+directories:
+  app: dist  # if you want to use original sources for debug: comment out this line (and uncomment out the "asar: false")
+  output: out
+
+win:
+  icon: "./app/images/fimk-coin-256x256.png"
+  target:
+     - "nsis"
+#    - "zip"
+
+linux:
+  target:
+    - "deb"
+
+
+# Config for the windows installer
+#nsis:
+#  oneClick: true
+#  perMachine: true
+
+#extends: null
+
+

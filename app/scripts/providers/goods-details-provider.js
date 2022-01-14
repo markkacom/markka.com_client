@@ -59,13 +59,12 @@
           }
         } catch (e) { /* ignore */ }
 
-        data.priceNXT = nxt.util.convertNQT(data.priceNQT);
 
-        var moment = new Date();
-        data.isExpired = data.timestamp < nxt.util.convertToEpochTimestamp(moment.setFullYear(moment.getFullYear() - 2));
+        data.priceNXT = nxt.util.convertNQT(data.priceNQT);
+        var now = new Date();
+        data.isExpired = data.timestamp < nxt.util.convertToEpochTimestamp(now.setFullYear(now.getFullYear() - 2));
         data.isExpired = data.isExpired || (data.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > data.expiry : false);
         data.expiry = data.expiry === 2147483647 ? null : nxt.util.formatTimestamp(data.expiry);
-
         angular.extend(this, data);
         angular.extend(this.data, data);
         if (data.tags) {

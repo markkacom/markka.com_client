@@ -52,6 +52,10 @@ module.config(function(noCAPTCHAProvider, $translateProvider) {
 
 module.run(function ($log, $rootScope, $translate, plugins, serverService) {
   $log.log('fim.base application started');
+  /*  disable this code, which is needed for nw.js but not needed for Electron
+
+  todo the same in Electron manner
+
   if (isNodeJS) {
     var win = require('nw.gui').Window.get();
     win.on('close', function (event) {
@@ -91,13 +95,13 @@ module.run(function ($log, $rootScope, $translate, plugins, serverService) {
         }
       );
     });
-  }
+  }*/
 });
 
 module.config(function($translateProvider, $httpProvider) {
   $translateProvider.useSanitizeValueStrategy(null);
   $translateProvider.useStaticFilesLoader({ prefix: './i18n/', suffix: '.json' });
-  $translateProvider.preferredLanguage('en');
+  $translateProvider.preferredLanguage('fi');
   $translateProvider.useLocalStorage();
 
   delete $httpProvider.defaults.headers.common['X-Requested-With'];

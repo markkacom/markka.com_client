@@ -233,7 +233,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     $rootScope.availableLanguages[entry[0]] = entry[1];
   });
 
-  $rootScope.langCode = $translate.preferredLanguage();
+  $rootScope.langCode = "fi";
   $rootScope.langName = $rootScope.availableLanguages[$rootScope.langCode];
   $rootScope.setLang  = function (langCode) {
     $rootScope.langCode = langCode;
@@ -242,7 +242,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   }
 
   if (!$rootScope.multiLanguage) {
-    $rootScope.setLang('en');
+    $rootScope.setLang('fi');
   }
 
   $scope.showLanguageModal = function () {
@@ -267,7 +267,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
 
   $scope.reloadMofoWallet = function () {
     try {
-      if (isNodeJS) {
+      /*if (isNodeJS) {
         var wait = 0;
         if (serverService.isRunning('TYPE_FIM')) {
           serverService.stopServer('TYPE_FIM');
@@ -283,7 +283,8 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
       }
       else {
         window.location.reload();
-      }
+      }*/
+      window.location.reload();
     } catch (e) {
       console.log(e)
     }
@@ -372,13 +373,13 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     return false;
   }
 
-  if (isNodeJS) {
+  /*if (isNodeJS) {
     $scope.clipboardCopy = function (text) {
       var gui = require('nw.gui');
       var clipboard = gui.Clipboard.get();
       clipboard.set(text, 'text');
     }
-  }
+  }*/
 
   $rootScope.followUser = function (id_rs) {
     var deferred = $q.defer();
