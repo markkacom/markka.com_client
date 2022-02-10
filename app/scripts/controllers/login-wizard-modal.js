@@ -1500,7 +1500,6 @@ addStep({
           '<span class="input-group" style="margin-bottom: 8px">',
             '<span class="input-group-btn">',
               '<span class="btn btn-default btn-block btn-file" ng-disabled="input.accounts.length">',
-                '<i class="fa fa-folder-open fa-fw"></i>&nbsp;&nbsp;<span translate="translate.open_wallet"></span>',
                 '<input type="file" onchange="angular.element(this).scope().walletFileChanged(event)">',
               '</span>',
             '</span>',
@@ -1616,7 +1615,11 @@ addStep({
             '</button>',
           '</div>',
         '</div>',
-      '</div>',
+        '<button class="center-block btn btn-default" ng-click="backupWallet()">',
+        '<i class="fa fa-floppy-o fa-fw"></i>&nbsp;<span ng-bind-html="backupWalletButtonLabel"></span>',
+        '</button>',
+    '</div>',
+
     '</div>'
   ],
   buttons: {
