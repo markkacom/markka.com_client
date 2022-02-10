@@ -1,4 +1,17 @@
-const { app, BrowserWindow } = require('electron')
+const electron = require('electron')
+const remoteMain = require('@electron/remote/main')
+const path = require('path')
+
+remoteMain.initialize()
+
+
+
+
+
+/*
+const { app } = require('electron')
+const { BrowserWindow } = require('@electron/remote')
+*/
 
 //const { is, setContentSecurityPolicy } = require('electron-util');
 // set the CSP in production mode
@@ -15,9 +28,9 @@ const { app, BrowserWindow } = require('electron')
 // }
 
 function createWindow () {
-  const path = require('path')
+  //const path = require('path')
 
-  const win = new BrowserWindow({
+  const win = new electron.BrowserWindow({
     show: false,
     width: 1024,
     height: 800,
@@ -28,10 +41,13 @@ function createWindow () {
       contextIsolation: false
     }
   })
+
+  remoteMain.enable(win.webContents)
+
   win.loadFile('index.html')
 
   // create a temporary splash window
-  let splash = new BrowserWindow({width: 450, height: 350, transparent: true, frame: false, alwaysOnTop: false, autoHideMenuBar: true});
+  let splash = new electron.BrowserWindow({width: 450, height: 350, transparent: true, frame: false, alwaysOnTop: false, autoHideMenuBar: true});
   splash.loadFile('splash-electron.html');
 
   win.once('ready-to-show', () => {
@@ -39,18 +55,27 @@ function createWindow () {
     //show main window with delay to eliminate splash css animation render side effects
     setTimeout(() => win.show(), 200)
   })
+
+  // const homePath = app.getPath('home')
+  // console.log(`homePath ${homePath}`)
+  //
+  // var fs = require('fs')
+  // let dir = homePath + "./test1"
+  // if (!fs.existsSync(dir)){
+  //   fs.mkdirSync(dir);
+  // }
 }
 
-app.whenReady().then(createWindow)
+electron.app.whenReady().then(createWindow)
 
-app.on('window-all-closed', () => {
+electron.app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    electron.app.quit()
   }
 })
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
+electron.app.on('activate', () => {
+  if (electron.BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
 })

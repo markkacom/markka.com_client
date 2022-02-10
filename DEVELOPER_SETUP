@@ -1,5 +1,6 @@
-(sudo) npm install
+npm install
 bower install
+npm install "@electron/remote"@latest
 grunt less
 grunt sass
 grunt serve

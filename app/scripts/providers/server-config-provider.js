@@ -173,8 +173,9 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
   function ServerConfigProvider(api, $scope) {
     this.api               = api;
     this.$scope            = $scope;
-    this.defaultConfigPath = serverService.getConfFilePath(api.engine.type, 'nxt-default.properties');
-    this.userConfigPath    = serverService.getConfFilePath(api.engine.type, 'nxt.properties');
+    this.defaultConfigPath = serverService.getConfigFilePath(api.engine.type, 'nxt-default.properties', false);
+    this.userConfigPath    = serverService.getConfigFilePath(api.engine.type, 'nxt.properties', true);
+    this.effectiveUserConfigPath    = serverService.getConfigFilePath(api.engine.type, 'nxt.properties', false);
     this.defaultConfig     = {};
     this.userConfig        = {};
     this.config            = {};
@@ -193,7 +194,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
           this.rows.push({
             type: 1,
             name: key,
-            value: this.config[key],
+            value: this.userConfig[key] || this.config[key],
             description: PROPERTIES[name][key]
           });
         }
@@ -211,11 +212,11 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
     },
 
     serialize: function (objs) {
-      var ret = [];
+      var result = []
       for (var name in objs) {
-        ret.push(name+'='+objs[name]);
+        if (objs[name]) result.push(name + '=' + objs[name])
       }
-      return ret.join(os.EOL);
+      return result.join(os.EOL)
     },
 
     onchange: function (key, newValue) {
@@ -224,12 +225,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
 
     onsave: function (key) {
       this.userConfig[key] = this.config[key];
-      for (var name in this.userConfig) {
-        if (this.userConfig[name] == this.defaultConfig[name]) {
-          delete this.userConfig[name];
-        }
-      }
-      fs.writeFile(this.userConfigPath, this.serialize(this.userConfig),
+      fs.writeFileSync(this.userConfigPath, this.serialize(this.userConfig),
         function (err) {
           if (err) {
             plugins.get('alerts').danger({title: 'Save failed', message: 'Failure, setting not saved'});
@@ -239,6 +235,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
           }
         }
       );
+      fs.copyFileSync(this.userConfigPath, this.effectiveUserConfigPath);
     },
 
     /* Given a span/btn (the restore btn) try and find the sibling <input>

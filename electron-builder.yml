@@ -4,6 +4,7 @@ appId: "mofowallet"
 
 extraResources:
   - "node_modules/java-properties/"
+  - "node_modules/@electron/"
 
 extraFiles:
   - from: "../fimk/dist/"   #add embedded fimk server

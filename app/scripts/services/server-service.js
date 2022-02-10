@@ -102,6 +102,7 @@ var path;
 if (isNodeJS) {
   path = require('path');
 
+
   // SIGTERM AND SIGINT will trigger the exit event.
   process.once("SIGTERM", function () {
     process.exit(0);
@@ -156,11 +157,7 @@ function maybeNotifyServerReady(id, line) {
   }
 }
 
-var NON_WHITESPACE = /\S/;
-var BUFFER_SIZE = 2000;
-
-return {
-  getDir: function (id) {
+function getDir(id) {
     /* Allow this to be called from web context without errors */
     try {
       /* @dependency on nxt.js this must match the TYPE_FIM and TYPE_NXT constant values */
@@ -174,24 +171,89 @@ return {
       else {
         ret = path.join(path.dirname( process.execPath ), dir);
       }
-      console.log('serverService-getDir', ret);
       return ret;
     } catch(e) {
       console.log('server-service.js getCWD', e);
       return '';
     }
-  },
-  getConfFilePath: function (id, fileName) {
-    if (isNodeJS) {
-      var path = require('path');
-      return path.join(this.getDir(id), 'conf', fileName);
+}
+
+function getUserDir () {
+    var remote = require("@electron/remote");
+    if (!remote) return getDir("");
+    var path = require('path');
+    var dir = path.join(remote.app.getPath("home"), ".fimk");
+    var fs = require('fs');
+    if (!fs.existsSync(dir)) {
+      fs.mkdir(dir, function (err) {
+        if (err) throw err;
+      });
     }
-    return '';
-  },
+    return dir;
+}
+
+function getConfigFilePath(id, fileName, useUserDir) {
+  if (isNodeJS) {
+    var path = require('path');
+    if (!useUserDir) {
+      return path.join(getDir(id), 'conf', fileName);
+    }
+    var userDir = getUserDir();
+    return path.join(userDir, 'conf', fileName);
+  }
+  return '';
+}
+
+
+var NON_WHITESPACE = /\S/;
+var BUFFER_SIZE = 2000;
+
+//check and init server config file
+/*
+Effective server config resides in the app dir that is overwritten on each install.
+The actual config that is not overwritten on install resides in user homedir in the dir ".fimk".
+So user edits actual config then it is copied to effective config.
+On first install the actual and effective configs is born from 'embedded-template.properties' is shipped with server.
+*/
+setTimeout(function () {
+  var fs = require('fs')
+  var path = require('path')
+  var userDir = getUserDir()
+  var configDir = path.join(userDir, 'conf')
+  if (!fs.existsSync(configDir)) {
+    fs.mkdir(configDir, {recursive: true}, function (err) {
+      if (err) throw err
+    })
+  }
+  var configFile = path.join(configDir, "nxt.properties")
+  if (!fs.existsSync(configFile)) {
+    var virginConfigFile = path.join(getDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
+    //fs.copyFileSync(virginConfigFile, configFile)
+
+    var data = fs.readFileSync(virginConfigFile, 'utf8')
+    var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
+    fs.writeFileSync(configFile, updatedData, 'utf8')
+    var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "nxt.properties")
+    if (!fs.existsSync(effectiveConfigFile)) {
+      fs.copyFileSync(configFile, effectiveConfigFile)
+    }
+  }
+}, 200)
+
+
+return {
+  getUserDir: getUserDir,
+
+  getDir: getDir,
+
+  getConfigFilePath: getConfigFilePath,
+
   getStartCommand: function (id) {
     return engine[id].commands[getOS()].start;
   },
+
   isNodeJS: function () { return isNodeJS; },
+
   startServer: function (id) {
     if (this.isRunning(id)) {
       throw new Error('Server '+id+' already running');
@@ -262,6 +324,7 @@ return {
 
     notifyListeners(engine[id].listeners.start, 'Starting server');
   },
+
   stopServer: function (id) {
     if (engine[id].server) {
       engine[id].server.shutdown();
@@ -270,21 +333,27 @@ return {
     }
     $timeout(function () { notifyListeners(engine[id].listeners.exit, 'Stopping server'); }, 1000, false);
   },
+
   isRunning: function (id) {
     return !!(engine[id].server);
   },
+
   isReady: function (id) {
     return engine[id].isReady;
   },
+
   addListener: function (id, type, listener) {
     engine[id].listeners[type].push(listener);
   },
+
   removeListener: function (id, type, listener) {
     engine[id].listeners[type] = engine[id].listeners[type].filter(function (_listener) { return _listener != listener; });
   },
+
   getMessages: function (id) {
     return engine[id].messages;
   },
+
   write: function (id, msg) {
     engine[id].messages.push({ data: msg });
     while (engine[id].messages.length > BUFFER_SIZE) {
