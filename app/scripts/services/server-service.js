@@ -233,10 +233,10 @@ setTimeout(function () {
     var data = fs.readFileSync(virginConfigFile, 'utf8')
     var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
     fs.writeFileSync(configFile, updatedData, 'utf8')
-    var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "nxt.properties")
-    if (!fs.existsSync(effectiveConfigFile)) {
-      fs.copyFileSync(configFile, effectiveConfigFile)
-    }
+  }
+  var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "nxt.properties")
+  if (!fs.existsSync(effectiveConfigFile)) {
+    fs.copyFileSync(configFile, effectiveConfigFile)
   }
 }, 200)
 
