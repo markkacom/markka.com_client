@@ -210,10 +210,10 @@ var BUFFER_SIZE = 2000;
 
 //check and init server config file
 /*
-Effective server config resides in the app dir that is overwritten on each install.
-The actual config that is not overwritten on install resides in user homedir in the dir ".fimk".
-So user edits actual config then it is copied to effective config.
-On first install the actual and effective configs is born from 'embedded-template.properties' is shipped with server.
+Effective server config file resides in the app dir that is overwritten on each installation.
+The backup config that is not overwritten on installation resides in user homedir in the dir ".fimk/conf".
+So user edits effective config then it is auto copied to backup config.
+On first install the effective and backup configs is born from 'embedded-template.properties' is shipped with server.
 */
 setTimeout(function () {
   var fs = require('fs')
@@ -225,16 +225,18 @@ setTimeout(function () {
       if (err) throw err
     })
   }
-  var configFile = path.join(configDir, "nxt.properties")
-  if (!fs.existsSync(configFile)) {
-    var virginConfigFile = path.join(getDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
-    //fs.copyFileSync(virginConfigFile, configFile)
-
-    var data = fs.readFileSync(virginConfigFile, 'utf8')
-    var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
-    fs.writeFileSync(configFile, updatedData, 'utf8')
-  }
+  var configFile = path.join(configDir, "nxt.properties.bak")
   var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "nxt.properties")
+  if (!fs.existsSync(configFile)) {
+    if (fs.existsSync(effectiveConfigFile)) {
+      fs.copyFileSync(effectiveConfigFile, configFile)
+    } else {
+      var virginConfigFile = path.join(getDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
+      var data = fs.readFileSync(virginConfigFile, 'utf8')
+      var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
+      fs.writeFileSync(configFile, updatedData, 'utf8')
+    }
+  }
   if (!fs.existsSync(effectiveConfigFile)) {
     fs.copyFileSync(configFile, effectiveConfigFile)
   }

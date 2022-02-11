@@ -174,7 +174,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
     this.api               = api;
     this.$scope            = $scope;
     this.defaultConfigPath = serverService.getConfigFilePath(api.engine.type, 'nxt-default.properties', false);
-    this.userConfigPath    = serverService.getConfigFilePath(api.engine.type, 'nxt.properties', true);
+    this.userConfigPath    = serverService.getConfigFilePath(api.engine.type, 'nxt.properties.bak', true);
     this.effectiveUserConfigPath    = serverService.getConfigFilePath(api.engine.type, 'nxt.properties', false);
     this.defaultConfig     = {};
     this.userConfig        = {};
@@ -184,7 +184,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
   ServerConfigProvider.prototype = {
     load: function () {
       this.defaultConfig   = /*TEST_DEFAULT;*/ this.readConfig(this.defaultConfigPath);
-      this.userConfig      = /*TEST_USER;*/ this.readConfig(this.userConfigPath);
+      this.userConfig      = /*TEST_USER;*/ this.readConfig(this.effectiveUserConfigPath);
       this.config          = angular.copy(this.defaultConfig);
       angular.extend(this.defaultConfig, this.userConfig);
 
@@ -225,7 +225,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
 
     onsave: function (key) {
       this.userConfig[key] = this.config[key];
-      fs.writeFileSync(this.userConfigPath, this.serialize(this.userConfig),
+      fs.writeFileSync(this.effectiveUserConfigPath, this.serialize(this.userConfig),
         function (err) {
           if (err) {
             plugins.get('alerts').danger({title: 'Save failed', message: 'Failure, setting not saved'});
@@ -235,7 +235,7 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
           }
         }
       );
-      fs.copyFileSync(this.userConfigPath, this.effectiveUserConfigPath);
+      fs.copyFileSync(this.effectiveUserConfigPath, this.userConfigPath);
     },
 
     /* Given a span/btn (the restore btn) try and find the sibling <input>
