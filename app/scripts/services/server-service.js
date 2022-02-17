@@ -225,8 +225,8 @@ setTimeout(function () {
       if (err) throw err
     })
   }
-  var configFile = path.join(configDir, "nxt.properties.bak")
-  var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "nxt.properties")
+  var configFile = path.join(configDir, "fimk.properties.bak")
+  var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "fimk.properties")
   if (!fs.existsSync(configFile)) {
     if (fs.existsSync(effectiveConfigFile)) {
       fs.copyFileSync(effectiveConfigFile, configFile)
