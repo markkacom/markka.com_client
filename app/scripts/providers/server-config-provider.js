@@ -173,9 +173,9 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
   function ServerConfigProvider(api, $scope) {
     this.api               = api;
     this.$scope            = $scope;
-    this.defaultConfigPath = serverService.getConfigFilePath(api.engine.type, 'nxt-default.properties', false);
-    this.userConfigPath    = serverService.getConfigFilePath(api.engine.type, 'nxt.properties.bak', true);
-    this.effectiveUserConfigPath    = serverService.getConfigFilePath(api.engine.type, 'nxt.properties', false);
+    this.defaultConfigPath = serverService.getConfigFilePath(api.engine.type, 'fimk-default.properties', false);
+    this.userConfigPath    = serverService.getConfigFilePath(api.engine.type, 'fimk.properties.bak', true);
+    this.effectiveUserConfigPath    = serverService.getConfigFilePath(api.engine.type, 'fimk.properties', false);
     this.defaultConfig     = {};
     this.userConfig        = {};
     this.config            = {};
@@ -208,7 +208,8 @@ module.factory('ServerConfigProvider', function (serverService, plugins) {
         //backward compatibility (user may define properties started with "nxt.")
         //rename key prefixes "nxt." to "fimk."
         var keys = Object.keys(props);
-        for (const key of keys) {
+        for (var i in keys) {
+          var key = keys[i];
           if (key.startsWith("nxt.")) {
             var newKey = "fimk." + key.substr(4);
             props[newKey] = props[key];
