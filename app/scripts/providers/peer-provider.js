@@ -105,7 +105,7 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
           break
       }
       p.downloadedVolume = p.downloadedVolume || 0;;
-      p.lastUpdatedStr = nxt.util.formatTimestamp(p.lastUpdated, true);
+      p.lastUpdatedStr = nxt.util.formatTimestamp(p.lastUpdated, false, true);
       //p.downloadedVolumeStr = formatVolume(p.downloadedVolume);
       p.downloadedVolumeBytes = nxt.util.commaFormat(""+p.downloadedVolume);
       //p.uploadedVolumeStr = formatVolume(p.uploadedVolume);

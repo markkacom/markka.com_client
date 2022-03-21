@@ -32,7 +32,10 @@ module.factory('AllAssetsProvider', function (nxt, $q, IndexedEntityProvider) {
   angular.extend(AllAssetsProvider.prototype, IndexedEntityProvider.prototype, {
 
     uniqueKey: function (asset) { return asset.asset; },
-    sortFunction: function (a, b) { return a.index - b.index; },
+
+    sortFunction: function (a, b) {
+      return (b.orig_numberOfTrades - a.orig_numberOfTrades) || (b.blockTimestamp - a.blockTimestamp)
+    },
 
     getData: function (firstIndex) {
       var deferred = $q.defer();
@@ -59,6 +62,7 @@ module.factory('AllAssetsProvider', function (nxt, $q, IndexedEntityProvider) {
       for (var i=0; i<assets.length; i++) {
         var a       = assets[i];
         a.quantity  = nxt.util.commaFormat(nxt.util.convertToQNTf(a.quantityQNT, a.decimals));
+        a.orig_numberOfTrades    = a.numberOfTrades || 0;
         a.numberOfTrades    = nxt.util.commaFormat(String(a.numberOfTrades));
         a.numberOfTransfers = nxt.util.commaFormat(String(a.numberOfTransfers));
         a.numberOfAccounts  = nxt.util.commaFormat(String(a.numberOfAccounts));
@@ -68,6 +72,7 @@ module.factory('AllAssetsProvider', function (nxt, $q, IndexedEntityProvider) {
         a.label    += '/' + a.name;
         a.isExpired = a.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > a.expiry : false;
         a.expiry = a.expiry === 2147483647 ? null : nxt.util.formatTimestamp(a.expiry);
+        a.timestamp = nxt.util.formatTimestamp(a.blockTimestamp);
       }
       //return new Iterator(assets);
       //filter expired on client side. Todo should be filtered on server side

@@ -6,6 +6,7 @@
   ],
   "translate": {
     "about":                "About",
+    "created":              "Created",
     "client_version":       "Client Version",
     "server_version":       "Server Version",
     "discuss":              "Discuss",

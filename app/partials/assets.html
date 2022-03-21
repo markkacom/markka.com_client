@@ -250,8 +250,10 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <b>{{assetName}}</b>&nbsp;#<a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade">{{paramAsset}}</a>
-              <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase" ng-hide="TRADE_UI_ONLY">
-                <span translate="translate.show_pulse" />
+              <span translate="translate.created" style="margin-left: 16px;"></span><span> &nbsp;{{details.data.dateFormatted}}</span>
+              <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase" ng-hide="TRADE_UI_ONLY"
+                 tooltip="Show pulse">
+                <!--<span translate="translate.show_pulse" />--><i class="fa fa-newspaper-o"></i>
               </a>
             </div>
             <div class="panel-body" style="height: 250px;overflow-y:auto">

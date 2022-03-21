@@ -66,7 +66,7 @@ module.factory('TradesProvider', function (nxt, $q, IndexedEntityProvider) {
         trade.total    = nxt.util.convertToNXT(nxt.util.calculateOrderTotalNQT(trade.priceNQT, trade.quantityQNT));
       }
       if (trade.timestamp) {
-        trade.date     = nxt.util.formatTimestamp(trade.timestamp, false);
+        trade.date     = nxt.util.formatTimestamp(trade.timestamp, false, false);
       }
     },
 

@@ -64,7 +64,7 @@ module.factory('BalanceProvider', function (nxt, $q, $timeout) {
                 balance.forgedBalanceTodayNXT = nxt.util.convertToNXT(balance.forgedBalanceTodayNQT);
                 balance.forgedBalanceWeekNXT = nxt.util.convertToNXT(balance.forgedBalanceWeekNQT);
                 balance.forgedBalanceMonthNXT = nxt.util.convertToNXT(balance.forgedBalanceMonthNQT);
-                balance.date = nxt.util.formatTimestamp(balance.lastBlockTimestamp, true) || 'never';
+                balance.date = nxt.util.formatTimestamp(balance.lastBlockTimestamp, false, true) || 'never';
               }
               self.balances.push(balance);
             });

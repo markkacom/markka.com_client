@@ -5,6 +5,7 @@
   "translate": {
     "about": "Tietoa Lompsasta",
     "client_version": "Ohjelmistoversio",
+    "created":              "Luotu",
     "server_version": "Palvelinversio",
     "discuss": "Keskustelu",
     "public_key": "Julkinen avain",

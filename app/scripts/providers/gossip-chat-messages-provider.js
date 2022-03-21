@@ -101,7 +101,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
     },
 
     translate: function (transaction) {
-      transaction.date = nxt.util.formatTimestamp(transaction.timestamp, false);
+      transaction.date = nxt.util.formatTimestamp(transaction.timestamp, false, false);
       transaction.attachment = transaction.attachment || {};
       if (transaction.senderRS == this.parent.accountOne) {
         transaction.clazz = "fromMe";
@@ -251,7 +251,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
     // }
 
     this.interval(function (entity) {
-      entity.date = nxt.util.formatTimestamp(entity.timestamp, false);
+      entity.date = nxt.util.formatTimestamp(entity.timestamp, false, false);
     });
 
     /* observe the database for new gossip messages */
@@ -510,7 +510,7 @@ module.factory('GossipChatMessagesProvider', function (nxt, $q, Emoji, KeyServic
     },
 
     translate: function (gossip) {
-      gossip.date = nxt.util.formatTimestamp(gossip.timestamp, false);
+      gossip.date = nxt.util.formatTimestamp(gossip.timestamp, false, false);
       if (gossip.senderRS == this.accountOne) {
         gossip.clazz = "fromMe";
         gossip.pull_clazz = "pull-right";
