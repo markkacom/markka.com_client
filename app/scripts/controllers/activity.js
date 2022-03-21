@@ -100,7 +100,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
       break;
     case 'assets':
       $scope.showFilter = false;
-      $scope.provider = new AllAssetsProvider(api, $scope, 40);
+      $scope.provider = new AllAssetsProvider(api, $scope, 60);
       $scope.provider.reload();
       break;
     default:
