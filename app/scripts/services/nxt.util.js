@@ -191,7 +191,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
 
   /* timeago functionality functionality removed since it required jquery */
 
-  function formatTimestamp(timestamp, short = false, use_timeago) {
+  function formatTimestamp(timestamp, short, use_timeago) {
     if (!timestamp) return '';
     if (use_timeago) {
       if (timeago_cache[timestamp]) {
