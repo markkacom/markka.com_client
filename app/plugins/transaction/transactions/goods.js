@@ -31,13 +31,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
   // Add Goods
 
   plugin.add({
-    label: 'Devious Item',
+    label: 'Add Marketplace Item',
     id: 'dgsListing',
     exclude: true,
     execute: function () {
       return plugin.create(angular.extend({
-        title: 'Devious Item',
-        message: 'Create a Marketplace item with no length restricted tags',
+        title: 'Add Marketplace Item',
+        message: 'Create a Marketplace item with no length restricted tags. <br/>Item will automatically be removed after 6 months. <br/>Change this in "Assign Expiry" screen (section "Advanced") after item is added.',
         requestType: 'dgsListing',
         canHaveRecipient: false,
         createArguments: function (items) {
