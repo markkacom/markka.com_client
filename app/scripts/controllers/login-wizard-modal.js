@@ -124,7 +124,8 @@ function goBack() {
   rememberCurrentState();
   var previousStep = paths.pop();
   if (!previousStep) {
-    throw new Error('Something is wrong there is no previous step');
+    console.error('Something is wrong there is no previous step')
+    return
   }
   angular.extend($scope, scopeDefaults);
   initNextState(previousStep);
@@ -1237,9 +1238,9 @@ addStep({
               '<div class="form-group">',
                 '<label ng-bind="secretPhraseLabel"></label>',
                 '<div class="input-group">',
-                  '<textarea id="secret-phrase-textarea-3" class="form-control monospace" rows="2" ng-model="a.secretPhrase" readonly></textarea>',
+                  '<textarea id="{{\'secret-phrase-textarea-3-\' + $index}}" class="form-control monospace" rows="2" ng-model="a.secretPhrase" readonly></textarea>',
 
-                  '<span id="copy-3" data-clipboard-target="#secret-phrase-textarea-3" class="input-group-addon btn btn-default" type="button">',
+                  '<span id="{{\'copy-3-\' + $index}}" data-clipboard-target="#{{\'secret-phrase-textarea-3-\' + $index}}" class="input-group-addon btn btn-default" type="button">',
                   '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__secret_clipped,\'fa-clipboard\':!a.__secret_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
 
                   /*// browser clipboard
@@ -1253,9 +1254,9 @@ addStep({
               '<div class="form-group">',
                 '<label ng-bind="accountIdLabel"></label>',
                 '<div class="input-group">',
-                  '<input id="account-id-5" class="form-control monospace" ng-model="a.id_rs" readonly>',
+                  '<input id="{{\'account-id-5-\' + $index}}" class="form-control monospace" ng-model="a.id_rs" readonly>',
 
-                  '<span id="copy-5" data-clipboard-target="#account-id-5" class="input-group-addon btn btn-default" type="button">',
+                  '<span id="{{\'copy-5-\' + $index}}" data-clipboard-target="#{{\'account-id-5-\' + $index}}" class="input-group-addon btn btn-default" type="button">',
                   '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__id_rs_clipped,\'fa-clipboard\':!a.__id_rs_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
 
                   /*// browser clipboard
@@ -1269,9 +1270,9 @@ addStep({
               '<div class="form-group">',
                 '<label ng-bind="publicKeyLabel"></label>',
                 '<div class="input-group">',
-                  '<input id="public-key-6" class="form-control monospace" ng-model="a.publicKey" readonly>',
+                  '<input id="{{\'public-key-6-\' + $index}}" class="form-control monospace" ng-model="a.publicKey" readonly>',
 
-                  '<span id="copy-6" data-clipboard-target="#public-key-6" class="input-group-addon btn btn-default" type="button">',
+                  '<span id="{{\'copy-6-\' + $index}}" data-clipboard-target="#{{\'public-key-6-\' + $index}}" class="input-group-addon btn btn-default" type="button">',
                     '<i class="fa fa-fw" ng-class="{\'fa-check\':a.__publickey_clipped,\'fa-clipboard\':!a.__publickey_clipped}"></i>&nbsp;<span translate="translate.copy"></span></span>',
 
                   /*// browser clipboard
@@ -1630,7 +1631,14 @@ addStep({
 
 ready();
 
-new ClipboardJS("#copy-0, #copy-1, #copy-2, #copy-3, #copy-5, #copy-6");
-
+var clipboardElementIds = ["#copy-0", "#copy-1", "#copy-2"]
+if ($scope.input) {
+  $scope.input.accounts.forEach((v, i) => {
+    clipboardElementIds.push("#copy-3-" + i)
+    clipboardElementIds.push("#copy-5-" + i)
+    clipboardElementIds.push("#copy-6-" + i)
+  })
+}
+new ClipboardJS(clipboardElementIds.join(", "))
 });
 })();
