@@ -57,7 +57,7 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
   }
   PeerProvider.prototype = {
     socket: function () {
-      return $rootScope.forceLocalHost ? this.api.engine.socket() : this.api.engine.localSocket();
+      return $rootScope.forceLocalHost ? this.api.engine.localSocket() : this.api.engine.socket();
     },
 
     reload: function () {
