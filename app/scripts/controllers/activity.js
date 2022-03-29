@@ -32,7 +32,7 @@ module.config(function($routeProvider) {
 });
 
 module.controller('ActivityController', function($scope, $location, $routeParams, nxt, $q, $sce,
-  ActivityProvider, BlocksProvider, ForgersProvider, StatisticsProvider, AllAssetsProvider, BlockStateProvider,
+  ActivityProvider, BlocksProvider, ForgersProvider, StatisticsProvider, AllAssetsProvider, BlockStateProvider, PeerProvider,
   $timeout, dateParser, dateFilter, $rootScope) {
 
   $rootScope.paramEngine  = $routeParams.engine;
@@ -51,7 +51,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     return;
   }
 
-  if (['activity', 'blockchain', 'forgers', 'assets'].indexOf($scope.paramSection) == -1) {
+  if (['activity', 'blockchain', 'forgers', 'assets', 'peers'].indexOf($scope.paramSection) == -1) {
     $location.path('/activity/'+$scope.paramEngine+'/activity/latest');
     return;
   }
@@ -101,6 +101,10 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     case 'assets':
       $scope.showFilter = false;
       $scope.provider = new AllAssetsProvider(api, $scope, 60);
+      $scope.provider.reload();
+      break;
+    case 'peers':
+      $scope.provider = new PeerProvider(api, $scope);
       $scope.provider.reload();
       break;
     default:

@@ -148,6 +148,12 @@
         </a>
       </li>
 
+      <li role="presentation" route-active="activity/{{paramEngine}}/peers" ng-hide="TRADE_UI_ONLY">
+        <a href="#/activity/{{paramEngine}}/peers/latest">
+          <i class="fa fa-globe"></i>&nbsp;&nbsp;<span translate="translate.peers"></span>
+        </a>
+      </li>
+
       <li role="presentation" route-active="activity/{{paramEngine}}/assets" ng-hide="TRADE_UI_ONLY">
         <a href="#/activity/{{paramEngine}}/assets/latest">
           <i class="fa fa-line-chart"></i>&nbsp;&nbsp;{{'translate.assets'|translate}}
@@ -447,6 +453,39 @@
             </div>
           </div>
         </div>
+
+        <!-- peers section -->
+        <div ng-if="paramSection=='peers'" class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <tbody>
+              <tr>
+                <th translate="translate.address"></th>
+                <th translate="translate.state"></th>
+                <th translate="translate.weight"></th>
+                <th translate="translate.download"></th>
+                <th translate="translate.upload"></th>
+                <th></th>
+                <th translate="translate.blacklisted"></th>
+                <th translate="translate.last_update"></th>
+              </tr>
+              <tr ng-repeat="p in provider.peers | slice:0:40" class="{{p.stateClass}}">
+                <td class="text-primary">{{p.address}}</td>
+                <td>{{p.stateStr}}</td>
+                <td>{{p.weightStr}}</td>
+                <td>{{p.downloadedVolumeBytes}} b</td>
+                <td>{{p.uploadedVolumeBytes}} b</td>
+                <td>{{p.application}} - {{p.version}} - {{p.platform}}</td>
+                <td><span ng-show="p.blacklisted"><b>blacklisted</b></span></td>
+                <td>{{p.lastUpdatedStr}}</td>
+              </tr>
+              <tr><td colspan="8" translate="translate.displaying_so_many_peers" translate-values="{limit:40, size:provider.peers.length}"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>
