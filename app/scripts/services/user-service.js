@@ -52,6 +52,7 @@ module.factory('UserService', function ($q, nxt, KeyService, $rootScope) {
           });
         }
       );
+      $rootScope.showQRCode(account)
       return this.currentAccount
     },
 

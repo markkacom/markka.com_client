@@ -447,6 +447,25 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
       return plugins.get('transaction').get(id).execute($scope.id_rs, arg);
     }
   }
+
+  var accountQRCode
+
+  $rootScope.showQRCode = function(account) {
+    if (accountQRCode) {
+      accountQRCode.clear()
+      accountQRCode.makeCode(account.id_rs)
+    } else {
+      accountQRCode = new QRCode("addressQRCode", {
+        text: account.id_rs,
+        width: 120,
+        height: 120,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      })
+    }
+  }
+
 });
 
 })();

@@ -102,6 +102,7 @@
     <script src="scripts/lib/ng-infinite-scroll.js"></script>
     <script src="scripts/lib/techan.js"></script>
     <script src="scripts/lib/angular-no-captcha.js"></script>
+    <script src="scripts/lib/qrcode.js"></script>
 
     <script src="scripts/app.js"></script>
 
@@ -296,6 +297,22 @@
           <u><b class="text-danger">TESTNET</b></u>
         </span>
 
+        <div class="navbar-brand navbar-default" ng-hide="!currentAccount" dropdown style="padding: 0px; margin-left: -12px; margin-right: -12px;">
+          <ul class="nav navbar-nav" nav-menu="active">
+            <li>
+              <a href class="dropdown-toggle" dropdown-toggle tooltip="QR code">
+                <i class="fa fa-qrcode"></i>
+              </a>
+            </li>
+          </ul>
+          <ul class="dropdown-menu" role="menu">
+            <li style="padding: 10px 0 10px 18px">
+              <p>Address:</p>
+              <div id="addressQRCode"></div>
+            </li>
+          </ul>
+        </div>
+
         <a href="#/accounts/{{currentAccount.id_rs}}/activity/latest" ng-show="currentAccount"
             class="navbar-brand" style="padding-top:8px">
           <div><b>{{currentAccount.balance}}</b></div>
@@ -306,6 +323,7 @@
           <i class="fa fa-comment-o fa-2x" style="max-height:none; min-height:5px !important; height:100%"></i>
         </a>
       </div>
+
 
       <div class="collapse navbar-collapse navbar-default" collapse="mainMenuCollapsed" menu-close="mainMenuCollapsed=true">
         <ul class="nav navbar-nav" nav-menu="active">
