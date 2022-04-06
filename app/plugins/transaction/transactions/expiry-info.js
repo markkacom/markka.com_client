@@ -38,7 +38,7 @@
         var api = nxt.get($rootScope.currentAccount.id_rs);
         return plugin.create(angular.extend(args, {
           title: 'Assign Expiry',
-          message: 'Assign expiry to asset, marketplace',
+          message: 'Assign expiry to asset or/and marketplace',
           requestType: 'setNamespacedAlias',
           createArguments: function (items) {
             return {
