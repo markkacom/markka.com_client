@@ -87,7 +87,7 @@ module.controller('MerchantTerminalController', function ($scope, $rootScope, nx
       });
     })
   ];
-  if ($scope.assetId) {
+  if ($scope.assetId && $scope.assetId.trim() !== "0") {
     promises.push(
       api.engine.socket().callAPIFunction({requestType:'getAsset', asset: $scope.assetId}).then(function (data) {
         $scope.$evalAsync(function () {
