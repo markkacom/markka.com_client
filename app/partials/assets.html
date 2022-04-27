@@ -73,6 +73,11 @@
           <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.remove_account"/>
         </a>
       </li>
+      <li role="presentation" ng-if="currentAccount">
+        <a href ng-click="executeTransaction('assignExpiry', { asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign-expiry"/>
+        </a>
+      </li>
     </ul>
   </div>
 
@@ -216,7 +221,7 @@
     </style>
 
     <div ng-if="paramSection=='trade' && isExpired && currentAccount.id_rs!=assetIssuerRS" style="margin-top: 120px">
-      <p><code>Asset "{{assetName}}" is expired</code></p>
+      <p><code>Asset is expired</code></p>
     </div>
 
     <div ng-if="paramSection=='trade' && !isExpired">
