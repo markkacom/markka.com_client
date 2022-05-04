@@ -76,7 +76,6 @@
       <div class="row">
         <div class="col-md-12">
           <span class="text-muted">Showing {{symbol}} marketplace listings
-            <a ng-show="symbol=='FIM' && enableDualEngines" href="#/goods/nxt/listing">show NXT</a>
             <a ng-show="symbol=='NXT' && enableDualEngines" href="#/goods/fim/listing">show FIM</a>
           </span>
         </div>
@@ -201,7 +200,6 @@
       <div class="row">
         <div class="col-md-12">
           <span class="text-muted">Showing all items in {{symbol}} cart
-            <a ng-show="symbol=='FIM'" href="#/goods/nxt/cart">show NXT</a>
             <a ng-show="symbol=='NXT'" href="#/goods/fim/cart">show FIM</a>
           </span>
         </div>
@@ -224,8 +222,9 @@
                   <th translate="translate.amount"></th>
                   <th style="text-align: center;">{{'translate.goods_name' | translate}}</th>
                   <th></th>
-                  <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                  <th translate="translate.goods_price"></th>
                   <th>{{'translate.goods_total_price' | translate}}</th>
+                  <th>Markka.com Wallet</th>
                 </tr>
               </thead>
                <tbody>
@@ -238,17 +237,39 @@
                     <p><b>{{'translate.goods_seller' | translate}}: </b><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></p>
                     <p class="remove-item" ng-click="item.delete()">{{'translate.remove_from_cart' | translate}}</p>
                   </td>
-                  <td class="price">{{item.priceNXT}}</td>
-                  <td class="total-price"><b>{{'translate.goods_total_price' | translate}}: {{item.totalNXT}}</b></td>
+                  <td class="price">
+                    {{item.priceNXT}}
+                    <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+                  </td>
+                  <td class="total-price">
+                    <b>{{item.totalNXT}}</b>
+                    <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+                  </td>
+                  <td class="total-price">
+                    <div id="payQRCode-{{$index}}" class="pay-qrcode" tooltip="To pay scan with Markka.com Wallet"></div>
+<!--                    <span style="width: 110px;display: inline-flex;margin-right: 14px;text-align: left;">To pay scan with Markka.com Wallet</span>                  </td>-->
                 </tr>
               </tbody>
             </table>
-            <div class="estPrice">{{'translate.estimated_price' | translate}}: {{totalNXT}}</div>
+            <div class="estPrice">
+              Grand Total: {{totalNXT}}
+              <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+            </div>
+            <div class="estPrice">
+              {{'translate.estimated_price' | translate}}: todo
+              <span>&nbsp;&nbsp;EUR</span>
+            </div>
           </div>
         </div>
         <div class="col-md-12 order-buttons">
           <div>
             <a href="#/goods/{{paramEngine}}/listing" class="btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
+
+<!--
+            <span style="width: 70px;display: inline-flex;margin: 8px;">
+              or click to pay now:
+            </span>
+-->
             <button class="btn btn-success place-order" ng-click="placeOrder()"
               ng-if="currentAccount && currentAccount.symbol_lower == paramEngine">
               {{'translate.place_order' | translate}}
