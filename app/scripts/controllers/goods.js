@@ -34,6 +34,9 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider,
   SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db) {
 
+  var cartQRCodes = []
+  var goodsQRCode
+
   $scope.paramEngine  = $rootScope.paramEngine = $routeParams.engine;
   $scope.paramSection = $routeParams.section;
   $scope.id_rs        = $routeParams.id_rs;
@@ -50,11 +53,11 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     });
   }
 
-  shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart).then(updatePayQRCode);
+  shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart).then(updateCartQRCodes);
 
   db.cart.addObserver($scope, {
     finally: function () {
-      shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart).then(updatePayQRCode);
+      shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart).then(updateCartQRCodes);
     }
   });
 
@@ -109,6 +112,14 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       $scope.provider = new GoodsDetailsProvider(api, $scope, $scope.paramSection);
       $scope.provider.reload();
       $scope.paramSection = 'detail';
+
+      setTimeout(function() {
+        var goods = {}
+        Object.assign(goods, $scope.provider)
+        goods.count = 1
+        var newQRCode = updateGoodsQRCode('payQRCode', goodsQRCodeValue(goods), goodsQRCode)
+        if (newQRCode) goodsQRCode = newQRCode
+      }, 600);
     }
   }
 
@@ -117,35 +128,49 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     $scope.$evalAsync(function () {
       calculateItemTotal(item);
       calculateCartTotal();
-      updatePayQRCode();
+      updateCartQRCodes();
       item.save();
     });
   }
 
-  var payQRCodes = []
+  function goodsQRCodeValue(goods) {
+    //format "TxnType&TxnSubtype&txnField1&txnField2..."
+    //3&4&73478485485995&2&100500&
+    //This sample contains DigitalGoodsPurchase transaction (type 3 subtype 4), goodsId=73478485485995,
+    // count=2, priceNXT=100500, deliveryDeadlineTimestamp is undefined
+    return [3, 4, goods.goods, goods.count, goods.priceNXT, (goods.deliveryDeadlineTimestamp||"")].join("&")
+  }
 
-  function updatePayQRCode() {
-    setTimeout(() => {
-      payQRCodes = payQRCodes.filter(v => v._el.isConnected)
+  function updateGoodsQRCode(elementId, qrCodeValue, existingQRCode) {
+    if (existingQRCode) {
+      existingQRCode.clear()
+      existingQRCode.makeCode(qrCodeValue)
+    } else {
+      var element = document.getElementById(elementId)
+      if (element) {
+        return  new QRCode(elementId, {
+          text: qrCodeValue,
+          width: 100,
+          height: 100,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        })
+      }
+    }
+  }
+
+  function updateCartQRCodes() {
+    setTimeout(function() {
+      cartQRCodes = cartQRCodes.filter(function(v) {return v._el.isConnected})
       $scope.$evalAsync(function () {
-        $scope.shoppingCart.forEach((v, i) => {
+        $scope.shoppingCart.forEach(function(v, i) {
           var elementId = "payQRCode-" + i
-          //if (!document.getElementById(elementId)) return
-          var qrCodeValue = `DigitalGoodsPurchase|${v.goods}|${v.count}|${v.priceNXT}|${v.deliveryDeadlineTimestamp||""}`
-          if (payQRCodes.length > i) {
-            payQRCodes[i].clear()
-            payQRCodes[i].makeCode(qrCodeValue)
-          } else {
-            var c = new QRCode(elementId, {
-              text: qrCodeValue,
-              width: 100,
-              height: 100,
-              colorDark: "#000000",
-              colorLight: "#ffffff",
-              correctLevel: QRCode.CorrectLevel.H
-            })
-            payQRCodes.push(c)
-          }
+          var existingQRCode = cartQRCodes.length > i ? cartQRCodes[i] : null
+
+          var newQRCode = updateGoodsQRCode(elementId, goodsQRCodeValue(v), existingQRCode)
+
+          if (newQRCode) cartQRCodes.push(newQRCode)
         })
       });
     }, 500)

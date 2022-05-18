@@ -156,6 +156,10 @@
       <div>
         <div class="row">
           <div class="col-md-12">
+            <div id="payQRCode" class="pay-qrcode col-md-2" style="display: block" tooltip="To pay scan with Markka.com Wallet"
+                 ng-if="!provider.isExpired">
+              <span style="font-size: smaller">Markka.com Wallet</span>
+            </div>
             <h4>
               <b>{{'translate.goods_name' | translate}}: </b><span>{{provider.name}}</span>
               <span style="float: right;">
