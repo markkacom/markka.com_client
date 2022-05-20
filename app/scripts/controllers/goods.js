@@ -21,7 +21,9 @@
  * SOFTWARE.
  * */
 (function() {
+
 var module = angular.module('fim.base');
+
 module.config(function($routeProvider) {
   $routeProvider
     .when('/goods/:engine/:section/:id_rs?', {
@@ -30,11 +32,17 @@ module.config(function($routeProvider) {
     })
 });
 
+function cutString(s, maxLen) {
+  if (!s) return null;
+  if (s.length > maxLen) return s.substr(0, maxLen - 3) + "...";
+  return s;
+}
+
 module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins,
   shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider,
   SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db) {
 
-  var cartQRCodes = []
+  var cartQRCodes = {}
   var goodsQRCode
 
   $scope.paramEngine  = $rootScope.paramEngine = $routeParams.engine;
@@ -53,11 +61,14 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     });
   }
 
-  shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart).then(updateCartQRCodes);
+  shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
 
   db.cart.addObserver($scope, {
+    /*remove: function () {
+      $scope.showQRCode(-1)
+    },*/
     finally: function () {
-      shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart).then(updateCartQRCodes);
+      shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
     }
   });
 
@@ -117,7 +128,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
         var goods = {}
         Object.assign(goods, $scope.provider)
         goods.count = 1
-        var newQRCode = updateGoodsQRCode('payQRCode', goodsQRCodeValue(goods), goodsQRCode)
+        var newQRCode = updateQRCode('payQRCode', goodsQRCodeValue(goods), goodsQRCode)
         if (newQRCode) goodsQRCode = newQRCode
       }, 600);
     }
@@ -128,21 +139,37 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     $scope.$evalAsync(function () {
       calculateItemTotal(item);
       calculateCartTotal();
-      updateCartQRCodes();
+      updateCartQRCodes(item);
       item.save();
     });
   }
 
-  function goodsQRCodeValue(goods) {
-    //format "TxnType&TxnSubtype&txnField1&txnField2..."
-    //3&4&73478485485995&2&100500&
-    //This sample contains DigitalGoodsPurchase transaction (type 3 subtype 4), goodsId=73478485485995,
-    // count=2, priceNXT=100500, deliveryDeadlineTimestamp is undefined
-    return [3, 4, goods.goods, goods.count, goods.priceNXT, (goods.deliveryDeadlineTimestamp||"")].join("&")
+  $scope.activeItemQRCode = -1;
+
+  $scope.showQRCode = function (item) {
+    updateCartQRCodes(item);
+    $scope.$evalAsync(function () {
+      $scope.activeItemQRCode = $scope.activeItemQRCode == item.goods ? -1 : item.goods
+    });
   }
 
-  function updateGoodsQRCode(elementId, qrCodeValue, existingQRCode) {
-    if (existingQRCode) {
+  function goodsQRCodeValue(item) {
+    //example fimk:3/4?g=53282690084759346&c=1&p=50000&dt=null&nm=Kalevalakoru+Kuut...&dsc=Kalevalakorun+Kuutar-riipus%2C+pronssia
+    //This sample contains DigitalGoodsPurchase transaction (type 3 subtype 4), goodsId=53282690084759346
+    var obj = {
+      g: item.goods, c: item.count, p: item.priceNXT,
+      dt: item.deliveryDeadlineTimestamp || String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
+      nm: cutString(item.name, 20),
+      dsc: cutString(item.description, 40),
+      sl: item.seller
+    };
+    const url = new URL("fimk:" + 3 + "/" + 4);
+    url.search = new URLSearchParams(obj);
+    return url.toString();
+  }
+
+  function updateQRCode(elementId, qrCodeValue, existingQRCode) {
+    if (existingQRCode && existingQRCode._el.isConnected) {
       existingQRCode.clear()
       existingQRCode.makeCode(qrCodeValue)
     } else {
@@ -150,8 +177,8 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       if (element) {
         return  new QRCode(elementId, {
           text: qrCodeValue,
-          width: 100,
-          height: 100,
+          width: 120,
+          height: 120,
           colorDark: "#000000",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.H
@@ -160,18 +187,24 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     }
   }
 
-  function updateCartQRCodes() {
+  function updateCartQRCodes(item) {
+    if (!item) return
     setTimeout(function() {
-      cartQRCodes = cartQRCodes.filter(function(v) {return v._el.isConnected})
+      //cartQRCodes = cartQRCodes.filter(function(v) {return v._el.isConnected})
       $scope.$evalAsync(function () {
-        $scope.shoppingCart.forEach(function(v, i) {
-          var elementId = "payQRCode-" + i
+        var elementId = "payQRCode-" + item.goods
+        var existingQRCode = cartQRCodes["" + item.goods]
+        var newQRCode = updateQRCode(elementId, goodsQRCodeValue(item), existingQRCode)
+        if (newQRCode) cartQRCodes["" + item.goods] = newQRCode
+
+        /*$scope.shoppingCart.forEach(function(v, i) {
+          var elementId = "payQRCode-" + v.goods
           var existingQRCode = cartQRCodes.length > i ? cartQRCodes[i] : null
 
-          var newQRCode = updateGoodsQRCode(elementId, goodsQRCodeValue(v), existingQRCode)
+          var newQRCode = updateQRCode(elementId, goodsQRCodeValue(v), existingQRCode)
 
           if (newQRCode) cartQRCodes.push(newQRCode)
-        })
+        })*/
       });
     }, 500)
   }

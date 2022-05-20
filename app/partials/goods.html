@@ -156,10 +156,6 @@
       <div>
         <div class="row">
           <div class="col-md-12">
-            <div id="payQRCode" class="pay-qrcode col-md-2" style="display: block" tooltip="To pay scan with Markka.com Wallet"
-                 ng-if="!provider.isExpired">
-              <span style="font-size: smaller">Markka.com Wallet</span>
-            </div>
             <h4>
               <b>{{'translate.goods_name' | translate}}: </b><span>{{provider.name}}</span>
               <span style="float: right;">
@@ -191,6 +187,10 @@
             <div class="goods-details3" ng-if="!provider.isExpired">
               <a class="btn btn-primary add-to-cart" ng-click="addToCart(provider.data)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
               <a href="#/goods/{{paramEngine}}/listing" class="btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
+            </div>
+            <div id="payQRCode" class="pay-qrcode" style="display: block" tooltip="To pay scan with Markka.com Wallet"
+                 ng-if="!provider.isExpired">
+              <a href="https://mobile.heatwallet.com/site2" target="_blank">Pay now with<br/>Markka.com Wallet</a>
             </div>
             <code ng-if="provider.isExpired">expired</code>
           </div>
@@ -250,8 +250,12 @@
                     <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
                   </td>
                   <td class="total-price">
-                    <div id="payQRCode-{{$index}}" class="pay-qrcode" tooltip="To pay scan with Markka.com Wallet"></div>
-<!--                    <span style="width: 110px;display: inline-flex;margin-right: 14px;text-align: left;">To pay scan with Markka.com Wallet</span>                  </td>-->
+                    <div class="btn" ng-click="showQRCode(item)">
+                      <i ng-show="activeItemQRCode!=item.goods" class="fa fa-qrcode" style="font-size: x-large"></i>
+                      <div id="payQRCode-{{item.goods}}" ng-show="activeItemQRCode==item.goods"
+                          class="cart-pay-qrcode" tooltip="To pay scan with Markka.com Wallet"></div>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
