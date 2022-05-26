@@ -38,7 +38,7 @@ function cutString(s, maxLen) {
   return s;
 }
 
-module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins,
+module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, $q, nxt, plugins,
   shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider,
   SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db) {
 
@@ -125,11 +125,14 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       $scope.paramSection = 'detail';
 
       setTimeout(function() {
-        var goods = {}
-        Object.assign(goods, $scope.provider)
-        goods.count = 1
-        var newQRCode = updateQRCode('payQRCode', goodsQRCodeValue(goods), goodsQRCode)
-        if (newQRCode) goodsQRCode = newQRCode
+        $scope.qrcodeModel = {}
+        Object.assign($scope.qrcodeModel, $scope.provider)
+        $scope.qrcodeModel.count = 1
+
+        goodsQRCodeValue($scope.qrcodeModel).then(function(qrcodeValue) {
+          var newQRCode = updateQRCode($scope.qrcodeModel,'payQRCode', qrcodeValue, goodsQRCode)
+          if (newQRCode) goodsQRCode = newQRCode
+        })
       }, 600);
     }
   }
@@ -139,7 +142,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     $scope.$evalAsync(function () {
       calculateItemTotal(item);
       calculateCartTotal();
-      updateCartQRCodes(item);
+      $scope.updateCartItemQRCode(item);
       item.save();
     });
   }
@@ -147,66 +150,98 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   $scope.activeItemQRCode = -1;
 
   $scope.showQRCode = function (item) {
-    updateCartQRCodes(item);
+    $scope.updateCartItemQRCode(item);
     $scope.$evalAsync(function () {
       $scope.activeItemQRCode = $scope.activeItemQRCode == item.goods ? -1 : item.goods
     });
   }
 
-  function goodsQRCodeValue(item) {
-    //example fimk:3/4?g=53282690084759346&c=1&p=50000&dt=null&nm=Kalevalakoru+Kuut...&dsc=Kalevalakorun+Kuutar-riipus%2C+pronssia
-    //This sample contains DigitalGoodsPurchase transaction (type 3 subtype 4), goodsId=53282690084759346
-    var obj = {
-      g: item.goods, c: item.count, p: item.priceNXT,
-      dt: item.deliveryDeadlineTimestamp || String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
-      nm: cutString(item.name, 20),
-      dsc: cutString(item.description, 40),
-      sl: item.seller
-    };
-    const url = new URL("fimk:" + 3 + "/" + 4);
-    url.search = new URLSearchParams(obj);
-    return url.toString();
+  function getAccountPublicKey(account) {
+    var deferred = $q.defer();
+    api.engine.socket().getAccount({account: account}).then(
+        function (data) {
+          if (data.publicKey) {
+            deferred.resolve(data.publicKey)
+          }
+          else {
+            deferred.reject();
+          }
+        },
+        deferred.reject
+    );
+    return deferred.promise;
   }
 
-  function updateQRCode(elementId, qrCodeValue, existingQRCode) {
-    if (existingQRCode && existingQRCode._el.isConnected) {
-      existingQRCode.clear()
-      existingQRCode.makeCode(qrCodeValue)
-    } else {
-      var element = document.getElementById(elementId)
-      if (element) {
-        return  new QRCode(elementId, {
-          text: qrCodeValue,
-          width: 120,
-          height: 120,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.H
-        })
+  function goodsQRCodeValue(item) {
+    return getAccountPublicKey(item.seller).then(function(pubKey) {
+      //example fimk:3/4?g=53282690084759346&c=1&p=50000&dt=null&nm=Kalevalakoru+Kuut...&dsc=Kalevalakorun+Kuutar-riipus%2C+pronssia
+      //This sample contains DigitalGoodsPurchase transaction (type 3 subtype 4), goodsId=53282690084759346
+      var obj = {
+        g: item.goods, c: item.count, //p: item.priceNXT,
+        //dt: item.deliveryDeadlineTimestamp || String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
+        //nm: cutString(item.name, 20),
+       //dsc: "893475kjgn45yghndfjkghtioghjGGGGGHVGYGHJ", //cutString(item.description, 40),
+        //pk: pubKey,
+      };
+      if (item.qrcodeNote) obj.m = item.qrcodeNote
+      const url = new URL("fimk:" + 3 + "/" + 4);
+      url.search = new URLSearchParams(obj);
+      return url.toString();
+    })
+  }
+
+  function updateQRCode(item, elementId, qrCodeValue, existingQRCode) {
+    item.$errorMessage = null
+    try {
+      if (existingQRCode && existingQRCode._el.isConnected) {
+        existingQRCode.clear()
+        existingQRCode.makeCode(qrCodeValue)
+      } else {
+        var element = document.getElementById(elementId)
+        if (element) {
+          return new QRCode(elementId, {
+            text: qrCodeValue,
+            width: 130,
+            height: 130,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          })
+        }
       }
+    } catch (e) {
+      item.$errorMessage = "Error on build QR code"
     }
   }
 
-  function updateCartQRCodes(item) {
+  $scope.updateItemQRCode = function(item) {
+    item.$errorMessage = item.qrcodeNote?.length > 100 ? "Max length 100" : null
+    if (item.$errorMessage) return
+    goodsQRCodeValue(item).then(function(qrcodeValue) {
+      var newQRCode = updateQRCode(item, 'payQRCode', qrcodeValue, goodsQRCode)
+      if (newQRCode) goodsQRCode = newQRCode
+    })
+  }
+
+  $scope.updateCartItemQRCode = function(item) {
     if (!item) return
-    setTimeout(function() {
+    item.$errorMessage = item.qrcodeNote?.length > 100 ? "Max length 100" : null
+    if (item.$errorMessage) return
+    goodsQRCodeValue(item).then(function(qrcodeValue) {
       //cartQRCodes = cartQRCodes.filter(function(v) {return v._el.isConnected})
       $scope.$evalAsync(function () {
         var elementId = "payQRCode-" + item.goods
         var existingQRCode = cartQRCodes["" + item.goods]
-        var newQRCode = updateQRCode(elementId, goodsQRCodeValue(item), existingQRCode)
+        var newQRCode
+        try {
+          newQRCode = updateQRCode(item, elementId, qrcodeValue, existingQRCode)
+        } catch (e) {
+          item.$errorMessage = "Error on build QR code"
+          return
+        }
         if (newQRCode) cartQRCodes["" + item.goods] = newQRCode
-
-        /*$scope.shoppingCart.forEach(function(v, i) {
-          var elementId = "payQRCode-" + v.goods
-          var existingQRCode = cartQRCodes.length > i ? cartQRCodes[i] : null
-
-          var newQRCode = updateQRCode(elementId, goodsQRCodeValue(v), existingQRCode)
-
-          if (newQRCode) cartQRCodes.push(newQRCode)
-        })*/
       });
-    }, 500)
+    })
   }
 
   function calculateCartTotal() {

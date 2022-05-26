@@ -188,10 +188,16 @@
               <a class="btn btn-primary add-to-cart" ng-click="addToCart(provider.data)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
               <a href="#/goods/{{paramEngine}}/listing" class="btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
             </div>
-            <div id="payQRCode" class="pay-qrcode" style="display: block" tooltip="To pay scan with Markka.com Wallet"
-                 ng-if="!provider.isExpired">
-              <a href="https://mobile.heatwallet.com/site2" target="_blank">Pay now with<br/>Markka.com Wallet</a>
+
+            <div class="pay-qrcode">
+              <span style="font-size: small;display: block;white-space: pre-wrap;text-align: left;">Encrypted message from buyer (delivery address etc.):</span>
+              <input type="text" ng-model="qrcodeModel.qrcodeNote" ng-change="updateItemQRCode(qrcodeModel)" ng-model-options="{ debounce: { 'default': 500 } }"/>
+              <span class="pay-qrcode-error" ng-show="qrcodeModel.$errorMessage">{{qrcodeModel.$errorMessage}}</span>
+              <div id="payQRCode" style="display: block" ng-if="!provider.isExpired && !qrcodeModel.$errorMessage">
+                <a href="https://mobile.heatwallet.com/site2" target="_blank">Pay now with<br/>Markka.com Wallet</a>
+              </div>
             </div>
+
             <code ng-if="provider.isExpired">expired</code>
           </div>
         </div>
@@ -232,7 +238,7 @@
                 </tr>
               </thead>
                <tbody>
-                <tr class="itemsRow" ng-repeat="item in shoppingCart">
+                <tr class="itemsRow" ng-repeat="item in shoppingCart track by $index">
                   <td><input type="number" ng-model="item.count" min="0" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
                   <td class="image" ng-if="item.image"> <img ng-src="{{item.image}}"> </td>
                   <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
@@ -250,10 +256,15 @@
                     <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
                   </td>
                   <td class="total-price">
-                    <div class="btn" ng-click="showQRCode(item)">
-                      <i ng-show="activeItemQRCode!=item.goods" class="fa fa-qrcode" style="font-size: x-large"></i>
-                      <div id="payQRCode-{{item.goods}}" ng-show="activeItemQRCode==item.goods"
-                          class="cart-pay-qrcode" tooltip="To pay scan with Markka.com Wallet"></div>
+                    <div class="btn">
+                      <i ng-click="showQRCode(item)" ng-show="activeItemQRCode!=item.goods" class="fa fa-qrcode" style="font-size: x-large"></i>
+                      <div ng-show="activeItemQRCode==item.goods" style="margin-bottom: 7px">
+                        <span style="font-size: small;display: block;white-space: pre-wrap;text-align: left;">Encrypted message from buyer (delivery address etc.):</span>
+                        <input type="text" ng-model="item.qrcodeNote" ng-change="updateCartItemQRCode(item)" ng-model-options="{ debounce: { 'default': 800 } }"/>
+                        <span class="pay-qrcode-error" ng-show="item.$errorMessage">{{item.$errorMessage}}</span>
+                      </div>
+                      <div id="payQRCode-{{item.goods}}" ng-click="showQRCode(item)" ng-show="activeItemQRCode==item.goods && !item.$errorMessage" class="cart-pay-qrcode">
+                      </div>
                     </div>
                   </td>
                 </tr>
