@@ -215,7 +215,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   }
 
   $scope.updateItemQRCode = function(item) {
-    item.$errorMessage = item.qrcodeNote?.length > 100 ? "Max length 100" : null
+    item.$errorMessage = item.qrcodeNote ? (item.qrcodeNote.length > 100 ? "Max length 100" : null) : null
     if (item.$errorMessage) return
     goodsQRCodeValue(item).then(function(qrcodeValue) {
       var newQRCode = updateQRCode(item, 'payQRCode', qrcodeValue, goodsQRCode)
@@ -225,7 +225,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
 
   $scope.updateCartItemQRCode = function(item) {
     if (!item) return
-    item.$errorMessage = item.qrcodeNote?.length > 100 ? "Max length 100" : null
+    item.$errorMessage = item.qrcodeNote ? (item.qrcodeNote.length > 100 ? "Max length 100" : null) : null
     if (item.$errorMessage) return
     goodsQRCodeValue(item).then(function(qrcodeValue) {
       //cartQRCodes = cartQRCodes.filter(function(v) {return v._el.isConnected})
