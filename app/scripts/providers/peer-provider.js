@@ -122,7 +122,7 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
     onUpdate: function (peer) {
       peer.lastActivity = Date.now();
       for (var i=0; i<this.peers.length; i++) {
-        if (this.peers[i].announcedAddress == peer.announcedAddress) {
+        if ((peer.announcedAddress && this.peers[i].announcedAddress == peer.announcedAddress) || (this.peers[i].address == peer.address)) {
           var self = this, existing = this.peers[i];
           this.$scope.$evalAsync(function () {
             angular.extend(existing, peer);

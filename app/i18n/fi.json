@@ -15,7 +15,7 @@
     "download": "Lataa palvelimelta",
     "upload": "Lataa palvelimelle",
     "blacklisted": "Mustalle listalle",
-    "last_update": "Viimeisin päivitys",
+    "last_update": "Viimeinen tarkastus",
     "displaying_so_many_peers": "{{limit}} aktiivista noodia. Noodien kokonaismäärä on {{size}}",
     "never_start_server": "Älä koskaan käynnistä palvelinta Lompsaa avatessa",
     "always_start_server": "Käynnistä aina palvelin",

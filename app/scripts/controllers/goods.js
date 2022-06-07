@@ -177,16 +177,14 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       //example fimk:3/4?g=53282690084759346&c=1&p=50000&dt=null&nm=Kalevalakoru+Kuut...&dsc=Kalevalakorun+Kuutar-riipus%2C+pronssia
       //This sample contains DigitalGoodsPurchase transaction (type 3 subtype 4), goodsId=53282690084759346
       var obj = {
-        g: item.goods, c: item.count, //p: item.priceNXT,
-        //dt: item.deliveryDeadlineTimestamp || String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
-        //nm: cutString(item.name, 20),
-       //dsc: "893475kjgn45yghndfjkghtioghjGGGGGHVGYGHJ", //cutString(item.description, 40),
-        //pk: pubKey,
+        g: item.goods,
+        c: item.count,
+        d: item.deliveryDeadlineTimestamp || String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
       };
       if (item.qrcodeNote) obj.m = item.qrcodeNote
-      const url = new URL("fimk:" + 3 + "/" + 4);
-      url.search = new URLSearchParams(obj);
-      return url.toString();
+      const url = new URL("fimk:" + 3 + "/" + 4)
+      url.search = new URLSearchParams(obj)
+      return url.toString()
     })
   }
 

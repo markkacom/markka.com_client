@@ -137,7 +137,7 @@
                 <th translate="translate.download"></th>
                 <th translate="translate.upload"></th>
                 <th></th>
-                <th translate="translate.blacklisted"></th>
+                <th>Last height</th>
                 <th translate="translate.last_update"></th>
               </tr>
               <tr ng-repeat="p in provider.peers | slice:0:40" class="{{p.stateClass}}">
@@ -147,7 +147,7 @@
                 <td>{{p.downloadedVolumeBytes}} b</td>
                 <td>{{p.uploadedVolumeBytes}} b</td>
                 <td>{{p.application}} - {{p.version}} - {{p.platform}}</td>
-                <td><span ng-show="p.blacklisted"><b>blacklisted</b></span></td>
+                <td><span ng-show="p.lastBlockHeight">{{p.lastBlockHeight}}</span></td>
                 <td>{{p.lastUpdatedStr}}</td>
               </tr>
               <tr><td colspan="8" translate="translate.displaying_so_many_peers" translate-values="{limit:40, size:provider.peers.length}"></td></tr>
