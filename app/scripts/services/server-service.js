@@ -215,32 +215,35 @@ The backup config that is not overwritten on installation resides in user homedi
 So user edits effective config then it is auto copied to backup config.
 On first install the effective and backup configs is born from 'embedded-template.properties' is shipped with server.
 */
-setTimeout(function () {
-  var fs = require('fs')
-  var path = require('path')
-  var userDir = getUserDir()
-  var configDir = path.join(userDir, 'conf')
-  if (!fs.existsSync(configDir)) {
-    fs.mkdir(configDir, {recursive: true}, function (err) {
-      if (err) throw err
-    })
-  }
-  var configFile = path.join(configDir, "fimk.properties.bak")
-  var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "fimk.properties")
-  if (!fs.existsSync(configFile)) {
-    if (fs.existsSync(effectiveConfigFile)) {
-      fs.copyFileSync(effectiveConfigFile, configFile)
-    } else {
-      var virginConfigFile = path.join(getDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
-      var data = fs.readFileSync(virginConfigFile, 'utf8')
-      var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
-      fs.writeFileSync(configFile, updatedData, 'utf8')
+
+if (isNodeJS) {
+  setTimeout(function () {
+    var fs = require('fs')
+    var path = require('path')
+    var userDir = getUserDir()
+    var configDir = path.join(userDir, 'conf')
+    if (!fs.existsSync(configDir)) {
+      fs.mkdir(configDir, {recursive: true}, function (err) {
+        if (err) throw err
+      })
     }
-  }
-  if (!fs.existsSync(effectiveConfigFile)) {
-    fs.copyFileSync(configFile, effectiveConfigFile)
-  }
-}, 200)
+    var configFile = path.join(configDir, "fimk.properties.bak")
+    var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "fimk.properties")
+    if (!fs.existsSync(configFile)) {
+      if (fs.existsSync(effectiveConfigFile)) {
+        fs.copyFileSync(effectiveConfigFile, configFile)
+      } else {
+        var virginConfigFile = path.join(getDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
+        var data = fs.readFileSync(virginConfigFile, 'utf8')
+        var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
+        fs.writeFileSync(configFile, updatedData, 'utf8')
+      }
+    }
+    if (!fs.existsSync(effectiveConfigFile)) {
+      fs.copyFileSync(configFile, effectiveConfigFile)
+    }
+  }, 200)
+}
 
 
 return {
