@@ -40,7 +40,7 @@ function cutString(s, maxLen) {
 
 module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, $q, nxt, plugins,
   shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider,
-  SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db) {
+  SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db, lompsaService) {
 
   var cartQRCodes = {}
   var goodsQRCode
@@ -61,7 +61,23 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     });
   }
 
-  shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
+  lompsaService.fimkRates()
+      .then(function (data) {
+        $scope.fimkRate = Object.assign({}, data);
+        $scope.fimkRate.calculated = {};
+      }, function (error) {
+        console.error(error);
+        var data = "{\n" +
+            "  \"TIME\": \"2022-06-06 11:00:00\",\n" +
+            "  \"BTC\": 0.00000001,\n" +
+            "  \"EUR\": 0.0002910\n" +
+            "}";
+        $scope.fimkRate = Object.assign({}, JSON.parse(data));
+        $scope.fimkRate.calculated = {};
+      })
+      .then(function () {
+        shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
+      });
 
   db.cart.addObserver($scope, {
     /*remove: function () {
@@ -246,17 +262,20 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     var totalNQT = '0';
     $scope.shoppingCart.forEach(function (item) {
       totalNQT = (new BigInteger(totalNQT)).add(
-                    new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString()
+                    new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString();
     });
-    $scope.totalNXT = nxt.util.convertToNXT(totalNQT.toString());
+    $scope.totalNXT = nxt.util.convertToNXT(totalNQT);
+
+    const scaler = new BigInteger("1000000000"); //for scaling for big integer operations
+    var intRate = new BigInteger($scope.fimkRate.EUR.toString()).multiply(scaler);
+    $scope.fimkRate.calculated.EUR = nxt.util.convertToNXT(intRate.multiply(new BigInteger($scope.totalNXT)).divide(scaler).toString());
   }
 
   /* @param item CartModel */
   function calculateItemTotal(item) {
-    if (item.count == 0) {
+    if (item.count == 0 || !item.count) {
       item.totalNXT = '0';
-    }
-    else {
+    } else {
       item.totalNXT = nxt.util.convertToNXT((new BigInteger(item.priceNQT)).multiply(new BigInteger(""+item.count)).toString());
     }
   }
