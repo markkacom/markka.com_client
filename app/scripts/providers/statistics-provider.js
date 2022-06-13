@@ -70,7 +70,7 @@ module.factory('StatisticsProvider', function (nxt, $timeout) {
       this.lastBlockDate      = nxt.util.formatTimestamp(data.lastBlock.timestamp);
       this.lastBlockHeight    = data.lastBlock.height;
       this.lastBlockID        = data.lastBlock.block;
-      this.average            = data.averageBlockTime24H,
+      this.average            = data.averageBlockTime24H;
       this.transactionCountToday  = data.transactionCountToday;
       this.transactionCountWeek   = data.transactionCountWeek;
       this.transactionCountMonth  = data.transactionCountMonth;
