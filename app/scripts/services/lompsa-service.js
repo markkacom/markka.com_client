@@ -21,14 +21,14 @@
  * SOFTWARE.
  * */
 (function () {
-    'use strict'
-    var module = angular.module('fim.base')
+    'use strict';
+    var module = angular.module('fim.base');
     module.factory('lompsaService', function ($q, $http) {
 
         var SERVICE = {
 
             fimkRates: function () {
-                var deferred = $q.defer()
+                var deferred = $q.defer();
                 $http.get('https://lompsa.com/fimkrates.txt')
                     .success(function (data) {
                         //todo
@@ -38,16 +38,16 @@
                             "  \"BTC\": 0.00000001,\n" +
                             "  \"EUR\": 0.0002910\n" +
                             "}";
-                        deferred.resolve(JSON.parse(data))
+                        deferred.resolve(JSON.parse(data));
                     })
                     .error(function (data) {
-                        deferred.reject(data)
-                    })
-                return deferred.promise
+                        deferred.reject(data);
+                    });
+                return deferred.promise;
             }
 
-        }
+        };
 
-        return SERVICE
-    })
-})()
+        return SERVICE;
+    });
+})();
