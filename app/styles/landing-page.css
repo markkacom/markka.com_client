@@ -4,7 +4,7 @@ html,body {
 }
 
 body.showing-landing-page {
-  background: url('../images/background2/mountain-1200x795.jpg') no-repeat center center fixed;
+  background: url('../images/background2/fimkstart.jpg') no-repeat center center fixed;
   background-color: #000;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -28,12 +28,12 @@ body.showing-landing-page .jumbotron h1 {
 
 @media only screen and (max-width : 768px) {
   body.showing-landing-page {
-    background: url('../images/background2/mountain-768x509.jpg') no-repeat center center fixed;
+    background: url('../images/background2/fimkstart.jpg') no-repeat center center fixed;
   }
 }
 
 @media only screen and (max-width : 992px) {
   body.showing-landing-page {
-    background: url('../images/background2/mountain-1200x795.jpg') no-repeat center center fixed;
+    background: url('../images/background2/fimkstart.jpg') no-repeat center center fixed;
   }
 }
