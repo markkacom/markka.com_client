@@ -223,7 +223,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
         month: "numeric",
         year: "numeric"
       } : {
-        hour12: true,
+        hour12: false,
         second: "2-digit",
         minute: "2-digit",
         hour: "2-digit",
@@ -233,18 +233,6 @@ module.run(function (nxt, timeagoService, $rootScope) {
       }
     var s = date.toLocaleString("sv-SE", options)
     return s.replace("fm", "AM").replace("em", "PM")
-
-    /* original code
-    var options = {
-      second: "2-digit",
-      minute: "2-digit",
-      hour: "2-digit",
-      day: "numeric",
-      month: "numeric",
-      year: "2-digit"
-    }
-    return date.toLocaleDateString("en-US", options)
-    */
   }
 
   $rootScope.$on('$translateChangeSuccess', function () {
