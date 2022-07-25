@@ -747,7 +747,10 @@
         <div>
           <table class="table table-condensed">
             <tr>
-              <td translate="translate.account"></td>
+              <td>
+              <span translate="translate.account"></span>
+                <span style="font-size: x-small;color: grey;padding-left: 6px;">{{account.id}}</span>
+              </td>
               <td>
                 <a ng-href="#/accounts/{{id_rs}}/activity/latest">{{id_rs}}</a>
               </td>

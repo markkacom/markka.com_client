@@ -74,6 +74,7 @@ module.factory('AccountProvider', function (nxt, $q, $timeout, db, $rootScope, U
           self.$scope.$evalAsync(function () {
             self.isLoading              = false;
             self.symbol                 = a.accountColorName||self.api.engine.symbol;
+            self.id                     = a.account;
             self.name                   = a.accountName;
             self.description            = a.description;
             if (a.accountEmail != a.accountRS) {
