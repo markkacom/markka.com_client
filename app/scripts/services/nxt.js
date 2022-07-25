@@ -82,24 +82,31 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.symbol_lower = this.symbol.toLowerCase();
 
     if ($rootScope.forceLocalHost) {
-      this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:');
+      var hosts = [
+        {host: window.location.hostname||'localhost', port: this.port, tls: window.location.protocol == 'https:'}
+      ]
+      this.urlPool = new URLPool(this, hosts);
     }
     else if (this.type == TYPE_FIM) {
+      var hosts = [
+        {host: 'cloud.mofowallet.org', port: this.port, tls: true},
+        {host: 'fimk1.heatwallet.com', tls: true}
+      ]
       if (this.test) {
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org' /*'188.166.0.145'*/], true);
+        this.urlPool = new URLPool(this, hosts);
       }
       else {
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
+        this.urlPool = new URLPool(this, hosts);
       }
     }
     else if (this.type == TYPE_NXT) {
       if (this.test) {
         console.log('There are no nxt testnet servers');
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], false);
       }
-      else {
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
-      }
+      var hosts = [
+        {host: 'cloud.mofowallet.org', port: this.port, tls: !this.test}
+      ]
+      this.urlPool = new URLPool(this, hosts);
     }
     else {
       throw new Error('?');
@@ -134,14 +141,16 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     }
   };
 
-  function URLPool(engine, ips, tls, port) {
-    this.engine = engine;
-    this.ips = [];
-    for (var i=0; i<ips.length; i++) {
-      this.ips.push((tls ? 'wss' : 'ws') + '://' + ips[i] + ':' + this.engine.port + '/ws/');
+  function URLPool(engine, hosts) {
+    this.engine = engine
+    this.ips = []
+    for (var i = 0; i < hosts.length; i++) {
+      var v = hosts[i]
+      this.ips.push((v.tls ? 'wss' : 'ws') + '://' + v.host + (v.port ? ':' + v.port : '') + '/ws/')
     }
-    this.good = angular.copy(this.ips);
+    this.good = angular.copy(this.ips)
   }
+
   URLPool.prototype = {
     getRandom: function () {
       return this.good[Math.floor(Math.random()*this.good.length)];

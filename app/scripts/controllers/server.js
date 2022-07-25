@@ -117,6 +117,8 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
 
   $scope.consoleProvider = new ServerConsoleProvider(api, $scope);
 
+  $scope.getEngineUrl = function () { return api.engine.socket().url; };
+
   switch ($scope.paramSection) {
     case 'config': {
       $scope.provider = new ServerConfigProvider(api, $scope);

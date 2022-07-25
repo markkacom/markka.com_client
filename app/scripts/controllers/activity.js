@@ -81,6 +81,8 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     $scope.blockstate['TYPE_NXT'].load();
   }
 
+  $scope.getEngineUrl = function () { return api.engine.socket().url; };
+
   switch ($scope.paramSection) {
     case 'activity':
       $scope.showFilter = !TRADE_UI_ONLY;
