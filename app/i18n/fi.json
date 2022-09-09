@@ -330,6 +330,9 @@
     "users": "Käyttäjät",
     "create_account_color": "Luo tilille väri",
     "assign_account_color": "Määritä tilille väri",
+    "assign-expiry":        "Määritä vanheneminen",
+    "assign-asset-rewarding": "Määritä omaisuuden palkitseminen",
+
     "signin_title": "Kirjaudu sisään / Luo uusi tili",
     "signin_open": "Avaa lompakko",
     "signin_create": "Luo uusi käyttäjä",

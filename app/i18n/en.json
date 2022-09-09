@@ -343,6 +343,7 @@
     "create_account_color": "Create Color",
     "assign_account_color": "Assign Color",
     "assign-expiry":        "Assign Expiry",
+    "assign-asset-rewarding": "Assign Asset Rewarding",
 
     "signin_title":         "Sign in / Create new account",
     "signin_open":          "Open wallet",

@@ -1745,6 +1745,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           return false;
         }
         break;
+      case "assignAssetRewarding":
+        if (transaction.type !== 2 && transaction.subtype !== 7) {
+          return false;
+        }
+        break;
       default:
         //invalid requestType..
         return false;
