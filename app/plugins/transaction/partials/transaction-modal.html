@@ -210,7 +210,7 @@
                   <span ng-if="!$first">&nbsp;&nbsp;</span>
                   <input type="radio"
                          ng-checked="option.value==f.value"
-                         name="userFieldName"
+                         name="{{f.name}}"
                          ng-model="f.value"
                          ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"

@@ -228,8 +228,9 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
           socket.callAPIFunction(args).then(
             function (data) {
 
-              if (data.error || data.errorDescription) {
-                progress.setErrorMessage(data.error || data.errorDescription);
+              var error = data.errorDescription || data.error;
+              if (error) {
+                progress.setErrorMessage(error);
                 progress.enableCloseBtn();
                 return;
               }
