@@ -487,7 +487,8 @@
       "2":                  "{{sender}} placed sell order for {{quantity}} {{assetName}} at {{price}} {{symbol}} total {{total}} {{symbol}} {{details}} {{message}}",
       "3":                  "{{sender}} placed buy order for {{quantity}} {{assetName}} at {{price}} {{symbol}} total {{total}} {{symbol}} {{details}} {{message}}",
       "4":                  "{{sender}} cancelled sell order {{order}} {{details}} {{message}}",
-      "5":                  "{{sender}} cancelled buy order {{order}} {{details}} {{message}}"
+      "5":                  "{{sender}} cancelled buy order {{order}} {{details}} {{message}}",
+      "7":                  "{{sender}} assigned rewarding rules to asset {{asset}} {{details}} {{message}}"
     },
     "3": {
       "0":                  "{{sender}} listed good {{goodsName}} quantity {{quantity}} for {{price}} {{symbol}} {{description}} {{tags}} {{details}} {{message}}",

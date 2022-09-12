@@ -671,6 +671,12 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
+              case 7: return $translate.instant('transaction.2.7', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                asset:      render(TYPE.ASSET_ID, transaction.attachment.asset, transaction.attachment.asset),
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
             }
           }
           case 3: {
