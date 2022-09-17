@@ -18,7 +18,7 @@ setup project:
 npm install -g yarn
 yarn add electron-builder --dev
 
-grunt build
+grunt build-release
 # build executable app (for test)
 yarn run pack
 # build app distr (for production)
