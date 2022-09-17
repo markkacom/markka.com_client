@@ -285,6 +285,15 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
     }
   });
 
+  plugin.addField('radio-v2', {
+    create: function (fieldName, opts) {
+      var field  = CreateStandardField(fieldName, opts);
+      field.type = 'radio-v2';
+      evalSetFieldData(field, 'options', opts.options, opts.$scope||$rootScope);
+      return field;
+    }
+  });
+
   /**
    * Creates an input type=checkbox
    * @inherits from CreateStandardField

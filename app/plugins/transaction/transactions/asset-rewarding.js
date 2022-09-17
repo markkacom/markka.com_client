@@ -67,39 +67,31 @@
             return result
           },
           fields: [
-            {
+            plugin.fields('asset').create('asset', {
               label: 'Asset',
-              name: 'asset',
-              type: 'asset',
               required: true,
               account: $rootScope.currentAccount.id_rs,
               api: api
-            },
-            {
+            }),
+            plugin.fields('text').create('frequency', {
               value: 1,
               label: 'Frequency (every N block)',
-              name: 'frequency',
-              type: 'text',
               required: true,
               validate: function (text) {
                 this.errorMsg = validateNumber(text, {min: 0})
                 return ! this.errorMsg
               }
-            },
-            {
+            }),
+            plugin.fields('text').create('baseAmount', {
               label: 'Base Amount',
-              name: 'baseAmount',
-              type: 'text',
               required: true,
               validate: function (text) {
                 this.errorMsg = validateNumber(text, {minExclusive: 0})
                 return ! this.errorMsg
               }
-            },
-            {
+            }),
+            plugin.fields('radio-v2').create('target', {
               label: 'Target type',
-              name: "target",
-              type: "radio-v2",
               required: true,
               options: [
                 {label: "Registered candidates", value: 0},
@@ -107,55 +99,47 @@
                 {label: "Constant account", value: 2}
               ],
               onchange: function (dialog) {
-                var isRegisteredCandidates = dialog.fields_map.target.value == 0
-                dialog.fields_map.lotteryType.hide = !isRegisteredCandidates
-                dialog.fields_map.balanceDivider.hide = !isRegisteredCandidates
-                dialog.fields_map.asset2.hide = !isRegisteredCandidates
-                dialog.fields_map.targetAccount.hide = !(dialog.fields_map.target.value == 2)
+                var isRegisteredCandidates = dialog.target.value == 0
+                dialog.lotteryType.hide = !isRegisteredCandidates
+                dialog.balanceDivider.hide = !isRegisteredCandidates
+                dialog.asset2.hide = !isRegisteredCandidates
+                dialog.targetAccount.hide = !(dialog.target.value == 2)
               }
-            },
-            {
+            }),
+            plugin.fields('radio-v2').create('lotteryType', {
               label: 'Lottery type',
-              name: "lotteryType",
-              type: "radio-v2",
               required: true,
               options: [
                 {label: "Random probability candidate", value: 0},
                 {label: "Random probability by candidate's balance", value: 1}
               ],
               onchange: function (dialog) {
-                var isOption0 = dialog.fields_map.lotteryType.value == 0
-                dialog.fields_map.balanceDivider.hide = !isOption0
+                var isOption0 = dialog.lotteryType.value == 0
+                dialog.balanceDivider.hide = !isOption0
               }
-            },
-            {
+            }),
+            plugin.fields('text').create('balanceDivider', {
               value: 1,
               label: 'Balance Divider',
-              name: 'balanceDivider',
-              type: 'text',
               // required: true,
               hide: true,
               validate: function (text) {
                 this.errorMsg = validateNumber(text, {minExclusive: 0})
                 return ! this.errorMsg
               }
-            },
-            {
+            }),
+            plugin.fields('asset').create('asset2', {
               label: 'Asset used to weight the target account',
-              name: 'asset2',
-              type: 'asset',
               required: false,
               hide: true,
               api: api
-            },
-            {
+            }),
+            plugin.fields('account').create('targetAccount', {
               label: 'Constant target account',
-              name: 'targetAccount',
-              type: 'account',
               required: false,
               hide: true,
               api: api
-            },
+            }),
 
             //field formValid is trick to disable button OK until at least one of fields "asset" or "goods" will be filled
             //plugin.fields('text').create('formValid', {value: '', hide: true, required: true})
