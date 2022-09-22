@@ -120,8 +120,14 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     getSocketNodeURL: function () {
       var deferred = $q.defer();
-      deferred.resolve(this.urlPool.getRandom());
+      deferred.resolve(this.urlPool.forcedUrl || this.urlPool.getRandom());
       return deferred.promise;
+    },
+
+    forceSocketURL: function (url) {
+      var s = this.urlPool.good.find(function(s){return s.includes(url)})
+      if (s) this.urlPool.forcedUrl = s
+      this.socket().refresh()
     },
 
     socket: function () {

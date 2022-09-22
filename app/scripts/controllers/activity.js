@@ -82,6 +82,11 @@ module.controller('ActivityController', function($scope, $location, $routeParams
   }
 
   $scope.getEngineUrl = function () { return api.engine.socket().url; };
+  $scope.setEngineUrl = function (url) {
+    api.engine.forceSocketURL(url);
+  };
+
+  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com"];
 
   switch ($scope.paramSection) {
     case 'activity':

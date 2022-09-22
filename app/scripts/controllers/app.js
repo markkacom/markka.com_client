@@ -291,11 +291,9 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   }
 
   $scope.openDevTools = function () {
-    try {
-      require('nw.gui').Window.get().showDevTools();
-    } catch (e) {
-      console.log(e)
-    }
+    // see https://stackoverflow.com/questions/68952769/electron-how-to-get-webcontents-to-check-on-backgroundthrottling
+    const electron = require ("electron")
+    electron.ipcRenderer.send("openDevTools", null)
   }
 
   /* handler for rendered transaction identifier onclick events */

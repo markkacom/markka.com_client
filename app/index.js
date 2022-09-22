@@ -56,6 +56,12 @@ function createWindow () {
     setTimeout(() => win.show(), 200)
   })
 
+  electron.ipcMain.on ("openDevTools", (event, args) => {
+    // args === null, but event.sender is the webContents of the BrowserWindow which sent the event
+    win.webContents.openDevTools()
+  })
+
+
   // const homePath = app.getPath('home')
   // console.log(`homePath ${homePath}`)
   //
