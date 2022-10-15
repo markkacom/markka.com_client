@@ -191,7 +191,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
         requestType: 'transferAsset',
         createArguments: function (items, fields) {
           return {
-            recipient: nxt.util.convertRSAddress(items.recipient),
+            recipient: plugin.isNumeric(items.recipient) ? items.recipient : nxt.util.convertRSAddress(items.recipient),
             asset: items.asset,
             quantityQNT: nxt.util.convertToQNT(items.quantity, fields.asset.asset.decimals)
           }

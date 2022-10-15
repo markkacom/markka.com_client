@@ -38,7 +38,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, UserService) {
         requestType: 'sendMoney',
         createArguments: function (items) {
           var _args = {
-            recipient: nxt.util.convertRSAddress(items.recipient),
+            recipient: plugin.isNumeric(items.recipient) ? items.recipient : nxt.util.convertRSAddress(items.recipient),
             amountNQT: nxt.util.convertToNQT(items.amountNXT)
           }
           if (items.recipientPublicKey) {
