@@ -57,7 +57,7 @@
                     progress.enableCloseBtn()
                     return
                 }
-                socket.callAPIFunction({requestType: 'broadcastTransaction', transactionBytes: payload}).then(
+                return socket.callAPIFunction({requestType: 'broadcastTransaction', transactionBytes: payload}).then(
                     function (data) {
                         progress.animateProgress().then(
                             function () {
@@ -81,7 +81,7 @@
                 )
             },
 
-            sendTransaction: function (api, args, account, secretPhrase) {
+            sendTransaction: function (api, args, secretPhrase, autoclose) {
                 plugins.get('alerts').progress({title: "Please wait"}).then(
                     function (progress) {
                         var socket = api.engine.socket()
@@ -102,8 +102,8 @@
                             function (data) {
                                 var error = data.errorDescription || data.error
                                 if (error) {
-                                    progress.setErrorMessage(error)
-                                    progress.enableCloseBtn()
+                                    console.error("Error on sending login registration transaction (no fee). " + error)
+                                    progress.close()
                                     return
                                 }
                                 /* Secretphrase was send to the server */
@@ -121,7 +121,13 @@
                                 } else {  /* Must sign the txn client side */
                                     var payload = SERVICE.signTransaction(progress, api, args, data, secretPhrase, args.publicKey)
                                     if (payload) {
-                                        SERVICE.broadcast(socket, progress, payload)
+                                        var promise = SERVICE.broadcast(socket, progress, payload)
+                                        if (autoclose && promise) {
+                                            promise.then(function () {
+                                                console.debug("sign in is registered")
+                                                progress.close()
+                                            })
+                                        }
                                     } else {
                                         progress.setMessage('Not signed')
                                         progress.enableCloseBtn()

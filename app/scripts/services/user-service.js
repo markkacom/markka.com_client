@@ -25,7 +25,23 @@
 var module = angular.module('fim.base');
 module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $rootScope, TransactionService) {
 
+  // remember sent transactions to prevent extra sendings
+  var registerRewardApplicantSession = {
+    accounts: new Set(),
+    started: 0
+  }
+
   function registerRewardApplicant(api, account, secretPhrase) {
+    // prevent sending duplicate login registration transaction within 1h
+    var now = Date.now() / 1000
+    if (now - registerRewardApplicantSession.started > 3600) {
+      registerRewardApplicantSession.started = now
+      registerRewardApplicantSession.accounts.clear()
+    } else {
+      if (registerRewardApplicantSession.accounts.has(account.account)) return
+    }
+    registerRewardApplicantSession.accounts.add(account.account)
+
     var txnArguments = {
       feeNQT: "0",
       amountNQT: "0",
@@ -35,7 +51,7 @@ module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $roo
       publicKey: account.publicKey,
       requestType: "registerRewardApplicant"
     }
-    TransactionService.sendTransaction(api, txnArguments, account, secretPhrase)
+    TransactionService.sendTransaction(api, txnArguments, secretPhrase, true)
   }
 
   var SERVICE = {
