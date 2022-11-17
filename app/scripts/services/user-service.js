@@ -23,129 +23,19 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $rootScope) {
-
-  function signTransaction(progress, api, args, data, secretPhrase, publicKey) {
-    progress.setMessage('Signing Transaction')
-    var signature = api.crypto.signBytes(
-        data.unsignedTransactionBytes,
-        converters.stringToHexString(secretPhrase)
-    )
-    if (!api.crypto.verifyBytes(signature, data.unsignedTransactionBytes, publicKey)) {
-      progress.setErrorMessage(i18n.format('error_signature_verification_client'))
-      progress.enableCloseBtn()
-      return
-    }
-    var payload = api.verifyAndSignTransactionBytes(
-        data.unsignedTransactionBytes, signature, args.requestType, args, api.type
-    )
-    if (!payload) {
-      progress.setErrorMessage(i18n.format('error_signature_verification_server'))
-      progress.enableCloseBtn()
-      return
-    }
-    return payload
-  }
-
-  function broadcast(socket, progress, payload) {
-    progress.setMessage('Broadcasting Transaction')
-    if (!socket.is_connected) {
-      progress.setErrorMessage("No connection with server, try later")
-      progress.enableCloseBtn()
-      return
-    }
-    socket.callAPIFunction({requestType: 'broadcastTransaction', transactionBytes: payload}).then(
-        function (data) {
-          progress.animateProgress().then(
-              function () {
-                progress.setMessage('Transaction sent successfully')
-                progress.enableCloseBtn()
-                // if ($scope.items.autoSubmit) {
-                //   progress.close();
-                //   $modalInstance.close($scope.items);
-                // } else {
-                //   progress.onclose = function () {
-                //     $modalInstance.close($scope.items);
-                //   };
-                // }
-              }
-          )
-        },
-        function (data) {
-          progress.setMessage(JSON.stringify(data))
-          progress.enableCloseBtn()
-        }
-    )
-  }
-
-  function sendTransaction(api, args, account, publicKey, secretPhrase) {
-    args.requestType  = "registerRewardApplicant";
-    args.publicKey    = publicKey;
-
-    plugins.get('alerts').progress({ title: "Please wait" }).then(
-        function (progress) {
-          var socket = api.engine.socket();
-
-          // if (items.autoSubmit) {
-          //   progress.onclose = function () {
-          //     $modalInstance.close($scope.items);
-          //   };
-          // }
-
-          progress.setMessage('Creating Transaction');
-          if (!socket.is_connected) {
-            progress.setErrorMessage("No connection with server, try later");
-            progress.enableCloseBtn();
-            return;
-          }
-          socket.callAPIFunction(args).then(
-              function (data) {
-                var error = data.errorDescription || data.error
-                if (error) {
-                  progress.setErrorMessage(error)
-                  progress.enableCloseBtn()
-                  return
-                }
-                /* Secretphrase was send to the server */
-                if (args.secretPhrase) {
-                  progress.animateProgress().then(
-                      function () {
-                        new Audio('images/beep.wav').play()
-                        progress.setMessage('Operation complete')
-                        progress.enableCloseBtn()
-                        // progress.onclose = function () {
-                        //   $modalInstance.close($scope.items);
-                        // };
-                      }
-                  )
-                } else {  /* Must sign the txn client side */
-                  var payload = signTransaction(progress, api, args, data, secretPhrase, publicKey)
-                  if (payload) {
-                    broadcast(socket, progress, payload)
-                  } else {
-                    progress.setMessage('Not signed')
-                    progress.enableCloseBtn()
-                  }
-                }
-              },
-              function (data) {
-                progress.setMessage(JSON.stringify(data));
-                progress.enableCloseBtn();
-              }
-          );
-        }
-    );
-  }
+module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $rootScope, TransactionService) {
 
   function registerRewardApplicant(api, account, secretPhrase) {
     var txnArguments = {
       feeNQT: "0",
-      deadline: "1440",
       amountNQT: "0",
+      deadline: "1440",
       sender: account.accountRS,
       recipient: account.account,
+      publicKey: account.publicKey,
+      requestType: "registerRewardApplicant"
     }
-    sendTransaction(api, txnArguments, account, account.publicKey, secretPhrase)
+    TransactionService.sendTransaction(api, txnArguments, account, secretPhrase)
   }
 
   var SERVICE = {
