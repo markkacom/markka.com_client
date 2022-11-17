@@ -59,7 +59,7 @@
               target: items.target,
               lotteryType: items.lotteryType,
               frequency: items.frequency,
-              baseAmount: items.baseAmount,
+              baseAmount: items.baseAmount, //todo nxt.util.convertToQNT(items.quantity, fields.asset.asset.decimals)
               balanceDivider: items.balanceDivider
             }
             if (items.target === 0) result.balanceAssetId = items.asset2

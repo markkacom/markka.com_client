@@ -201,7 +201,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
 
     function sendTransaction(args, publicKey, secretPhrase) {
       args.publicKey    = publicKey;
-      args.requestType  = $scope.items.requestType;
+      args.requestType  = args.requestType || $scope.items.requestType;
 
       addMessageData(args, secretPhrase);
 

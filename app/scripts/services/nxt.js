@@ -767,6 +767,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:  render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:  message(transaction)
               });
+              case 2: return $translate.instant('login registration', {});
             }
           }
           case 5: {
@@ -1228,6 +1229,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     }
 
     switch (requestType) {
+      case "registerRewardApplicant":
+        if (transaction.type !== 4 || transaction.subtype !== 2) return false;
+        break;
       case "sendMoney":
         if (transaction.type !== 0 || transaction.subtype !== 0) {
           console.log('verifyAndSignTransactionBytes.failed | transaction.type !== 0 || transaction.subtype !== 0', transaction);
