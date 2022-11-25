@@ -1,7 +1,7 @@
 {
   "name": "FIMK",
   "description": "Lompsa.com | desktop version",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "main": "index.js",
   "window": {
     "toolbar": false,
