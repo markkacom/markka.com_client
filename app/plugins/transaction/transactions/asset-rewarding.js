@@ -53,14 +53,17 @@
           title: 'Assign Asset Rewarding',
           message: 'Specify the rules for Asset Rewarding',
           requestType: 'assignAssetRewarding',
-          createArguments: function (items) {
+          createArguments: function (items, fields) {
+            var balanceDividerValue = fields.asset2.asset
+                  ? nxt.util.convertToQNT(items.balanceDivider, fields.asset2.asset.decimals)
+                  : nxt.util.convertToNQT(items.balanceDivider)
             var result = {
               asset: items.asset,
               target: items.target,
               lotteryType: items.lotteryType,
               frequency: items.frequency,
-              baseAmount: items.baseAmount, //todo nxt.util.convertToQNT(items.quantity, fields.asset.asset.decimals)
-              balanceDivider: items.balanceDivider
+              baseAmount: nxt.util.convertToQNT(items.baseAmount, fields.asset.asset.decimals),
+              balanceDivider: balanceDividerValue
             }
             if (items.target === 0) result.balanceAssetId = items.asset2
             if (items.target === 2) result.targetAccount = items.targetAccount
@@ -104,11 +107,12 @@
                 dialog.balanceDivider.hide = !isRegisteredCandidates
                 dialog.asset2.hide = !isRegisteredCandidates
                 dialog.targetAccount.hide = !(dialog.target.value == 2)
+                dialog.formValid.value = dialog.target.value == 0 && dialog.lotteryType.value == undefined ? "" : "ok"
               }
             }),
             plugin.fields('radio-v2').create('lotteryType', {
               label: 'Lottery type',
-              required: true,
+              required: false,
               options: [
                 {label: "Random probability candidate", value: 0},
                 {label: "Random probability by candidate's balance", value: 1}
@@ -116,6 +120,7 @@
               onchange: function (dialog) {
                 var isOption0 = dialog.lotteryType.value == 0
                 dialog.balanceDivider.hide = !isOption0
+                dialog.formValid.value = dialog.target.value == 0 && dialog.lotteryType.value == undefined ? "" : "ok"
               }
             }),
             plugin.fields('text').create('balanceDivider', {
@@ -129,7 +134,8 @@
               }
             }),
             plugin.fields('asset').create('asset2', {
-              label: 'Asset used to weight the target account',
+              label: 'Asset used to weight the target account (empty means FIMK)',
+              account: $rootScope.currentAccount.id_rs,
               required: false,
               hide: true,
               api: api
@@ -142,7 +148,7 @@
             }),
 
             //field formValid is trick to disable button OK until at least one of fields "asset" or "goods" will be filled
-            //plugin.fields('text').create('formValid', {value: '', hide: true, required: true})
+            plugin.fields('text').create('formValid', {value: '', hide: true, required: true})
           ]
         }));
       }

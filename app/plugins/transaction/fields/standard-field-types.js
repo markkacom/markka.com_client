@@ -133,7 +133,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
       else {
         field.watch = 'f.value';
       }
-      console.log('Field watch value: %s', field.watch);
+      console.debug('Field watch value: %s', field.watch);
     }
     field.onchange = function (items) {
       if (typeof opts.onchange == 'function') {

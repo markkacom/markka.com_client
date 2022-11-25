@@ -214,6 +214,7 @@
                          ng-model="f.value"
                          ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"
+                         ng-required="f.required"
                          ng-value="option.value"
                          ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
                          ui-validate-watch="f.watch"
