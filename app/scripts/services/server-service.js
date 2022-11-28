@@ -38,7 +38,7 @@ function commandToRunJava(embeddedJREVariant, systemJREVariant) {
     var fs = require('fs');
     var path = require('path');
     var jreDir = path.join(serverDir, "jre");
-    console.log("embedded jre '" + jreDir + "' exists: " + fs.existsSync(jreDir));
+    //console.log("embedded jre '" + jreDir + "' exists: " + fs.existsSync(jreDir));
     return fs.existsSync(jreDir) ? embeddedJREVariant : systemJREVariant
   }
 }

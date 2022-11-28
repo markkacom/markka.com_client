@@ -456,7 +456,22 @@
 
         <!-- peers section -->
         <div ng-if="paramSection=='peers'" class="col-md-12">
-          <div style="font-size: smaller;text-align-last: right;color: grey;">current API url: {{getEngineUrl()}}</div>
+
+<!--          <div style="font-size: smaller;text-align-last: right;color: grey;">current API url: {{getEngineUrl()}}</div>-->
+
+          <div style="font-size: smaller;text-align-last: right;color: grey;margin-top: -12px;"><span>current API url: </span>
+            <span dropdown>
+              <a href class="dropdown-toggle" dropdown-toggle>
+                <span>{{getEngineUrl()}}</span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="url in urlList">
+                  <a href ng-click="setEngineUrl(url)">{{url}}</a>
+                </li>
+              </ul>
+            </span>
+          </div>
+
           <div class="table-responsive">
             <table class="table table-striped">
               <tbody>

@@ -118,6 +118,11 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
   $scope.consoleProvider = new ServerConsoleProvider(api, $scope);
 
   $scope.getEngineUrl = function () { return api.engine.socket().url; };
+  $scope.setEngineUrl = function (url) {
+    api.engine.forceSocketURL(url);
+  };
+
+  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com"];
 
   switch ($scope.paramSection) {
     case 'config': {
