@@ -34,7 +34,7 @@
       //exclude: $rootScope.TRADE_UI_ONLY,
       execute: function (args) {
         args = args || {};
-        var epochTimeNow = nxt.util.convertToEpochTimestamp(Date.now()) - 1
+        var epochTimeNow = args.expiry || nxt.util.convertToEpochTimestamp(Date.now()) - 1
         var api = nxt.get($rootScope.currentAccount.id_rs);
         return plugin.create(angular.extend(args, {
           title: 'Assign Expiry',

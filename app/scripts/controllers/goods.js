@@ -288,6 +288,16 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     plugins.get('transaction').get('dgsDelisting').execute({goods: good.goods});
   }
 
+  $scope.relist = function(good) {
+    var d = new Date()
+    d.setMonth(d.getMonth() + 6)
+    var expiryTimestamp = nxt.util.convertToEpochTimestamp(d)
+    plugins.get('transaction').get('assignExpiry').execute({
+      goods: good.goods,
+      expiry: expiryTimestamp
+    })
+  }
+
   $scope.add = function() {
     plugins.get('transaction').get('dgsListing').execute();
   }

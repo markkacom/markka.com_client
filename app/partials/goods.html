@@ -123,7 +123,10 @@
                     <td ng-bind-html="item.tagsHTML"></td>
                     <td>{{item.quantity}}</td>
                     <td>{{item.priceNXT}}</td>
-                    <td>{{item.expiry}} <code ng-if="item.isExpired">expired</code></td>
+                    <td><span ng-if="item.isExpired">
+                      <code>expired</code> {{item.expiry}}
+                      <button ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="relist(item)">Relist</button>
+                    </span></td>
                     <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)"
                       class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
                   </tr>
