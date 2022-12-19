@@ -3,6 +3,9 @@
     "0": "täytyy olla"
   },
   "translate": {
+    "expiry": "Erääntyminen",
+    "assign-expiry": "Määritä erääntyminen",
+    "goods_expiry": "Sulkeutuu",
     "about": "Tietoa Lompsasta",
     "client_version": "Ohjelmistoversio",
     "created":              "Luotu",
@@ -14,7 +17,7 @@
     "weight": "Painoarvo",
     "download": "Lataa palvelimelta",
     "upload": "Lataa palvelimelle",
-    "blacklisted": "Mustalle listalle",
+    "blacklisted": "Estetty",
     "last_update": "Viimeinen tarkastus",
     "displaying_so_many_peers": "{{limit}} aktiivista noodia. Noodien kokonaismäärä on {{size}}",
     "never_start_server": "Älä koskaan käynnistä palvelinta Lompsaa avatessa",
@@ -505,8 +508,8 @@
       "1": "{{sender}} lisäsi {{recipient}} arvokkeen {{assetName}} sallittuihin tileihin {{details}} {{message}}",
       "2": "{{sender}} poisti {{recipient}} arvokkeen {{assetName}} sallituista tileistä {{details}} {{message}}",
       "3": "{{sender}} asetti {{assetName}} toimeksiantokulun {{orderFee}} % kauppamaksun{{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asetti Tilitunnuksen {{identifier}} arvoille {recipient}} {{details}} {{message}}",
-      "5": "{{sender}} asetti{{recipient}} todentaminen viranomainen {{period}} lohkot {{details}} {{message}}",
+      "4": "{{sender}} asetti Tilitunnuksen {{identifier}} arvoille {{recipient}} {{details}} {{message}}",
+      "5": "{{sender}} asetti{{recipient}} todennusauktoriteetin {{period}} lohkot {{details}} {{message}}",
       "6": "{{sender}} loi tilivärin {{name}} {{details}} {{message}}",
       "7": "{{sender}} määritti tilivärin {{color}} arvoille {{recipient}} {{details}} {{message}}"
     }
