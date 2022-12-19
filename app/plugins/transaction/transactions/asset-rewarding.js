@@ -58,10 +58,12 @@
                   ? nxt.util.convertToQNT(items.balanceDivider, fields.asset2.asset.decimals)
                   : nxt.util.convertToNQT(items.balanceDivider)
             var result = {
+              deadline: "5",
               asset: items.asset,
               target: items.target,
               lotteryType: items.lotteryType,
               frequency: items.frequency,
+              halvingBlocks: items.halvingBlocks,
               baseAmount: nxt.util.convertToQNT(items.baseAmount, fields.asset.asset.decimals),
               balanceDivider: balanceDividerValue
             }
@@ -81,6 +83,14 @@
               label: 'Frequency (every N block)',
               required: true,
               validate: function (text) {
+                this.errorMsg = validateNumber(text, {min: 0})
+                return ! this.errorMsg
+              }
+            }),
+            plugin.fields('text').create('halvingBlocks', {
+              label: 'Halving (every N block) (empty means never)',
+              validate: function (text) {
+                if (! text) return true
                 this.errorMsg = validateNumber(text, {min: 0})
                 return ! this.errorMsg
               }
