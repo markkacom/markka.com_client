@@ -79,7 +79,7 @@ module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $roo
             $rootScope.$evalAsync(function () {
               SERVICE.currentAccount.name = a.accountName
 
-              registerRewardApplicant(api, a, account.secretPhrase)
+              //registerRewardApplicant(api, a, account.secretPhrase)
 
             })
           }
