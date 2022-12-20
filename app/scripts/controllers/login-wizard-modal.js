@@ -223,8 +223,13 @@ function identifierIsAvailable(api, identifier) {
   return deferred.promise;
 }
 
+function host() {
+  var host = nxt.fim().engine.getSelectedSocketHostPort(nxt.fim().engine.socket().url)
+  return host || "fimk1.heatwallet.com"
+}
+
 function createRegistrationURL(identifier, signature, signatory, publicKey, captcha) {
-  return 'https://cloud.mofowallet.org:3001/api/register/'+identifier+'/'+signature+'/'+signatory+'/'+publicKey+'/'+captcha;
+  return "https://" + host() + "/api/register/" + identifier + '/' + signature + '/' + signatory + '/' + publicKey + '/' + captcha
 }
 
 function registerIdentifier(api, secretPhrase, identifier, captcha) {
@@ -245,7 +250,7 @@ function registerIdentifier(api, secretPhrase, identifier, captcha) {
 }
 
 function createRegisterCustomEmailURL(identifier, signature, signatory, publicKey, captcha) {
-  return 'https://cloud.mofowallet.org:3001/api/registercustom/'+identifier+'/'+signature+'/'+signatory+'/'+publicKey+'/'+captcha;
+  return "https://" + host() + '/api/registercustom/'+identifier+'/'+signature+'/'+signatory+'/'+publicKey+'/'+captcha;
 }
 
 function registerCustomEmail(api, secretPhrase, identifier, captcha) {
@@ -266,7 +271,7 @@ function registerCustomEmail(api, secretPhrase, identifier, captcha) {
 }
 
 function createFaucetURL(email, account, publickey) {
-  return 'https://cloud.mofowallet.org:3001/api/faucet/'+email+'/'+account+'/'+publickey;
+  return "https://" + host() + '/api/faucet/'+email+'/'+account+'/'+publickey;
 }
 
 function applyForFaucet(api, secretPhrase, email) {

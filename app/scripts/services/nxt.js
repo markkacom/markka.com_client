@@ -124,6 +124,12 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       return deferred.promise;
     },
 
+    getSelectedSocketHostPort: function (url) {
+      var h = this.urlPool.urlHostMap.get(url)
+      if (h) return h.host + (h.port ? ':' + h.port : '')
+      return null
+    },
+
     forceSocketURL: function (url) {
       var s = this.urlPool.good.find(function(s){return s.includes(url)})
       if (s) this.urlPool.forcedUrl = s
@@ -150,9 +156,12 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
   function URLPool(engine, hosts) {
     this.engine = engine
     this.ips = []
+    this.urlHostMap = new Map()
     for (var i = 0; i < hosts.length; i++) {
       var v = hosts[i]
-      this.ips.push((v.tls ? 'wss' : 'ws') + '://' + v.host + (v.port ? ':' + v.port : '') + '/ws/')
+      var url = (v.tls ? 'wss' : 'ws') + '://' + v.host + (v.port ? ':' + v.port : '') + '/ws/'
+      this.ips.push(url)
+      this.urlHostMap.set(url, v)
     }
     this.good = angular.copy(this.ips)
   }
