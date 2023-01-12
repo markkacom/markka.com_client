@@ -35,39 +35,46 @@
             <form class="navbar-form statistics-form" role="search">
               <div class="form-group" ng-if="!fimCollapse">
                 <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.average_block_time</label>
+                  <b><span class="control-label text-muted" translate translate-cloak>translate.average_block_time</span></b>
                   <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].average}} {{ 'translate.seconds' | translate }}</div>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
                 </div>
                 <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsToday}} FIM</div>
+<!--                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>-->
+                  <b><span class="text-muted" translate translate-cloak>translate.block_fees</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">
+                    <div>
+                      <span class="text-muted" translate translate-cloak>translate.today</span>
+                      {{statistics['TYPE_FIM'].rewardsToday}} FIM
+                    </div>
+                    <div>
+                      <span class="text-muted" translate translate-cloak>translate.this_week</span>
+                      {{statistics['TYPE_FIM'].rewardsWeek}} FIM
+                    </div>
+                    <div>
+                      <span class="text-muted" translate translate-cloak>translate.this_month</span>
+                      {{statistics['TYPE_FIM'].rewardsMonth}} FIM
+                    </div>
+                  </div>
                 </div>
                 <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_week</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsWeek}} FIM</div>
+                  <b><span class="text-muted" translate translate-cloak>translate.transactions</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_month</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsMonth}} FIM</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_today</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountToday}}</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_week</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountWeek}}</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_month</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountMonth}}</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                  <div ng-if="!statistics['TYPE_FIM'].isLoading">
+                    <div>
+                      <span class="text-muted" translate translate-cloak>translate.today</span>
+                      {{statistics['TYPE_FIM'].transactionCountToday}}
+                    </div>
+                    <div>
+                      <span class="text-muted" translate translate-cloak>translate.this_week</span>
+                      {{statistics['TYPE_FIM'].transactionCountWeek}}
+                    </div>
+                    <div>
+                      <span class="text-muted" translate translate-cloak>translate.this_month</span>
+                      {{statistics['TYPE_FIM'].transactionCountMonth}}
+                    </div>
+                  </div>
                 </div>
               </div>
             </form>
