@@ -69,6 +69,7 @@ module.factory('BlocksProvider', function (nxt, $q, EntityProvider) {
         b.totalFeeNXT       = nxt.util.convertToNXT(b.totalFeeNQT);
         b.totalPOSRewardNXT = b.totalPOSRewardNQT ?
           (nxt.util.convertToNXT(b.totalPOSRewardNQT) + ' ' + this.api.engine.symbol) : 'none';
+        b.rewardTotals = b.rewardTotals ? b.rewardTotals : "none";
       }
       return new Iterator(blocks);
     },

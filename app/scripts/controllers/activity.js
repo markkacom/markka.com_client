@@ -33,7 +33,7 @@ module.config(function($routeProvider) {
 
 module.controller('ActivityController', function($scope, $location, $routeParams, nxt, $q, $sce,
   ActivityProvider, BlocksProvider, ForgersProvider, StatisticsProvider, AllAssetsProvider, BlockStateProvider, PeerProvider,
-  $timeout, dateParser, dateFilter, $rootScope) {
+  $timeout, dateParser, dateFilter, $rootScope, plugins) {
 
   $rootScope.paramEngine  = $routeParams.engine;
   $scope.paramEngine      = $routeParams.engine;
@@ -197,5 +197,79 @@ module.controller('ActivityController', function($scope, $location, $routeParams
       $scope.statistics[engine].load();
     }
   }
+
+  $scope.showRewardInfo = function (height) {
+
+    api.engine.socket().callAPIFunction({
+      requestType: 'getRewardTotals',
+      fromHeight: height,
+      toHeight: height + 1
+    }).then(function(v) {
+      var rewardTotals = v.rewardTotals
+      var rewardTotalsDisplayed
+      if (rewardTotals) {
+        rewardTotalsDisplayed = rewardTotals.map(function(v) {
+          var amountFormatted = nxt.util.commaFormat(nxt.util.convertToQNTf(v.amount, v.decimals))
+          return v.name + " <b>" + amountFormatted + " " + v.assetName + "</b> &#8594; " + v.accountRS
+        })
+      }
+      var displayingObject = {
+        "Items": rewardTotalsDisplayed
+      }
+
+      var inspector = plugins.get('inspector');
+      inspector.inspect({
+        title: "Reward amounts at height " + height,
+        object: displayingObject,
+        name: "rewardTotals"
+      });
+    });
+    /*
+    [
+    {
+        "fromHeight": 2062,
+        "amount": "20000000000",
+        "decimals": 8,
+        "name": "POS Block Reward",
+        "assetName": "FIM",
+        "toHeight": 2063,
+        "asset": "0"
+    },
+    {
+        "fromHeight": 2062,
+        "amount": "100000000",
+        "decimals": 8,
+        "name": "POP Block Reward",
+        "assetName": "FIM",
+        "toHeight": 2063,
+        "asset": "0"
+    },
+    {
+        "fromHeight": 2062,
+        "amount": "1",
+        "decimals": 0,
+        "name": "POP Random Weighted Account Reward",
+        "assetName": "PA1",
+        "toHeight": 2063,
+        "asset": "13678669228915572197"
+    }
+]
+     */
+
+
+    /*
+        var type   = element.getAttribute('data-type');
+        var value  = element.getAttribute('data-value');
+        if (element.getAttribute('data-engine')) {
+          var api  = nxt.get(element.getAttribute('data-engine'));
+        }
+        else if (type == 'ACCOUNT') {
+          var api  = nxt.get(value);
+        }
+    */
+    // console.log('onTransactionIdentifierClick', {type:type,value:value});
+    return false;
+  }
+
 });
 })();
