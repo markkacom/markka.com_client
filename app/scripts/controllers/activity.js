@@ -86,7 +86,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     api.engine.forceSocketURL(url);
   };
 
-  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com"];
+  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com", "localhost"];
 
   switch ($scope.paramSection) {
     case 'activity':

@@ -122,7 +122,7 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
     api.engine.forceSocketURL(url);
   };
 
-  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com"];
+  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com", "localhost"];
 
   switch ($scope.paramSection) {
     case 'config': {

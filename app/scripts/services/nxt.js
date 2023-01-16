@@ -90,7 +90,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     else if (this.type == TYPE_FIM) {
       var hosts = [
         {host: 'cloud.mofowallet.org', port: this.port, tls: true},
-        {host: 'fimk1.heatwallet.com', tls: true}
+        {host: 'fimk1.heatwallet.com', tls: true},
+        {host: 'localhost', port: this.port, tls: false}
       ]
       if (this.test) {
         this.urlPool = new URLPool(this, hosts);
@@ -131,15 +132,21 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     },
 
     forceSocketURL: function (url) {
-      var s = this.urlPool.good.find(function(s){return s.includes(url)})
-      if (s) this.urlPool.forcedUrl = s
-      this.socket().refresh()
+      var newUrl = this.urlPool.good.find(function (s) { return s.includes(url) })
+      if (newUrl) {
+        this.urlPool.forcedUrl = newUrl
+        var socket = this.socket()
+        socket.force_local = newUrl.indexOf("localhost") >= 0
+        socket.refresh()
+      }
     },
 
     socket: function () {
-      var downloader = this.type == TYPE_NXT ? $rootScope.nxtDownloadProvider : $rootScope.fimDownloadProvider;
-      if (downloader && downloader.server_running && !downloader.downloading) {
-        return this._localSocket || (this._localSocket = new MofoSocket(this, true));
+      if (!this.urlPool.forcedUrl) {
+        var downloader = this.type == TYPE_NXT ? $rootScope.nxtDownloadProvider : $rootScope.fimDownloadProvider;
+        if (downloader && downloader.server_running && !downloader.downloading) {
+          return this._localSocket || (this._localSocket = new MofoSocket(this, true));
+        }
       }
       return this._socket || (this._socket = new MofoSocket(this));
     },
