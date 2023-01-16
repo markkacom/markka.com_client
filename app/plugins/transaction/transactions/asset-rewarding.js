@@ -131,6 +131,9 @@
                 var isOption0 = dialog.lotteryType.value == 0
                 dialog.balanceDivider.hide = !isOption0
                 dialog.formValid.value = dialog.target.value == 0 && dialog.lotteryType.value == undefined ? "" : "ok"
+                dialog.asset2.label = isOption0
+                    ? "Asset which balance affects amount of reward (empty means FIMK)"
+                    : "Asset which balance affects probability of win (empty means FIMK)"
               }
             }),
             plugin.fields('text').create('balanceDivider', {
@@ -139,12 +142,12 @@
               // required: true,
               hide: true,
               validate: function (text) {
-                this.errorMsg = validateNumber(text, {minExclusive: 0})
+                this.errorMsg = validateNumber(text, {minExclusive: 1})
                 return ! this.errorMsg
               }
             }),
             plugin.fields('asset').create('asset2', {
-              label: 'Asset used to weight the target account (empty means FIMK)',
+              label: 'Asset which balance affects probability of win (empty means FIMK)',
               account: $rootScope.currentAccount.id_rs,
               required: false,
               hide: true,
