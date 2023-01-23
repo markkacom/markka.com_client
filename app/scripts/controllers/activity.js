@@ -210,7 +210,11 @@ module.controller('ActivityController', function($scope, $location, $routeParams
       if (rewardTotals) {
         rewardTotalsDisplayed = rewardTotals.map(function(v) {
           var amountFormatted = nxt.util.commaFormat(nxt.util.convertToQNTf(v.amount, v.decimals))
-          return v.name + " <b>" + amountFormatted + " " + v.assetName + "</b> &#8594; " + v.accountRS
+          var result = v.name + " <b>" + amountFormatted + " " + v.assetName + "</b> &#8594; " + v.accountRS
+          if (v.campaignId && !(v.campaignId == 0 || v.campaignId == -1)) {
+            result = result + "<br><small><i>campaign " + v.campaignId + "</i></small>"
+          }
+          return result
         })
       }
       var displayingObject = {
