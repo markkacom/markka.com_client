@@ -81,7 +81,15 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     $scope.blockstate['TYPE_NXT'].load();
   }
 
-  $scope.getEngineUrl = function () { return api.engine.socket().url; };
+  $scope.getEngineUrl = function () {
+    var url = api.engine.socket().url;
+    if (!url) {
+      console.debug("current url is empty");
+      return "none";
+    }
+    return url;
+  };
+
   $scope.setEngineUrl = function (url) {
     api.engine.forceSocketURL(url);
   };
