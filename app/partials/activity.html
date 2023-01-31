@@ -43,38 +43,42 @@
 <!--                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>-->
                   <b><span class="text-muted" translate translate-cloak>translate.block_fees</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">
-                    <div>
-                      <span class="text-muted" translate translate-cloak>translate.today</span>
-                      {{statistics['TYPE_FIM'].rewardsToday}} FIM
-                    </div>
-                    <div>
-                      <span class="text-muted" translate translate-cloak>translate.this_week</span>
-                      {{statistics['TYPE_FIM'].rewardsWeek}} FIM
-                    </div>
-                    <div>
-                      <span class="text-muted" translate translate-cloak>translate.this_month</span>
-                      {{statistics['TYPE_FIM'].rewardsMonth}} FIM
-                    </div>
-                  </div>
+                  <table ng-if="!statistics['TYPE_FIM'].isLoading" style="width: 100%">
+                    <tbody>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.today</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].rewardsToday}}&nbsp; FIM</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_week</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].rewardsWeek}}&nbsp; FIM</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_month</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].rewardsMonth}}&nbsp; FIM</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
                 <div class="form-control-static">
                   <b><span class="text-muted" translate translate-cloak>translate.transactions</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">
-                    <div>
-                      <span class="text-muted" translate translate-cloak>translate.today</span>
-                      {{statistics['TYPE_FIM'].transactionCountToday}}
-                    </div>
-                    <div>
-                      <span class="text-muted" translate translate-cloak>translate.this_week</span>
-                      {{statistics['TYPE_FIM'].transactionCountWeek}}
-                    </div>
-                    <div>
-                      <span class="text-muted" translate translate-cloak>translate.this_month</span>
-                      {{statistics['TYPE_FIM'].transactionCountMonth}}
-                    </div>
-                  </div>
+                  <table ng-if="!statistics['TYPE_FIM'].isLoading" style="width: 100%">
+                    <tbody>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.today</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].transactionCountToday}}</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_week</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].transactionCountWeek}}</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_month</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].transactionCountMonth}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </form>
@@ -376,7 +380,8 @@
                     <td>{{b.numberOfTransactions}}</td>
                     <td>{{b.totalAmountNXT}}</td>
                     <td>{{b.totalFeeNXT}}</td>
-                    <td><a href ng-click="showRewardInfo(b.height)">{{b.rewardTotals}}</a></td>
+                    <td ng-if="b.rewardTotals"><a href ng-click="showRewardInfo(b.height)">{{b.rewardTotals}}</a></td>
+                    <td ng-if="!b.rewardTotals">-</td>
                   </tr>
                 </tbody>
               </table>

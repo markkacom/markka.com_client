@@ -1112,7 +1112,8 @@
                       <td>{{b.numberOfTransactions}}</td>
                       <td>{{b.totalAmountNXT}}</td>
                       <td>{{b.totalFeeNXT}}</td>
-                      <td>{{b.rewardTotals}}</td>
+                      <td ng-if="b.rewardTotals"><a href ng-click="showRewardInfo(b.height)">{{b.rewardTotals}}</a></td>
+                      <td ng-if="!b.rewardTotals">-</td>
                     </tr>
                   </tbody>
                 </table>
