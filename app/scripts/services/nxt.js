@@ -88,9 +88,10 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       this.urlPool = new URLPool(this, hosts);
     }
     else if (this.type == TYPE_FIM) {
+      // ordered by priority (availability)
       var hosts = [
-        {host: 'cloud.mofowallet.org', port: this.port, tls: true},
         {host: 'fimk1.heatwallet.com', tls: true},
+        {host: 'cloud.mofowallet.org', port: this.port, tls: true},
         {host: 'localhost', port: this.port, tls: false}
       ]
       if (this.test) {
@@ -121,7 +122,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     getSocketNodeURL: function () {
       var deferred = $q.defer();
-      deferred.resolve(this.urlPool.forcedUrl || this.urlPool.getRandom());
+      deferred.resolve(this.urlPool.forcedUrl || this.urlPool.getNext());
       return deferred.promise;
     },
 
@@ -174,6 +175,12 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
   }
 
   URLPool.prototype = {
+    position: -1,
+    getNext: function () {
+      this.position++;
+      if (this.position >= this.good.length) this.position = 0;
+      return this.good[this.position];
+    },
     getRandom: function () {
       return this.good[Math.floor(Math.random()*this.good.length)];
     },
