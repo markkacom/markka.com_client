@@ -34,12 +34,12 @@
           <li>
             <form class="navbar-form statistics-form" role="search">
               <div class="form-group" ng-if="!fimCollapse">
-                <div class="form-control-static">
+                <div class="block">
                   <b><span class="control-label text-muted" translate translate-cloak>translate.average_block_time</span></b>
                   <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].average}} {{ 'translate.seconds' | translate }}</div>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
                 </div>
-                <div class="form-control-static">
+                <div class="block">
 <!--                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>-->
                   <b><span class="text-muted" translate translate-cloak>translate.block_fees</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
@@ -60,7 +60,7 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="form-control-static">
+                <div class="block">
                   <b><span class="text-muted" translate translate-cloak>translate.transactions</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
                   <table ng-if="!statistics['TYPE_FIM'].isLoading" style="width: 100%">
