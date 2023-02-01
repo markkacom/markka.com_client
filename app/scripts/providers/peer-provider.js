@@ -32,6 +32,8 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
     this.$scope     = $scope;
     this.isLoading  = false;
     this.peers      = [];
+    this.socketUrl = "";
+    this.serverIP = "";
 
     var socket      = this.socket();
     var update      = angular.bind(this, this.onUpdate);
@@ -70,8 +72,11 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
     getNetworkData: function () {
       var self = this;
       var arg  = { requestType: "getPeers", includePeerInfo: true };
-      this.socket().callAPIFunction(arg).then(
+      var socket = this.socket();
+      this.socketUrl = socket.url;
+      socket.callAPIFunction(arg).then(
         function (data) {
+          self.setServerInetAddress(data.inetAddress)
           self.$scope.$evalAsync(function () {
             self.isLoading = false;
             self.peers = data.peers;
@@ -104,6 +109,10 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
           p.stateClass = 'danger';
           break
       }
+      if (this.serverIP === p.address) {
+        p.stateStr = 'API server';
+        p.stateClass = 'info'
+      }
       p.downloadedVolume = p.downloadedVolume || 0;
       p.lastUpdatedStr = nxt.util.formatTimestamp(p.lastUpdated, false, true);
       //p.downloadedVolumeStr = formatVolume(p.downloadedVolume);
@@ -120,10 +129,11 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
     },
 
     onUpdate: function (peer) {
+      var self = this;
       peer.lastActivity = Date.now();
       for (var i=0; i<this.peers.length; i++) {
         if ((peer.announcedAddress && this.peers[i].announcedAddress == peer.announcedAddress) || (this.peers[i].address == peer.address)) {
-          var self = this, existing = this.peers[i];
+          var existing = this.peers[i];
           this.$scope.$evalAsync(function () {
             angular.extend(existing, peer);
             self.format(existing);
@@ -131,6 +141,12 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
           });
           break;
         }
+      }
+      //check is socket url changed
+      if (this.socketUrl !== this.socket().url) {
+        this.$scope.$evalAsync(function () {
+          self.getNetworkData();
+        });
       }
     },
 
@@ -150,7 +166,16 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
         self.format(peer);
         self.sort();
       });
+    },
+
+    setServerInetAddress: function (inetAddress) {
+      // format "host/ip". Host maybe empty
+      if (inetAddress) {
+        var hostAndIp = inetAddress.split("/");
+        if (hostAndIp.length > 1) this.serverIP = hostAndIp[1]
+      }
     }
+
   }
 
   function formatVolume(volume) {
