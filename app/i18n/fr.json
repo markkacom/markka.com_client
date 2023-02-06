@@ -483,7 +483,7 @@
       "1": "{{sender}} ajoute {{recipient}} à {{assetName}} comptes acceptés {{details}} {{message}}",
       "2": "{{sender}} enlevé {{recipient}} de {{assetName}} comptes acceptés {{details}} {{message}}",
       "3": "{{sender}} ensemble {{assetName}} frais de l'ordre {{orderFee}} % De frais de commerce {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned identifiant de compte {{identifier}} à {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned identifiant de compte {{identifier}} à {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} fabriqué {{recipient}} une autorité de vérification pour {{period}} blocs {{details}} {{message}}",
       "6": "{{sender}} créé en compte la couleur {{name}} {{details}} {{message}}",
       "7": "{{sender}} affecté compte couleur {{color}} à {{recipient}} {{details}} {{message}}"

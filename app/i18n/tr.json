@@ -483,7 +483,7 @@
       "1": "{{sender}} ekler {{recipient}} için {{assetName}} izin hesaplar {{details}} {{message}}",
       "2": "{{sender}} kaldırıldı {{recipient}} itibaren {{assetName}} izin hesaplar {{details}} {{message}}",
       "3": "{{sender}} set {{assetName}} sipariş ücreti {{orderFee}} % Ticaret ücreti {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned hesap tanımlayıcı {{identifier}} için {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned hesap tanımlayıcı {{identifier}} için {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} yapılmış {{recipient}} bir doğrulama yetkisi {{period}} bloklar {{details}} {{message}}",
       "6": "{{sender}} oluşturulan hesap rengi {{name}} {{details}} {{message}}",
       "7": "{{sender}} atanan hesap rengi {{color}} için {{recipient}} {{details}} {{message}}"

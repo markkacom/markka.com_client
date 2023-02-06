@@ -483,7 +483,7 @@
       "1": "{{sender}} کا اضافہ کر دیتی {{recipient}} کرنے کے لئے {{assetName}} اجازت دی اکاؤنٹس {{details}} {{message}}",
       "2": "{{sender}} ہٹا {{recipient}} سے {{assetName}} اجازت دی اکاؤنٹس {{details}} {{message}}",
       "3": "{{sender}} سیٹ {{assetName}} حکم کی فیس {{orderFee}} ٪ تجارت فیس {{tradeFee}} ٪ {{details}} {{message}}",
-      "4": "{{sender}} asigned اکاؤنٹ شناخت {{identifier}} کرنے کے لئے {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned اکاؤنٹ شناخت {{identifier}} کرنے کے لئے {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} بنایا {{recipient}} کے لئے ایک تصدیقی اتھارٹی {{period}} بلاکس {{details}} {{message}}",
       "6": "{{sender}} پیدا اکاؤنٹ رنگ {{name}} {{details}} {{message}}",
       "7": "{{sender}} تفویض اکاؤنٹ رنگ {{color}} کرنے کے لئے {{recipient}} {{details}} {{message}}"

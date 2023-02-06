@@ -483,7 +483,7 @@
       "1": "{{sender}} ಸೇರಿಸುತ್ತದೆ {{recipient}} ಗೆ {{assetName}} ಅವಕಾಶ ಖಾತೆಗಳನ್ನು {{details}} {{message}}",
       "2": "{{sender}} ತೆಗೆದು {{recipient}} ರಿಂದ {{assetName}} ಅವಕಾಶ ಖಾತೆಗಳನ್ನು {{details}} {{message}}",
       "3": "{{sender}} ಸೆಟ್ {{assetName}} ಸಲುವಾಗಿ ಶುಲ್ಕ {{orderFee}} % ವ್ಯಾಪಾರ ಶುಲ್ಕ {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned ಖಾತೆ ಗುರುತಿಸುವಿಕೆ {{identifier}} ಗೆ {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned ಖಾತೆ ಗುರುತಿಸುವಿಕೆ {{identifier}} ಗೆ {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} ಮಾಡಿದ {{recipient}} ಪರಿಶೀಲನಾ ಅಧಿಕಾರ {{period}} ಬ್ಲಾಕ್ಗಳನ್ನು {{details}} {{message}}",
       "6": "{{sender}} ದಾಖಲಿಸಿದವರು ಖಾತೆಯನ್ನು ಬಣ್ಣ {{name}} {{details}} {{message}}",
       "7": "{{sender}} ಅದಕ್ಕೆ ಖಾತೆಯನ್ನು ಬಣ್ಣ {{color}} ಗೆ {{recipient}} {{details}} {{message}}"

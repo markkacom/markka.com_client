@@ -113,7 +113,6 @@
     "add_account":          "Add Account",
     "remove_account":       "Remove Account",
     "import_wallet":        "Import Wallet",
-    "balance":              "Balance",
     "filter":               "Filter",
     "unconfirmed_balance":  "Unconfirmed balance",
     "effective_balance":    "Effective balance",
@@ -523,7 +522,7 @@
       "1":                  "{{sender}} adds {{recipient}} to {{assetName}} allowed accounts {{details}} {{message}}",
       "2":                  "{{sender}} removed {{recipient}} from {{assetName}} allowed accounts {{details}} {{message}}",
       "3":                  "{{sender}} set {{assetName}} order fee {{orderFee}}% trade fee {{tradeFee}}% {{details}} {{message}}",
-      "4":                  "{{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}",
+      "4":                  "{{sender}} assigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}",
       "5":                  "{{sender}} made {{recipient}} a verification authority for {{period}} blocks {{details}} {{message}}",
       "6":                  "{{sender}} created account color {{name}} {{details}} {{message}}",
       "7":                  "{{sender}} assigned account color {{color}} to {{recipient}} {{details}} {{message}}"

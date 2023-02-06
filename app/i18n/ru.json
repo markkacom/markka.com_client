@@ -483,7 +483,7 @@
       "1": "{{sender}} добавляет {{recipient}} в {{assetName}} позволили счета {{details}} {{message}}",
       "2": "{{sender}} удалить {{recipient}} от {{assetName}} позволили счета {{details}} {{message}}",
       "3": "{{sender}} набор {{assetName}} Плата за заказ {{orderFee}} % Взнос торговля {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned идентификатор учетной записи {{identifier}} для {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned идентификатор учетной записи {{identifier}} для {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} сделал {{recipient}} верификация орган для {{period}} блоки {{details}} {{message}}",
       "6": "{{sender}} создано цвет счет {{name}} {{details}} {{message}}",
       "7": "{{sender}} другой цвет счет {{color}} для {{recipient}} {{details}} {{message}}"

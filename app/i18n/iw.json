@@ -483,7 +483,7 @@
       "1": "{{sender}} מוסיף {{recipient}} ל {{assetName}} חשבונות אפשרו {{details}} {{message}}",
       "2": "{{sender}} הוסר {{recipient}} מ {{assetName}} חשבונות אפשרו {{details}} {{message}}",
       "3": "{{sender}} סט {{assetName}} תשלום על מנת {{orderFee}} % דמי סחר {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} מזהה חשבון asigned {{identifier}} ל {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} מזהה חשבון assigned {{identifier}} ל {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} עָשׂוּי {{recipient}} סמכות אימות ל {{period}} בלוקים {{details}} {{message}}",
       "6": "{{sender}} צבע חשבון שנוצר {{name}} {{details}} {{message}}",
       "7": "{{sender}} צבע חשבון שהוקצה {{color}} ל {{recipient}} {{details}} {{message}}"

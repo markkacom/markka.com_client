@@ -483,7 +483,7 @@
       "1": "{{sender}} iżid {{recipient}} li {{assetName}} kontijiet permessi {{details}} {{message}}",
       "2": "{{sender}} jitneħħew {{recipient}} minn {{assetName}} kontijiet permessi {{details}} {{message}}",
       "3": "{{sender}} sett {{assetName}} miżata ordni {{orderFee}} % Miżata kummerċ {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} identifikatur tal-kont asigned {{identifier}} li {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} identifikatur tal-kont assigned {{identifier}} li {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} magħmula {{recipient}} awtorità ta 'verifika għall {{period}} blokki {{details}} {{message}}",
       "6": "{{sender}} kulur kont maħluqa {{name}} {{details}} {{message}}",
       "7": "{{sender}} kulur kont assenjat {{color}} li {{recipient}} {{details}} {{message}}"

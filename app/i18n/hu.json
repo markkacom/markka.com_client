@@ -483,7 +483,7 @@
       "1": "{{sender}} Hozzáteszi {{recipient}} hogy {{assetName}} megengedett számlák {{details}} {{message}}",
       "2": "{{sender}} eltávolított {{recipient}} -tól {{assetName}} megengedett számlák {{details}} {{message}}",
       "3": "{{sender}} készlet {{assetName}} érdekében díj {{orderFee}} % Kereskedelmet díj {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned számla azonosítója {{identifier}} nak nek {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned számla azonosítója {{identifier}} nak nek {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} készült {{recipient}} ellenőrző hatóság {{period}} blokkok {{details}} {{message}}",
       "6": "{{sender}} létrehozott fiókot szín {{name}} {{details}} {{message}}",
       "7": "{{sender}} rendelt fiók színe {{color}} nak nek {{recipient}} {{details}} {{message}}"

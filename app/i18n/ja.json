@@ -483,7 +483,7 @@
       "1": "{{sender}}追加します{{recipient}}へ{{assetName}}許可されたアカウント{{details}} {{message}}",
       "2": "{{sender}}削除{{recipient}}から{{assetName}}許可されたアカウント{{details}} {{message}}",
       "3": "{{sender}}セット{{assetName}}オーダー料{{orderFee}} ％トレード手数料{{tradeFee}} ％ {{details}} {{message}}",
-      "4": "{{sender}} asignedアカウント識別子{{identifier}}に{{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assignedアカウント識別子{{identifier}}に{{recipient}} {{details}} {{message}}",
       "5": "{{sender}}製{{recipient}}以下のための検証機関{{period}}ブロック{{details}} {{message}}",
       "6": "{{sender}}作成したアカウントの色{{name}} {{details}} {{message}}",
       "7": "{{sender}}割り当てられたアカウントの色{{color}}に{{recipient}} {{details}} {{message}}"

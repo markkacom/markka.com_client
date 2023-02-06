@@ -483,7 +483,7 @@
       "1": "{{sender}} adds {{recipient}} ad {{assetName}} liceat rationibus {{details}} {{message}}",
       "2": "{{sender}} removed {{recipient}} a {{assetName}} liceat rationibus {{details}} {{message}}",
       "3": "{{sender}} set {{assetName}} order fee {{orderFee}} % Fee trade {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned propter identifier {{identifier}} ad {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned propter identifier {{identifier}} ad {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} fecit {{recipient}} potestatem enim a verificationem {{period}} Stipitibus {{details}} {{message}}",
       "6": "{{sender}} creata propter colorem {{name}} {{details}} {{message}}",
       "7": "{{sender}} assignari propter colorem {{color}} ad {{recipient}} {{details}} {{message}}"

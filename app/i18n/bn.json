@@ -483,7 +483,7 @@
       "1": "{{sender}} যোগ {{recipient}} থেকে {{assetName}} অনুমতি অ্যাকাউন্ট {{details}} {{message}}",
       "2": "{{sender}} অপসারিত {{recipient}} থেকে {{assetName}} অনুমতি অ্যাকাউন্ট {{details}} {{message}}",
       "3": "{{sender}} সেট {{assetName}} যাতে ফি {{orderFee}} % বিনিময় হার {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned অ্যাকাউন্ট শনাক্তকারী {{identifier}} থেকে {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned অ্যাকাউন্ট শনাক্তকারী {{identifier}} থেকে {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} প্রণীত {{recipient}} জন্য একটি যাচাইকরণ কর্তৃপক্ষ {{period}} ব্লক {{details}} {{message}}",
       "6": "{{sender}} তৈরি করা অ্যাকাউন্টের রঙ {{name}} {{details}} {{message}}",
       "7": "{{sender}} নির্ধারিত অ্যাকাউন্ট রঙ {{color}} থেকে {{recipient}} {{details}} {{message}}"

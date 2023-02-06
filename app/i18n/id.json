@@ -483,7 +483,7 @@
       "1": "{{sender}} menambahkan {{recipient}} untuk {{assetName}} account diizinkan {{details}} {{message}}",
       "2": "{{sender}} dihapus {{recipient}} dari {{assetName}} account diizinkan {{details}} {{message}}",
       "3": "{{sender}} set {{assetName}} Biaya untuk {{orderFee}} Biaya perdagangan% {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} identifier akun asigned {{identifier}} untuk {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} identifier akun assigned {{identifier}} untuk {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} terbuat {{recipient}} otoritas verifikasi untuk {{period}} blok {{details}} {{message}}",
       "6": "{{sender}} warna akun dibuat {{name}} {{details}} {{message}}",
       "7": "{{sender}} warna akun ditugaskan {{color}} untuk {{recipient}} {{details}} {{message}}"

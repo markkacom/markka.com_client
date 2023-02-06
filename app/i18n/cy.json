@@ -483,7 +483,7 @@
       "1": "{{sender}} ychwanegu {{recipient}} i {{assetName}} cyfrifon a ganiateir {{details}} {{message}}",
       "2": "{{sender}} tynnu {{recipient}} o {{assetName}} cyfrifon a ganiateir {{details}} {{message}}",
       "3": "{{sender}} set {{assetName}} Ffi gorchymyn {{orderFee}} % Ffi fasnach {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} dynodwr cyfrif asigned {{identifier}} i {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} dynodwr cyfrif assigned {{identifier}} i {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} gwneud {{recipient}} awdurdod dilysu ar gyfer {{period}} blociau {{details}} {{message}}",
       "6": "{{sender}} Lliw cyfrif a grëwyd {{name}} {{details}} {{message}}",
       "7": "{{sender}} Lliw cyfrif neilltuo {{color}} i {{recipient}} {{details}} {{message}}"

@@ -483,7 +483,7 @@
       "1": "{{sender}} voeg {{recipient}} om {{assetName}} toegelaat rekeninge {{details}} {{message}}",
       "2": "{{sender}} verwyder {{recipient}} uit {{assetName}} toegelaat rekeninge {{details}} {{message}}",
       "3": "{{sender}} stel {{assetName}} Om fooi {{orderFee}} % Handel fooi {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned rekening identifiseer {{identifier}} om {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned rekening identifiseer {{identifier}} om {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} gemaak {{recipient}} 'n verifikasie gesag {{period}} blokke {{details}} {{message}}",
       "6": "{{sender}} geskep rekening kleur {{name}} {{details}} {{message}}",
       "7": "{{sender}} opgedra rekening kleur {{color}} om {{recipient}} {{details}} {{message}}"

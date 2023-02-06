@@ -483,7 +483,7 @@
       "1": "{{sender}} เพิ่ม {{recipient}} ไปยัง {{assetName}} บัญชีรับอนุญาต {{details}} {{message}}",
       "2": "{{sender}} ลบออก {{recipient}} จาก {{assetName}} บัญชีรับอนุญาต {{details}} {{message}}",
       "3": "{{sender}} ชุด {{assetName}} ค่าธรรมเนียมการสั่งซื้อ {{orderFee}} % ค่าธรรมเนียมการค้า {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} ระบุบัญชี asigned {{identifier}} ไปยัง {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} ระบุบัญชี assigned {{identifier}} ไปยัง {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} ทำ {{recipient}} ผู้มีอำนาจในการตรวจสอบสำหรับ {{period}} บล็อก {{details}} {{message}}",
       "6": "{{sender}} สีสร้างบัญชี {{name}} {{details}} {{message}}",
       "7": "{{sender}} สีที่ได้รับมอบหมายบัญชี {{color}} ไปยัง {{recipient}} {{details}} {{message}}"

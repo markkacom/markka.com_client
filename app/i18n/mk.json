@@ -483,7 +483,7 @@
       "1": "{{sender}} додава {{recipient}} да {{assetName}} дозволено сметки {{details}} {{message}}",
       "2": "{{sender}} отстранети {{recipient}} од {{assetName}} дозволено сметки {{details}} {{message}}",
       "3": "{{sender}} сет {{assetName}} со цел плаќање {{orderFee}} % На трговијата плаќање {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} Идентификатор asigned сметка {{identifier}} до {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} Идентификатор assigned сметка {{identifier}} до {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} направени {{recipient}} орган за верификација {{period}} блокови {{details}} {{message}}",
       "6": "{{sender}} создадена боја сметка {{name}} {{details}} {{message}}",
       "7": "{{sender}} доделени боја сметка {{color}} до {{recipient}} {{details}} {{message}}"
