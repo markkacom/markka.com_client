@@ -25,8 +25,7 @@
 
 var module = angular.module('fim.base');
 module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
-  settings, $timeout, $sce, serverService, plugins, $interval,
-  $translate, MofoSocket, Emoji) {
+  settings, $timeout, $sce, serverService, plugins, $interval, $translate, MofoSocket, Emoji) {
 
   var TYPE_FIM  = 'TYPE_FIM';
   var TYPE_NXT  = 'TYPE_NXT';
@@ -81,38 +80,32 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.symbol    = _type == TYPE_FIM ? 'FIM' : 'NXT';
     this.symbol_lower = this.symbol.toLowerCase();
 
+    var hosts
     if ($rootScope.forceLocalHost) {
-      var hosts = [
+      hosts = [
         {host: window.location.hostname||'localhost', port: this.port, tls: window.location.protocol == 'https:'}
       ]
       this.urlPool = new URLPool(this, hosts);
-    }
-    else if (this.type == TYPE_FIM) {
+    } else if (this.type == TYPE_FIM) {
       // ordered by priority (availability)
-      var hosts = [
+      hosts = [
         {host: 'fimk1.heatwallet.com', tls: true},
         {host: 'cloud.mofowallet.org', port: this.port, tls: true},
         {host: 'localhost', port: this.port, tls: false}
       ]
-      if (this.test) {
-        this.urlPool = new URLPool(this, hosts);
-      }
-      else {
-        this.urlPool = new URLPool(this, hosts);
-      }
     }
     else if (this.type == TYPE_NXT) {
       if (this.test) {
         console.log('There are no nxt testnet servers');
       }
-      var hosts = [
+      hosts = [
         {host: 'cloud.mofowallet.org', port: this.port, tls: !this.test}
       ]
-      this.urlPool = new URLPool(this, hosts);
     }
     else {
       throw new Error('?');
     }
+    this.urlPool = new URLPool(this, hosts);
   };
   AbstractEngine.prototype = {
 
@@ -122,7 +115,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
 
     getSocketNodeURL: function () {
       var deferred = $q.defer();
-      deferred.resolve(this.urlPool.forcedUrl || this.urlPool.getNext());
+      var self = this
+      $rootScope.appConfigPromise.then(function(config) {
+        self.urlPool.init(config)
+        deferred.resolve(self.urlPool.forcedUrl || self.urlPool.getNext());
+      })
       return deferred.promise;
     },
 
@@ -164,18 +161,25 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
   function URLPool(engine, hosts) {
     this.engine = engine
     this.ips = []
+    this.hosts = hosts
     this.urlHostMap = new Map()
-    for (var i = 0; i < hosts.length; i++) {
-      var v = hosts[i]
-      var url = (v.tls ? 'wss' : 'ws') + '://' + v.host + (v.port ? ':' + v.port : '') + '/ws/'
-      this.ips.push(url)
-      this.urlHostMap.set(url, v)
-    }
-    this.good = angular.copy(this.ips)
   }
 
   URLPool.prototype = {
     position: -1,
+    init: function (config) {
+      if (config) {
+        this.hosts = config.fimkNodes.mainnet.knownServers
+      }
+      if (!this.hosts || this.hosts.length === 0) throw Error("Server hosts are not defined")
+      for (var i = 0; i < this.hosts.length; i++) {
+        var v = this.hosts[i]
+        var url = (v.tls ? 'wss' : 'ws') + '://' + v.host + (v.port ? ':' + v.port : '') + '/ws/'
+        this.ips.push(url)
+        this.urlHostMap.set(url, v)
+      }
+      this.good = angular.copy(this.ips)
+    },
     getNext: function () {
       this.position++;
       if (this.position >= this.good.length) this.position = 0;
@@ -393,9 +397,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     };
     this.templates = {};
     angular.forEach(this.TYPE, function (type) {
-      self.templates[type] = ['<a href__HREF__ data-engine="',self.api.type,'" data-type="',type,'" data-value="__VALUE__" class="txn txn-',
-        type,'"','__CLICK__',
-        ' ','>__LABEL__</a>'].join('');
+      self.templates[type] = ['<a href__HREF__ data-engine="',self.api.type,'" data-type="',type,'" data-value="__VALUE__" class="txn txn-',type,'"','__CLICK__',' ','>__LABEL__</a>'].join('');
     });
   }
   Renderer.prototype = {
@@ -1006,7 +1008,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
-              // {{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}
+              // {{sender}} assigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}
               case 4: return $translate.instant('transaction.40.4', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 identifier: render(TYPE.ACCOUNT, transaction.attachment.identifier, transaction.recipientRS),

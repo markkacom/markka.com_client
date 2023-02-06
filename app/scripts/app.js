@@ -50,8 +50,11 @@ module.config(function(noCAPTCHAProvider, $translateProvider) {
   noCAPTCHAProvider.setLanguage($translateProvider.preferredLanguage());
 });
 
-module.run(function ($log, $rootScope, $translate, plugins, serverService) {
+module.run(function ($log, $rootScope, $translate, plugins, serverService, $http) {
   $log.log('fim.base application started');
+
+  $rootScope.appConfigPromise = loadAppConfig($http)
+
   /*  disable this code, which is needed for nw.js but not needed for Electron
 
   todo the same in Electron manner
@@ -106,6 +109,29 @@ module.config(function($translateProvider, $httpProvider) {
 
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
+
+function loadAppConfig(http) {
+    var fileName = 'app-config.json'
+    if (isNodeJS) {
+        const path = require('path')
+        const {promises: {readFile}} = require("fs");
+        fileName = path.join(__dirname, fileName)
+        return readFile(fileName).then(fileBuffer => {
+            return JSON.parse(fileBuffer)
+        }).catch(error => {
+            console.error(error.message);
+            reject(message);
+        });
+    } else {
+        return http.get('app-config.json').then((response) => {
+            return response.data
+        }, (reason) => {
+            let message = "Cannot load 'app-config.json': " + reason ? reason : ""
+            console.error(message)
+            reject(message);
+        })
+    }
+}
 
 })();
 
