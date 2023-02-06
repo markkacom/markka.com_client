@@ -399,7 +399,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     });
   }
   Renderer.prototype = {
-    clickHandler: '" onclick="event.preventDefault(); if (angular.element(this).scope().onTransactionIdentifierClick) { angular.element(this).scope().onTransactionIdentifierClick(this) }" ',
+    clickHandler: ' onclick="event.preventDefault(); if (angular.element(this).scope().onTransactionIdentifierClick) { angular.element(this).scope().onTransactionIdentifierClick(this) }" ',
 
     getHTML: function (transaction, translator, accountRS) {
       return $sce.trustAsHtml(this._renderTransaction(transaction, translator, accountRS));
@@ -515,7 +515,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
             html.push('&nbsp;<a href="#/messenger/',transaction.senderRS,'"><b><i class="fa fa-comments-o fa-fw"></i></b></a>&nbsp;');
             var text = escapeHtml(decoded.text);
             html.push('&nbsp;<span data-text="',text,'" data-sender="',transaction.senderRS,'" data-recipient="',transaction.recipientRS,'" ',
-            '>',Emoji.emojifi(text),'</span></span>');
+            '>',text,'</span></span>');
           }
           else {
             html.push('</span>');
