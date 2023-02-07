@@ -42,6 +42,8 @@ function createWindow () {
     }
   })
 
+  //win.webContents.openDevTools()
+
   remoteMain.enable(win.webContents)
 
   win.loadFile('index.html')

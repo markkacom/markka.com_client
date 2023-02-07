@@ -114,19 +114,19 @@ function loadAppConfig(http) {
     var fileName = 'app-config.json'
     if (isNodeJS) {
         const path = require('path')
-        const {promises: {readFile}} = require("fs");
+        const fs = require("fs");
         fileName = path.join(__dirname, fileName)
-        return readFile(fileName).then(fileBuffer => {
+        return fs.promises.readFile(fileName).then(function(fileBuffer) {
             return JSON.parse(fileBuffer)
-        }).catch(error => {
+        }).catch(function(error) {
             console.error(error.message);
             reject(message);
         });
     } else {
-        return http.get('app-config.json').then((response) => {
+        return http.get('app-config.json').then(function(response) {
             return response.data
-        }, (reason) => {
-            let message = "Cannot load 'app-config.json': " + reason ? reason : ""
+        }, function(reason) {
+            var message = "Cannot load 'app-config.json': " + reason ? reason : ""
             console.error(message)
             reject(message);
         })
