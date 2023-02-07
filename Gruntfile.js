@@ -505,7 +505,8 @@ module.exports = function (grunt) {
             'JSON/{,*/}*.json',
             'images/{,*/}*.{webp,wav}',
             'fonts/*',
-            'dice-words/*.txt'
+            'dice-words/*.txt',
+            'app-config.json'
           ]
         }, {
           expand: true,

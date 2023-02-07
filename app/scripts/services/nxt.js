@@ -170,6 +170,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     init: function (config) {
       if (config) {
         this.hosts = config.fimkNodes.mainnet.knownServers
+        this.hosts.sort(function(a,b) {return a.priority - b.priority})
       }
       if (!this.hosts || this.hosts.length === 0) throw Error("Server hosts are not defined")
       for (var i = 0; i < this.hosts.length; i++) {
