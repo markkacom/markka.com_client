@@ -19,10 +19,12 @@ directories:
 win:
   icon: "./app/images/fimk-coin-256x256.png"
   target:
-     - "nsis"
+    - "nsis"
 #    - "zip"
 
 linux:
+  maintainer: "Lompsa.com"
+  icon: "./app/images/fimk-coin-256x256.png"
   target:
     - "deb"
 
@@ -33,5 +35,3 @@ linux:
 #  perMachine: true
 
 #extends: null
-
-

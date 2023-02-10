@@ -1,8 +1,8 @@
 {
   "name": "FIMK",
   "version": "1.0.0",
-  "author": "abc",
-  "description": "qwerty",
+  "author": "FIMK Developers",
+  "description": "Mofowallet",
   "main": "app/index.js",
   "scripts": {
     "pack": "electron-builder --dir",
