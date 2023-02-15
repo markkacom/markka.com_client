@@ -26,7 +26,7 @@ linux:
   maintainer: "Lompsa.com"
   icon: "./app/images/fimk-coin-256x256.png"
   target:
-    - "deb"
+    - "AppImage"
 
 
 # Config for the windows installer
