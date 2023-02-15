@@ -204,7 +204,7 @@ function getConfigFilePath(id, fileName, useUserDir) {
 }
 
 /**
- * Match files in server target dir and server files in the mofowallet app dir. Copy newer files to target dir.
+ * Match version in server target dir and server files in the mofowallet app dir. Copy newer server to target dir.
  */
 function checkServerFiles(appServerDir, targetServerDir) {
   if (appServerDir === targetServerDir) return
@@ -213,22 +213,21 @@ function checkServerFiles(appServerDir, targetServerDir) {
   var path = require('path')
 
   // copy original (shipped with app) server files to target dir
-  var copyServer = function(checkFile) {
+  var readServerVersion = function(serverDir) {
+    var configPath = path.join(serverDir, "/conf/fimk-default.properties")
+    if (!fs.existsSync(configPath)) return null
+    var data = fs.readFileSync(configPath, 'utf8');
+    var text = data.toString()
+    var versionLine = text.split(/\r?\n/).find(function(s) {return s.trim().startsWith("fimk.version")})
+    return versionLine ? versionLine.trim().substring("fimk.version=".length) : ""
+  }
+
+  var origVersion = readServerVersion(appServerDir)
+  var targetVersion = readServerVersion(targetServerDir)
+
+  if (origVersion !== targetVersion) {
+    // copy original (shipped with app) server files to target dir
     fs.cpSync(appServerDir, targetServerDir, { recursive: true })
-    // create check file
-    var createStream = fs.createWriteStream(checkFile);
-    createStream.end();
-  }
-
-  var origBirthtime = fs.statSync(path.join(appServerDir, 'fim.jar')).birthtime
-  var timeMatchFile = path.join(targetServerDir, "createdByMofowalletForMatching." + origBirthtime.getTime())
-
-  if (!fs.existsSync(targetServerDir)) {
-    copyServer(timeMatchFile)
-    return
-  }
-  if (!fs.existsSync(timeMatchFile)) {
-    copyServer(timeMatchFile)
   }
 }
 
