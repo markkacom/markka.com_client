@@ -157,21 +157,20 @@ function maybeNotifyServerReady(id, line) {
   }
 }
 
-function getDir(id) {
+function getServerDir(id) {
     /* Allow this to be called from web context without errors */
     try {
       /* @dependency on nxt.js this must match the TYPE_FIM and TYPE_NXT constant values */
       var dir  = id == 'TYPE_NXT' ? 'nxt' : 'fim';
       var path = require('path');
       /* MAC OS support */
-      var ret;
+      var result;
       if (engine[id].commands[getOS()].start.extra) {
-        ret = path.join(path.dirname( process.execPath ), engine[id].commands[getOS()].start.extra, dir);
+        result = path.join(path.dirname( process.execPath ), engine[id].commands[getOS()].start.extra, dir);
+      } else {
+        result = path.join(getUserDir(), dir);
       }
-      else {
-        ret = path.join(path.dirname( process.execPath ), dir);
-      }
-      return ret;
+      return result;
     } catch(e) {
       console.log('server-service.js getCWD', e);
       return '';
@@ -180,7 +179,7 @@ function getDir(id) {
 
 function getUserDir () {
     var remote = require("@electron/remote");
-    if (!remote) return getDir("");
+    if (!remote) return "";
     var path = require('path');
     var dir = path.join(remote.app.getPath("home"), ".fimk");
     var fs = require('fs');
@@ -196,12 +195,41 @@ function getConfigFilePath(id, fileName, useUserDir) {
   if (isNodeJS) {
     var path = require('path');
     if (!useUserDir) {
-      return path.join(getDir(id), 'conf', fileName);
+      return path.join(getServerDir(id), 'conf', fileName);
     }
     var userDir = getUserDir();
     return path.join(userDir, 'conf', fileName);
   }
   return '';
+}
+
+/**
+ * Match files in server target dir and server files in the mofowallet app dir. Copy newer files to target dir.
+ */
+function checkServerFiles(appServerDir, targetServerDir) {
+  if (appServerDir === targetServerDir) return
+
+  var fs = require('fs')
+  var path = require('path')
+
+  // copy original (shipped with app) server files to target dir
+  var copyServer = function(checkFile) {
+    fs.cpSync(appServerDir, targetServerDir, { recursive: true })
+    // create check file
+    var createStream = fs.createWriteStream(checkFile);
+    createStream.end();
+  }
+
+  var origBirthtime = fs.statSync(path.join(appServerDir, 'fim.jar')).birthtime
+  var timeMatchFile = path.join(targetServerDir, "createdByMofowalletForMatching." + origBirthtime.getTime())
+
+  if (!fs.existsSync(targetServerDir)) {
+    copyServer(timeMatchFile)
+    return
+  }
+  if (!fs.existsSync(timeMatchFile)) {
+    copyServer(timeMatchFile)
+  }
 }
 
 
@@ -222,25 +250,32 @@ if (isNodeJS) {
     var path = require('path')
     var userDir = getUserDir()
     var configDir = path.join(userDir, 'conf')
-    if (!fs.existsSync(configDir)) {
-      fs.mkdir(configDir, {recursive: true}, function (err) {
-        if (err) throw err
-      })
-    }
-    var configFile = path.join(configDir, "fimk.properties.bak")
-    var effectiveConfigFile = path.join(getDir("TYPE_FIM"), 'conf', "fimk.properties")
-    if (!fs.existsSync(configFile)) {
-      if (fs.existsSync(effectiveConfigFile)) {
-        fs.copyFileSync(effectiveConfigFile, configFile)
-      } else {
-        var virginConfigFile = path.join(getDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
-        var data = fs.readFileSync(virginConfigFile, 'utf8')
-        var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
-        fs.writeFileSync(configFile, updatedData, 'utf8')
+
+    try {
+      checkServerFiles(path.join(path.dirname(process.execPath), "fim"), getServerDir("TYPE_FIM"))
+
+      if (!fs.existsSync(configDir)) {
+        fs.mkdir(configDir, {recursive: true}, function (err) {
+          if (err) throw err
+        })
       }
-    }
-    if (!fs.existsSync(effectiveConfigFile)) {
-      fs.copyFileSync(configFile, effectiveConfigFile)
+      var configFile = path.join(configDir, "fimk.properties.bak")
+      var effectiveConfigFile = path.join(getServerDir("TYPE_FIM"), 'conf', "fimk.properties")
+      if (!fs.existsSync(configFile)) {
+        if (fs.existsSync(effectiveConfigFile)) {
+          fs.copyFileSync(effectiveConfigFile, configFile)
+        } else {
+          var virginConfigFile = path.join(getServerDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
+          var data = fs.readFileSync(virginConfigFile, 'utf8')
+          var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
+          fs.writeFileSync(configFile, updatedData, 'utf8')
+        }
+      }
+      if (!fs.existsSync(effectiveConfigFile)) {
+        fs.copyFileSync(configFile, effectiveConfigFile)
+      }
+    } catch (e) {
+      console.error(e)
     }
   }, 200)
 }
@@ -249,7 +284,7 @@ if (isNodeJS) {
 return {
   getUserDir: getUserDir,
 
-  getDir: getDir,
+  getDir: getServerDir,
 
   getConfigFilePath: getConfigFilePath,
 
