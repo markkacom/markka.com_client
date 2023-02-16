@@ -166,13 +166,16 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
   }
 
   URLPool.prototype = {
+    isInitialized: false,
     position: -1,
     init: function (config) {
+      if (this.isInitialized) return
+      this.isInitialized = true
       if (config) {
         this.hosts = config.fimkNodes.mainnet.knownServers
+        if (!this.hosts || this.hosts.length === 0) throw Error("Server hosts are not defined")
         this.hosts.sort(function(a,b) {return a.priority - b.priority})
       }
-      if (!this.hosts || this.hosts.length === 0) throw Error("Server hosts are not defined")
       for (var i = 0; i < this.hosts.length; i++) {
         var v = this.hosts[i]
         var url = (v.tls ? 'wss' : 'ws') + '://' + v.host + (v.port ? ':' + v.port : '') + '/ws/'

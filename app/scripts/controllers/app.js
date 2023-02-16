@@ -115,12 +115,14 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
 
   /* Only run when in NodeJS environment */
   if (isNodeJS) {
-    $rootScope.fimDownloadProvider = new BlockchainDownloadProvider(nxt.fim(), $scope);
-    $rootScope.fimDownloadProvider.load();
-    if ($rootScope.enableDualEngines) {
-      $rootScope.nxtDownloadProvider = new BlockchainDownloadProvider(nxt.nxt(), $scope);
-      $rootScope.nxtDownloadProvider.load();
-    }
+    setTimeout(function() {
+      $rootScope.fimDownloadProvider = new BlockchainDownloadProvider(nxt.fim(), $scope);
+      $rootScope.fimDownloadProvider.load();
+      if ($rootScope.enableDualEngines) {
+        $rootScope.nxtDownloadProvider = new BlockchainDownloadProvider(nxt.nxt(), $scope);
+        $rootScope.nxtDownloadProvider.load();
+      }
+    }, 300)
   }
 
   /* Install app plugins | these all get a menu entry */
