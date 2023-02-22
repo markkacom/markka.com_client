@@ -89,9 +89,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     } else if (this.type == TYPE_FIM) {
       // ordered by priority (availability)
       hosts = [
-        {host: 'fimk1.heatwallet.com', tls: true},
-        {host: 'cloud.mofowallet.org', port: this.port, tls: true},
-        {host: 'localhost', port: this.port, tls: false}
+        {host: 'fimk1.heatwallet.com', tls: true, isRemote: true},
+        {host: 'cloud.mofowallet.org', port: this.port, tls: true, isRemote: true},
+        {host: 'localhost', port: this.port, tls: false, isRemote: true}
       ]
     }
     else if (this.type == TYPE_NXT) {
@@ -113,12 +113,21 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       return serverService.isRunning(this.type);
     },
 
-    getSocketNodeURL: function () {
+    getSocketNodeURL: function (isRemote) {
       var deferred = $q.defer();
-      var self = this
+      var up = this.urlPool
       $rootScope.appConfigPromise.then(function(config) {
-        self.urlPool.init(config)
-        deferred.resolve(self.urlPool.forcedUrl || self.urlPool.getNext());
+        up.init(config)
+        var fu = up.forcedUrl
+        if (isRemote) {
+          if (fu && fu.indexOf("localhost") == -1) {
+            deferred.resolve(fu)
+          } else {
+            deferred.resolve(up.getNext(isRemote))
+          }
+        } else {
+          deferred.resolve(fu || up.getNext())
+        }
       })
       return deferred.promise;
     },
@@ -184,10 +193,19 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       }
       this.good = angular.copy(this.ips)
     },
-    getNext: function () {
-      this.position++;
-      if (this.position >= this.good.length) this.position = 0;
-      return this.good[this.position];
+    getNext: function (isRemote) {
+      var n = this.good.length
+      while (n > 0) {
+        n--
+        this.position++;
+        if (this.position >= this.good.length) this.position = 0;
+        var result = this.good[this.position];
+        if (isRemote) {
+          if (result.indexOf("localhost") == -1) return result
+        } else {
+          return result
+        }
+      }
     },
     getRandom: function () {
       return this.good[Math.floor(Math.random()*this.good.length)];

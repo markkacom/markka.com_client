@@ -40,7 +40,6 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
     this.force_local  = force_local||false;
     this.force_remote = force_remote||false;
     this.observers    = [];
-    this.stopped      = false;
 
     this.createIsOpenPromise();
     this.refresh();
@@ -212,9 +211,7 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       }
     },
 
-    /* When the local server is stopped it tells the socket to not try and re-connect */
     stop: function () {
-      this.stopped = true;
       if (this.socket) {
         this.url = null;
         this.socket.close();
@@ -227,7 +224,6 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
         console.trace('WEBSOCKET - refresh ' + this.engine.symbol);
       }
       var self = this;
-      this.stopped = false;
 
       function createSocket(url) {
         if (self.debug) { console.log('WEBSOCKET - refresh CREATE NEW SOCKET old='+self.url+' new='+url) }
@@ -270,14 +266,12 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
 
       /* force remote trumps force local */
       if (this.force_remote) {
-        this.engine.getSocketNodeURL().then(setSocketURL);
-      }
-      else if (this.force_local) {
+        this.engine.getSocketNodeURL(true).then(setSocketURL);
+      } else if (this.force_local) {
         var protocol = window.location.protocol == 'https:' ? 'wss:' : 'ws:';
         var url = protocol + '//' + (window.location.hostname||'localhost') + ':' + this.engine.port + '/ws/';
         setSocketURL(url);
-      }
-      else {
+      } else {
         this.engine.getSocketNodeURL().then(setSocketURL);
       }
     },
@@ -329,11 +323,10 @@ module.factory('MofoSocket', function ($q, $timeout, $interval, $rootScope) {
       /* if connected to a remote node auto reconnect,
          if connected to localhost only reconnect when server is running */
       if (this.force_local) {
-        if ( ! this.stopped) {
+        if (this.engine.serverIsRunning) {
           $timeout(this._createDelayedRefreshHandler(this), 2000, false);
         }
-      }
-      else {
+      } else {
         $timeout(this._createDelayedRefreshHandler(this), 2000, false);
       }
       this.socket = null;

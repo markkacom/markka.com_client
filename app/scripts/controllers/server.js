@@ -147,10 +147,12 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
 
   $scope.startServer = function (type) {
     serverService.startServer(type);
+    api.engine.serverIsRunning = true
   }
 
   $scope.stopServer = function (type) {
     serverService.stopServer(type);
+    api.engine.serverIsRunning = false
   }
 
   $scope.rescanChain = function (type) {
