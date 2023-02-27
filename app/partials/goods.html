@@ -124,9 +124,10 @@
                     <td>{{item.quantity}}</td>
                     <td>{{item.priceNXT}}</td>
                     <td><span ng-if="item.isExpired">
-                      <code>expired</code> {{item.expiry}}
+                      <code>expired</code>
                       <button ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="relist(item)">Relist</button>
-                    </span></td>
+                    </span>
+                      {{item.expiry}}</td>
                     <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)"
                       class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
                   </tr>

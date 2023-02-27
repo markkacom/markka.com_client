@@ -41,7 +41,7 @@
                         deferred.resolve(JSON.parse(data));
                     })
                     .error(function (data) {
-                        deferred.reject(data);
+                        deferred.reject("error on requesting data from https://lompsa.com/fimkrates.txt " + (data || ""));
                     });
                 return deferred.promise;
             }

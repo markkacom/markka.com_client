@@ -242,13 +242,18 @@ module.run(function (nxt, timeagoService, $rootScope) {
     date_cache_count = 0;
   });
 
+  const epochBase = Date.UTC(2013, 10, 24, 12, 0, 0, 0);
   /**
    * Converts an UTC timestamp to a NXT epoch timestamp.
    * @param timestamp Number
    * @returns String
    */
   function convertToEpochTimestamp(timestamp) {
-    return Math.floor((timestamp - Date.UTC(2013, 10, 24, 12, 0, 0, 0)) / 1000);
+    return Math.floor((timestamp - epochBase) / 1000);
+  }
+
+  function convertFromEpochTimestamp(timestamp) {
+    return epochBase + timestamp * 1000
   }
 
   /**
@@ -431,6 +436,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
     convertFromHex16:convertFromHex16,
     convertFromHex8:convertFromHex8,
     convertToEpochTimestamp: convertToEpochTimestamp,
+    convertFromEpochTimestamp: convertFromEpochTimestamp,
     convertRSAddress: convertRSAddress,
 
     /**
