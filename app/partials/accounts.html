@@ -760,7 +760,7 @@
                 <a ng-href="#/accounts/{{id_rs}}/activity/latest">{{id_rs}}</a>
               </td>
               <td>Forged
-                <a href ng-click="showAccountRewardInfo(account.id)" style="margin-left: 10px; font-size: smaller"> (Rewards)</a>
+                <a ng-if="isCurrentAccount(id_rs)" href ng-click="showAccountRewardInfo(account.id)" style="margin-left: 10px; font-size: smaller"> (Rewards)</a>
               </td>
               <td>{{account.forgedBalanceNXT}}</td>
             </tr>
