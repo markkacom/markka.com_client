@@ -298,6 +298,10 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     })
   }
 
+  $scope.relistAsNew = function(goods) {
+    plugins.get('transaction').get('dgsListing').execute({goods: goods});
+  }
+
   $scope.add = function() {
     plugins.get('transaction').get('dgsListing').execute();
   }

@@ -54,7 +54,7 @@
       </li>
 
       <li ng-if="currentAccount" role="presentation">
-        <a ng-click="add()" translate="translate.add_item" class="bg-primary"></a>
+        <a href ng-click="add()" translate="translate.add_item" class="bg-primary"></a>
       </li>
 
     </ul>
@@ -451,7 +451,10 @@
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click="msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceNXT}}</td>
-                    <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button></td>
+                    <td ng-if="currentAccount">
+                      <button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button>
+                      <button ng-click="relistAsNew(orders.goods)" style="margin: 4px">Relist</button>
+                    </td>
                     <td ng-if="currentAccount">
                       <button class="btn btn-primary" ng-if="orders.note" ng-click="decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
                       <label ng-if="!orders.note">{{'translate.no_messages' | translate}}</label>
