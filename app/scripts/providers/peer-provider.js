@@ -111,7 +111,11 @@ module.factory('PeerProvider', function (nxt, $timeout, $q, $rootScope) {
       }
       if (this.serverIP === p.address) {
         p.stateStr = 'API server';
-        p.stateClass = 'info'
+        p.stateClass = 'info';
+        p.version = $rootScope.FIM_SERVER_VERSION;
+        p.version = p.version.replace("FIMK", "");
+        p.application = "FIMK";
+        p.platform = "server";
       }
       p.downloadedVolume = p.downloadedVolume || 0;
       p.lastUpdatedStr = nxt.util.formatTimestamp(p.lastUpdated, false, true);
