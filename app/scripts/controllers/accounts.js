@@ -360,6 +360,40 @@ module.controller('AccountsController', function($location, $q, $scope, modals, 
     return false
   }
 
+  $scope.showRewardInfo = function (height) {
+
+    api.engine.socket().callAPIFunction({
+      requestType: 'getRewardTotals',
+      fromHeight: height,
+      toHeight: height + 1
+    }).then(function(response) {
+      var rewardTotals = response.rewardTotals
+      var rewardTotalsDisplayed
+      if (rewardTotals) {
+        rewardTotalsDisplayed = rewardTotals.map(function(item) {
+          var amountFormatted = nxt.util.commaFormat(nxt.util.convertToQNTf(item.amount, item.decimals))
+          var result = item.name + " <b>" + amountFormatted + " " + item.assetName + "</b> &#8594; " + item.accountRS
+          if (item.campaignId && !(item.campaignId == 0 || item.campaignId == -1)) {
+            result = result + "<br><small><i>campaign " + item.campaignId + "</i></small>"
+          }
+          return result
+        })
+      }
+      var displayingObject = {
+        "Items": rewardTotalsDisplayed
+      }
+
+      var inspector = plugins.get('inspector');
+      inspector.inspect({
+        title: "Reward amounts at height " + height,
+        object: displayingObject,
+        name: "rewardTotals"
+      });
+    });
+
+    return false;
+  }
+
 
 });
 
