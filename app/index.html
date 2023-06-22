@@ -364,7 +364,7 @@
           </li>
 
           <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount && !TRADE_UI_ONLY">
-            <a href="#/messenger">
+            <a href="#/messenger" tooltip="Messenger"  tooltip-placement="bottom">
               <i class="fa fa-comment-o"></i>
               <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.messenger' | translate}}</span>
             </a>
@@ -372,7 +372,7 @@
           </li>
 
           <li role="presentation" ng-show="currentAccount && !TRADE_UI_ONLY">
-            <a href ng-click="executeTransaction('transferAsset',{ asset:asset })">
+            <a href ng-click="executeTransaction('transferAsset',{ asset:asset })" tooltip="Transfer Asset or FIMK"  tooltip-placement="bottom">
               <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;
               <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm" translate="translate.transfer_asset"/>
             </a>
@@ -385,38 +385,40 @@
           </li> -->
 
           <li route-active="activity/" ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/activity/latest">
+            <a ng-href="#/activity/{{paramEngine}}/activity/latest" tooltip="Explorer"  tooltip-placement="bottom">
               <i class="fa fa-cloud"></i>
               <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.explorer' | translate}}</span>
             </a>
           </li>
 
           <li ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/assets/latest">
+            <a ng-href="#/activity/{{paramEngine}}/assets/latest" tooltip="Assets"  tooltip-placement="bottom">
               <i class="fa fa-line-chart"></i>
               <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span>
             </a>
           </li>
 
           <li ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/goods/{{paramEngine}}/listing"><i class="fa fa-shopping-cart"></i>
+            <a ng-href="#/goods/{{paramEngine}}/listing" tooltip="Marketplace" tooltip-placement="bottom"><i class="fa fa-shopping-cart"></i>
               <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.marketplace' | translate}}</span></a>
           </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right" nav-menu="active">
           <li ng-hide="TRADE_UI_ONLY">
-            <a href="#/search/fim/accounts/">
+            <a href="#/search/fim/accounts/" tooltip="Search" tooltip-placement="bottom">
               <i class="fa fa-search fa-fw"></i><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.search' | translate}}</span>
             </a>
           </li>
           <li ng-show="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/activity/latest">
+            <a ng-href="#/activity/{{paramEngine}}/activity/latest" tooltip="Explorer" tooltip-placement="bottom">
               <i class="fa fa-cloud fa-fw"></i><span>&nbsp;&nbsp;{{'translate.explorer' | translate}}</span>
             </a>
           </li>
           <li ng-show="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart fa-fw"></i>&nbsp;&nbsp;{{'translate.assets' | translate}}</a>
+            <a ng-href="#/activity/{{paramEngine}}/assets/latest" tooltip="Assets" tooltip-placement="bottom">
+              <i class="fa fa-line-chart fa-fw"></i>&nbsp;&nbsp;{{'translate.assets' | translate}}
+            </a>
           </li>
           <li route-active="settings" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
