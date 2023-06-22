@@ -523,20 +523,23 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
             field.errorMsg = null;
             field.__label  = '';
           });
-          opts.api.engine.socket().callAPIFunction({ requestType: 'getAsset', asset: field.value }).then(
-            function (data) {
-              scope.$evalAsync(function () {
-                if (data.asset == field.value) {
-                  field.asset = data;
-                  field.__label = format_asset_label(data);
-                }
-                else {
-                  field.errorMsg = 'Asset does not exist';
-                }
-                field.changed(true);
-              });
-            }
-          );
+          opts.api.engine.socket().callAPIFunction({requestType: 'getAsset', asset: field.value}).then(
+              function (data) {
+                scope.$evalAsync(function () {
+                  if (field.value == "0") {
+                    field.__label = "FIMK"
+                  } else {
+                    if (data.asset == field.value) {
+                      field.asset = data
+                      field.__label = format_asset_label(data)
+                    } else {
+                      field.errorMsg = 'Asset does not exist'
+                    }
+                  }
+                  field.changed(true)
+                })
+              }
+          )
         },
       500);
       // load and remember all assets owned by account
@@ -582,7 +585,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           }
           promise.then(
             function (data) {
-              var assets = data.assets||data.accountAssets||[];
+              var assets = query == "0" ? [] : data.assets||data.accountAssets||[];
               deferred.resolve(assets.map(
                 function (d) {
                   return {

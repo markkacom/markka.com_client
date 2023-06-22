@@ -190,14 +190,23 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
         message: null,
         requestType: 'transferAsset',
         createArguments: function (items, fields) {
-          return {
-            recipient: plugin.isNumeric(items.recipient) ? items.recipient : nxt.util.convertRSAddress(items.recipient),
-            asset: items.asset,
-            quantityQNT: nxt.util.convertToQNT(items.quantity, fields.asset.asset.decimals)
+          var args = {
+            recipient: plugin.isNumeric(items.recipient) ? items.recipient : nxt.util.convertRSAddress(items.recipient)
           }
+          if (items.recipientPublicKey) {
+            args.recipientPublicKey = items.recipientPublicKey;
+          }
+          if (fields.asset.value === "0") {
+            args.amountNQT = nxt.util.convertToNQT(items.quantity)
+            this.requestType = "sendMoney";
+          } else {
+            args.asset = items.asset
+            args.quantityQNT = nxt.util.convertToQNT(items.quantity, fields.asset.asset.decimals)
+          }
+          return args
         },
         fields: [
-          plugin.fields('asset').create('asset', { value: args.asset||'', label: 'Asset', required: true, account: $rootScope.currentAccount.id_rs, api: api }),
+          plugin.fields('asset').create('asset', { value: args.asset||'', label: 'Asset (0 means FIMK)', required: true, account: $rootScope.currentAccount.id_rs, api: api}),
           plugin.fields('account').create('recipient', { value: args.recipient||'', label: 'Recipient', required: true,
             api:api, accountColorId: UserService.currentAccount.accountColorId }),
           plugin.fields('text').create('quantity', { value: args.quantity||'', label: 'Quantity', required: true,
