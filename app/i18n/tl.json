@@ -483,7 +483,7 @@
       "1": "{{sender}} nagdadagdag {{recipient}} sa {{assetName}} pinahihintulutan account {{details}} {{message}}",
       "2": "{{sender}} dahil {{recipient}} mula sa {{assetName}} pinahihintulutan account {{details}} {{message}}",
       "3": "{{sender}} itakda {{assetName}} fee sunod {{orderFee}} % Kalakalan fee {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned identifier account {{identifier}} sa {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned identifier account {{identifier}} sa {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} ginawa {{recipient}} isang awtoridad ng pag-verify para sa {{period}} bloke {{details}} {{message}}",
       "6": "{{sender}} kulay na nilikha account {{name}} {{details}} {{message}}",
       "7": "{{sender}} kulay itinalaga account {{color}} sa {{recipient}} {{details}} {{message}}"

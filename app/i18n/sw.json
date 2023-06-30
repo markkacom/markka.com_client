@@ -483,7 +483,7 @@
       "1": "{{sender}} Anaongeza {{recipient}} kwa {{assetName}} kuruhusiwa akaunti {{details}} {{message}}",
       "2": "{{sender}} kuondolewa {{recipient}} kutoka {{assetName}} kuruhusiwa akaunti {{details}} {{message}}",
       "3": "{{sender}} kuweka {{assetName}} ada ili {{orderFee}} Ada% biashara {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned akaunti kitambulisho {{identifier}} kwa {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned akaunti kitambulisho {{identifier}} kwa {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} alifanya {{recipient}} mamlaka uhakiki kwa {{period}} vitalu {{details}} {{message}}",
       "6": "{{sender}} umba akaunti rangi {{name}} {{details}} {{message}}",
       "7": "{{sender}} kupewa akaunti rangi {{color}} kwa {{recipient}} {{details}} {{message}}"

@@ -31,6 +31,18 @@ function getOS() {
   throw new Error('Could not detect OS');
 }
 
+function commandToRunJava(embeddedJREVariant, systemJREVariant) {
+  //curried function, should be resolved on invoking
+  return function(serverDir) {
+    serverDir = serverDir || ".";
+    var fs = require('fs');
+    var path = require('path');
+    var jreDir = path.join(serverDir, "jre");
+    //console.log("embedded jre '" + jreDir + "' exists: " + fs.existsSync(jreDir));
+    return fs.existsSync(jreDir) ? embeddedJREVariant : systemJREVariant
+  }
+}
+
 var engine = {
   TYPE_NXT: {
     commands: {
@@ -62,19 +74,19 @@ var engine = {
     commands: {
       WIN: {
         start: {
-          command: 'java',
-          args: ['-cp', 'fim.jar;lib\\*;conf', 'nxt.Nxt']
+          command: commandToRunJava("jre/bin/java.exe", "java"),
+          args: ['-cp', 'fim.jar;lib/*;conf', 'nxt.Nxt']
         }
       },
       LINUX: {
         start: {
-          command: 'java',
+          command: commandToRunJava("jre/bin/java", "java"),
           args: ['-cp', 'fim.jar:lib/*:conf', 'nxt.Nxt']
         }
       },
       MAC: {
         start: {
-          command: 'java',
+          command: commandToRunJava("jre/bin/java", "java"),
           args: ['-cp', 'fim.jar:lib/*:conf', 'nxt.Nxt'],
           extra: '../../../../Resources/'
         }
@@ -89,6 +101,7 @@ var engine = {
 var path;
 if (isNodeJS) {
   path = require('path');
+
 
   // SIGTERM AND SIGINT will trigger the exit event.
   process.once("SIGTERM", function () {
@@ -144,48 +157,149 @@ function maybeNotifyServerReady(id, line) {
   }
 }
 
-var NON_WHITESPACE = /\S/;
-var BUFFER_SIZE = 2000;
-
-return {
-  getDir: function (id) {
+function getServerDir(id) {
     /* Allow this to be called from web context without errors */
     try {
       /* @dependency on nxt.js this must match the TYPE_FIM and TYPE_NXT constant values */
       var dir  = id == 'TYPE_NXT' ? 'nxt' : 'fim';
       var path = require('path');
       /* MAC OS support */
-      var ret;
+      var result;
       if (engine[id].commands[getOS()].start.extra) {
-        ret = path.join(path.dirname( process.execPath ), engine[id].commands[getOS()].start.extra, dir);
+        result = path.join(path.dirname( process.execPath ), engine[id].commands[getOS()].start.extra, dir);
+      } else {
+        result = path.join(getUserDir(), dir);
       }
-      else {
-        ret = path.join(path.dirname( process.execPath ), dir);
-      }
-      console.log('serverService-getDir', ret);
-      return ret;
+      return result;
     } catch(e) {
       console.log('server-service.js getCWD', e);
       return '';
     }
-  },
-  getConfFilePath: function (id, fileName) {
-    if (isNodeJS) {
-      var path = require('path');
-      return path.join(this.getDir(id), 'conf', fileName);
+}
+
+function getUserDir () {
+    var remote = require("@electron/remote");
+    if (!remote) return "";
+    var path = require('path');
+    var dir = path.join(remote.app.getPath("home"), ".fimk");
+    var fs = require('fs');
+    if (!fs.existsSync(dir)) {
+      fs.mkdir(dir, function (err) {
+        if (err) throw err;
+      });
     }
-    return '';
-  },
+    return dir;
+}
+
+function getConfigFilePath(id, fileName, useUserDir) {
+  if (isNodeJS) {
+    var path = require('path');
+    if (!useUserDir) {
+      return path.join(getServerDir(id), 'conf', fileName);
+    }
+    var userDir = getUserDir();
+    return path.join(userDir, 'conf', fileName);
+  }
+  return '';
+}
+
+/**
+ * Match version in server target dir and server files in the mofowallet app dir. Copy newer server to target dir.
+ */
+function checkServerFiles(appServerDir, targetServerDir) {
+  if (appServerDir === targetServerDir) return
+
+  var fs = require('fs')
+  var path = require('path')
+
+  // copy original (shipped with app) server files to target dir
+  var readServerVersion = function(serverDir) {
+    var configPath = path.join(serverDir, "/conf/fimk-default.properties")
+    if (!fs.existsSync(configPath)) return null
+    var data = fs.readFileSync(configPath, 'utf8');
+    var text = data.toString()
+    var versionLine = text.split(/\r?\n/).find(function(s) {return s.trim().startsWith("fimk.version")})
+    return versionLine ? versionLine.trim().substring("fimk.version=".length) : ""
+  }
+
+  var origVersion = readServerVersion(appServerDir)
+  var targetVersion = readServerVersion(targetServerDir)
+
+  if (origVersion !== targetVersion) {
+    // copy original (shipped with app) server files to target dir
+    fs.cpSync(appServerDir, targetServerDir, { recursive: true })
+  }
+}
+
+
+var NON_WHITESPACE = /\S/;
+var BUFFER_SIZE = 2000;
+
+//check and init server config file
+/*
+Effective server config file resides in the app dir that is overwritten on each installation.
+The backup config that is not overwritten on installation resides in user homedir in the dir ".fimk/conf".
+So user edits effective config then it is auto copied to backup config.
+On first install the effective and backup configs is born from 'embedded-template.properties' is shipped with server.
+*/
+
+if (isNodeJS) {
+  setTimeout(function () {
+    var fs = require('fs')
+    var path = require('path')
+    var userDir = getUserDir()
+    var configDir = path.join(userDir, 'conf')
+
+    try {
+      checkServerFiles(path.join(path.dirname(process.execPath), "fim"), getServerDir("TYPE_FIM"))
+
+      if (!fs.existsSync(configDir)) {
+        fs.mkdir(configDir, {recursive: true}, function (err) {
+          if (err) throw err
+        })
+      }
+      var configFile = path.join(configDir, "fimk.properties.bak")
+      var effectiveConfigFile = path.join(getServerDir("TYPE_FIM"), 'conf', "fimk.properties")
+      if (!fs.existsSync(configFile)) {
+        if (fs.existsSync(effectiveConfigFile)) {
+          fs.copyFileSync(effectiveConfigFile, configFile)
+        } else {
+          var virginConfigFile = path.join(getServerDir("TYPE_FIM"), 'conf', 'embedded-template.properties')
+          var data = fs.readFileSync(virginConfigFile, 'utf8')
+          var updatedData = data.replace("{DATA_DIR}", userDir.replaceAll("\\", "/"))
+          fs.writeFileSync(configFile, updatedData, 'utf8')
+        }
+      }
+      if (!fs.existsSync(effectiveConfigFile)) {
+        fs.copyFileSync(configFile, effectiveConfigFile)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }, 200)
+}
+
+
+return {
+  getUserDir: getUserDir,
+
+  getDir: getServerDir,
+
+  getConfigFilePath: getConfigFilePath,
+
   getStartCommand: function (id) {
     return engine[id].commands[getOS()].start;
   },
+
   isNodeJS: function () { return isNodeJS; },
+
   startServer: function (id) {
     if (this.isRunning(id)) {
       throw new Error('Server '+id+' already running');
     }
     var self      = this;
-    var start_options = {  cwd: this.getDir(id) };
+    var serverDir = this.getDir(id);
+    var start_options = {  cwd: serverDir };
 
     engine[id].isReady = false;
 
@@ -194,7 +308,7 @@ return {
     notifyListeners(engine[id].listeners.stdout, 'Starting mofowallet in '+start_options.cwd);
 
     var spawn     = require('child_process').spawn;
-    var child     = engine[id].server = spawn(engine[id].commands[os].start.command, engine[id].commands[os].start.args, start_options);
+    var child     = engine[id].server = spawn(engine[id].commands[os].start.command(serverDir), engine[id].commands[os].start.args, start_options);
 
     child.shutdown = function () {
       try {
@@ -249,6 +363,7 @@ return {
 
     notifyListeners(engine[id].listeners.start, 'Starting server');
   },
+
   stopServer: function (id) {
     if (engine[id].server) {
       engine[id].server.shutdown();
@@ -257,21 +372,27 @@ return {
     }
     $timeout(function () { notifyListeners(engine[id].listeners.exit, 'Stopping server'); }, 1000, false);
   },
+
   isRunning: function (id) {
     return !!(engine[id].server);
   },
+
   isReady: function (id) {
     return engine[id].isReady;
   },
+
   addListener: function (id, type, listener) {
     engine[id].listeners[type].push(listener);
   },
+
   removeListener: function (id, type, listener) {
     engine[id].listeners[type] = engine[id].listeners[type].filter(function (_listener) { return _listener != listener; });
   },
+
   getMessages: function (id) {
     return engine[id].messages;
   },
+
   write: function (id, msg) {
     engine[id].messages.push({ data: msg });
     while (engine[id].messages.length > BUFFER_SIZE) {

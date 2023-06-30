@@ -34,40 +34,51 @@
           <li>
             <form class="navbar-form statistics-form" role="search">
               <div class="form-group" ng-if="!fimCollapse">
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.average_block_time</label>
+                <div class="block">
+                  <b><span class="control-label text-muted" translate translate-cloak>translate.average_block_time</span></b>
                   <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].average}} {{ 'translate.seconds' | translate }}</div>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
                 </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsToday}} FIM</div>
+                <div class="block">
+<!--                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_today</label>-->
+                  <b><span class="text-muted" translate translate-cloak>translate.block_fees</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                  <table ng-if="!statistics['TYPE_FIM'].isLoading" style="width: 100%">
+                    <tbody>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.today</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].rewardsToday}}&nbsp; FIM</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_week</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].rewardsWeek}}&nbsp; FIM</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_month</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].rewardsMonth}}&nbsp; FIM</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_week</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsWeek}} FIM</div>
+                <div class="block">
+                  <b><span class="text-muted" translate translate-cloak>translate.transactions</span></b>
                   <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.block_rewards_month</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].rewardsMonth}} FIM</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_today</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountToday}}</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_week</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountWeek}}</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
-                </div>
-                <div class="form-control-static">
-                  <label class="control-label text-muted" translate translate-cloak>translate.transactions_month</label>
-                  <div ng-if="!statistics['TYPE_FIM'].isLoading">{{statistics['TYPE_FIM'].transactionCountMonth}}</div>
-                  <div ng-if="statistics['TYPE_FIM'].isLoading" class="text-muted"><small><i class="fa fa-refresh fa-spin"></i></small></div>
+                  <table ng-if="!statistics['TYPE_FIM'].isLoading" style="width: 100%">
+                    <tbody>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.today</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].transactionCountToday}}</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_week</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].transactionCountWeek}}</td>
+                    </tr>
+                    <tr>
+                      <td><span class="text-muted" translate translate-cloak>translate.this_month</span></td>
+                      <td style="float: right">{{statistics['TYPE_FIM'].transactionCountMonth}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </form>
@@ -145,6 +156,12 @@
       <li role="presentation" route-active="activity/{{paramEngine}}/forgers" ng-hide="TRADE_UI_ONLY">
         <a href="#/activity/{{paramEngine}}/forgers/latest">
           <i class="fa fa-wrench"></i>&nbsp;&nbsp;{{'translate.forgers'|translate}}
+        </a>
+      </li>
+
+      <li role="presentation" route-active="activity/{{paramEngine}}/peers" ng-hide="TRADE_UI_ONLY">
+        <a href="#/activity/{{paramEngine}}/peers/latest">
+          <i class="fa fa-globe"></i>&nbsp;&nbsp;<span translate="translate.peers"></span>
         </a>
       </li>
 
@@ -363,7 +380,8 @@
                     <td>{{b.numberOfTransactions}}</td>
                     <td>{{b.totalAmountNXT}}</td>
                     <td>{{b.totalFeeNXT}}</td>
-                    <td>{{b.totalPOSRewardNXT}}</td>
+                    <td ng-if="b.rewardTotals"><a href ng-click="showRewardInfo(b.height)">{{b.rewardTotals}}</a></td>
+                    <td ng-if="!b.rewardTotals">-</td>
                   </tr>
                 </tbody>
               </table>
@@ -421,6 +439,7 @@
                     <th>{{ 'translate.transfers' | translate }}</th>
                     <th>{{ 'translate.accounts' | translate }}</th>
                     <th>{{ 'translate.private' | translate }}</th>
+                    <th>{{ 'translate.expiry' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -433,6 +452,7 @@
                     <td>{{a.numberOfTransfers}}</td>
                     <td>{{a.numberOfAccounts}}</td>
                     <td><span class="text-success" ng-show="a.isPrivate"><i class="fa fa-lock"></i></span></td>
+                    <td>{{a.expiry}} <code ng-if="a.isExpired">expired</code></td>
                   </tr>
                 </tbody>
               </table>
@@ -445,6 +465,55 @@
             </div>
           </div>
         </div>
+
+        <!-- peers section -->
+        <div ng-if="paramSection=='peers'" class="col-md-12">
+
+<!--          <div style="font-size: smaller;text-align-last: right;color: grey;">current API url: {{getEngineUrl()}}</div>-->
+
+          <div style="font-size: smaller;text-align-last: right;color: grey;margin-top: -12px;"><span>current API url: </span>
+            <span dropdown>
+              <a href class="dropdown-toggle" dropdown-toggle>
+                <span>{{getEngineUrl()}}</span>
+              </a>
+              <ul class="dropdown-menu" role="menu" style="margin-left: -50px">
+                <li ng-repeat="url in urlList">
+                  <a href ng-click="setEngineUrl(url)">{{url}}</a>
+                </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <tbody>
+              <tr>
+                <th translate="translate.address"></th>
+                <th translate="translate.state"></th>
+                <th translate="translate.weight"></th>
+                <th translate="translate.download"></th>
+                <th translate="translate.upload"></th>
+                <th></th>
+                <th>Last height</th>
+                <th translate="translate.last_update"></th>
+              </tr>
+              <tr ng-repeat="p in provider.peers | slice:0:40" class="{{p.stateClass}}">
+                <td class="text-primary">{{p.address}}</td>
+                <td>{{p.stateStr}}</td>
+                <td>{{p.weightStr}}</td>
+                <td>{{p.downloadedVolumeBytes}} b</td>
+                <td>{{p.uploadedVolumeBytes}} b</td>
+                <td>{{p.application}} - {{p.version}} - {{p.platform}}</td>
+                <td><span ng-show="p.lastBlockHeight">{{p.lastBlockHeight}}</span></td>
+                <td>{{p.lastUpdatedStr}}</td>
+              </tr>
+              <tr><td colspan="8" translate="translate.displaying_so_many_peers" translate-values="{limit:40, size:provider.peers.length}"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>

@@ -209,7 +209,7 @@ module.factory('GossipChatListProvider', function (nxt, $q, Gossip, db, $rootSco
 
     translate: function (chat) {
       chat.label = emptyToNull(chat.name) || chat.otherRS;
-      chat.date  = emptyToNull(chat.timestamp) ? nxt.util.formatTimestamp(chat.timestamp, true) : 'never';
+      chat.date  = emptyToNull(chat.timestamp) ? nxt.util.formatTimestamp(chat.timestamp, false, true) : 'never';
       if (!chat.provider) {
         chat.provider = Gossip.getChatStatusProvider(this.$scope, chat.otherRS);
       }

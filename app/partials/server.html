@@ -127,6 +127,20 @@
 
       <!-- peers section -->
       <div ng-if="paramSection=='peers'" class="col-md-12">
+<!--        <div style="font-size: smaller;text-align-last: right;color: grey;">current API url: {{getEngineUrl()}}</div>-->
+        <div style="font-size: smaller;text-align-last: right;color: grey;margin-top: -12px;"><span>current API url: </span>
+          <span dropdown>
+              <a href class="dropdown-toggle" dropdown-toggle>
+                <span>{{getEngineUrl()}}</span>
+              </a>
+              <ul class="dropdown-menu" role="menu" style="margin-left: -50px">
+                <li ng-repeat="url in urlList">
+                  <a href ng-click="setEngineUrl(url)">{{url}}</a>
+                </li>
+              </ul>
+            </span>
+        </div>
+
         <div class="table-responsive">
           <table class="table table-striped">
             <tbody>
@@ -137,7 +151,7 @@
                 <th translate="translate.download"></th>
                 <th translate="translate.upload"></th>
                 <th></th>
-                <th translate="translate.blacklisted"></th>
+                <th>Last height</th>
                 <th translate="translate.last_update"></th>
               </tr>
               <tr ng-repeat="p in provider.peers | slice:0:40" class="{{p.stateClass}}">
@@ -147,7 +161,7 @@
                 <td>{{p.downloadedVolumeBytes}} b</td>
                 <td>{{p.uploadedVolumeBytes}} b</td>
                 <td>{{p.application}} - {{p.version}} - {{p.platform}}</td>
-                <td><span ng-show="p.blacklisted"><b>blacklisted</b></span></td>
+                <td><span ng-show="p.lastBlockHeight">{{p.lastBlockHeight}}</span></td>
                 <td>{{p.lastUpdatedStr}}</td>
               </tr>
               <tr><td colspan="8" translate="translate.displaying_so_many_peers" translate-values="{limit:40, size:provider.peers.length}"></td></tr>

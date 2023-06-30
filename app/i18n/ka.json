@@ -483,7 +483,7 @@
       "1": "{{sender}} დასძენს {{recipient}} to {{assetName}} დაშვებული ანგარიშები {{details}} {{message}}",
       "2": "{{sender}} მოხსნა {{recipient}} საწყისი {{assetName}} დაშვებული ანგარიშები {{details}} {{message}}",
       "3": "{{sender}} კომპლექტი {{assetName}} იმისათვის, გადასახადი {{orderFee}} % სავაჭრო საფასური {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned ანგარიშის იდენტიფიკატორი {{identifier}} უნდა {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned ანგარიშის იდენტიფიკატორი {{identifier}} უნდა {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} გააკეთა {{recipient}} შემოწმების უფლებამოსილება {{period}} ბლოკები {{details}} {{message}}",
       "6": "{{sender}} ის ანგარიშზე ფერი {{name}} {{details}} {{message}}",
       "7": "{{sender}} დანიშნული ანგარიშის ფერი {{color}} უნდა {{recipient}} {{details}} {{message}}"

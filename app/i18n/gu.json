@@ -483,7 +483,7 @@
       "1": "{{sender}} ઉમેરે છે {{recipient}} માટે {{assetName}} મંજૂરી એકાઉન્ટ્સ {{details}} {{message}}",
       "2": "{{sender}} દૂર {{recipient}} થી {{assetName}} મંજૂરી એકાઉન્ટ્સ {{details}} {{message}}",
       "3": "{{sender}} સમૂહ {{assetName}} ક્રમમાં ફી {{orderFee}} % વેપાર ફી {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned એકાઉન્ટ ઓળખકર્તા {{identifier}} માટે {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned એકાઉન્ટ ઓળખકર્તા {{identifier}} માટે {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} કરવામાં {{recipient}} માટે ચકાસણી સત્તા {{period}} બ્લોક્સ {{details}} {{message}}",
       "6": "{{sender}} બનાવેલ એકાઉન્ટ રંગ {{name}} {{details}} {{message}}",
       "7": "{{sender}} સોંપેલ એકાઉન્ટ રંગ {{color}} માટે {{recipient}} {{details}} {{message}}"

@@ -191,40 +191,48 @@ module.run(function (nxt, timeagoService, $rootScope) {
 
   /* timeago functionality functionality removed since it required jquery */
 
-  function formatTimestamp(timestamp, use_timeago) {
-    if (timestamp) {
-      if (use_timeago) {
-        if (timeago_cache[timestamp]) {
-          return timeago_cache[timestamp];
-        }
-        if (timeago_cache_count++ > 1000) {
-          timeago_cache_count = 0;
-          timeago_cache = {};
-        }
-        var date = new Date(Date.UTC(2013, 10, 24, 12, 0, 0, 0) + timestamp * 1000);
-        return timeago_cache[timestamp] = timeagoService.format(date);
+  function formatTimestamp(timestamp, short, use_timeago) {
+    if (!timestamp) return '';
+    if (use_timeago) {
+      if (timeago_cache[timestamp]) {
+        return timeago_cache[timestamp]
       }
-      else {
-        if (date_cache[timestamp]) {
-          return date_cache[timestamp];
-        }
-        var options = {
-          second: "2-digit",
-          minute: "2-digit",
-          hour: "2-digit",
-          day: "numeric",
-          month: "numeric",
-          year: "2-digit"
-        };
-        if (date_cache_count++ > 1000) {
-          date_cache_count = 0;
-          date_cache = {};
-        }
-        var date = new Date(Date.UTC(2013, 10, 24, 12, 0, 0, 0) + timestamp * 1000);
-        return date_cache[timestamp] = date.toLocaleDateString("en-US", options);
+      if (timeago_cache_count++ > 1000) {
+        timeago_cache_count = 0
+        timeago_cache = {}
       }
+      var date = new Date(Date.UTC(2013, 10, 24, 12, 0, 0, 0) + timestamp * 1000)
+      return timeago_cache[timestamp] = timeagoService.format(date)
+    } else {
+      if (date_cache[timestamp]) {
+        return date_cache[timestamp]
+      }
+      if (date_cache_count++ > 1000) {
+        date_cache_count = 0
+        date_cache = {}
+      }
+      var date = new Date(Date.UTC(2013, 10, 24, 12, 0, 0, 0) + timestamp * 1000)
+      return date_cache[timestamp] = formatDateTime(date, short)
     }
-    return '';
+  }
+
+  function formatDateTime(date, short) {
+    // forced format yyyy-mm-dd xx:xx:xx (12 hour)
+    var options = short ? {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric"
+      } : {
+        hour12: false,
+        second: "2-digit",
+        minute: "2-digit",
+        hour: "2-digit",
+        day: "numeric",
+        month: "numeric",
+        year: "numeric"
+      }
+    var s = date.toLocaleString("sv-SE", options)
+    return s.replace("fm", "AM").replace("em", "PM")
   }
 
   $rootScope.$on('$translateChangeSuccess', function () {
@@ -234,13 +242,18 @@ module.run(function (nxt, timeagoService, $rootScope) {
     date_cache_count = 0;
   });
 
+  const epochBase = Date.UTC(2013, 10, 24, 12, 0, 0, 0);
   /**
    * Converts an UTC timestamp to a NXT epoch timestamp.
    * @param timestamp Number
    * @returns String
    */
   function convertToEpochTimestamp(timestamp) {
-    return Math.floor((timestamp - Date.UTC(2013, 10, 24, 12, 0, 0, 0)) / 1000);
+    return Math.floor((timestamp - epochBase) / 1000);
+  }
+
+  function convertFromEpochTimestamp(timestamp) {
+    return epochBase + timestamp * 1000
   }
 
   /**
@@ -423,6 +436,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
     convertFromHex16:convertFromHex16,
     convertFromHex8:convertFromHex8,
     convertToEpochTimestamp: convertToEpochTimestamp,
+    convertFromEpochTimestamp: convertFromEpochTimestamp,
     convertRSAddress: convertRSAddress,
 
     /**

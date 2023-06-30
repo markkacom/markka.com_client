@@ -41,7 +41,6 @@ var module = angular.module('fim.base', [
   'ui.validate',
   'pascalprecht.translate',
   'infinite-scroll',
-  'ngClipboard',
   'noCAPTCHA'
 ]);
 
@@ -51,8 +50,15 @@ module.config(function(noCAPTCHAProvider, $translateProvider) {
   noCAPTCHAProvider.setLanguage($translateProvider.preferredLanguage());
 });
 
-module.run(function ($log, $rootScope, $translate, plugins, serverService) {
+module.run(function ($log, $rootScope, $translate, plugins, serverService, $http) {
   $log.log('fim.base application started');
+
+  $rootScope.appConfigPromise = loadAppConfig($http)
+
+  /*  disable this code, which is needed for nw.js but not needed for Electron
+
+  todo the same in Electron manner
+
   if (isNodeJS) {
     var win = require('nw.gui').Window.get();
     win.on('close', function (event) {
@@ -92,21 +98,40 @@ module.run(function ($log, $rootScope, $translate, plugins, serverService) {
         }
       );
     });
-  }
+  }*/
 });
 
 module.config(function($translateProvider, $httpProvider) {
   $translateProvider.useSanitizeValueStrategy(null);
   $translateProvider.useStaticFilesLoader({ prefix: './i18n/', suffix: '.json' });
-  $translateProvider.preferredLanguage('en');
+  $translateProvider.preferredLanguage('fi');
   $translateProvider.useLocalStorage();
 
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
 
-module.config(['ngClipProvider', function(ngClipProvider) {
-  ngClipProvider.setPath("ZeroClipboard.swf");
-}]);
+function loadAppConfig(http) {
+    var fileName = 'app-config.json'
+    if (isNodeJS) {
+        const path = require('path')
+        const fs = require("fs");
+        fileName = path.join(__dirname, fileName)
+        return fs.promises.readFile(fileName).then(function(fileBuffer) {
+            return JSON.parse(fileBuffer)
+        }).catch(function(error) {
+            console.error(error.message);
+            reject(message);
+        });
+    } else {
+        return http.get('app-config.json').then(function(response) {
+            return response.data
+        }, function(reason) {
+            var message = "Cannot load 'app-config.json': " + reason ? reason : ""
+            console.error(message)
+            reject(message);
+        })
+    }
+}
 
 })();
 

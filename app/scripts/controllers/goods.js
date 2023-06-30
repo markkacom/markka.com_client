@@ -21,7 +21,9 @@
  * SOFTWARE.
  * */
 (function() {
+
 var module = angular.module('fim.base');
+
 module.config(function($routeProvider) {
   $routeProvider
     .when('/goods/:engine/:section/:id_rs?', {
@@ -30,9 +32,18 @@ module.config(function($routeProvider) {
     })
 });
 
-module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, nxt, plugins,
+function cutString(s, maxLen) {
+  if (!s) return null;
+  if (s.length > maxLen) return s.substr(0, maxLen - 3) + "...";
+  return s;
+}
+
+module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, $q, nxt, plugins,
   shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider,
-  SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db) {
+  SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db, lompsaService) {
+
+  var cartQRCodes = {}
+  var goodsQRCode
 
   $scope.paramEngine  = $rootScope.paramEngine = $routeParams.engine;
   $scope.paramSection = $routeParams.section;
@@ -50,8 +61,28 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     });
   }
 
-  shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
+  lompsaService.fimkRates()
+      .then(function (data) {
+        $scope.fimkRate = Object.assign({}, data);
+        $scope.fimkRate.calculated = {};
+      }, function (error) {
+        console.error(error);
+        var data = "{\n" +
+            "  \"TIME\": \"2022-06-06 11:00:00\",\n" +
+            "  \"BTC\": 0.00000001,\n" +
+            "  \"EUR\": 0.0002910\n" +
+            "}";
+        $scope.fimkRate = Object.assign({}, JSON.parse(data));
+        $scope.fimkRate.calculated = {};
+      })
+      .then(function () {
+        shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
+      });
+
   db.cart.addObserver($scope, {
+    /*remove: function () {
+      $scope.showQRCode(-1)
+    },*/
     finally: function () {
       shoppingCartService.getAll(api.engine.symbol).then(setupShoppingCart);
     }
@@ -108,6 +139,17 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       $scope.provider = new GoodsDetailsProvider(api, $scope, $scope.paramSection);
       $scope.provider.reload();
       $scope.paramSection = 'detail';
+
+      setTimeout(function() {
+        $scope.qrcodeModel = {}
+        Object.assign($scope.qrcodeModel, $scope.provider)
+        $scope.qrcodeModel.count = 1
+
+        goodsQRCodeValue($scope.qrcodeModel).then(function(qrcodeValue) {
+          var newQRCode = updateQRCode($scope.qrcodeModel,'payQRCode', qrcodeValue, goodsQRCode)
+          if (newQRCode) goodsQRCode = newQRCode
+        })
+      }, 600);
     }
   }
 
@@ -116,25 +158,124 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     $scope.$evalAsync(function () {
       calculateItemTotal(item);
       calculateCartTotal();
+      $scope.updateCartItemQRCode(item);
       item.save();
     });
+  }
+
+  $scope.activeItemQRCode = -1;
+
+  $scope.showQRCode = function (item) {
+    $scope.updateCartItemQRCode(item);
+    $scope.$evalAsync(function () {
+      $scope.activeItemQRCode = $scope.activeItemQRCode == item.goods ? -1 : item.goods
+    });
+  }
+
+  function getAccountPublicKey(account) {
+    var deferred = $q.defer();
+    api.engine.socket().getAccount({account: account}).then(
+        function (data) {
+          if (data.publicKey) {
+            deferred.resolve(data.publicKey)
+          }
+          else {
+            deferred.reject();
+          }
+        },
+        deferred.reject
+    );
+    return deferred.promise;
+  }
+
+  function goodsQRCodeValue(item) {
+    return getAccountPublicKey(item.seller).then(function(pubKey) {
+      //example fimk:3/4?g=53282690084759346&c=1&p=50000&dt=null&nm=Kalevalakoru+Kuut...&dsc=Kalevalakorun+Kuutar-riipus%2C+pronssia
+      //This sample contains DigitalGoodsPurchase transaction (type 3 subtype 4), goodsId=53282690084759346
+      var obj = {
+        g: item.goods,
+        c: item.count,
+        d: item.deliveryDeadlineTimestamp || String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168)
+      };
+      if (item.qrcodeNote) obj.m = item.qrcodeNote
+      const url = new URL("fimk:" + 3 + "/" + 4)
+      url.search = new URLSearchParams(obj)
+      return url.toString()
+    })
+  }
+
+  function updateQRCode(item, elementId, qrCodeValue, existingQRCode) {
+    item.$errorMessage = null
+    try {
+      if (existingQRCode && existingQRCode._el.isConnected) {
+        existingQRCode.clear()
+        existingQRCode.makeCode(qrCodeValue)
+      } else {
+        var element = document.getElementById(elementId)
+        if (element) {
+          return new QRCode(elementId, {
+            text: qrCodeValue,
+            width: 130,
+            height: 130,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          })
+        }
+      }
+    } catch (e) {
+      item.$errorMessage = "Error on build QR code"
+    }
+  }
+
+  $scope.updateItemQRCode = function(item) {
+    item.$errorMessage = item.qrcodeNote ? (item.qrcodeNote.length > 100 ? "Max length 100" : null) : null
+    if (item.$errorMessage) return
+    goodsQRCodeValue(item).then(function(qrcodeValue) {
+      var newQRCode = updateQRCode(item, 'payQRCode', qrcodeValue, goodsQRCode)
+      if (newQRCode) goodsQRCode = newQRCode
+    })
+  }
+
+  $scope.updateCartItemQRCode = function(item) {
+    if (!item) return
+    item.$errorMessage = item.qrcodeNote ? (item.qrcodeNote.length > 100 ? "Max length 100" : null) : null
+    if (item.$errorMessage) return
+    goodsQRCodeValue(item).then(function(qrcodeValue) {
+      //cartQRCodes = cartQRCodes.filter(function(v) {return v._el.isConnected})
+      $scope.$evalAsync(function () {
+        var elementId = "payQRCode-" + item.goods
+        var existingQRCode = cartQRCodes["" + item.goods]
+        var newQRCode
+        try {
+          newQRCode = updateQRCode(item, elementId, qrcodeValue, existingQRCode)
+        } catch (e) {
+          item.$errorMessage = "Error on build QR code"
+          return
+        }
+        if (newQRCode) cartQRCodes["" + item.goods] = newQRCode
+      });
+    })
   }
 
   function calculateCartTotal() {
     var totalNQT = '0';
     $scope.shoppingCart.forEach(function (item) {
       totalNQT = (new BigInteger(totalNQT)).add(
-                    new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString()
+                    new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString();
     });
-    $scope.totalNXT = nxt.util.convertToNXT(totalNQT.toString());
+    $scope.totalNXT = nxt.util.convertToNXT(totalNQT);
+
+    const scaler = new BigInteger("1000000000"); //for scaling for big integer operations
+    var intRate = new BigInteger($scope.fimkRate.EUR.toString()).multiply(scaler);
+    $scope.fimkRate.calculated.EUR = nxt.util.convertToNXT(intRate.multiply(new BigInteger($scope.totalNXT)).divide(scaler).toString());
   }
 
   /* @param item CartModel */
   function calculateItemTotal(item) {
-    if (item.count == 0) {
+    if (item.count == 0 || !item.count) {
       item.totalNXT = '0';
-    }
-    else {
+    } else {
       item.totalNXT = nxt.util.convertToNXT((new BigInteger(item.priceNQT)).multiply(new BigInteger(""+item.count)).toString());
     }
   }
@@ -145,6 +286,20 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
 
   $scope.deleteGood = function(good) {
     plugins.get('transaction').get('dgsDelisting').execute({goods: good.goods});
+  }
+
+  $scope.relist = function(good) {
+    var d = new Date()
+    d.setMonth(d.getMonth() + 6)
+    var expiryTimestamp = nxt.util.convertToEpochTimestamp(d)
+    plugins.get('transaction').get('assignExpiry').execute({
+      goods: good.goods,
+      expiry: expiryTimestamp
+    })
+  }
+
+  $scope.relistAsNew = function(goods) {
+    plugins.get('transaction').get('dgsListing').execute({goods: goods});
   }
 
   $scope.add = function() {

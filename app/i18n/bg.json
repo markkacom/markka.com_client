@@ -483,7 +483,7 @@
       "1": "{{sender}} добавя, {{recipient}} към {{assetName}} допускат сметки {{details}} {{message}}",
       "2": "{{sender}} отстранен {{recipient}} от {{assetName}} допускат сметки {{details}} {{message}}",
       "3": "{{sender}} комплект {{assetName}} За да такса {{orderFee}} % Търговска такса {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} идентификатор asigned акаунт {{identifier}} да се {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} идентификатор assigned акаунт {{identifier}} да се {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} изработен {{recipient}} орган за проверка {{period}} блокове {{details}} {{message}}",
       "6": "{{sender}} създаден цвят акаунт {{name}} {{details}} {{message}}",
       "7": "{{sender}} възложени цвят акаунт {{color}} да се {{recipient}} {{details}} {{message}}"

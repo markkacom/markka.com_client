@@ -483,7 +483,7 @@
       "1": "{{sender}} சேர்க்கிறது {{recipient}} வேண்டும் {{assetName}} அனுமதி கணக்குகள் {{details}} {{message}}",
       "2": "{{sender}} நீக்கப்பட்டது {{recipient}} இருந்து {{assetName}} அனுமதி கணக்குகள் {{details}} {{message}}",
       "3": "{{sender}} தொகுப்பு {{assetName}} பொருட்டு கட்டணம் {{orderFee}} % வர்த்தக கட்டணம் {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned கணக்கு அடையாளங்காட்டி {{identifier}} செய்ய {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned கணக்கு அடையாளங்காட்டி {{identifier}} செய்ய {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} செய்து {{recipient}} சரிபார்ப்புக் அதிகாரம் {{period}} தொகுதிகள் {{details}} {{message}}",
       "6": "{{sender}} உருவாக்கப்பட்ட கணக்கின் வண்ண {{name}} {{details}} {{message}}",
       "7": "{{sender}} ஒதுக்கப்பட்ட கணக்கைச் வண்ண {{color}} செய்ய {{recipient}} {{details}} {{message}}"

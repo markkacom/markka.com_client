@@ -483,7 +483,7 @@
       "1": "{{sender}} thêm {{recipient}} đến {{assetName}} tài khoản cho phép {{details}} {{message}}",
       "2": "{{sender}} loại bỏ {{recipient}} từ {{assetName}} tài khoản cho phép {{details}} {{message}}",
       "3": "{{sender}} bộ {{assetName}} Phí đặt hàng {{orderFee}} % Phí thương mại {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned nhận dạng tài khoản {{identifier}} đến {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned nhận dạng tài khoản {{identifier}} đến {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} làm {{recipient}} một cơ quan thẩm tra cho {{period}} khối {{details}} {{message}}",
       "6": "{{sender}} màu tài khoản đã tạo {{name}} {{details}} {{message}}",
       "7": "{{sender}} màu tài khoản giao {{color}} đến {{recipient}} {{details}} {{message}}"

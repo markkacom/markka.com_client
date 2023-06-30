@@ -343,17 +343,27 @@
         <ul class="nav navbar-stacked" collapse="!collapse['advanced']">
           <li role="presentation">
             <a href ng-click="executeTransaction('accountColorCreate')">
-              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.create_account_color"/><span>
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.create_account_color"/>
             </a>
           </li>
           <li role="presentation">
             <a href ng-click="executeTransaction('accountColorAssign')">
-              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign_account_color"/><span>
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign_account_color"/>
             </a>
           </li>
           <li role="presentation">
             <a href ng-click="executeTransaction('issueAsset')">
               <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.issue_asset"/>
+            </a>
+          </li>
+          <li role="presentation">
+            <a href ng-click="executeTransaction('assignExpiry')">
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign-expiry"/>
+            </a>
+          </li>
+          <li role="presentation">
+            <a href ng-click="executeTransaction('assignAssetRewarding')">
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign-asset-rewarding"/>
             </a>
           </li>
           <li role="presentation" ng-show="privateEnabled">
@@ -742,11 +752,16 @@
         <div>
           <table class="table table-condensed">
             <tr>
-              <td translate="translate.account"></td>
+              <td>
+              <span translate="translate.account"></span>
+                <span style="font-size: x-small;color: grey;padding-left: 6px;">{{account.id}}</span>
+              </td>
               <td>
                 <a ng-href="#/accounts/{{id_rs}}/activity/latest">{{id_rs}}</a>
               </td>
-              <td>Forged</td>
+              <td>Forged
+                <a ng-if="isCurrentAccount(id_rs)" href ng-click="showAccountRewardInfo(account.id)" style="margin-left: 10px; font-size: smaller"> (Rewards)</a>
+              </td>
               <td>{{account.forgedBalanceNXT}}</td>
             </tr>
             <tr>
@@ -995,6 +1010,7 @@
                     <th translate="translate.amount"></th>
                     <th translate="translate.total_supply"></th>
                     <th translate="translate.issuer"></th>
+                    <th translate="translate.expiry"></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -1006,6 +1022,7 @@
                     <td>{{a.quantity}}</td>
                     <td>{{a.totalQuantity}}</td>
                     <td><a ng-href="#/accounts/{{a.issuer}}/activity/latest">{{a.issuer}}</a></td>
+                    <td>{{a.expiry}} <code ng-if="a.isExpired">expired</code></td>
                     <td>
                       <a href ng-show="id_rs == a.issuerRS && isCurrentAccount(id_rs)"
                         ng-click="executeTransaction('sellAsset',{asset:a.asset,quantity:0})"
@@ -1097,7 +1114,8 @@
                       <td>{{b.numberOfTransactions}}</td>
                       <td>{{b.totalAmountNXT}}</td>
                       <td>{{b.totalFeeNXT}}</td>
-                      <td>{{b.totalPOSRewardNXT}}</td>
+                      <td ng-if="b.rewardTotals"><a href ng-click="showRewardInfo(b.height)">{{b.rewardTotals}}</a></td>
+                      <td ng-if="!b.rewardTotals">-</td>
                     </tr>
                   </tbody>
                 </table>

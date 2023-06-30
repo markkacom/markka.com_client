@@ -32,8 +32,8 @@ module.config(function($routeProvider) {
 });
 
 module.controller('ActivityController', function($scope, $location, $routeParams, nxt, $q, $sce,
-  ActivityProvider, BlocksProvider, ForgersProvider, StatisticsProvider, AllAssetsProvider, BlockStateProvider,
-  $timeout, dateParser, dateFilter, $rootScope) {
+  ActivityProvider, BlocksProvider, ForgersProvider, StatisticsProvider, AllAssetsProvider, BlockStateProvider, PeerProvider,
+  $timeout, dateParser, dateFilter, $rootScope, plugins) {
 
   $rootScope.paramEngine  = $routeParams.engine;
   $scope.paramEngine      = $routeParams.engine;
@@ -51,7 +51,7 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     return;
   }
 
-  if (['activity', 'blockchain', 'forgers', 'assets'].indexOf($scope.paramSection) == -1) {
+  if (['activity', 'blockchain', 'forgers', 'assets', 'peers'].indexOf($scope.paramSection) == -1) {
     $location.path('/activity/'+$scope.paramEngine+'/activity/latest');
     return;
   }
@@ -81,6 +81,21 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     $scope.blockstate['TYPE_NXT'].load();
   }
 
+  $scope.getEngineUrl = function () {
+    var url = api.engine.socket().url;
+    if (!url) {
+      console.debug("current url is empty");
+      return "none";
+    }
+    return url;
+  };
+
+  $scope.setEngineUrl = function (url) {
+    api.engine.forceSocketURL(url);
+  };
+
+  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com", "localhost"];
+
   switch ($scope.paramSection) {
     case 'activity':
       $scope.showFilter = !TRADE_UI_ONLY;
@@ -100,7 +115,11 @@ module.controller('ActivityController', function($scope, $location, $routeParams
       break;
     case 'assets':
       $scope.showFilter = false;
-      $scope.provider = new AllAssetsProvider(api, $scope, 10);
+      $scope.provider = new AllAssetsProvider(api, $scope, 60);
+      $scope.provider.reload();
+      break;
+    case 'peers':
+      $scope.provider = new PeerProvider(api, $scope);
       $scope.provider.reload();
       break;
     default:
@@ -186,5 +205,40 @@ module.controller('ActivityController', function($scope, $location, $routeParams
       $scope.statistics[engine].load();
     }
   }
+
+  $scope.showRewardInfo = function (height) {
+
+    api.engine.socket().callAPIFunction({
+      requestType: 'getRewardTotals',
+      fromHeight: height,
+      toHeight: height + 1
+    }).then(function(response) {
+      var rewardTotals = response.rewardTotals
+      var rewardTotalsDisplayed
+      if (rewardTotals) {
+        rewardTotalsDisplayed = rewardTotals.map(function(item) {
+          var amountFormatted = nxt.util.commaFormat(nxt.util.convertToQNTf(item.amount, item.decimals))
+          var result = item.name + " <b>" + amountFormatted + " " + item.assetName + "</b> &#8594; " + item.accountRS
+          if (item.campaignId && !(item.campaignId == 0 || item.campaignId == -1)) {
+            result = result + "<br><small><i>campaign " + item.campaignId + "</i></small>"
+          }
+          return result
+        })
+      }
+      var displayingObject = {
+        "Items": rewardTotalsDisplayed
+      }
+
+      var inspector = plugins.get('inspector');
+      inspector.inspect({
+        title: "Reward amounts at height " + height,
+        object: displayingObject,
+        name: "rewardTotals"
+      });
+    });
+
+    return false;
+  }
+
 });
 })();

@@ -483,7 +483,7 @@
       "1": "{{sender}} bætir {{recipient}} að {{assetName}} leyft reikninga {{details}} {{message}}",
       "2": "{{sender}} fjarlægð {{recipient}} frá {{assetName}} leyft reikninga {{details}} {{message}}",
       "3": "{{sender}} sett {{assetName}} Til gjald {{orderFee}} % Viðskipti gjald {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned reikning kennimerki {{identifier}} að {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned reikning kennimerki {{identifier}} að {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} gert {{recipient}} sannprófun heimild fyrir {{period}} blokkir {{details}} {{message}}",
       "6": "{{sender}} búin reikning lit {{name}} {{details}} {{message}}",
       "7": "{{sender}} úthlutað reikning lit {{color}} að {{recipient}} {{details}} {{message}}"

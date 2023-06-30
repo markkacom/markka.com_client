@@ -133,7 +133,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
       else {
         field.watch = 'f.value';
       }
-      console.log('Field watch value: %s', field.watch);
+      console.debug('Field watch value: %s', field.watch);
     }
     field.onchange = function (items) {
       if (typeof opts.onchange == 'function') {
@@ -277,6 +277,15 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
    * })
    */
   plugin.addField('radio', {
+    create: function (fieldName, opts) {
+      var field  = CreateStandardField(fieldName, opts);
+      field.type = 'radio-v2';
+      evalSetFieldData(field, 'options', opts.options, opts.$scope||$rootScope);
+      return field;
+    }
+  });
+
+  plugin.addField('radio-v2', {
     create: function (fieldName, opts) {
       var field  = CreateStandardField(fieldName, opts);
       field.type = 'radio-v2';
@@ -514,20 +523,23 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
             field.errorMsg = null;
             field.__label  = '';
           });
-          opts.api.engine.socket().callAPIFunction({ requestType: 'getAsset', asset: field.value }).then(
-            function (data) {
-              scope.$evalAsync(function () {
-                if (data.asset == field.value) {
-                  field.asset = data;
-                  field.__label = format_asset_label(data);
-                }
-                else {
-                  field.errorMsg = 'Asset does not exist';
-                }
-                field.changed(true);
-              });
-            }
-          );
+          opts.api.engine.socket().callAPIFunction({requestType: 'getAsset', asset: field.value}).then(
+              function (data) {
+                scope.$evalAsync(function () {
+                  if (field.value == "0") {
+                    field.__label = "FIMK"
+                  } else {
+                    if (data.asset == field.value) {
+                      field.asset = data
+                      field.__label = format_asset_label(data)
+                    } else {
+                      field.errorMsg = 'Asset does not exist'
+                    }
+                  }
+                  field.changed(true)
+                })
+              }
+          )
         },
       500);
       // load and remember all assets owned by account
@@ -573,7 +585,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           }
           promise.then(
             function (data) {
-              var assets = data.assets||data.accountAssets||[];
+              var assets = query == "0" ? [] : data.assets||data.accountAssets||[];
               deferred.resolve(assets.map(
                 function (d) {
                   return {
@@ -581,6 +593,114 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
                     name: d.name,
                     accountName: d.accountName,
                     accountRS: d.accountRS
+                  };
+                }
+              ));
+            }
+          );
+          return deferred.promise;
+        }
+      }));
+      return field;
+    }
+  });
+
+  /**
+   * Generic marketplace field.
+   * @inherits from CreateStandardField
+   *
+   * Required arguments:
+   *
+   *  - api (either nxt.nxt() or nxt.fim())
+   *
+   * Optional arguments:
+   *
+   *  - account (String||Function||Promise)
+   *    Limits results to items owned by this account
+   */
+  plugin.addField('goods', {
+    create: function (name, opts) {
+      var scope = opts.$scope || $rootScope;
+      var format_goods_label = function (data) {
+        return [
+          '<a class="font-bold" href="#/goods/', opts.api.engine.symbol_lower, '/" target="_blank">', data.name, '</a> (',
+          '<a href="#/accounts/', data.accountRS, '/activity/latest" target="_blank">', data.accountName || data.accountRS, '</a>)'
+        ].join('');
+      };
+      var lazy_lookup_goods = debounce(
+        function (field) {
+          field.goods = null;
+          scope.$evalAsync(function () {
+            field.errorMsg = null;
+            field.__label = '';
+          });
+          opts.api.engine.socket().callAPIFunction({requestType: 'getDGSGood', goods: field.value}).then(
+            function (data) {
+              scope.$evalAsync(function () {
+                if (data.goods == field.value) {
+                  field.goods = data;
+                  field.__label = format_goods_label(data);
+                } else {
+                  field.errorMsg = 'Goods does not exist';
+                }
+                field.changed(true);
+              });
+            }
+          );
+        },
+        500);
+      var account_goods_promise = null;
+      var get_account_goods = function (account) {
+        if (account_goods_promise) {
+          return account_goods_promise;
+        }
+        var deferred = $q.defer();
+        opts.api.engine.socket().callAPIFunction({
+          requestType: 'getDGSGoods',
+          seller: account
+        }).then(deferred.resolve);
+        return account_goods_promise = deferred.promise;
+      };
+      var field = plugin.fields('autocomplete').create(name, angular.extend(opts, {
+        wait: 500,
+        label: opts.label,
+        template: [
+          '<a class="monospace">',
+          '<span class="font-bold">{{match.model.value + "&nbsp;" + match.model.name}}</span>&nbsp;&nbsp;',
+          '<span class="pull-right" ng-bind="match.model.accountName||match.model.accountRS"></span>',
+          '</a>'
+        ].join(''),
+        validate: function (text) {
+          if (text && !/\d+/.test) {
+            throw "Not a valid goods identifier";
+          }
+          if (text) {
+            lazy_lookup_goods(this);
+          }
+        },
+        getResults: function (query) {
+          var deferred = $q.defer();
+          var promise;
+          if (opts.account) {
+            promise = get_account_goods(opts.account);
+          } else {
+            promise = opts.api.engine.socket().callAPIFunction({
+              requestType: 'searchDGSGoods',
+              query: 'NAME:' + query + '*',
+              firstIndex: 0,
+              lastIndex: 15
+            });
+          }
+          promise.then(
+            function (data) {
+              var goods = data.goods || data.accountGoods || [];
+              deferred.resolve(goods.map(
+                function (d) {
+                  return {
+                    value: d.goods,
+                    name: d.name,
+                    accountName: d.seller,
+                    accountRS: d.sellerRS
                   };
                 }
               ));

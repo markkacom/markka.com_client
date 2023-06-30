@@ -483,7 +483,7 @@
       "1": "{{sender}} fügt {{recipient}} bis {{assetName}} erlaubt Konten {{details}} {{message}}",
       "2": "{{sender}} entfernt {{recipient}} von {{assetName}} erlaubt Konten {{details}} {{message}}",
       "3": "{{sender}} Satz {{assetName}} Zuschlag {{orderFee}} % Handelsgebühr {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned Kontokennung {{identifier}} nach {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned Kontokennung {{identifier}} nach {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} gemacht {{recipient}} ein Verifikationsbehörde {{period}} Blöcke {{details}} {{message}}",
       "6": "{{sender}} erstellte Konto Farb {{name}} {{details}} {{message}}",
       "7": "{{sender}} zugeordnet Konto Farbe {{color}} nach {{recipient}} {{details}} {{message}}"

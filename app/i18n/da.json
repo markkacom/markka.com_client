@@ -483,7 +483,7 @@
       "1": "{{sender}} tilføjer {{recipient}} til {{assetName}} tilladte konti {{details}} {{message}}",
       "2": "{{sender}} fjernet {{recipient}} fra {{assetName}} tilladte konti {{details}} {{message}}",
       "3": "{{sender}} sæt {{assetName}} orden gebyr {{orderFee}} % Gebyr handel {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned kontoidentifikator {{identifier}} til {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned kontoidentifikator {{identifier}} til {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} lavet {{recipient}} en verificering myndighed {{period}} blokke {{details}} {{message}}",
       "6": "{{sender}} oprettet konto farve {{name}} {{details}} {{message}}",
       "7": "{{sender}} tildelt konto farve {{color}} til {{recipient}} {{details}} {{message}}"

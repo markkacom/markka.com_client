@@ -210,10 +210,11 @@
                   <span ng-if="!$first">&nbsp;&nbsp;</span>
                   <input type="radio"
                          ng-checked="option.value==f.value"
-                         name="userFieldName"
+                         name="{{f.name}}"
                          ng-model="f.value"
                          ng-disabled="sendSuccess"
                          ng-readonly="f.readonly"
+                         ng-required="f.required"
                          ng-value="option.value"
                          ng-attr-ui-validate="{{f.validate ? '\'f.validate($value, items)\'' : true }}"
                          ui-validate-watch="f.watch"
@@ -436,7 +437,7 @@
     <div class="form-group">
       <div class="col-xs-6">
         <button ng-show="!sendSuccess && !isSending" class="btn btn-block btn-primary" ng-click="close()"
-          ng-disabled="!transactionCreateForm.$valid">Pay Now</button>
+          ng-disabled="!transactionCreateForm.$valid">Confirm</button>
         <button ng-show="isSending" class="btn btn-block btn-success" disabled>
           <i class="fa fa-circle-o-notch fa-spin pull-left"></i>&nbsp;&nbsp;Sending
         </button>

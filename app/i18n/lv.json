@@ -483,7 +483,7 @@
       "1": "{{sender}} piebilst {{recipient}} līdz {{assetName}} atļauts konti {{details}} {{message}}",
       "2": "{{sender}} noņemt {{recipient}} no {{assetName}} atļauts konti {{details}} {{message}}",
       "3": "{{sender}} komplekts {{assetName}} pasūtījums maksa {{orderFee}} % Trade maksa {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned konta identifikators {{identifier}} līdz {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned konta identifikators {{identifier}} līdz {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} izgatavoti {{recipient}} pārbaudes iestāde {{period}} bloki {{details}} {{message}}",
       "6": "{{sender}} izveidots konts krāsa {{name}} {{details}} {{message}}",
       "7": "{{sender}} piešķirts konts krāsa {{color}} līdz {{recipient}} {{details}} {{message}}"

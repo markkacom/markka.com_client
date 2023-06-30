@@ -483,7 +483,7 @@
       "1": "{{sender}} Dodává {{recipient}} na {{assetName}} povolené účty {{details}} {{message}}",
       "2": "{{sender}} odstraněn {{recipient}} z {{assetName}} povolené účty {{details}} {{message}}",
       "3": "{{sender}} sada {{assetName}} objednat poplatek {{orderFee}} % Obchod poplatek {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} Identifikátor asigned účet {{identifier}} na {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} Identifikátor assigned účet {{identifier}} na {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} vyrobený {{recipient}} ověření orgánem pro {{period}} Bloky {{details}} {{message}}",
       "6": "{{sender}} vytvořil barva účet {{name}} {{details}} {{message}}",
       "7": "{{sender}} přidělen barva účet {{color}} na {{recipient}} {{details}} {{message}}"

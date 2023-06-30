@@ -483,7 +483,7 @@
       "1": "{{sender}} prideda {{recipient}} į {{assetName}} leidžiama sąskaitos {{details}} {{message}}",
       "2": "{{sender}} pašalintas {{recipient}} nuo {{assetName}} leidžiama sąskaitos {{details}} {{message}}",
       "3": "{{sender}} rinkinys {{assetName}} Kad mokestis {{orderFee}} % Prekybos mokestis {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned sąskaitos identifikatorius {{identifier}} į {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned sąskaitos identifikatorius {{identifier}} į {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} pagamintas {{recipient}} tikrinimo institucija {{period}} blokai {{details}} {{message}}",
       "6": "{{sender}} sukurta sąskaita spalva {{name}} {{details}} {{message}}",
       "7": "{{sender}} priskirti sąskaitos spalva {{color}} į {{recipient}} {{details}} {{message}}"

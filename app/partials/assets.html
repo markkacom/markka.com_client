@@ -73,6 +73,11 @@
           <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.remove_account"/>
         </a>
       </li>
+      <li role="presentation" ng-if="currentAccount">
+        <a href ng-click="executeTransaction('assignExpiry', { asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign-expiry"/>
+        </a>
+      </li>
     </ul>
   </div>
 
@@ -215,7 +220,11 @@
       }
     </style>
 
-    <div ng-if="paramSection=='trade'">
+    <div ng-if="paramSection=='trade' && isExpired && currentAccount.id_rs!=assetIssuerRS" style="margin-top: 120px">
+      <p><code>Asset is expired</code></p>
+    </div>
+
+    <div ng-if="paramSection=='trade' && !isExpired">
 
       <!-- Chart + Description -->
 
@@ -246,8 +255,10 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <b>{{assetName}}</b>&nbsp;#<a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade">{{paramAsset}}</a>
-              <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase" ng-hide="TRADE_UI_ONLY">
-                <span translate="translate.show_pulse" />
+              <span translate="translate.created" style="margin-left: 16px;"></span><span> &nbsp;{{details.data.dateFormatted}}</span>
+              <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase" ng-hide="TRADE_UI_ONLY"
+                 tooltip="Show pulse">
+                <!--<span translate="translate.show_pulse" />--><i class="fa fa-newspaper-o"></i>
               </a>
             </div>
             <div class="panel-body" style="height: 250px;overflow-y:auto">

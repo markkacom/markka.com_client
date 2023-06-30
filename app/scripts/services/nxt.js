@@ -25,8 +25,7 @@
 
 var module = angular.module('fim.base');
 module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
-  settings, $timeout, $sce, serverService, plugins, $interval,
-  $translate, MofoSocket, Emoji) {
+  settings, $timeout, $sce, serverService, plugins, $interval, $translate, MofoSocket, Emoji) {
 
   var TYPE_FIM  = 'TYPE_FIM';
   var TYPE_NXT  = 'TYPE_NXT';
@@ -81,29 +80,32 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     this.symbol    = _type == TYPE_FIM ? 'FIM' : 'NXT';
     this.symbol_lower = this.symbol.toLowerCase();
 
+    var hosts
     if ($rootScope.forceLocalHost) {
-      this.urlPool = new URLPool(this, [window.location.hostname||'localhost'], window.location.protocol == 'https:');
-    }
-    else if (this.type == TYPE_FIM) {
-      if (this.test) {
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org' /*'188.166.0.145'*/], true);
-      }
-      else {
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
-      }
+      hosts = [
+        {host: window.location.hostname||'localhost', port: this.port, tls: window.location.protocol == 'https:'}
+      ]
+      this.urlPool = new URLPool(this, hosts);
+    } else if (this.type == TYPE_FIM) {
+      // ordered by priority (availability)
+      hosts = [
+        {host: 'fimk1.heatwallet.com', tls: true, isRemote: true},
+        {host: 'cloud.mofowallet.org', port: this.port, tls: true, isRemote: true},
+        {host: 'localhost', port: this.port, tls: false, isRemote: true}
+      ]
     }
     else if (this.type == TYPE_NXT) {
       if (this.test) {
         console.log('There are no nxt testnet servers');
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], false);
       }
-      else {
-        this.urlPool = new URLPool(this, ['cloud.mofowallet.org'], true);
-      }
+      hosts = [
+        {host: 'cloud.mofowallet.org', port: this.port, tls: !this.test}
+      ]
     }
     else {
       throw new Error('?');
     }
+    this.urlPool = new URLPool(this, hosts);
   };
   AbstractEngine.prototype = {
 
@@ -111,16 +113,47 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       return serverService.isRunning(this.type);
     },
 
-    getSocketNodeURL: function () {
+    getSocketNodeURL: function (isRemote) {
       var deferred = $q.defer();
-      deferred.resolve(this.urlPool.getRandom());
+      var up = this.urlPool
+      $rootScope.appConfigPromise.then(function(config) {
+        up.init(config)
+        var fu = up.forcedUrl
+        if (isRemote) {
+          if (fu && fu.indexOf("localhost") == -1) {
+            deferred.resolve(fu)
+          } else {
+            deferred.resolve(up.getNext(isRemote))
+          }
+        } else {
+          deferred.resolve(fu || up.getNext())
+        }
+      })
       return deferred.promise;
     },
 
+    getSelectedSocketHostPort: function (url) {
+      var h = this.urlPool.urlHostMap.get(url)
+      if (h) return h.host + (h.port ? ':' + h.port : '')
+      return null
+    },
+
+    forceSocketURL: function (url) {
+      var newUrl = this.urlPool.good.find(function (s) { return s.includes(url) })
+      if (newUrl) {
+        this.urlPool.forcedUrl = newUrl
+        var socket = this.socket()
+        socket.force_local = newUrl.indexOf("localhost") >= 0
+        socket.refresh()
+      }
+    },
+
     socket: function () {
-      var downloader = this.type == TYPE_NXT ? $rootScope.nxtDownloadProvider : $rootScope.fimDownloadProvider;
-      if (downloader && downloader.server_running && !downloader.downloading) {
-        return this._localSocket || (this._localSocket = new MofoSocket(this, true));
+      if (!this.urlPool.forcedUrl) {
+        var downloader = this.type == TYPE_NXT ? $rootScope.nxtDownloadProvider : $rootScope.fimDownloadProvider;
+        if (downloader && downloader.server_running && !downloader.downloading) {
+          return this._localSocket || (this._localSocket = new MofoSocket(this, true));
+        }
       }
       return this._socket || (this._socket = new MofoSocket(this));
     },
@@ -134,15 +167,46 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     }
   };
 
-  function URLPool(engine, ips, tls, port) {
-    this.engine = engine;
-    this.ips = [];
-    for (var i=0; i<ips.length; i++) {
-      this.ips.push((tls ? 'wss' : 'ws') + '://' + ips[i] + ':' + this.engine.port + '/ws/');
-    }
-    this.good = angular.copy(this.ips);
+  function URLPool(engine, hosts) {
+    this.engine = engine
+    this.ips = []
+    this.hosts = hosts
+    this.urlHostMap = new Map()
   }
+
   URLPool.prototype = {
+    isInitialized: false,
+    position: -1,
+    init: function (config) {
+      if (this.isInitialized) return
+      this.isInitialized = true
+      if (config) {
+        this.hosts = config.fimkNodes.mainnet.knownServers
+        if (!this.hosts || this.hosts.length === 0) throw Error("Server hosts are not defined")
+        this.hosts.sort(function(a,b) {return a.priority - b.priority})
+      }
+      for (var i = 0; i < this.hosts.length; i++) {
+        var v = this.hosts[i]
+        var url = (v.tls ? 'wss' : 'ws') + '://' + v.host + (v.port ? ':' + v.port : '') + '/ws/'
+        this.ips.push(url)
+        this.urlHostMap.set(url, v)
+      }
+      this.good = angular.copy(this.ips)
+    },
+    getNext: function (isRemote) {
+      var n = this.good.length
+      while (n > 0) {
+        n--
+        this.position++;
+        if (this.position >= this.good.length) this.position = 0;
+        var result = this.good[this.position];
+        if (isRemote) {
+          if (result.indexOf("localhost") == -1) return result
+        } else {
+          return result
+        }
+      }
+    },
     getRandom: function () {
       return this.good[Math.floor(Math.random()*this.good.length)];
     },
@@ -355,13 +419,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     };
     this.templates = {};
     angular.forEach(this.TYPE, function (type) {
-      self.templates[type] = ['<a href__HREF__ data-engine="',self.api.type,'" data-type="',type,'" data-value="__VALUE__" class="txn txn-',
-        type,'"','__CLICK__',
-        ' ','>__LABEL__</a>'].join('');
+      self.templates[type] = ['<a href__HREF__ data-engine="',self.api.type,'" data-type="',type,'" data-value="__VALUE__" class="txn txn-',type,'"','__CLICK__',' ','>__LABEL__</a>'].join('');
     });
   }
   Renderer.prototype = {
-    clickHandler: '" onclick="event.preventDefault(); if (angular.element(this).scope().onTransactionIdentifierClick) { angular.element(this).scope().onTransactionIdentifierClick(this) }" ',
+    clickHandler: ' onclick="event.preventDefault(); if (angular.element(this).scope().onTransactionIdentifierClick) { angular.element(this).scope().onTransactionIdentifierClick(this) }" ',
 
     getHTML: function (transaction, translator, accountRS) {
       return $sce.trustAsHtml(this._renderTransaction(transaction, translator, accountRS));
@@ -477,7 +539,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
             html.push('&nbsp;<a href="#/messenger/',transaction.senderRS,'"><b><i class="fa fa-comments-o fa-fw"></i></b></a>&nbsp;');
             var text = escapeHtml(decoded.text);
             html.push('&nbsp;<span data-text="',text,'" data-sender="',transaction.senderRS,'" data-recipient="',transaction.recipientRS,'" ',
-            '>',Emoji.emojifi(text),'</span></span>');
+            '>',text,'</span></span>');
           }
           else {
             html.push('</span>');
@@ -662,6 +724,12 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
+              case 7: return $translate.instant('transaction.2.7', {
+                sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+                asset:      render(TYPE.ASSET_ID, transaction.attachment.asset, transaction.attachment.asset),
+                details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
+                message:    message(transaction)
+              });
             }
           }
           case 3: {
@@ -752,6 +820,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:  render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:  message(transaction)
               });
+              case 2: return $translate.instant('login registration', {});
             }
           }
           case 5: {
@@ -961,7 +1030,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 details:    render(TYPE.JSON,'details',JSON.stringify(transaction)),
                 message:    message(transaction)
               });
-              // {{sender}} asigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}
+              // {{sender}} assigned account identifier {{identifier}} to {{recipient}} {{details}} {{message}}
               case 4: return $translate.instant('transaction.40.4', {
                 sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 identifier: render(TYPE.ACCOUNT, transaction.attachment.identifier, transaction.recipientRS),
@@ -1213,6 +1282,9 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
     }
 
     switch (requestType) {
+      case "registerRewardApplicant":
+        if (transaction.type !== 4 || transaction.subtype !== 2) return false;
+        break;
       case "sendMoney":
         if (transaction.type !== 0 || transaction.subtype !== 0) {
           console.log('verifyAndSignTransactionBytes.failed | transaction.type !== 0 || transaction.subtype !== 0', transaction);
@@ -1733,6 +1805,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         pos += 8;
 
         if (transaction.accountColorId !== data.accountColorId) {
+          return false;
+        }
+        break;
+      case "assignAssetRewarding":
+        if (transaction.type !== 2 && transaction.subtype !== 7) {
           return false;
         }
         break;

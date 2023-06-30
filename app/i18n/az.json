@@ -483,7 +483,7 @@
       "1": "{{sender}} əlavə {{recipient}} qədər {{assetName}} icazə hesabları {{details}} {{message}}",
       "2": "{{sender}} aradan {{recipient}} etibarən {{assetName}} icazə hesabları {{details}} {{message}}",
       "3": "{{sender}} dəst {{assetName}} sifariş haqqı {{orderFee}} % Ticarət haqqı {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned hesab identifikatoru {{identifier}} qədər {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned hesab identifikatoru {{identifier}} qədər {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} etdi {{recipient}} bir yoxlama orqanı {{period}} blokları {{details}} {{message}}",
       "6": "{{sender}} yaradılmış hesab rəng {{name}} {{details}} {{message}}",
       "7": "{{sender}} təyin hesab rəng {{color}} qədər {{recipient}} {{details}} {{message}}"

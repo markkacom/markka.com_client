@@ -483,7 +483,7 @@
       "1": "{{sender}} shton {{recipient}} në {{assetName}} Llogaritë e lejuara {{details}} {{message}}",
       "2": "{{sender}} hequr {{recipient}} nga {{assetName}} Llogaritë e lejuara {{details}} {{message}}",
       "3": "{{sender}} komplet {{assetName}} Pagesa mënyrë {{orderFee}} % Tarifë tregtisë {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} identifikues llogari asigned {{identifier}} në {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} identifikues llogari assigned {{identifier}} në {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} i bërë {{recipient}} një autoritet verifikimi për {{period}} blloqe {{details}} {{message}}",
       "6": "{{sender}} ngjyra llogari krijuar {{name}} {{details}} {{message}}",
       "7": "{{sender}} ngjyra llogari caktuar {{color}} në {{recipient}} {{details}} {{message}}"

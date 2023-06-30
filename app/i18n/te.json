@@ -483,7 +483,7 @@
       "1": "{{sender}} జతచేస్తుంది {{recipient}} కు {{assetName}} ఎకౌంట్లు {{details}} {{message}}",
       "2": "{{sender}} తొలగించబడింది {{recipient}} నుండి {{assetName}} ఎకౌంట్లు {{details}} {{message}}",
       "3": "{{sender}} సెట్ {{assetName}} ఆర్డర్ రుసుము {{orderFee}} % వాణిజ్య రుసుము {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned ఖాతా ఐడెంటిఫైయర్ {{identifier}} కు {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned ఖాతా ఐడెంటిఫైయర్ {{identifier}} కు {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} చేసిన {{recipient}} ధృవీకరణ అధికారం {{period}} బ్లాక్స్ {{details}} {{message}}",
       "6": "{{sender}} రూపొందించినవారు ఖాతా రంగు {{name}} {{details}} {{message}}",
       "7": "{{sender}} కేటాయించిన ఖాతాకు రంగు {{color}} కు {{recipient}} {{details}} {{message}}"

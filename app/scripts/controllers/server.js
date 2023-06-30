@@ -117,6 +117,21 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
 
   $scope.consoleProvider = new ServerConsoleProvider(api, $scope);
 
+  $scope.getEngineUrl = function () {
+    var url = api.engine.socket().url;
+    if (!url) {
+      console.debug("current url is empty");
+      return "none";
+    }
+    return url;
+  };
+
+  $scope.setEngineUrl = function (url) {
+    api.engine.forceSocketURL(url);
+  };
+
+  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com", "localhost"];
+
   switch ($scope.paramSection) {
     case 'config': {
       $scope.provider = new ServerConfigProvider(api, $scope);
@@ -132,10 +147,12 @@ module.controller('ServerController', function ($scope, $rootScope, nxt, $routeP
 
   $scope.startServer = function (type) {
     serverService.startServer(type);
+    api.engine.serverIsRunning = true
   }
 
   $scope.stopServer = function (type) {
     serverService.stopServer(type);
+    api.engine.serverIsRunning = false
   }
 
   $scope.rescanChain = function (type) {

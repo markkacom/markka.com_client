@@ -30,11 +30,11 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
 
   /**
    * Account identifiers can be set for your own account. But only 'standard' ids can
-   * can be set just like that. These involve names that end with @fimk.fi you can
+   * can be set just like that. These involve names that end with @markka.com you can
    * either assign that name to your account. Or if you prefer get a secret
    * that another account can use to assign that name to your account.
    *
-   * If you want a 'non-standard' name that ends in something else then @fimk.fi you
+   * If you want a 'non-standard' name that ends in something else then @markka.com you
    * need to provide the secret to an verification authority. The verification authority
    * will verify that the email address you provide actually belongs to you and if it
    * does provide you with a secret that you must provide when registering the
@@ -59,7 +59,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
 
   /**
    * Set a standard identifier for your own account.
-   * Identifier must end with @fimk.fi.
+   * Identifier must end with @markka.com.
    **/
   plugin.add({
     id: 'setStandardAccountIdentifier',
@@ -68,7 +68,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
       var api = nxt.get($rootScope.currentAccount.id_rs);
       return plugin.create(angular.extend(args, {
         title: 'Set Account Name',
-        message: 'Standard names must end with <i>@fimk.fi</i>',
+        message: 'Standard names must end with <i>@markka.com</i>',
         requestType: 'setAccountIdentifier',
         createArguments: function (items) {
           return {
@@ -83,7 +83,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
               this.errorMsg = null;
               if (text) {
                 if (plugin.getByteLen(text) > 100) throw 'To much characters';
-                if (!/^[^@]+@fimk.fi$/.test(this.value)) throw 'Standard name must end with @fimk.fi';
+                if (!/^[^@]+@markka.com$/.test(this.value)) throw 'Standard name must end with @markka.com';
                 lazy_lookup_identifier(api, this);
               }
             }
@@ -122,7 +122,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
               this.errorMsg = null;
               if (text) {
                 if (plugin.getByteLen(text) > 100) throw 'To much characters';
-                if (!/^[^@]+@fimk.fi$/.test(this.value)) throw 'Standard name must end with @fimk.fi';
+                if (!/^[^@]+@markka.com$/.test(this.value)) throw 'Standard name must end with @markka.com';
                 lazy_lookup_identifier(api, this);
               }
             }
@@ -184,17 +184,17 @@ module.run(function (plugins, modals, $q, $rootScope, nxt) {
   //             if (text) {
   //               if (plugin.getByteLen(text) > 100) throw 'To much characters';
   //               if (fields.useStandardName.value) {
-  //                 if (!/^[^@]+@fimk.fi$/.test(this.value)) throw 'Standard name must end with @fimk.fi';
+  //                 if (!/^[^@]+@markka.com$/.test(this.value)) throw 'Standard name must end with @markka.com';
   //               }
   //               else {
-  //                 if (/^[^@]+@fimk.fi$/.test(this.value)) throw 'Custom name cannot end with @fimk.fi';
+  //                 if (/^[^@]+@markka.com$/.test(this.value)) throw 'Custom name cannot end with @markka.com';
   //                 if (text.indexOf('@')==-1) throw 'Name must be a valid email address';
   //               }
   //               lazy_lookup_identifier(this);
   //             }
   //           }
   //         }),
-  //         plugin.fields('checkbox').create('useStandardName', { value: true, label: 'Use standard @fimk.fi name (unselect for custom name)',
+  //         plugin.fields('checkbox').create('useStandardName', { value: true, label: 'Use standard @markka.com name (unselect for custom name)',
   //           onchange: function (fields) {
   //             fields.identifier.changed();
   //             fields.authorizationRequest.hide = true;

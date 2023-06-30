@@ -483,7 +483,7 @@
       "1": "{{sender}} dodaje {{recipient}} do {{assetName}} domowe rachunki {{details}} {{message}}",
       "2": "{{sender}} usunięte {{recipient}} od {{assetName}} domowe rachunki {{details}} {{message}}",
       "3": "{{sender}} zestaw {{assetName}} Opłata za zamówienie {{orderFee}} % Opłaty handlowej {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned identyfikator konta {{identifier}} do {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned identyfikator konta {{identifier}} do {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} zrobiony {{recipient}} organ weryfikacja {{period}} Bloki {{details}} {{message}}",
       "6": "{{sender}} stworzył kolor konto {{name}} {{details}} {{message}}",
       "7": "{{sender}} przypisany kolor konto {{color}} do {{recipient}} {{details}} {{message}}"

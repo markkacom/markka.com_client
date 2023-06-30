@@ -31,15 +31,37 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
   // Add Goods
 
   plugin.add({
-    label: 'Devious Item',
+    label: 'Add Marketplace Item',
     id: 'dgsListing',
     exclude: true,
-    execute: function () {
-      return plugin.create(angular.extend({
-        title: 'Devious Item',
-        message: 'Create a Marketplace item with no length restricted tags',
+    execute: function (args) {
+      args = args || {}
+      return plugin.create(angular.extend(args, {
+        title: 'Add Marketplace Item',
+        message: 'Create a Marketplace item with no length restricted tags. <br/>Item will automatically be removed after 6 months. <br/>Change this in "Assign Expiry" screen (section "Advanced") after item is added.',
         requestType: 'dgsListing',
         canHaveRecipient: false,
+        initialize: function (items) {
+          var api = nxt.get($rootScope.currentAccount.id_rs);
+          api.engine.socket().callAPIFunction({requestType: 'getDGSGood', goods: args.goods}).then(
+              function (data) {
+                $rootScope.$evalAsync(function () {
+                  var error = data.error || data.errorDescription;
+                  if (error) {
+                    console.log(error)
+                  } else {
+                    plugin.getField(items, 'name').value = data.name
+                    plugin.getField(items, 'tags').value = data.tags
+                    plugin.getField(items, 'priceNXT').value = nxt.util.convertToNXT((new BigInteger(data.priceNQT)).toString())
+                    var v = JSON.parse(data.description)
+                    plugin.getField(items, 'description').value = v.description
+                    plugin.getField(items, 'image').value = v.image
+                    plugin.getField(items, 'callback').value = v.callback
+                  }
+                });
+              }
+          );
+        },
         createArguments: function (items) {
           var tags = (items.tags||'').split(',');
           tags.forEach(function (tag, index) { tags[index] = String(tag).trim() });
@@ -86,7 +108,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           label: 'Quantity',
           name: 'quantity',
           type: 'text',
-          value: ''
+          value: '',
+          validate: function (text) {
+            this.errorMsg = null;
+            if (!text) { this.errorMsg = null; }
+            else if ( ! plugin.isInteger(text, 1)) { this.errorMsg = 'Must be a number greater than 0'; }
+            return ! this.errorMsg;
+          },
         }]
       }));
     }

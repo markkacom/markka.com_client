@@ -483,7 +483,7 @@
       "1": "{{sender}} додає {{recipient}} в {{assetName}} дозволили рахунки {{details}} {{message}}",
       "2": "{{sender}} видалити {{recipient}} від {{assetName}} дозволили рахунки {{details}} {{message}}",
       "3": "{{sender}} набір {{assetName}} Плата за замовлення {{orderFee}} % Внесок торгівля {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned ідентифікатор облікового запису {{identifier}} для {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned ідентифікатор облікового запису {{identifier}} для {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} зроблений {{recipient}} верифікація орган для {{period}} блоки {{details}} {{message}}",
       "6": "{{sender}} створено колір рахунок {{name}} {{details}} {{message}}",
       "7": "{{sender}} інший колір рахунок {{color}} для {{recipient}} {{details}} {{message}}"

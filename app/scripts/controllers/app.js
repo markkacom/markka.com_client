@@ -115,12 +115,14 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
 
   /* Only run when in NodeJS environment */
   if (isNodeJS) {
-    $rootScope.fimDownloadProvider = new BlockchainDownloadProvider(nxt.fim(), $scope);
-    $rootScope.fimDownloadProvider.load();
-    if ($rootScope.enableDualEngines) {
-      $rootScope.nxtDownloadProvider = new BlockchainDownloadProvider(nxt.nxt(), $scope);
-      $rootScope.nxtDownloadProvider.load();
-    }
+    setTimeout(function() {
+      $rootScope.fimDownloadProvider = new BlockchainDownloadProvider(nxt.fim(), $scope);
+      $rootScope.fimDownloadProvider.load();
+      if ($rootScope.enableDualEngines) {
+        $rootScope.nxtDownloadProvider = new BlockchainDownloadProvider(nxt.nxt(), $scope);
+        $rootScope.nxtDownloadProvider.load();
+      }
+    }, 300)
   }
 
   /* Install app plugins | these all get a menu entry */
@@ -233,7 +235,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     $rootScope.availableLanguages[entry[0]] = entry[1];
   });
 
-  $rootScope.langCode = $translate.preferredLanguage();
+  $rootScope.langCode = "fi";
   $rootScope.langName = $rootScope.availableLanguages[$rootScope.langCode];
   $rootScope.setLang  = function (langCode) {
     $rootScope.langCode = langCode;
@@ -242,7 +244,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
   }
 
   if (!$rootScope.multiLanguage) {
-    $rootScope.setLang('en');
+    $rootScope.setLang('fi');
   }
 
   $scope.showLanguageModal = function () {
@@ -267,7 +269,7 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
 
   $scope.reloadMofoWallet = function () {
     try {
-      if (isNodeJS) {
+      /*if (isNodeJS) {
         var wait = 0;
         if (serverService.isRunning('TYPE_FIM')) {
           serverService.stopServer('TYPE_FIM');
@@ -283,18 +285,17 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
       }
       else {
         window.location.reload();
-      }
+      }*/
+      window.location.reload();
     } catch (e) {
       console.log(e)
     }
   }
 
   $scope.openDevTools = function () {
-    try {
-      require('nw.gui').Window.get().showDevTools();
-    } catch (e) {
-      console.log(e)
-    }
+    // see https://stackoverflow.com/questions/68952769/electron-how-to-get-webcontents-to-check-on-backgroundthrottling
+    const electron = require ("electron")
+    electron.ipcRenderer.send("openDevTools", null)
   }
 
   /* handler for rendered transaction identifier onclick events */
@@ -372,13 +373,13 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     return false;
   }
 
-  if (isNodeJS) {
+  /*if (isNodeJS) {
     $scope.clipboardCopy = function (text) {
       var gui = require('nw.gui');
       var clipboard = gui.Clipboard.get();
       clipboard.set(text, 'text');
     }
-  }
+  }*/
 
   $rootScope.followUser = function (id_rs) {
     var deferred = $q.defer();
@@ -446,6 +447,25 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
       return plugins.get('transaction').get(id).execute($scope.id_rs, arg);
     }
   }
+
+  var accountQRCode
+
+  $rootScope.showQRCode = function(account) {
+    if (accountQRCode) {
+      accountQRCode.clear()
+      accountQRCode.makeCode(account.id_rs)
+    } else {
+      accountQRCode = new QRCode("addressQRCode", {
+        text: account.id_rs,
+        width: 120,
+        height: 120,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      })
+    }
+  }
+
 });
 
 })();

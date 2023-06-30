@@ -54,7 +54,7 @@
       </li>
 
       <li ng-if="currentAccount" role="presentation">
-        <a ng-click="add()" translate="translate.add_item" class="bg-primary"></a>
+        <a href ng-click="add()" translate="translate.add_item" class="bg-primary"></a>
       </li>
 
     </ul>
@@ -76,7 +76,6 @@
       <div class="row">
         <div class="col-md-12">
           <span class="text-muted">Showing {{symbol}} marketplace listings
-            <a ng-show="symbol=='FIM' && enableDualEngines" href="#/goods/nxt/listing">show NXT</a>
             <a ng-show="symbol=='NXT' && enableDualEngines" href="#/goods/fim/listing">show FIM</a>
           </span>
         </div>
@@ -113,6 +112,7 @@
                     <th translate="translate.goods_tags"></th>
                     <th translate="translate.goods_quantity"></th>
                     <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_expiry"></th>
                     <th ng-if="currentAccount && currentAccount.id_rs == id_rs"></th>
                   </tr>
                 </thead>
@@ -123,6 +123,11 @@
                     <td ng-bind-html="item.tagsHTML"></td>
                     <td>{{item.quantity}}</td>
                     <td>{{item.priceNXT}}</td>
+                    <td><span ng-if="item.isExpired">
+                      <code>expired</code>
+                      <button ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="relist(item)">Relist</button>
+                    </span>
+                      {{item.expiry}}</td>
                     <td ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="deleteGood(item)"
                       class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
                   </tr>
@@ -157,9 +162,6 @@
           <div class="col-md-12">
             <h4>
               <b>{{'translate.goods_name' | translate}}: </b><span>{{provider.name}}</span>
-              <span style="float: right;">
-                <b>{{'translate.goods_seller' | translate}}: </b><span><a href="#/goods/{{paramEngine}}/listing/{{provider.sellerRS}}">{{provider.sellerRS}}</a></span>
-              </span>
             </h4>
             <p>
               <b>{{'translate.goods_id' | translate}}: </b><span>{{provider.goods}}</span>
@@ -171,7 +173,7 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <div style="text-align: center;">
+            <div>
               <img ng-if="provider.image" ng-src="{{provider.image}}" style="width: 300px">
               <img ng-if="!provider.image" src="images/no-image.jpg" style="width: 225px">
             </div>
@@ -180,13 +182,27 @@
               <label class="quantity"><b>{{'translate.goods_quantity' | translate}}: </b>{{provider.quantity}}</label>
             </div>
             <div class="goods-details2">
+              <span>
+                <b>{{'translate.goods_seller' | translate}}: </b><span><a href="#/goods/{{paramEngine}}/listing/{{provider.sellerRS}}">{{provider.sellerRS}}</a></span>
+              </span>
               <p class="description">{{provider.description}}</p>
-              <p><b>{{'translate.goods_tags' | translate}}:</b> <span ng-bind-html="provider.tagsHTML"></span></p>
+              <p ng-if="provider.tagsHTML"><b>{{'translate.goods_tags' | translate}}:</b> <span ng-bind-html="provider.tagsHTML"></span></p>
             </div>
-            <div class="goods-details3">
+            <div class="goods-details3" ng-if="!provider.isExpired">
               <a class="btn btn-primary add-to-cart" ng-click="addToCart(provider.data)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
               <a href="#/goods/{{paramEngine}}/listing" class="btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
             </div>
+
+            <div class="pay-qrcode">
+              <span style="font-size: small;display: block;white-space: pre-wrap;text-align: left;">Encrypted message from buyer (delivery address etc.):</span>
+              <input type="text" ng-model="qrcodeModel.qrcodeNote" ng-change="updateItemQRCode(qrcodeModel)" ng-model-options="{ debounce: { 'default': 500 } }"/>
+              <span class="pay-qrcode-error" ng-show="qrcodeModel.$errorMessage">{{qrcodeModel.$errorMessage}}</span>
+              <div id="payQRCode" style="display: block" ng-if="!provider.isExpired && !qrcodeModel.$errorMessage">
+                <a href="https://mobile.heatwallet.com/site2" target="_blank">Pay now with<br/>Markka.com Wallet</a>
+              </div>
+            </div>
+
+            <code ng-if="provider.isExpired">expired</code>
           </div>
         </div>
       </div>
@@ -198,7 +214,6 @@
       <div class="row">
         <div class="col-md-12">
           <span class="text-muted">Showing all items in {{symbol}} cart
-            <a ng-show="symbol=='FIM'" href="#/goods/nxt/cart">show NXT</a>
             <a ng-show="symbol=='NXT'" href="#/goods/fim/cart">show FIM</a>
           </span>
         </div>
@@ -221,12 +236,13 @@
                   <th translate="translate.amount"></th>
                   <th style="text-align: center;">{{'translate.goods_name' | translate}}</th>
                   <th></th>
-                  <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                  <th translate="translate.goods_price"></th>
                   <th>{{'translate.goods_total_price' | translate}}</th>
+                  <th>Markka.com Wallet</th>
                 </tr>
               </thead>
                <tbody>
-                <tr class="itemsRow" ng-repeat="item in shoppingCart">
+                <tr class="itemsRow" ng-repeat="item in shoppingCart track by $index">
                   <td><input type="number" ng-model="item.count" min="0" max="{{item.quantity}}" ng-change="quantityChanged(item)"></td>
                   <td class="image" ng-if="item.image"> <img ng-src="{{item.image}}"> </td>
                   <td class="no-image" ng-if="!item.image"><img src="images/no-image.jpg"></td>
@@ -235,17 +251,48 @@
                     <p><b>{{'translate.goods_seller' | translate}}: </b><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></p>
                     <p class="remove-item" ng-click="item.delete()">{{'translate.remove_from_cart' | translate}}</p>
                   </td>
-                  <td class="price">{{item.priceNXT}}</td>
-                  <td class="total-price"><b>{{'translate.goods_total_price' | translate}}: {{item.totalNXT}}</b></td>
+                  <td class="price">
+                    {{item.priceNXT}}
+                    <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+                  </td>
+                  <td class="total-price">
+                    <b>{{item.totalNXT}}</b>
+                    <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+                  </td>
+                  <td class="total-price">
+                    <div class="btn">
+                      <i ng-click="showQRCode(item)" ng-show="activeItemQRCode!=item.goods" class="fa fa-qrcode" style="font-size: x-large"></i>
+                      <div ng-show="activeItemQRCode==item.goods" style="margin-bottom: 7px">
+                        <span style="font-size: small;display: block;white-space: pre-wrap;text-align: left;">Encrypted message from buyer (delivery address etc.):</span>
+                        <input type="text" ng-model="item.qrcodeNote" ng-change="updateCartItemQRCode(item)" ng-model-options="{ debounce: { 'default': 800 } }"/>
+                        <span class="pay-qrcode-error" ng-show="item.$errorMessage">{{item.$errorMessage}}</span>
+                      </div>
+                      <div id="payQRCode-{{item.goods}}" ng-click="showQRCode(item)" ng-show="activeItemQRCode==item.goods && !item.$errorMessage" class="cart-pay-qrcode">
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
-            <div class="estPrice">{{'translate.estimated_price' | translate}}: {{totalNXT}}</div>
+            <div class="estPrice">
+              Grand Total: {{totalNXT}}
+              <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+            </div>
+            <div class="estPrice">
+              {{'translate.estimated_price' | translate}}: {{fimkRate.calculated.EUR}}
+              <span>&nbsp;&nbsp;EUR</span>
+            </div>
           </div>
         </div>
         <div class="col-md-12 order-buttons">
           <div>
             <a href="#/goods/{{paramEngine}}/listing" class="btn btn-default back-to-goods">{{'translate.back_to_items' | translate}}</a>
+
+<!--
+            <span style="width: 70px;display: inline-flex;margin: 8px;">
+              or click to pay now:
+            </span>
+-->
             <button class="btn btn-success place-order" ng-click="placeOrder()"
               ng-if="currentAccount && currentAccount.symbol_lower == paramEngine">
               {{'translate.place_order' | translate}}
@@ -404,7 +451,10 @@
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click="msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceNXT}}</td>
-                    <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button></td>
+                    <td ng-if="currentAccount">
+                      <button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button>
+                      <button ng-click="relistAsNew(orders.goods)" style="margin: 4px">Relist</button>
+                    </td>
                     <td ng-if="currentAccount">
                       <button class="btn btn-primary" ng-if="orders.note" ng-click="decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
                       <label ng-if="!orders.note">{{'translate.no_messages' | translate}}</label>

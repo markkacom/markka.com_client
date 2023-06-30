@@ -483,7 +483,7 @@
       "1": "{{sender}} कहते हैं {{recipient}} को {{assetName}} अनुमत खातों {{details}} {{message}}",
       "2": "{{sender}} हटाया {{recipient}} से {{assetName}} अनुमत खातों {{details}} {{message}}",
       "3": "{{sender}} सेट {{assetName}} आदेश शुल्क {{orderFee}} % व्यापार शुल्क {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned खाता पहचानकर्ता {{identifier}} को {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned खाता पहचानकर्ता {{identifier}} को {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} निर्मित {{recipient}} के लिए एक सत्यापन अधिकार {{period}} ब्लॉकों {{details}} {{message}}",
       "6": "{{sender}} निर्मित खाते रंग {{name}} {{details}} {{message}}",
       "7": "{{sender}} सौंपा खाते रंग {{color}} को {{recipient}} {{details}} {{message}}"

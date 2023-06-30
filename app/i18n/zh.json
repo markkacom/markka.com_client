@@ -483,7 +483,7 @@
       "1": "{{sender}}增加{{recipient}}至{{assetName}}允许账户{{details}} {{message}}",
       "2": "{{sender}}移除{{recipient}}从{{assetName}}允许账户{{details}} {{message}}",
       "3": "{{sender}}集{{assetName}}为了费{{orderFee}} ％贸易费用{{tradeFee}} ％ {{details}} {{message}}",
-      "4": "{{sender}} asigned账户标识符{{identifier}}至{{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned账户标识符{{identifier}}至{{recipient}} {{details}} {{message}}",
       "5": "{{sender}}发{{recipient}}验证权限{{period}}块{{details}} {{message}}",
       "6": "{{sender}}创建的帐户颜色{{name}} {{details}} {{message}}",
       "7": "{{sender}}指定账户颜色{{color}}至{{recipient}} {{details}} {{message}}"

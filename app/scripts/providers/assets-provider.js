@@ -54,8 +54,12 @@ module.factory('AssetsProvider', function (nxt, $q, IndexedEntityProvider) {
         a.isPrivate = a.type == 1;
         a.label = a.issuerColorName ? a.issuerColorName : this.api.engine.symbol;
         a.label += '/' + a.name;
+        a.isExpired = a.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > a.expiry : false;
+        a.expiry = a.expiry === 2147483647 ? null : nxt.util.formatTimestamp(a.expiry);
       }
-      return new Iterator(accountAssets);
+      //return new Iterator(accountAssets);
+      //filter expired on client side. Todo should be filtered on server side
+      return new Iterator(accountAssets, function (e) { return !e.isExpired; });
     }
   });
   return AssetsProvider;

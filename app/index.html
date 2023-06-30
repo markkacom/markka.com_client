@@ -29,6 +29,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>.ng-cloak { display:none; }</style>
     <script src="mode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"
+            integrity="sha512-sIqUEnRn31BgngPmHt2JenzleDDsXwYO+iyvQ46Mw6RL+udAUZj2n/u/PGY80NxRxynO7R9xIGx5LEzw4INWJQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link rel="shortcut icon" href="/favicon.ico?v=7" />
@@ -77,10 +80,8 @@
     <script src="bower_components/ng-table/dist/ng-table.js"></script><!-- depracated - dont use-->
     <script src="bower_components/d3/d3.js"></script>
     <script src="bower_components/pako/dist/pako.min.js"></script>
-    <script src="bower_components/ng-clip/dest/ng-clip.min.js"></script>
-    <script src="bower_components/zeroclipboard/dist/ZeroClipboard.min.js"></script>
-    <script src="bower_components/dexie/dist/latest/Dexie.js"></script>
-    <script src="bower_components/dexie/addons/Dexie.Observable/Dexie.Observable.js"></script>
+    <script src="bower_components/dexie/dist/dexie.js"></script>
+    <script src="bower_components/dexie/addons/Dexie.Observable/dist/dexie-observable.js"></script>
 
     <script src="scripts/lib/es5.js"></script>
     <script src="scripts/lib/iterator.js"></script>
@@ -101,6 +102,7 @@
     <script src="scripts/lib/ng-infinite-scroll.js"></script>
     <script src="scripts/lib/techan.js"></script>
     <script src="scripts/lib/angular-no-captcha.js"></script>
+    <script src="scripts/lib/qrcode.js"></script>
 
     <script src="scripts/app.js"></script>
 
@@ -196,6 +198,8 @@
     <script src="scripts/services/dice-words-service.js"></script>
     <script src="scripts/services/shopping-cart.js"></script>
     <script src="scripts/services/user-service.js"></script>
+    <script src="scripts/services/lompsa-service.js"></script>
+    <script src="scripts/services/transaction-service.js"></script>
 
     <script src="scripts/controllers/app.js"></script>
     <script src="scripts/controllers/about-modal.js"></script>
@@ -231,6 +235,8 @@
     <script src="plugins/transaction/transactions/goods.js"></script>
     <script src="plugins/transaction/transactions/account-identifier.js"></script>
     <script src="plugins/transaction/transactions/colored-accounts.js"></script>
+    <script src="plugins/transaction/transactions/expiry-info.js"></script>
+    <script src="plugins/transaction/transactions/asset-rewarding.js"></script>
     <script src="plugins/transaction/fields/standard-field-types.js"></script>
 
     <script src="plugins/inspector/config.js"></script>
@@ -294,6 +300,22 @@
           <u><b class="text-danger">TESTNET</b></u>
         </span>
 
+        <div class="navbar-brand navbar-default" ng-hide="!currentAccount" dropdown style="padding: 0px; margin-left: -12px; margin-right: -12px;">
+          <ul class="nav navbar-nav" nav-menu="active">
+            <li>
+              <a ng-click="showQRCode(currentAccount)" href class="dropdown-toggle" dropdown-toggle tooltip="QR code">
+                <i class="fa fa-qrcode"></i>
+              </a>
+            </li>
+          </ul>
+          <ul class="dropdown-menu" role="menu">
+            <li style="padding: 10px 0 10px 18px">
+              <p>Address:</p>
+              <div id="addressQRCode"></div>
+            </li>
+          </ul>
+        </div>
+
         <a href="#/accounts/{{currentAccount.id_rs}}/activity/latest" ng-show="currentAccount"
             class="navbar-brand" style="padding-top:8px">
           <div><b>{{currentAccount.balance}}</b></div>
@@ -304,6 +326,7 @@
           <i class="fa fa-comment-o fa-2x" style="max-height:none; min-height:5px !important; height:100%"></i>
         </a>
       </div>
+
 
       <div class="collapse navbar-collapse navbar-default" collapse="mainMenuCollapsed" menu-close="mainMenuCollapsed=true">
         <ul class="nav navbar-nav" nav-menu="active">
@@ -341,10 +364,18 @@
           </li>
 
           <li role="presentation" route-active="messenger/{{currentAccount.id_rs}}" ng-show="currentAccount && !TRADE_UI_ONLY">
-            <a href="#/messenger">
+            <a href="#/messenger" tooltip="Messenger"  tooltip-placement="bottom">
               <i class="fa fa-comment-o"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.messenger' | translate}}</span>
             </a>
             <i class="fa fa-circle unread" ng-show="unread"></i>
+          </li>
+
+          <li role="presentation" ng-show="currentAccount && !TRADE_UI_ONLY">
+            <a href ng-click="executeTransaction('transferAsset',{ asset:asset })" tooltip="Transfer Asset or FIMK"  tooltip-placement="bottom">
+              <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm" translate="translate.transfer_asset"/>
+            </a>
           </li>
 
           <!-- <li route-active="home/" ng-hide="TRADE_UI_ONLY">
@@ -354,34 +385,40 @@
           </li> -->
 
           <li route-active="activity/" ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/activity/latest"><i class="fa fa-cloud"></i>
-              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.explorer' | translate}}</span></a>
+            <a ng-href="#/activity/{{paramEngine}}/activity/latest" tooltip="Explorer"  tooltip-placement="bottom">
+              <i class="fa fa-cloud"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.explorer' | translate}}</span>
+            </a>
           </li>
 
           <li ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart"></i>
-              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span></a>
+            <a ng-href="#/activity/{{paramEngine}}/assets/latest" tooltip="Assets"  tooltip-placement="bottom">
+              <i class="fa fa-line-chart"></i>
+              <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.assets' | translate}}</span>
+            </a>
           </li>
 
           <li ng-hide="TRADE_UI_ONLY">
-            <a ng-href="#/goods/{{paramEngine}}/listing"><i class="fa fa-shopping-cart"></i>
+            <a ng-href="#/goods/{{paramEngine}}/listing" tooltip="Marketplace" tooltip-placement="bottom"><i class="fa fa-shopping-cart"></i>
               <span ng-hide="currentAccount && !IS_SMALL_DEVICE" class="hidden-sm">&nbsp;&nbsp;{{'translate.marketplace' | translate}}</span></a>
           </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right" nav-menu="active">
           <li ng-hide="TRADE_UI_ONLY">
-            <a href="#/search/fim/accounts/">
+            <a href="#/search/fim/accounts/" tooltip="Search" tooltip-placement="bottom">
               <i class="fa fa-search fa-fw"></i><span class="hidden-md hidden-sm">&nbsp;&nbsp;{{'translate.search' | translate}}</span>
             </a>
           </li>
           <li ng-show="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/activity/latest">
+            <a ng-href="#/activity/{{paramEngine}}/activity/latest" tooltip="Explorer" tooltip-placement="bottom">
               <i class="fa fa-cloud fa-fw"></i><span>&nbsp;&nbsp;{{'translate.explorer' | translate}}</span>
             </a>
           </li>
           <li ng-show="TRADE_UI_ONLY">
-            <a ng-href="#/activity/{{paramEngine}}/assets/latest"><i class="fa fa-line-chart fa-fw"></i>&nbsp;&nbsp;{{'translate.assets' | translate}}</a>
+            <a ng-href="#/activity/{{paramEngine}}/assets/latest" tooltip="Assets" tooltip-placement="bottom">
+              <i class="fa fa-line-chart fa-fw"></i>&nbsp;&nbsp;{{'translate.assets' | translate}}
+            </a>
           </li>
           <li route-active="settings" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
@@ -431,7 +468,7 @@
               </li>
               <li>
                 <a href ng-click="showAboutModal()">
-                  <i class="fa fa-question-circle"></i>&nbsp;&nbsp;{{'translate.about' | translate}}&nbsp;Lompsa
+                  <i class="fa fa-question-circle"></i>&nbsp;&nbsp;{{'translate.about' | translate}}&nbsp;FIMK
                 </a>
               </li>
             </ul>
@@ -462,8 +499,8 @@
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
-              <li ng-repeat="a in userAccounts" ng-hide="a.type != 'TYPE_FIM'">
-                <a href ng-click="setCurrentAccount(a)" ng-disabled="">
+              <li style="max-height: 300px; overflow: auto;">
+                <a href ng-repeat="a in userAccounts" ng-hide="a.type != 'TYPE_FIM'" ng-click="setCurrentAccount(a)" ng-disabled="">
                   <table style="width:100%">
                     <tr>
                       <td class="text-muted"><b>{{a.label}}</b>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -495,21 +532,21 @@
       </div>
     </nav>
 
-    <div class="container-fluid" style="padding-bottom: 50px">
+    <div class="container-fluid" style="padding-bottom: 50px; margin-top: 64px">
       <div ng-view></div>
     </div>
 
     <nav class="navbar navbar-default navbar-fixed-bottom" ng-if="TRADE_UI_ONLY && isTestnet">
       <div class="container-fluid text-muted">
         <div>
-          <span ng-init="demoSecret='picture impossible creak beard bliss ready guy shape yell burn tremble loss';demoClipped=false">
+          <span ng-init="demoSecret='picture impossible creak beard bliss ready guy shape yell burn tremble loss'">
            <b>This is a blockchain testnet demo with trading bots. <br>
            Use this passphrase to access funded demo account:</b>
            {{demoSecret}}&nbsp;
-           <a href clip-copy="demoSecret" clip-click="demoClipped=true;">
+           <!--<a href clip-copy="demoSecret" clip-click="demoClipped=true;">
               <i class="fa fa-clipboard" ng-if="!demoClipped"></i>
               <span ng-if="demoClipped"><i class="fa fa-check text-success"></i>&nbsp;copied!</span>
-           </a>
+           </a>-->
           </span>
         </div>
       </div>
@@ -541,8 +578,7 @@
 
                   <!-- global network - always displays the height of the connected public node -->
                   <a style="text-align: left;" class="btn btn-default navbar-btn"
-                      href="#/activity/fim/activity/latest"
-                      ng-hide="fimDownloadProvider.server_running && !fimDownloadProvider.downloading">
+                      href="#/activity/fim/activity/latest">
                     <i class="fa fa-globe"></i><span>&nbsp;&nbsp;{{fimDownloadProvider.remoteheight}}</span>
                   </a>
 

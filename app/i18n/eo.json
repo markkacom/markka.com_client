@@ -483,7 +483,7 @@
       "1": "{{sender}} aldonas {{recipient}} por {{assetName}} permesis kontoj {{details}} {{message}}",
       "2": "{{sender}} forigita {{recipient}} el {{assetName}} permesis kontoj {{details}} {{message}}",
       "3": "{{sender}} aro {{assetName}} Por kotizo {{orderFee}} % Komerco kotizo {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned konton ensalutilo {{identifier}} por {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned konton ensalutilo {{identifier}} por {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} faris {{recipient}} kontrolan aŭtoritaton por {{period}} blokoj {{details}} {{message}}",
       "6": "{{sender}} kreis konton koloro {{name}} {{details}} {{message}}",
       "7": "{{sender}} atribuita konton koloro {{color}} por {{recipient}} {{details}} {{message}}"

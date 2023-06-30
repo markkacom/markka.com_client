@@ -1,0 +1,25 @@
+{
+  "fimkNodes": {
+    "mainnet": {
+      "knownServers": [
+        {
+          "host": "fimk1.heatwallet.com",
+          "tls": true,
+          "priority": 1
+        },
+        {
+          "host": "cloud.mofowallet.org",
+          "port": 7986,
+          "tls": true,
+          "priority": 2
+        },
+        {
+          "host": "localhost",
+          "port": 7986,
+          "tls": false,
+          "priority": 3
+        }
+      ]
+    }
+  }
+}

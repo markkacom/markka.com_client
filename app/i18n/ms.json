@@ -483,7 +483,7 @@
       "1": "{{sender}} menambah {{recipient}} kepada {{assetName}} dibenarkan akaun {{details}} {{message}}",
       "2": "{{sender}} dikeluarkan {{recipient}} daripada {{assetName}} dibenarkan akaun {{details}} {{message}}",
       "3": "{{sender}} set {{assetName}} Bayaran perintah {{orderFee}} % Yuran perdagangan {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} pengecam akaun asigned {{identifier}} kepada {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} pengecam akaun assigned {{identifier}} kepada {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} dibuat {{recipient}} pihak berkuasa pengesahan untuk {{period}} blok {{details}} {{message}}",
       "6": "{{sender}} warna akaun dicipta {{name}} {{details}} {{message}}",
       "7": "{{sender}} warna akaun diberikan {{color}} kepada {{recipient}} {{details}} {{message}}"

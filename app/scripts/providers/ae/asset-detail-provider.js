@@ -71,6 +71,9 @@ module.factory('AssetDetailProvider', function (nxt, $q, IndexedEntityProvider, 
       data.orderFee = nxt.util.convertToQNTf(String(d.orderFeePercentage), 6)||'0';
       data.tradeFee = nxt.util.convertToQNTf(String(d.tradeFeePercentage), 6)||'0'
       data.isPrivate = d.type && d.type == 1;
+      data.expiry = d.expiry
+      data.height = d.height
+      data.dateFormatted = nxt.util.formatTimestamp(d.blockTimestamp, true)
 
       var quantityQNT = new BigInteger(String(d.quantityQNT));
       var priceNQT = new BigInteger(String(d.lastPriceNQT||'0'));

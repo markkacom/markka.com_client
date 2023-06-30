@@ -57,6 +57,11 @@
         for (var i = 0; i < goods.length; i++) {
           var a = goods[i];
           a.priceNXT = nxt.util.convertNQT(a.priceNQT);
+
+          var moment = new Date();
+          a.isExpired = a.timestamp < nxt.util.convertToEpochTimestamp(moment.setFullYear(moment.getFullYear() - 2));
+          a.isExpired = a.isExpired || (a.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > a.expiry : false);
+          a.expiry = a.expiry === 2147483647 ? null : nxt.util.formatTimestamp(a.expiry);
         }
         return new Iterator(goods);
       }

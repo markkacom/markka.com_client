@@ -483,7 +483,7 @@
       "1": "{{sender}} adiciona {{recipient}} para {{assetName}} contas permitidos {{details}} {{message}}",
       "2": "{{sender}} removido {{recipient}} de {{assetName}} contas permitidos {{details}} {{message}}",
       "3": "{{sender}} conjunto {{assetName}} taxa a ordem {{orderFee}} % De taxa de comércio {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} identificador de conta asigned {{identifier}} para {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} identificador de conta assigned {{identifier}} para {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} feito {{recipient}} uma autoridade de verificação para {{period}} blocos {{details}} {{message}}",
       "6": "{{sender}} criado color conta {{name}} {{details}} {{message}}",
       "7": "{{sender}} cor atribuída conta {{color}} para {{recipient}} {{details}} {{message}}"

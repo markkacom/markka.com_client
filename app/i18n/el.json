@@ -483,7 +483,7 @@
       "1": "{{sender}} Προσθέτει {{recipient}} να {{assetName}} επιτρέπεται λογαριασμών {{details}} {{message}}",
       "2": "{{sender}} αφαιρεθεί {{recipient}} από {{assetName}} επιτρέπεται λογαριασμών {{details}} {{message}}",
       "3": "{{sender}} σετ {{assetName}} τέλος, προκειμένου {{orderFee}} % Χρέωση εμπορίου {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} Αναγνωριστικό asigned λογαριασμού {{identifier}} να {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} Αναγνωριστικό assigned λογαριασμού {{identifier}} να {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} κατασκευασμένος {{recipient}} μια αρχή ελέγχου για {{period}} μπλοκ {{details}} {{message}}",
       "6": "{{sender}} δημιουργήθηκε το χρώμα του λογαριασμού {{name}} {{details}} {{message}}",
       "7": "{{sender}} ανατεθεί χρώμα λογαριασμού {{color}} να {{recipient}} {{details}} {{message}}"

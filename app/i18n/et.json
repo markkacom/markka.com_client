@@ -483,7 +483,7 @@
       "1": "{{sender}} lisab {{recipient}} kuni {{assetName}} lubatud kontod {{details}} {{message}}",
       "2": "{{sender}} kõrvaldatud {{recipient}} pärit {{assetName}} lubatud kontod {{details}} {{message}}",
       "3": "{{sender}} komplekt {{assetName}} Selleks eest {{orderFee}} % Kaubanduse eest {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned konto identifitseerimine {{identifier}} kuni {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned konto identifitseerimine {{identifier}} kuni {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} tehtud {{recipient}} kontrollkäik asutus {{period}} plokid {{details}} {{message}}",
       "6": "{{sender}} loodud konto värvi {{name}} {{details}} {{message}}",
       "7": "{{sender}} määratud kontole värvi {{color}} kuni {{recipient}} {{details}} {{message}}"

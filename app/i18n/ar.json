@@ -483,7 +483,7 @@
       "1": "{{sender}} ويضيف {{recipient}} إلى {{assetName}} حسابات سمح {{details}} {{message}}",
       "2": "{{sender}} إزالة {{recipient}} من {{assetName}} حسابات سمح {{details}} {{message}}",
       "3": "{{sender}} مجموعة {{assetName}} رسوم أجل {{orderFee}} ٪ رسوم التجارة {{tradeFee}} ٪ {{details}} {{message}}",
-      "4": "{{sender}} معرف حساب asigned {{identifier}} إلى {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} معرف حساب assigned {{identifier}} إلى {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} صنع {{recipient}} سلطة التحقق ل {{period}} كتل {{details}} {{message}}",
       "6": "{{sender}} خلق لون الحساب {{name}} {{details}} {{message}}",
       "7": "{{sender}} تعيين لون الحساب {{color}} إلى {{recipient}} {{details}} {{message}}"

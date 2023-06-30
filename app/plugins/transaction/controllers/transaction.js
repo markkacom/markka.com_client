@@ -201,7 +201,7 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
 
     function sendTransaction(args, publicKey, secretPhrase) {
       args.publicKey    = publicKey;
-      args.requestType  = $scope.items.requestType;
+      args.requestType  = args.requestType || $scope.items.requestType;
 
       addMessageData(args, secretPhrase);
 
@@ -228,8 +228,9 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
           socket.callAPIFunction(args).then(
             function (data) {
 
-              if (data.error || data.errorDescription) {
-                progress.setErrorMessage(data.error || data.errorDescription);
+              var error = data.errorDescription || data.error;
+              if (error) {
+                progress.setErrorMessage(error);
                 progress.enableCloseBtn();
                 return;
               }

@@ -483,7 +483,7 @@
       "1": "{{sender}} Cuireann {{recipient}} go {{assetName}} Cuntais cheadaítear {{details}} {{message}}",
       "2": "{{sender}} bhaint {{recipient}} ó {{assetName}} Cuntais cheadaítear {{details}} {{message}}",
       "3": "{{sender}} leagtar {{assetName}} táille ordú {{orderFee}} % Táille trádála {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} aitheantóir cuntais asigned {{identifier}} chun {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} aitheantóir cuntais assigned {{identifier}} chun {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} rinneadh {{recipient}} údarás fhíoraithe {{period}} bloic {{details}} {{message}}",
       "6": "{{sender}} dath cuntas a cruthaíodh {{name}} {{details}} {{message}}",
       "7": "{{sender}} dath cuntas sannadh {{color}} chun {{recipient}} {{details}} {{message}}"

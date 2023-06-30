@@ -190,14 +190,23 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
         message: null,
         requestType: 'transferAsset',
         createArguments: function (items, fields) {
-          return {
-            recipient: nxt.util.convertRSAddress(items.recipient),
-            asset: items.asset,
-            quantityQNT: nxt.util.convertToQNT(items.quantity, fields.asset.asset.decimals)
+          var args = {
+            recipient: plugin.isNumeric(items.recipient) ? items.recipient : nxt.util.convertRSAddress(items.recipient)
           }
+          if (items.recipientPublicKey) {
+            args.recipientPublicKey = items.recipientPublicKey;
+          }
+          if (fields.asset.value === "0") {
+            args.amountNQT = nxt.util.convertToNQT(items.quantity)
+            this.requestType = "sendMoney";
+          } else {
+            args.asset = items.asset
+            args.quantityQNT = nxt.util.convertToQNT(items.quantity, fields.asset.asset.decimals)
+          }
+          return args
         },
         fields: [
-          plugin.fields('asset').create('asset', { value: args.asset||'', label: 'Asset', required: true, account: $rootScope.currentAccount.id_rs, api: api }),
+          plugin.fields('asset').create('asset', { value: args.asset||'', label: 'Asset (0 means FIMK)', required: true, account: $rootScope.currentAccount.id_rs, api: api}),
           plugin.fields('account').create('recipient', { value: args.recipient||'', label: 'Recipient', required: true,
             api:api, accountColorId: UserService.currentAccount.accountColorId }),
           plugin.fields('text').create('quantity', { value: args.quantity||'', label: 'Quantity', required: true,
@@ -223,6 +232,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
           fields.orderFeeNXT.value  = '';
           if (fields.asset.asset) {
             var asset    = fields.asset.asset;
+
+            var assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
+            if (assetIsExpired) {
+              fields.asset.errorMsg = "Disabled. Asset is expired";
+              fields.quantity.value = null;  // to disable button "Pay now"
+              return
+            }
+
             var decimals = asset.decimals;
             var orderFee = nxt.util.convertToQNTf(asset.orderFeePercentage, 6);
             var provider = new OrderEntryProvider(api, null, asset.asset, decimals, null, {
@@ -279,7 +296,11 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
                 fields.quantity.precision = this.asset.decimals;
               }
               reCalculateOrderTotal(fields);
-            }
+            },
+            validate: function (text) {
+              //if (!text) { this.errorMsg = null; }
+              return !this.errorMsg;
+            },
           }),
           plugin.fields('money').create('priceNXT', { value: args.priceNXT||'', label: 'Price', required: true, precision: 8,
             onchange: function (fields) {
@@ -319,6 +340,14 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
 
           if (fields.asset.asset) {
             var asset    = fields.asset.asset;
+
+            var assetIsExpired = asset.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > asset.expiry : false;
+            if (assetIsExpired) {
+              fields.asset.errorMsg = "Disabled. Asset is expired";
+              fields.quantity.value = null;  // to disable button "Pay now"
+              return
+            }
+
             var decimals = asset.decimals;
             var orderFee = nxt.util.convertToQNTf(asset.orderFeePercentage, 6);
             var provider = new OrderEntryProvider(api, null, asset.asset, decimals, null, {

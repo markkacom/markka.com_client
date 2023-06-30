@@ -483,7 +483,7 @@
       "1": "{{sender}} Dodaja {{recipient}} da {{assetName}} dovoljene računi {{details}} {{message}}",
       "2": "{{sender}} odstrani {{recipient}} od {{assetName}} dovoljene računi {{details}} {{message}}",
       "3": "{{sender}} set {{assetName}} Da pristojbina {{orderFee}} % Trade pristojbina {{tradeFee}} % {{details}} {{message}}",
-      "4": "{{sender}} asigned identifikator računa {{identifier}} da {{recipient}} {{details}} {{message}}",
+      "4": "{{sender}} assigned identifikator računa {{identifier}} da {{recipient}} {{details}} {{message}}",
       "5": "{{sender}} ki {{recipient}} organ za preverjanje za {{period}} bloki {{details}} {{message}}",
       "6": "{{sender}} ustvarjena barva račun {{name}} {{details}} {{message}}",
       "7": "{{sender}} dodeljena barva račun {{color}} da {{recipient}} {{details}} {{message}}"
