@@ -1453,7 +1453,7 @@
                     <th translate="translate.goods_seller"></th>
                     <th translate="translate.goods_tags"></th>
                     <th translate="translate.goods_quantity"></th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                     <th ng-if="currentAccount && currentAccount.id_rs == id_rs"></th>
                   </tr>
                 </thead>
@@ -1463,7 +1463,7 @@
                     <td><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></td>
                     <td ng-bind-html="item.tagsHTML"></td>
                     <td>{{item.quantity}}</td>
-                    <td>{{item.priceNXT}}</td>
+                    <td>{{item.priceNXT}} &nbsp;&nbsp;{{item.assetName}}</td>
                     <td ng-if="currentAccount && currentAccount.id_rs == id_rs"
                       ng-click="executeTransaction('dgsDelisting',{goods: item.goods})"
                       class="text-danger" translate="translate.delete_good" ng-disabled="item.delisted"></td>
@@ -1493,7 +1493,7 @@
                     <th translate="translate.goods_name"></th>
                     <th translate="translate.goods_seller"></th>
                     <th translate="translate.goods_quantity"></th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1534,7 +1534,7 @@
                         ng-click="executeTransaction('sendMessage',{recipient: orders.sellerRS, editRecipient: false})"
                         ng-show="currentAccount" translate="translate.message_to_seller"></a></td>
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}}</td>
+                    <td>{{orders.priceNXT}} &nbsp;&nbsp;{{orders.assetName}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -1599,7 +1599,7 @@
                     <th translate="translate.goods_name"></th>
                     <!-- <th>Seller</th> -->
                     <th translate="translate.goods_quantity"></th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                     <th ng-if="currentAccount"></th>
                     <!-- <th ng-if="currentAccount"></th>
                     <th ng-if="decryptedMessage && currentAccount">{{'translate.message_from_buyer' | translate}}</th> -->
@@ -1611,7 +1611,7 @@
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}}</td>
+                    <td>{{orders.priceNXT}} &nbsp;&nbsp;{{orders.assetName}}</td>
                     <td ng-if="currentAccount">
                       <button class="btn btn-primary"
                         ng-click="executeTransaction('dgsRefund', {purchase: orders.purchase,refundNQT: orders.priceNQT})"

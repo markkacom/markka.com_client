@@ -84,7 +84,7 @@
       },
 
       translate: function (item) {
-        item.priceNXT = nxt.util.convertNQT(item.priceNQT);
+        item.priceNXT = nxt.util.convertToAsset(item.priceNQT, item.assetDecimals);
         item.date = nxt.util.formatTimestamp(item.timestamp);
         if (!item.expiry || item.expiry === 2147483647) {
           var d = new Date(nxt.util.convertFromEpochTimestamp(item.timestamp));

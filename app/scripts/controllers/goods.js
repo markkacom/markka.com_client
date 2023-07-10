@@ -277,6 +277,8 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       item.totalNXT = '0';
     } else {
       item.totalNXT = nxt.util.convertToNXT((new BigInteger(item.priceNQT)).multiply(new BigInteger(""+item.count)).toString());
+      var sum = new BigInteger(item.priceNQT).multiply(new BigInteger("" + item.count)).toString()
+      item.totalNXT = nxt.util.convertToAsset(sum, item.assetDecimals);
     }
   }
 
@@ -324,11 +326,14 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       var item = iterator.next();
       var order_args = {
         goods: item.goods,
-        priceNXT: nxt.util.convertToNXT(item.priceNQT),
+        priceNXT: nxt.util.convertToAsset(item.priceNQT, item.assetDecimals),
         quantity: item.count,
         name: item.name,
         deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
-        recipient: item.sellerRS
+        recipient: item.sellerRS,
+        asset: item.asset,
+        assetDecimals: item.assetDecimals,
+        assetName: item.assetName
       }
       plugins.get('transaction').get('dgsPurchase').execute(order_args).then(
         function(data) {

@@ -56,7 +56,7 @@
         var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
         for (var i = 0; i < goods.length; i++) {
           var a = goods[i];
-          a.priceNXT = nxt.util.convertNQT(a.priceNQT);
+          a.priceNXT = nxt.util.convertToAsset(a.priceNQT, a.assetDecimals)
 
           var moment = new Date();
           a.isExpired = a.timestamp < nxt.util.convertToEpochTimestamp(moment.setFullYear(moment.getFullYear() - 2));

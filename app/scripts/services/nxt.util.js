@@ -30,7 +30,7 @@ module.run(function (nxt, timeagoService, $rootScope) {
       return '0';
     }
     var negative        = '',
-        decimals        = decimals || 8,
+        decimals        = decimals == 0 ? 0 : decimals || 8,
         afterComma      = '',
         amount          = new BigInteger(String(amount)),
         factor          = String(Math.pow(10, decimals)),
@@ -418,6 +418,10 @@ module.run(function (nxt, timeagoService, $rootScope) {
         }
       }
       return result;
+    },
+
+    convertToAsset: function (amountQNT, decimals) {
+      return commaFormat(convertNQT(amountQNT, decimals));
     },
 
     sign: sign,

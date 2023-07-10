@@ -60,7 +60,7 @@
         } catch (e) { /* ignore */ }
 
 
-        data.priceNXT = nxt.util.convertNQT(data.priceNQT);
+        data.priceNXT = nxt.util.convertToAsset(data.priceNQT, data.assetDecimals)
         var now = new Date();
         data.isExpired = data.timestamp < nxt.util.convertToEpochTimestamp(now.setFullYear(now.getFullYear() - 2));
         data.isExpired = data.isExpired || (data.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > data.expiry : false);

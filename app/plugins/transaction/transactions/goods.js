@@ -36,13 +36,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
     exclude: true,
     execute: function (args) {
       args = args || {}
+      var api = nxt.get($rootScope.currentAccount.id_rs);
       return plugin.create(angular.extend(args, {
         title: 'Add Marketplace Item',
         message: 'Create a Marketplace item with no length restricted tags. <br/>Item will automatically be removed after 6 months. <br/>Change this in "Assign Expiry" screen (section "Advanced") after item is added.',
         requestType: 'dgsListing',
         canHaveRecipient: false,
         initialize: function (items) {
-          var api = nxt.get($rootScope.currentAccount.id_rs);
           api.engine.socket().callAPIFunction({requestType: 'getDGSGood', goods: args.goods}).then(
               function (data) {
                 $rootScope.$evalAsync(function () {
@@ -52,7 +52,13 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
                   } else {
                     plugin.getField(items, 'name').value = data.name
                     plugin.getField(items, 'tags').value = data.tags
-                    plugin.getField(items, 'priceNXT').value = nxt.util.convertToNXT((new BigInteger(data.priceNQT)).toString())
+
+                    var s = new BigInteger(data.priceNQT).toString()
+                    var price = items.asset.value == '0'
+                        ? nxt.util.convertToNXT(s)
+                        : nxt.util.convertToAsset(s, items.asset.asset.decimals)
+                    plugin.getField(items, 'priceNXT').value = price
+
                     var v = JSON.parse(data.description)
                     plugin.getField(items, 'description').value = v.description
                     plugin.getField(items, 'image').value = v.image
@@ -66,12 +72,18 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           var tags = (items.tags||'').split(',');
           tags.forEach(function (tag, index) { tags[index] = String(tag).trim() });
           tags = tags.filter(function (tag) { return tag.length > 0 });
+          var asset = plugin.getField(items, 'asset').asset
+          if (!asset && items.asset.value != '0') throw Error("Wrong asset")
+          var price = items.asset.value == '0'
+              ? nxt.util.convertToNQT(items.priceNXT)
+              : nxt.util.convertToQNT(items.priceNXT, asset.decimals)
           return {
             name: items.name,
             description: JSON.stringify({ description: items.description, image: items.image || '', callback: items.callback || '' }),
             tags: items.tags,
             quantity: String(items.quantity),
-            priceNQT: nxt.util.convertToNQT(items.priceNXT)
+            priceNQT: price,
+            asset: items.asset
           }
         },
         fields: [{
@@ -90,7 +102,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           type: 'text',
           value: ''
         }, {
-          label: 'Callback',
+          label: 'Notification server URL (if applicable)',
           name: 'callback',
           type: 'text',
           value: ''
@@ -99,11 +111,25 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           name: 'tags',
           type: 'textarea',
           value: ''
-        }, {
+        }, plugin.fields('asset').create('asset', {
+          label: 'Asset for pricing',
+          required: false,
+          //account: $rootScope.currentAccount.id_rs,
+          value: '0',
+          api: api,
+          onchange: function (items) {
+            var currencyName = items.asset.value == '0'
+                ? 'FIMK'
+                : items.asset.asset ? items.asset.asset.name : '?'
+            items.priceNXT.label = 'Price ' + currencyName
+            items.priceNXT.precision = items.asset.asset ? items.asset.asset.decimals : '?'
+          }
+        }), {
           label: 'Price FIMK',
           name: 'priceNXT',
           type: 'money',
-          value: ''
+          value: '',
+          precision: '8'
         }, {
           label: 'Quantity',
           name: 'quantity',
@@ -148,7 +174,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
     id: 'dgsPurchase',
     exclude: true,
     execute: function (args) {
-      console.log(args);
+      //console.log(args);
       args = args||{};
       return plugin.create(angular.extend(args, {
         title: 'Purchase Item',
@@ -161,7 +187,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
             goods: items.goods,
             quantity: String(items.quantity),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
-            priceNQT: nxt.util.convertToNQT(items.priceNXT),
+            priceNQT: nxt.util.convertToQNT(items.priceNXT, args.assetDecimals),
             recipient: nxt.util.convertRSAddress(items.recipient)
           }
         },
@@ -178,7 +204,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           type: 'money',
           readonly: true,
           value: args.priceNXT||'',
-          precision: '8'
+          //precision: '8'
         },
         {
           label: 'Quantity',
@@ -299,6 +325,9 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           var call_arg = { requestType: 'getDGSPurchase', purchase: items.purchase };
           api.engine.socket().callAPIFunction(call_arg).then(
             function (data) {
+              args.asset = data.asset
+              args.assetName = data.assetName
+              args.assetDecimals = data.assetDecimals
               $rootScope.$evalAsync(function () {
                 var error = data.error || data.errorDescription;
                 if (error) {
@@ -333,7 +362,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
             goodsData: encrypted.message,
             goodsNonce: encrypted.nonce,
             goodsIsText: 'true',
-            discountNQT: nxt.util.convertToNQT(items.discountNXT)||'0'
+            discountNQT: nxt.util.convertToQNT(items.discountNXT, args.assetDecimals) || '0'
           };
         },
         fields: [{

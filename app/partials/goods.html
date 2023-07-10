@@ -111,7 +111,7 @@
                     <th translate="translate.goods_seller"></th>
                     <th translate="translate.goods_tags"></th>
                     <th translate="translate.goods_quantity"></th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                     <th translate="translate.goods_expiry"></th>
                     <th ng-if="currentAccount && currentAccount.id_rs == id_rs"></th>
                   </tr>
@@ -122,7 +122,7 @@
                     <td><a href="#/goods/{{paramEngine}}/listing/{{item.sellerRS}}">{{item.sellerRS}}</a></td>
                     <td ng-bind-html="item.tagsHTML"></td>
                     <td>{{item.quantity}}</td>
-                    <td>{{item.priceNXT}}</td>
+                    <td>{{item.priceNXT}} <small style="color: darkgrey">{{item.assetName}}</small></td>
                     <td><span ng-if="item.isExpired">
                       <code>expired</code>
                       <button ng-if="currentAccount && currentAccount.id_rs == id_rs" ng-click="relist(item)">Relist</button>
@@ -178,7 +178,7 @@
               <img ng-if="!provider.image" src="images/no-image.jpg" style="width: 225px">
             </div>
             <div class="goods-details1">
-              <label class="price" translate="translate.goods_price" translate-values="{symbol:symbol}"></label><label>: {{provider.priceNXT}}</label>
+              <label class="price" translate="translate.goods_price"></label><span> ({{provider.assetName}})</span><label>: {{provider.priceNXT}}</label>
               <label class="quantity"><b>{{'translate.goods_quantity' | translate}}: </b>{{provider.quantity}}</label>
             </div>
             <div class="goods-details2">
@@ -213,7 +213,7 @@
     <div class="cart-page" ng-if="paramSection == 'cart'">
       <div class="row">
         <div class="col-md-12">
-          <span class="text-muted">Showing all items in {{symbol}} cart
+          <span class="text-muted">Showing all items in cart
             <a ng-show="symbol=='NXT'" href="#/goods/fim/cart">show FIM</a>
           </span>
         </div>
@@ -253,11 +253,11 @@
                   </td>
                   <td class="price">
                     {{item.priceNXT}}
-                    <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+                    <span>&nbsp;&nbsp;{{item.assetName}}</span>
                   </td>
                   <td class="total-price">
                     <b>{{item.totalNXT}}</b>
-                    <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+                    <span>&nbsp;&nbsp;{{item.assetName}}</span>
                   </td>
                   <td class="total-price">
                     <div class="btn">
@@ -410,7 +410,7 @@
                     <th>{{'translate.purchase_id' | translate}}</th>
                     <th>{{'translate.goods_name' | translate}}</th>
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                     <th>{{'translate.delivery_deadline' | translate}}</th>
                     <th ng-if="currentAccount"></th>
                   </tr>
@@ -421,7 +421,7 @@
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}}</td>
+                    <td>{{orders.priceNXT}} &nbsp;&nbsp;{{orders.assetName}}</td>
                     <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
                     <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="confirmDelivery(orders)">{{'translate.confirm_delivery' | translate}}</button></td>
                     <!-- <td><button ng-click="rebate(orders)">Rebate</button></td> -->
@@ -437,7 +437,7 @@
                     <th>{{'translate.goods_name' | translate}}</th>
                     <!-- <th>Seller</th> -->
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                     <th ng-if="currentAccount"></th>
                     <th ng-if="currentAccount"></th>
                     <th ng-if="decryptedMessage && currentAccount">{{'translate.message_from_buyer' | translate}}</th>
@@ -450,7 +450,7 @@
                     <td>{{orders.name}}</td>
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click="msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}}</td>
+                    <td>{{orders.priceNXT}} &nbsp;&nbsp;{{orders.assetName}}</td>
                     <td ng-if="currentAccount">
                       <button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button>
                       <button ng-click="relistAsNew(orders.goods)" style="margin: 4px">Relist</button>
