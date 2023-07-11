@@ -276,7 +276,6 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     if (item.count == 0 || !item.count) {
       item.totalNXT = '0';
     } else {
-      item.totalNXT = nxt.util.convertToNXT((new BigInteger(item.priceNQT)).multiply(new BigInteger(""+item.count)).toString());
       var sum = new BigInteger(item.priceNQT).multiply(new BigInteger("" + item.count)).toString()
       item.totalNXT = nxt.util.convertToAsset(sum, item.assetDecimals);
     }

@@ -337,7 +337,7 @@
                     <th>{{'translate.goods_name' | translate}}</th>
                     <th>{{'translate.goods_seller' | translate}}</th>
                     <th>{{'translate.goods_quantity' | translate}}</th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -371,7 +371,7 @@
                     <td ng-if="!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
                     <td ng-if="orders.sellerName">{{orders.sellerName}}  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}}</td>
+                    <td>{{orders.priceNXT}}&nbsp;&nbsp;{{orders.assetName}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -421,7 +421,7 @@
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}} &nbsp;&nbsp;{{orders.assetName}}</td>
+                    <td>{{orders.priceNXT}}&nbsp;&nbsp;{{orders.assetName}}</td>
                     <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
                     <td ng-if="currentAccount"><button class="btn btn-primary" ng-click="confirmDelivery(orders)">{{'translate.confirm_delivery' | translate}}</button></td>
                     <!-- <td><button ng-click="rebate(orders)">Rebate</button></td> -->
@@ -450,7 +450,7 @@
                     <td>{{orders.name}}</td>
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click="msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}} &nbsp;&nbsp;{{orders.assetName}}</td>
+                    <td>{{orders.priceNXT}}&nbsp;&nbsp;{{orders.assetName}}</td>
                     <td ng-if="currentAccount">
                       <button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button>
                       <button ng-click="relistAsNew(orders.goods)" style="margin: 4px">Relist</button>

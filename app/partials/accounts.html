@@ -1560,7 +1560,7 @@
                     <th translate="translate.purchase_id"></th>
                     <th translate="translate.goods_name"></th>
                     <th translate="translate.goods_quantity"></th>
-                    <th translate="translate.goods_price" translate-values="{symbol:symbol}"></th>
+                    <th translate="translate.goods_price"></th>
                     <th translate="translate.delivery_deadline"></th>
                     <th ng-if="currentAccount"></th>
                   </tr>
@@ -1571,7 +1571,7 @@
                     <td>{{orders.purchase}}</td>
                     <td>{{orders.name}}</td>
                     <td>{{orders.quantity}}</td>
-                    <td>{{orders.priceNXT}}</td>
+                    <td>{{orders.priceNXT}}&nbsp;&nbsp;{{orders.assetName}}</td>
                     <td>{{orders.totalDeliveryDeadlineTimestamp}} hours</td>
                     <td ng-if="currentAccount"><button class="btn btn-primary"
                       ng-click="executeTransaction('dgsDelivery',{purchase: orders.purchase})"

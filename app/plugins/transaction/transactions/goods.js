@@ -230,10 +230,9 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
     id: 'dgsRefund',
     exclude: true,
     execute: function (args) {
-      args = args||{};
+      args = args || {}
       return plugin.create(angular.extend(args, {
         title: 'Give Rebate',
-        message: 'Return some FIMK to buyer',
         requestType: 'dgsRefund',
         canHaveRecipient: false,
         initialize: function (items) {
@@ -249,12 +248,19 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
                   plugin.getField(items, 'priceNXT').value = '';
                   plugin.getField(items, 'quantity').value = '';
                   plugin.getField(items, 'totalPriceNXT').value = '';
-                }
-                else {
+                } else {
+                  args.asset = data.asset
+                  args.assetName = data.assetName
+                  args.assetDecimals = data.assetDecimals
+                  plugin.getField(items, 'topMessage').value = `Return some "${args.assetName}" to buyer`;
+
                   plugin.getField(items, 'name').value = data.name + ' ('+data.goods+')';
-                  plugin.getField(items, 'priceNXT').value = nxt.util.convertToNXT(data.priceNQT)+' '+api.engine.symbol;
+                  plugin.getField(items, 'priceNXT').value =
+                      nxt.util.convertToAsset(data.priceNQT, args.assetDecimals) + ' ' + args.assetName
                   plugin.getField(items, 'quantity').value = data.quantity;
-                  plugin.getField(items, 'totalPriceNXT').value = nxt.util.convertToNXT((new BigInteger(data.priceNQT)).multiply(new BigInteger(""+data.quantity)).toString())+' '+api.engine.symbol;
+                  var sum = new BigInteger(data.priceNQT).multiply(new BigInteger("" + data.quantity)).toString()
+                  plugin.getField(items, 'totalPriceNXT').value =
+                      nxt.util.convertToAsset(sum, args.assetDecimals) + ' ' + args.assetName;
                 }
               });
             }
@@ -263,10 +269,15 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
         createArguments: function (items) {
           return {
             purchase: items.purchase,
-            refundNQT: nxt.util.convertToNQT(items.refundNXT)
+            refundNQT: nxt.util.convertToQNT(items.refundNXT, args.assetDecimals)
           }
         },
         fields: [{
+          name: 'topMessage',
+          type: 'static',
+          value: ''
+        },
+        {
           label: 'Purchase',
           name: 'purchase',
           type: 'text',
@@ -301,7 +312,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           label: 'Refund',
           name: 'refundNXT',
           type: 'money',
-          value: args.refundNXT||''
+          value: args.refundNXT || ''
         }]
       }));
     }
