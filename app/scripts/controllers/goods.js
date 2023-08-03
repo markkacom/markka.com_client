@@ -259,16 +259,28 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   }
 
   function calculateCartTotal() {
-    var totalNQT = '0';
+    var totals = new Map()
+    var allFimk = true
     $scope.shoppingCart.forEach(function (item) {
-      totalNQT = (new BigInteger(totalNQT)).add(
-                    new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString();
-    });
-    $scope.totalNXT = nxt.util.convertToNXT(totalNQT);
+      var total = totals.get(item.asset) || {assetName: item.assetName, amount: '0'}
+      total.amount = (new BigInteger(total.amount)).add(new BigInteger(nxt.util.convertToNQT(item.totalNXT))).toString()
+      totals.set(item.asset, total)
+      if (item.asset != '0') allFimk = false
+    })
+    totals.forEach(function (value, key) {
+      value.amount = nxt.util.convertToNXT(value.amount)
+    })
+    $scope.totals = Array.from(totals)
 
-    const scaler = new BigInteger("1000000000"); //for scaling for big integer operations
-    var intRate = new BigInteger($scope.fimkRate.EUR.toString()).multiply(scaler);
-    $scope.fimkRate.calculated.EUR = nxt.util.convertToNXT(intRate.multiply(new BigInteger($scope.totalNXT)).divide(scaler).toString());
+    if (allFimk && totals.get('0')) {
+      const scaler = new BigInteger("1000000000"); //for scaling for big integer operations
+      var intRate = new BigInteger($scope.fimkRate.EUR.toString()).multiply(scaler);
+      $scope.fimkRate.calculated.EUR = nxt.util.convertToNXT(
+          intRate.multiply(new BigInteger(totals.get('0'))).divide(scaler).toString()
+      )
+    } else {
+      $scope.fimkRate.calculated.EUR = null
+    }
   }
 
   /* @param item CartModel */
@@ -308,16 +320,9 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   }
 
   $scope.placeOrder = function() {
-    var result = (new BigInteger(nxt.util.convertToNQT($scope.totalNXT))).compareTo(
-                    new BigInteger(nxt.util.convertToNQT($rootScope.userData.balanceNXT)));
-    if (result > 0) {
-      $scope.balanceError = "You don't have enough balance to place these orders.";
-    }
-    else {
-      $scope.balanceError = ' ';
-      var iterator = new Iterator($scope.shoppingCart);
-      processCart(iterator);
-    }
+    $scope.balanceError = ' ';
+    var iterator = new Iterator($scope.shoppingCart);
+    processCart(iterator);
   }
 
   function processCart(iterator) {

@@ -274,11 +274,11 @@
                 </tr>
               </tbody>
             </table>
-            <div class="estPrice">
-              Grand Total: {{totalNXT}}
-              <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>
+            <div ng-repeat="total in totals" class="estPrice">
+              Grand Total: {{total[1].amount}} {{total[1].assetName}}
+<!--              <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>-->
             </div>
-            <div class="estPrice">
+            <div ng-if="fimkRate.calculated.EUR" class="estPrice">
               {{'translate.estimated_price' | translate}}: {{fimkRate.calculated.EUR}}
               <span>&nbsp;&nbsp;EUR</span>
             </div>
