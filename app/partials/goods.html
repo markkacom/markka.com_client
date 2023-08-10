@@ -234,7 +234,7 @@
               <thead>
                 <tr>
                   <th translate="translate.amount"></th>
-                  <th style="text-align: center;">{{'translate.goods_name' | translate}}</th>
+                  <th></th>
                   <th></th>
                   <th translate="translate.goods_price"></th>
                   <th>{{'translate.goods_total_price' | translate}}</th>
@@ -256,8 +256,13 @@
                     <span>&nbsp;&nbsp;{{item.assetName}}</span>
                   </td>
                   <td class="total-price">
-                    <b>{{item.totalNXT}}</b>
-                    <span>&nbsp;&nbsp;{{item.assetName}}</span>
+                    <p>
+                      <span class="font-bold">{{item.totalNXT}}</span>
+                      <span>&nbsp;&nbsp;{{item.assetName}}</span>
+                    </p>
+                    <p>
+                      <a href="" ng-if="currentAccount" ng-click="purchaseItem(item)">Purchase</a>
+                    </p>
                   </td>
                   <td class="total-price">
                     <div class="btn">
@@ -274,10 +279,16 @@
                 </tr>
               </tbody>
             </table>
-            <div ng-repeat="total in totals" class="estPrice">
-              Grand Total: {{total[1].amount}} {{total[1].assetName}}
-<!--              <span ng-show="symbol=='FIM'">&nbsp;&nbsp;FIM</span>-->
-            </div>
+
+            <table class="grandTotal">
+              <tbody>
+                <tr ng-repeat="total in totals">
+                  <td>Grand Total:</td>
+                  <td><span class="font-bold">{{total[1].amount}}</span> {{total[1].assetName}}</td>
+                </tr>
+              </tbody>
+            </table>
+
             <div ng-if="fimkRate.calculated.EUR" class="estPrice">
               {{'translate.estimated_price' | translate}}: {{fimkRate.calculated.EUR}}
               <span>&nbsp;&nbsp;EUR</span>

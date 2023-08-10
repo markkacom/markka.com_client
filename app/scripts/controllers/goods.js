@@ -319,27 +319,19 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     plugins.get('transaction').get('dgsListing').execute();
   }
 
-  $scope.placeOrder = function() {
-    $scope.balanceError = ' ';
-    var iterator = new Iterator($scope.shoppingCart);
-    processCart(iterator);
-  }
-
-  function processCart(iterator) {
-    if (iterator.hasMore()) {
-      var item = iterator.next();
-      var order_args = {
-        goods: item.goods,
-        priceNXT: nxt.util.convertToAsset(item.priceNQT, item.assetDecimals),
-        quantity: item.count,
-        name: item.name,
-        deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
-        recipient: item.sellerRS,
-        asset: item.asset,
-        assetDecimals: item.assetDecimals,
-        assetName: item.assetName
-      }
-      plugins.get('transaction').get('dgsPurchase').execute(order_args).then(
+  $scope.purchaseItem = function(item) {
+    var order_args = {
+      goods: item.goods,
+      priceNXT: nxt.util.convertToAsset(item.priceNQT, item.assetDecimals),
+      quantity: item.count,
+      name: item.name,
+      deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
+      recipient: item.sellerRS,
+      asset: item.asset,
+      assetDecimals: item.assetDecimals,
+      assetName: item.assetName
+    }
+    plugins.get('transaction').get('dgsPurchase').execute(order_args).then(
         function(data) {
           if(data) {
             if (item.callback) {
@@ -354,21 +346,32 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
               });
             }
             item.delete().then(
-              function () {
-                if (iterator.hasMore()) {
-                  processCart(iterator);
+                function () {
+                  if (iterator.hasMore()) {
+                    processCart(iterator);
+                  }
+                  else {
+                    $scope.$evalAsync(function () {
+                      $scope.successful = "Payment Completed";
+                    });
+                  }
                 }
-                else {
-                  $scope.$evalAsync(function () {
-                    $scope.successful = "Payment Completed";
-                  });
-                }
-              }
             );
           }
         }
-      );
+    );
+  }
+
+  function processCart(iterator) {
+    if (iterator.hasMore()) {
+      $scope.purchaseItem(iterator.next())
     }
+  }
+
+  $scope.placeOrder = function() {
+    $scope.balanceError = ' ';
+    var iterator = new Iterator($scope.shoppingCart);
+    processCart(iterator);
   }
 
   $scope.decrypt = function(encryptedMessage, index) {
