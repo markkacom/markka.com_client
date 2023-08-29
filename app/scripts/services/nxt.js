@@ -181,7 +181,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       if (this.isInitialized) return
       this.isInitialized = true
       if (config) {
-        this.hosts = config.fimkNodes.mainnet.knownServers
+        this.hosts = this.engine.test ? config.fimkNodes.testnet.knownServers : config.fimkNodes.mainnet.knownServers
         if (!this.hosts || this.hosts.length === 0) throw Error("Server hosts are not defined")
         this.hosts.sort(function(a,b) {return a.priority - b.priority})
       }
