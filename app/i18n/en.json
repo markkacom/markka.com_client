@@ -471,6 +471,7 @@
   },
 
   "transaction": {
+    "notresolved":          "{{sender}} sent transaction {{details}} {{message}}",
     "0": {
       "0":                  "{{sender}} paid {{amount}} {{symbol}} to {{recipient}} {{details}} {{message}}"
     },

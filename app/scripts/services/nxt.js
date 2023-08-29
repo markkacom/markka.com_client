@@ -1066,6 +1066,16 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           }
         }
       }
+
+      var other = {
+        sender:     render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
+        details:    render(TYPE.JSON,'details',JSON.stringify(transaction))
+      }
+      if (transaction.recipientRS) {
+        other.recipient = render(TYPE.ACCOUNT, transaction.recipientName, transaction.recipientRS)
+      }
+      return $translate.instant('transaction.notresolved', other)
+
     }
   };
 

@@ -459,6 +459,7 @@
     "sell": "{{seller}} myi {{quantity}} {{asset}} käyttäjälle {{buyer}}  {{price}} {{symbol}} kpl, yhteensä {{total}} {{symbol}} {{details}}"
   },
   "transaction": {
+    "notresolved": "{{sender}} sent transaction {{details}} {{message}}",
     "0": {
       "0": "{{sender}} maksoi {{amount}} {{symbol}} kohteeseen {{recipient}} {{details}} {{message}}"
     },
