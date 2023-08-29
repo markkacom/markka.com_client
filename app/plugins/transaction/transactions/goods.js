@@ -174,8 +174,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
     id: 'dgsPurchase',
     exclude: true,
     execute: function (args) {
-      //console.log(args);
-      args = args||{};
+      args = args || {}
       return plugin.create(angular.extend(args, {
         title: 'Purchase Item',
         message: 'Pay to complete Marketplace purchases',
@@ -187,7 +186,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
             goods: items.goods,
             quantity: String(items.quantity),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
-            priceNQT: nxt.util.convertToQNT(items.priceNXT, args.assetDecimals),
+            priceNQT: nxt.util.convertToQNT(args.priceNXT, args.assetDecimals),
             recipient: nxt.util.convertRSAddress(items.recipient)
           }
         },
@@ -196,32 +195,39 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           name: 'name',
           type: 'text',
           readonly: true,
-          value: args.name||''
+          value: args.name || ''
         },
-        {
-          label: 'Price',
-          name: 'priceNXT',
-          type: 'money',
-          readonly: true,
-          value: args.priceNXT||'',
-          //precision: '8'
-        },
-        {
-          label: 'Quantity',
-          name: 'quantity',
-          type: 'text',
-          value: args.quantity||''
-        },
-        {
-          label: 'Recipient',
-          name: 'recipient',
-          type: 'text',
-          value: args.recipient||'',
-          readonly: true
-        }]
-      }));
+          {
+            label: 'Price',
+            name: 'priceNXT',
+            type: 'text',
+            readonly: true,
+            value: (args.priceNXT || '') + '   ' + args.assetName
+            //precision: '8'
+          },
+          {
+            label: 'Quantity',
+            name: 'quantity',
+            type: 'text',
+            value: args.quantity || ''
+          },
+          {
+            label: 'Total',
+            name: 'total',
+            type: 'text',
+            readonly: true,
+            value: (args.totalNXT || '') + '   ' + args.assetName
+          },
+          {
+            label: 'Recipient',
+            name: 'recipient',
+            type: 'text',
+            value: args.recipient || '',
+            readonly: true
+          }]
+      }))
     }
-  });
+  })
 
   // Rebate Goods
 
