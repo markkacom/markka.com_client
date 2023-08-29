@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
+
 (function() {
 
 var module = angular.module('fim.base');
@@ -55,11 +56,17 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   /* @param items Array of CartModel (@see models/cart.js) */
   function setupShoppingCart(items) {
     $scope.$evalAsync(function () {
-      $scope.shoppingCart = items||[];
-      $scope.shoppingCart.forEach(calculateItemTotal);
-      calculateCartTotal();
+      $scope.shoppingCart = items || []
+      $scope.shoppingCart.forEach(calculateItemTotal)
+
+      $scope.purchaseButtonImageCache = {}
+      $scope.shoppingCart.forEach(function (item) {loadPurchaseButtonImage(item, $scope.purchaseButtonImageCache)})
+
+      calculateCartTotal()
     });
   }
+
+  $scope.fimkRate = {calculated: {}}
 
   lompsaService.fimkRates()
       .then(function (data) {
@@ -258,6 +265,24 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     })
   }
 
+  function loadPurchaseButtonImage(item, purchaseButtonImageCache) {
+    let result = purchaseButtonImageCache[item.goods]
+    if (!result) {
+      // 2,-2253527463085318614,4677526180684090633,17569696535005519532,Hash of the torrent.,"video, scifi, torrent","{video,scifi,torrent}",ASSET IMAGE_URL,https://www.gstatic.com/webp/gallery3/3.sm.png,true,"",306976564,306976540,8315,true,(FTR.3.0)
+      $http.get(`http://localhost:6886/nxt?requestType=getAssetGoodsImage&asset=${item.asset || ""}&goods=${item.goods || ""}`).success(function(taggedData) {
+        result = taggedData.data
+        purchaseButtonImageCache[item.goods] = result
+      }).error(function(err) {
+        console.log(err);
+      })
+      //
+      //
+      // result = Math.random() > 0.5
+      //     ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAAeUlEQVR4nGJR/yHCgAp2fHuDJpKgwoEmcr5oA5oIEwOVwKhBhAFjlbMGmtC+///RRM5esEATaWLmppWLRg0iDFgE3NBjxOoCO5pIUugENJE3N8/RykWjBhEGLC/2nEQTYsyXRxP5e/YCmsjutqW0ctGoQYQBIAAA//9AExl7WRaz1gAAAABJRU5ErkJggg=="
+      //     : "http://d3js.org/logo.svg"
+    }
+  }
+
   function calculateCartTotal() {
     var totals = new Map()
     var allFimk = true
@@ -324,6 +349,7 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
       goods: item.goods,
       priceNXT: nxt.util.convertToAsset(item.priceNQT, item.assetDecimals),
       quantity: item.count,
+      totalNXT: item.totalNXT,
       name: item.name,
       deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
       recipient: item.sellerRS,
