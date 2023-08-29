@@ -39,6 +39,8 @@ function cutString(s, maxLen) {
   return s;
 }
 
+var purchaseButtonImageCache = {resetTime: Date.now()}
+
 module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $routeParams, $q, nxt, plugins,
   shoppingCartService, AllGoodsProvider, PastGoodsProvider, GoodsDetailsProvider, UserGoodsProvider,
   SoldGoodsProvider, DeliveryConfirmedGoodsProvider, Gossip, db, lompsaService) {
@@ -53,14 +55,20 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   var api             = $scope.paramEngine == 'fim' ? nxt.fim() : nxt.nxt();
   $scope.symbol       = api.engine.symbol;
 
+  $scope.purchaseButtonImage = {}
+
   /* @param items Array of CartModel (@see models/cart.js) */
   function setupShoppingCart(items) {
     $scope.$evalAsync(function () {
       $scope.shoppingCart = items || []
       $scope.shoppingCart.forEach(calculateItemTotal)
 
-      $scope.purchaseButtonImageCache = {}
-      $scope.shoppingCart.forEach(function (item) {loadPurchaseButtonImage(item, $scope.purchaseButtonImageCache)})
+      $scope.shoppingCart.forEach(function (item) {loadPurchaseButtonImage(item, purchaseButtonImageCache)})
+      $scope.purchaseButtonImage = purchaseButtonImageCache
+      //reset cache every 30s
+      if (Date.now() > purchaseButtonImageCache.resetTime + 30000) {
+        purchaseButtonImageCache = {resetTime: Date.now()}
+      }
 
       calculateCartTotal()
     });
@@ -266,20 +274,15 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
   }
 
   function loadPurchaseButtonImage(item, purchaseButtonImageCache) {
+    // the cache is used to eliminate requests to server
     let result = purchaseButtonImageCache[item.goods]
-    if (!result) {
-      // 2,-2253527463085318614,4677526180684090633,17569696535005519532,Hash of the torrent.,"video, scifi, torrent","{video,scifi,torrent}",ASSET IMAGE_URL,https://www.gstatic.com/webp/gallery3/3.sm.png,true,"",306976564,306976540,8315,true,(FTR.3.0)
+    if (result === undefined) {
       $http.get(`http://localhost:6886/nxt?requestType=getAssetGoodsImage&asset=${item.asset || ""}&goods=${item.goods || ""}`).success(function(taggedData) {
         result = taggedData.data
-        purchaseButtonImageCache[item.goods] = result
+        purchaseButtonImageCache[item.goods] = result || null
       }).error(function(err) {
         console.log(err);
       })
-      //
-      //
-      // result = Math.random() > 0.5
-      //     ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAAeUlEQVR4nGJR/yHCgAp2fHuDJpKgwoEmcr5oA5oIEwOVwKhBhAFjlbMGmtC+///RRM5esEATaWLmppWLRg0iDFgE3NBjxOoCO5pIUugENJE3N8/RykWjBhEGLC/2nEQTYsyXRxP5e/YCmsjutqW0ctGoQYQBIAAA//9AExl7WRaz1gAAAABJRU5ErkJggg=="
-      //     : "http://d3js.org/logo.svg"
     }
   }
 
