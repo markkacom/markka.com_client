@@ -175,6 +175,17 @@
                           ng-change="f.onchange(items)"
                           ng-required="f.required"></textarea>
               </div>
+              <!-- FILE INPUT -->
+              <div ng-switch-when="input-file">
+                <input type="file" select-ng-files
+                          ng-model="f.value"
+                          class="form-control"
+                          name="userFieldName"
+                          ng-disabled="sendSuccess"
+                          ng-readonly="f.readonly"
+                          ng-change="f.onchange(items)"
+                          ng-required="f.required">
+              </div>
               <!-- AUTOCOMPLETE -->
               <div ng-switch-when="autocomplete">
                 <div class="input-group" ng-init="f.__label='';f.__loading=false;f.__noResults=false">

@@ -23,6 +23,22 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
+
+  /**
+   * AngularJS does not provide support for <input type="file"> so the directive does it.
+   */
+module.directive("selectNgFiles", function () {
+  return {
+    require: "ngModel",
+    link: function postLink(scope, elem, attrs, ngModel) {
+      elem.on("change", function (e) {
+        var files = elem[0].files
+        ngModel.$setViewValue(files)
+      })
+    }
+  }
+})
+
 module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
 
   var plugin = plugins.get('transaction');
@@ -247,6 +263,14 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
     create: function (fieldName, opts) {
       var field  = CreateStandardField(fieldName, opts);
       field.type = 'textarea-v2';
+      return field;
+    }
+  });
+
+  plugin.addField('input-file', {
+    create: function (fieldName, opts) {
+      var field  = CreateStandardField(fieldName, opts);
+      field.type = 'input-file';
       return field;
     }
   });
