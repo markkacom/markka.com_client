@@ -190,8 +190,13 @@
             </div>
             <div class="goods-details3" ng-if="!provider.isExpired">
               <a class="btn btn-primary add-to-cart" ng-click="addToCart(provider.data)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
+
               <a href="#/goods/{{paramEngine}}/listing" class="btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
             </div>
+
+            <a class="btn btn-primary goods-details3" href ng-if="currentAccount" ng-click="executeTransaction('assignAssetImage', { goods: provider.goods })">
+              <span translate="translate.assign_image"/>
+            </a>
 
             <div class="pay-qrcode">
               <span style="font-size: small;display: block;white-space: pre-wrap;text-align: left;">Encrypted message from buyer (delivery address etc.):</span>
@@ -262,7 +267,7 @@
                     </p>
                     <p>
                       <button ng-if="currentAccount" ng-click="purchaseItem(item)" class="btn btn-success" type="button">
-                        <img ng-if="purchaseButtonImage[item.goods]" src="{{purchaseButtonImage[item.goods]}}" style="width: 28px; height: 28px"/>
+                        <img ng-if="purchaseButtonImage[item.goods]" src="{{purchaseButtonImage[item.goods]}}" style="width: 28px; height: 28px; margin-right: 7px;"/>
                         Purchase
                       </button>
 <!--

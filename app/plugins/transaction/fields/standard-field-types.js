@@ -26,6 +26,7 @@ var module = angular.module('fim.base');
 
   /**
    * AngularJS does not provide support for <input type="file"> so the directive does it.
+   * The field changing is supported only (onchange: ...).
    */
 module.directive("selectNgFiles", function () {
   return {
@@ -271,6 +272,14 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
     create: function (fieldName, opts) {
       var field  = CreateStandardField(fieldName, opts);
       field.type = 'input-file';
+      return field;
+    }
+  });
+
+  plugin.addField('image', {
+    create: function (fieldName, opts) {
+      var field  = CreateStandardField(fieldName, opts);
+      field.type = 'image';
       return field;
     }
   });

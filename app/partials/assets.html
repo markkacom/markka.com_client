@@ -78,6 +78,11 @@
           <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign-expiry"/>
         </a>
       </li>
+      <li role="presentation" ng-if="currentAccount">
+        <a href ng-click="executeTransaction('assignAssetImage', { asset:asset })">
+          <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign_image"/>
+        </a>
+      </li>
     </ul>
   </div>
 
@@ -254,12 +259,12 @@
         <div class="col-md-6">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <b>{{assetName}}</b>&nbsp;#<a href="#/assets/{{paramEngine}}/{{paramAsset}}/trade">{{paramAsset}}</a>
+              <b>{{assetName}}</b>&nbsp;#<a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse">{{paramAsset}}</a>
               <span translate="translate.created" style="margin-left: 16px;"></span><span> &nbsp;{{details.data.dateFormatted}}</span>
-              <a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase" ng-hide="TRADE_UI_ONLY"
+              <!--<a href="#/assets/{{paramEngine}}/{{paramAsset}}/pulse" class="pull-right text-uppercase" ng-hide="TRADE_UI_ONLY"
                  tooltip="Show pulse">
-                <!--<span translate="translate.show_pulse" />--><i class="fa fa-newspaper-o"></i>
-              </a>
+                &lt;!&ndash;<span translate="translate.show_pulse" />&ndash;&gt;<i class="fa fa-newspaper-o"></i>
+              </a>-->
             </div>
             <div class="panel-body" style="height: 250px;overflow-y:auto">
               <table class="table table-condensed">

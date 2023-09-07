@@ -1,0 +1,148 @@
+/**
+ * The MIT License (MIT)
+ * Copyright (c) 2021 Krypto Fin ry and the FIMK Developers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
+// assign small image for asset
+
+(function () {
+    'use strict'
+    var module = angular.module('fim.base')
+
+    module.run(function (plugins, modals, $q, $rootScope, nxt) {
+
+        var plugin = plugins.get('transaction')
+
+        function createFields(args) {
+            var api = nxt.get($rootScope.currentAccount.id_rs)
+            var fileContentBase64 = " "
+            return {
+                title: 'Assign Image',
+                message: `Assign small image to ${args.asset ? 'asset' : ''}${args.goods ? 'marketplace goods' : ''}`,
+                requestType: 'uploadTaggedData',
+                feeNXT: '1',
+                createArguments: function (items) {
+                    var paramType
+                    var paramPriority
+                    if (items.asset) {
+                        paramType = "ASSET"
+                        paramPriority = "priority01"
+                    } else if (items.goods) {
+                        paramType = "GOODS"
+                        paramPriority = "priority00"
+                    }
+                    var paramId = items.asset || items.goods
+                    return {
+                        channel: "(FTR.3.0)",
+                        type: paramType,
+                        name: paramId,
+                        tags: paramPriority,
+                        data: fileContentBase64,
+                        secretPhrase: items.secretPhrase
+                    }
+                },
+                fields: [
+                    plugin.fields('input-file').create('file', {
+                        value: '',
+                        label: 'Image file',
+                        required: false,
+                        onchange: function (fields) {
+                            var file = this.value[0]
+                            fileContentBase64 = null
+                            fields.loadedImage.value = ""
+                            this.errorMsg = null
+                            if (file) {
+                                if (file.size > 40000) {
+                                    this.errorMsg = "File size is too big"
+                                } else {
+                                    var self = this
+                                    self.errorMsg = "File conversion in the progress..."
+                                    encodeImageFileAsURL(file).then(function (content) {
+                                        if (content.length > 40000) {
+                                            self.errorMsg = "File size is too big"
+                                        } else {
+                                            self.errorMsg = null
+                                            fileContentBase64 = content
+                                            fields.loadedImage.value = content
+                                        }
+                                    }).then(function (v) {
+                                        fields.formValid.value = fileContentBase64 && (fields.asset.value || fields.goods.value || '')
+                                    }).catch(function (reason) {
+                                        console.error(reason)
+                                        self.errorMsg = reason.toString()
+                                    })
+                                }
+                            } else {
+                                fileContentBase64 = " "  // empty is not allowed so space is indicator of no file
+                            }
+                            fields.formValid.value = fileContentBase64 && (fields.asset.value || fields.goods.value || '')
+                        }
+                    }),
+                    plugin.fields('image').create('loadedImage', {
+                        value: ''
+                    }),
+                    plugin.fields('asset').create('asset', {
+                        value: args.asset || '',
+                        label: 'Asset',
+                        required: false,
+                        account: $rootScope.currentAccount.id_rs,
+                        api: api,
+                        hide: !args.asset,
+                        onchange: function (fields) {
+                            fields.formValid.value = fields.asset.value || fields.goods.value || ''
+                        }
+                    }),
+                    plugin.fields('goods').create('goods', {
+                        value: args.goods || '',
+                        label: 'Goods',
+                        required: false,
+                        account: $rootScope.currentAccount.id_rs,
+                        api: api,
+                        hide: !args.goods,
+                        onchange: function (fields) {
+                            fields.formValid.value = fields.asset.value || fields.goods.value || ''
+                        }
+                    }),
+                    plugin.fields('text').create('formValid', {value: '', hide: true, required: true})
+                ]
+            }
+        }
+
+        plugin.add({
+            id: 'assignAssetImage', execute: function (args) {
+                args = args || {}
+                return plugin.create(angular.extend(args, createFields(args)))
+            }
+        })
+
+    })
+
+    function encodeImageFileAsURL(file) {
+        return new Promise(function (resolve, reject) {
+            var reader = new FileReader()
+            reader.onloadend = function (event) {
+                resolve(event.target.result)
+            }
+            reader.onerror = reject
+            reader.readAsDataURL(file);
+        })
+    }
+
+})()

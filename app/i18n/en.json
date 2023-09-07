@@ -220,6 +220,7 @@
     "issuer":               "Issuer",
     "transfers":            "Transfers",
     "load_more_assets":     "Load more assets",
+    "assign_image":         "Assign image",
     "continue":             "Continue",
     "back":                 "Back",
     "forward":              "Forward",

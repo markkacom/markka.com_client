@@ -444,8 +444,8 @@
                 </thead>
                 <tbody>
                   <tr ng-repeat="a in provider.entities">
-                    <td>{{a.label}}</td>
-                    <td><a ng-href="#/assets/{{paramEngine}}/{{a.asset}}/trade">{{a.asset}}</a></td>
+                    <td><a ng-href="#/assets/{{paramEngine}}/{{a.asset}}/trade">{{a.label}}</a></td>
+                    <td><a ng-href="#/assets/{{paramEngine}}/{{a.asset}}/pulse">{{a.asset}}</a></td>
                     <td>{{a.quantity}}</td>
                     <td><a ng-href="#/accounts/{{a.accountRS}}/activity/latest">{{a.accountRS}}</a></td>
                     <td>{{a.numberOfTrades}}</td>

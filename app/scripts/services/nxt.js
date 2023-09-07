@@ -1822,6 +1822,13 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         if (transaction.type !== 2 && transaction.subtype !== 7) {
           return false;
         }
+        // todo check txn data
+        break;
+      case "uploadTaggedData":
+        if (transaction.type !== 6 && transaction.subtype !== 0) {
+          return false;
+        }
+        // todo check txn data
         break;
       default:
         //invalid requestType..

@@ -211,6 +211,7 @@
     "issuer": "Liikkeeseenlaskija",
     "transfers": "Siirrot",
     "load_more_assets": "Lataa lisää arvokkeita",
+    "assign_image":      "Liitä kuva",
     "continue": "Jatka",
     "back": "Takaisin",
     "forward": "Eteenpäin",

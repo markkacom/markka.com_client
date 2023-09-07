@@ -186,6 +186,10 @@
                           ng-change="f.onchange(items)"
                           ng-required="f.required">
               </div>
+              <!-- IMAGE -->
+              <div ng-switch-when="image">
+                <img ng-if="f.value" src="{{f.value}}" style="max-width: 40px; max-height: 40px; transition: all .5s ease-in-out;"/>
+              </div>
               <!-- AUTOCOMPLETE -->
               <div ng-switch-when="autocomplete">
                 <div class="input-group" ng-init="f.__label='';f.__loading=false;f.__noResults=false">
