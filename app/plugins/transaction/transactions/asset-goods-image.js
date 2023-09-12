@@ -54,8 +54,18 @@
                         type: paramType,
                         name: paramId,
                         tags: paramPriority,
-                        data: fileContentBase64,
-                        secretPhrase: items.secretPhrase
+                        data: items.imageURL || fileContentBase64,
+                        secretPhrase: items.secretPhrase,
+                        adjustErrorBehavior: function (error, progress) {
+                            var s = "" + error
+                            if (s.indexOf("less than minimum fee") > -1) {
+                                progress.setMessage(error + ".  Please adjust fee")
+                                progress.enableCloseBtn()
+                                return false
+                            } else {
+                                return true
+                            }
+                        }
                     }
                 },
                 fields: [

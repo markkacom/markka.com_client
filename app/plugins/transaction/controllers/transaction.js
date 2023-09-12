@@ -230,8 +230,11 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
 
               var error = data.errorDescription || data.error;
               if (error) {
-                progress.setErrorMessage(error);
-                progress.enableCloseBtn();
+                var doDefaultErrorHandling = args.adjustErrorBehavior ? args.adjustErrorBehavior(error, progress) : true
+                if (doDefaultErrorHandling) {
+                  progress.setErrorMessage(error);
+                  progress.enableCloseBtn();
+                }
                 return;
               }
 
