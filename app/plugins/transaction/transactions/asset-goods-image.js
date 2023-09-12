@@ -59,9 +59,13 @@
                     }
                 },
                 fields: [
+                    plugin.fields('static').create('note1', {
+                        hide: false,
+                        value: "You can specify only one - image file (approximately less than 35 KB) or image URL"
+                    }),
                     plugin.fields('input-file').create('file', {
                         value: '',
-                        label: 'Image file',
+                        label: 'Image file (to clean selected file open dialog then click Cancel)',
                         required: false,
                         onchange: function (fields) {
                             var file = this.value[0]
@@ -84,6 +88,7 @@
                                         }
                                     }).then(function (v) {
                                         fields.formValid.value = fileContentBase64 && (fields.asset.value || fields.goods.value || '')
+                                        fields.imageURL.hide = !!file
                                     }).catch(function (reason) {
                                         console.error(reason)
                                         self.errorMsg = reason.toString()
@@ -93,6 +98,21 @@
                                 fileContentBase64 = " "  // empty is not allowed so space is indicator of no file
                             }
                             fields.formValid.value = fileContentBase64 && (fields.asset.value || fields.goods.value || '')
+                            fields.imageURL.hide = !!file
+                        }
+                    }),
+                    plugin.fields('text').create('imageURL', {
+                        value: '',
+                        label: 'Image URL',
+                        required: false,
+                        onchange: function (fields) {
+                            if (this.value.trim().length > 0) {
+                                fields.file.hide = true
+                                fields.loadedImage.value = this.value
+                            } else {
+                                fields.file.hide = false
+                                fields.loadedImage.value = ""
+                            }
                         }
                     }),
                     plugin.fields('image').create('loadedImage', {
@@ -103,6 +123,7 @@
                         label: 'Asset',
                         required: false,
                         account: $rootScope.currentAccount.id_rs,
+                        allowFIMK: false,
                         api: api,
                         hide: !args.asset,
                         onchange: function (fields) {

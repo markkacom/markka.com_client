@@ -206,12 +206,22 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, OrderEntryProvider, U
           return args
         },
         fields: [
-          plugin.fields('asset').create('asset', { value: args.asset||'', label: 'Asset (0 means FIMK)', required: true, account: $rootScope.currentAccount.id_rs, api: api}),
-          plugin.fields('account').create('recipient', { value: args.recipient||'', label: 'Recipient', required: true,
-            api:api, accountColorId: UserService.currentAccount.accountColorId }),
-          plugin.fields('text').create('quantity', { value: args.quantity||'', label: 'Quantity', required: true,
+          plugin.fields('asset').create('asset', {
+            value: args.asset || '',
+            label: 'Asset (0 means FIMK)',
+            required: true,
+            account: $rootScope.currentAccount.id_rs,
+            allowFIMK: true,
+            api: api
+          }),
+          plugin.fields('account').create('recipient', {
+            value: args.recipient || '', label: 'Recipient', required: true,
+            api: api, accountColorId: UserService.currentAccount.accountColorId
+          }),
+          plugin.fields('text').create('quantity', {
+            value: args.quantity || '', label: 'Quantity', required: true,
             validate: function (text) {
-              if (text && !plugin.isNumeric(text)) throw 'Must be a number';
+              if (text && !plugin.isNumeric(text)) throw 'Must be a number'
             }
           })
         ]

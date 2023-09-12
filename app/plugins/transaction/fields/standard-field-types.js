@@ -559,7 +559,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           opts.api.engine.socket().callAPIFunction({requestType: 'getAsset', asset: field.value}).then(
               function (data) {
                 scope.$evalAsync(function () {
-                  if (field.value == "0") {
+                  if (opts.allowFIMK && field.value == "0") {
                     field.__label = "FIMK"
                   } else {
                     if (data.asset == field.value) {
@@ -618,7 +618,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           }
           promise.then(
             function (data) {
-              var assets = query == "0" ? [] : data.assets||data.accountAssets||[];
+              var assets = query == "0" && opts.allowFIMK ? [] : data.assets || data.accountAssets || []
               deferred.resolve(assets.map(
                 function (d) {
                   return {
