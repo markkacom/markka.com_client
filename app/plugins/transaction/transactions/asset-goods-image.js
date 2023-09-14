@@ -49,13 +49,32 @@
                         paramPriority = "priority00"
                     }
                     var paramId = items.asset || items.goods
+
+                    /*
+                    for prunable transaction after transaction is signed (in client app)
+                    the prunableAttachmentJSON should be sent along with transactionBytes
+                    because transactionBytes does not contain prunable data (attachment in fact)
+                    */
+                    var prunableAttachmentJSON = {
+                        "version.TaggedDataUpload": 1,
+                        isText: true,
+                        description: "",
+                        filename: "",
+                        channel: "(FTR.3.0)",
+                        type: paramType,
+                        name: paramId,
+                        tags: paramPriority,
+                        data: items.imageURL || fileContentBase64
+                    }
+
                     return {
+                        isText: true,
                         channel: "(FTR.3.0)",
                         type: paramType,
                         name: paramId,
                         tags: paramPriority,
                         data: items.imageURL || fileContentBase64,
-                        secretPhrase: items.secretPhrase,
+                        prunableAttachmentJSON: prunableAttachmentJSON,
                         adjustErrorBehavior: function (error, progress) {
                             var s = "" + error
                             if (s.indexOf("less than minimum fee") > -1) {
