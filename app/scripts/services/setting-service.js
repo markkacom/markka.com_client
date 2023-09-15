@@ -153,9 +153,7 @@ module.factory('settings', function($log, db, $timeout) {
      * Update a setting.
      */
     update: function (id, value) {
-      console.log('update.setting', { id: id, value: value });
       var setting = registry[id];
-      console.log('update.setting-setting', setting);
       if (!setting) {
         throw new Error("Unknown setting "+id);
       }

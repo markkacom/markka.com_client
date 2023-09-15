@@ -20,6 +20,16 @@
           "priority": 3
         }
       ]
+    },
+    "testnet": {
+      "knownServers": [
+        {
+          "host": "localhost",
+          "port": 6986,
+          "tls": false,
+          "priority": 1
+        }
+      ]
     }
   }
 }
