@@ -74,17 +74,7 @@
                         name: paramId,
                         tags: paramPriority,
                         data: items.imageURL || fileContentBase64,
-                        prunableAttachmentJSON: prunableAttachmentJSON,
-                        adjustErrorBehavior: function (error, progress) {
-                            var s = "" + error
-                            if (s.indexOf("less than minimum fee") > -1) {
-                                progress.setMessage(error + ".  Please adjust fee")
-                                progress.enableCloseBtn()
-                                return false
-                            } else {
-                                return true
-                            }
-                        }
+                        prunableAttachmentJSON: prunableAttachmentJSON
                     }
                 },
                 fields: [
@@ -97,6 +87,7 @@
                         label: 'Image file (to clean selected file open dialog then click Cancel)',
                         required: false,
                         onchange: function (fields) {
+                            updateNote2(fields)
                             var file = this.value[0]
                             fileContentBase64 = null
                             fields.loadedImage.value = ""
@@ -135,6 +126,7 @@
                         label: 'Image URL',
                         required: false,
                         onchange: function (fields) {
+                            updateNote2(fields)
                             if (this.value.trim().length > 0) {
                                 fields.file.hide = true
                                 fields.loadedImage.value = this.value
@@ -146,6 +138,10 @@
                     }),
                     plugin.fields('image').create('loadedImage', {
                         value: ''
+                    }),
+                    plugin.fields('static').create('note2', {
+                        hide: false,
+                        value: "Sending not specified image (not filled fields) cleans previous assigned image"
                     }),
                     plugin.fields('asset').create('asset', {
                         value: args.asset || '',
@@ -181,6 +177,10 @@
                 return plugin.create(angular.extend(args, createFields(args)))
             }
         })
+
+        function updateNote2(fields) {
+            fields.note2.hide = (fields.file.value && fields.file.value.length > 0) || fields.imageURL.value
+        }
 
     })
 

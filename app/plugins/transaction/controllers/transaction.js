@@ -230,12 +230,8 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
 
               var error = data.errorDescription || data.error;
               if (error) {
-                var doDefaultErrorHandling = args.adjustErrorBehavior ? args.adjustErrorBehavior(error, progress) : true
-                if (doDefaultErrorHandling) {
-                  progress.setErrorMessage(error);
-                  progress.enableCloseBtn();
-                }
-                return;
+                handleError(error, progress)
+                return
               }
 
               /* Secretphrase was send to the server */
@@ -281,7 +277,11 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
                     progress.enableCloseBtn();
                     return;
                   }
-                  socket.callAPIFunction({ requestType: 'broadcastTransaction', transactionBytes: payload }).then(
+
+                  var broadcastParams = { requestType: 'broadcastTransaction', transactionBytes: payload }
+                  if (args.prunableAttachmentJSON) broadcastParams.prunableAttachmentJSON = args.prunableAttachmentJSON
+
+                  socket.callAPIFunction(broadcastParams).then(
                     function (data) {
                       progress.animateProgress().then(
                         function () {
@@ -315,6 +315,16 @@ module.controller('TransactionCreateModalController', function(items, $modalInst
           );
         }
       );
+    }
+
+    function handleError(error, progress) {
+      var s = "" + error
+      if (s.indexOf("less than minimum fee") > -1) {
+        progress.setMessage(error + ".  Please adjust fee")
+      } else {
+        progress.setErrorMessage(error)
+      }
+      progress.enableCloseBtn()
     }
 
     function getAccountPublicKey(account) {
