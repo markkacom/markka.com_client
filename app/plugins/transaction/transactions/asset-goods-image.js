@@ -35,7 +35,7 @@
             var fileContentBase64 = " "
             return {
                 title: 'Assign Image',
-                message: `Assign small image to ${args.asset ? 'asset' : ''}${args.goods ? 'marketplace goods' : ''}`,
+                message: "Assign small image to " + (args.asset ? 'asset' : '') + (args.goods ? 'marketplace goods' : ''),
                 requestType: 'uploadTaggedData',
                 feeNXT: '1',
                 createArguments: function (items) {

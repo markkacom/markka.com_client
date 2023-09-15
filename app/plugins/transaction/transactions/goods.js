@@ -258,7 +258,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
                   args.asset = data.asset
                   args.assetName = data.assetName
                   args.assetDecimals = data.assetDecimals
-                  plugin.getField(items, 'topMessage').value = `Return some "${args.assetName}" to buyer`;
+                  plugin.getField(items, 'topMessage').value = "Return some '" + args.assetName + "' to buyer";
 
                   plugin.getField(items, 'name').value = data.name + ' ('+data.goods+')';
                   plugin.getField(items, 'priceNXT').value =

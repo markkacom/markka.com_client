@@ -275,9 +275,9 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
 
   function loadPurchaseButtonImage(item, purchaseButtonImageCache) {
     // the cache is used to eliminate requests to server
-    let result = purchaseButtonImageCache[item.goods]
+    var result = purchaseButtonImageCache[item.goods]
     if (result === undefined) {
-      $http.get(`http://localhost:6886/nxt?requestType=getAssetGoodsImage&asset=${item.asset || ""}&goods=${item.goods || ""}`).success(function(taggedData) {
+      $http.get("http://localhost:6886/nxt?requestType=getAssetGoodsImage&asset=" + (item.asset || "") + "&goods=" + (item.goods || "")).success(function(taggedData) {
         result = taggedData.data
         purchaseButtonImageCache[item.goods] = result || null
       }).error(function(err) {
