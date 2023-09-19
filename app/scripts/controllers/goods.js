@@ -277,12 +277,17 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
     // the cache is used to eliminate requests to server
     var result = purchaseButtonImageCache[item.goods]
     if (result === undefined) {
-      $http.get("http://localhost:6886/nxt?requestType=getAssetGoodsImage&asset=" + (item.asset || "") + "&goods=" + (item.goods || "")).success(function(taggedData) {
-        result = taggedData.data
-        purchaseButtonImageCache[item.goods] = result || null
-      }).error(function(err) {
-        console.log(err);
-      })
+      var args = {
+        requestType: "getAssetGoodsImage",
+        asset: item.asset || "",
+        goods: item.goods || ""
+      }
+      api.engine.socket().callAPIFunction(args).then(
+          function (data) {
+            result = data.data
+            purchaseButtonImageCache[item.goods] = result || null
+          }
+      )
     }
   }
 
