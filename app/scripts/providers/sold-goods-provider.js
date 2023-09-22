@@ -62,6 +62,7 @@
           a.deliveryTime = String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168);
           a.totalTime = a.deliveryTime - a.deliveryDeadlineTimestamp;
           a.totalDeliveryDeadlineTimestamp = Math.floor(a.totalTime / 3600);
+          a.date = nxt.util.formatTimestamp(a.timestamp);
 
           var moment = new Date();
           a.isExpired = a.timestamp < nxt.util.convertToEpochTimestamp(moment.setFullYear(moment.getFullYear() - 2));

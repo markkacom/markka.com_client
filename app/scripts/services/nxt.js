@@ -132,9 +132,14 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       return deferred.promise;
     },
 
-    getSelectedSocketHostPort: function (url) {
-      var h = this.urlPool.urlHostMap.get(url)
-      if (h) return h.host + (h.port ? ':' + h.port : '')
+    getHostPort: function (withProtocol) {
+      var h = this.urlPool.urlHostMap.get(this.socket().url)
+      if (h) {
+        var protocol = withProtocol
+            ? h.tls ? "https://" : "http://"
+            : ""
+        return protocol + h.host + (h.port ? ':' + h.port : '')
+      }
       return null
     },
 

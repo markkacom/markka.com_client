@@ -54,8 +54,9 @@
         var goods = data.purchases;
         var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
         for (var i = 0; i < goods.length; i++) {
-          var a = goods[i];
+          var a = goods[i]
           a.priceNXT = nxt.util.convertToAsset(a.priceNQT, a.assetDecimals)
+          a.date = nxt.util.formatTimestamp(a.timestamp)
         }
         return new Iterator(goods);
       }

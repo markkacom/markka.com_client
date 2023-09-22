@@ -224,7 +224,7 @@ function identifierIsAvailable(api, identifier) {
 }
 
 function host() {
-  var host = nxt.fim().engine.getSelectedSocketHostPort(nxt.fim().engine.socket().url)
+  var host = nxt.fim().engine.getHostPort()
   return host || "fimk1.heatwallet.com"
 }
 
