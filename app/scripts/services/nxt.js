@@ -446,20 +446,21 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         }
         href  = '="#/accounts/'+encodeURIComponent(value)+'/activity/latest"';
         click = null;
-      }
-      else if (type == this.TYPE.ASSET_ID) {
+      } else if (type == this.TYPE.ASSET_ID) {
         label = label||value;
         href  = '="#/assets/'+this.api.engine.symbol_lower+'/'+encodeURIComponent(value)+'/trade"';
         click = null;
-      }
-      else if (type == this.TYPE.GOODS_NAME) {
+      } else if (type == this.TYPE.GOODS_NAME) {
         var transaction = value||{};
         href = '="#/goods/'+this.api.engine.symbol_lower+'/'+transaction.transaction+'"';
         click = null;
-      }
-      else if (type == this.TYPE.GOODS) {
-        href = '="#/goods/'+this.api.engine.symbol_lower+'/'+label+'"';
+      } else if (type == this.TYPE.GOODS) {
+        href = '="#/goods/' + this.api.engine.symbol_lower + '/' + label + '"';
         click = null;
+      } else if (type == this.TYPE.JSON) {
+
+      } else {
+        template = "<i>__VALUE__</i>"
       }
 
       var maxLength = 100;
@@ -744,8 +745,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
                 sender:    render(TYPE.ACCOUNT, transaction.senderName, transaction.senderRS),
                 goodsName: render(TYPE.GOODS_NAME, transaction.attachment.name, transaction),
                 quantity:  util.commaFormat(String(transaction.attachment.quantity)),
-                price:     util.convertToNXT(transaction.attachment.priceNQT),
-                symbol:    transaction.senderColorName||api.engine.symbol,
+                price:     util.convertToNXT(transaction.attachment.priceNQT), //todo fix replace convertToNXT to convertToAsset
+                symbol:    transaction.senderColorName||api.engine.symbol,  // todo should be displayed asset name or FIM
                 description: render(TYPE.DESCRIPTION,'description',transaction.attachment.description),
                 tags:      render(TYPE.TAGS,'tags',transaction.attachment.tags),
                 details:   render(TYPE.JSON,'details',JSON.stringify(transaction)),

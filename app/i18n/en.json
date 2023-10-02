@@ -482,7 +482,7 @@
       "2":                  "{{sender}} created poll {{pollId}} {{details}} {{message}}",
       "3":                  "{{sender}} casted vote for {{pollId}} {{details}} {{message}}",
       "4":                  "{{sender}} announced hub {{details}} {{message}}",
-      "5":                  "{{sender}} registered name {{name}} {{description}} {{details}} {{message}}",
+      "5":                  "{{sender}} registered name {{name}} {{details}} {{message}}",
       "6":                  "{{sender}} offered alias {{aliasName}} for sale for {{amount}} {{symbol}} {{details}} {{message}}",
       "7":                  "{{sender}} bought alias {{aliasName}} from {{recipient}} {{details}} {{message}}"
     },
@@ -496,11 +496,11 @@
       "7":                  "{{sender}} assigned rewarding rules to asset {{asset}} {{details}} {{message}}"
     },
     "3": {
-      "0":                  "{{sender}} listed good {{goodsName}} quantity {{quantity}} for {{price}} {{symbol}} {{description}} {{tags}} {{details}} {{message}}",
+      "0":                  "{{sender}} listed good {{goodsName}} quantity {{quantity}} {{details}} {{message}}",
       "1":                  "{{sender}} delisted good {{goodsName}} {{details}} {{message}}",
       "2":                  "{{sender}} changed price of {{goodsName}} to {{price}} {{symbol}} {{details}} {{message}}",
       "3":                  "{{sender}} changed quantity of {{goodsName}} by {{deltaQuantity}} {{details}} {{message}}",
-      "4":                  "{{sender}} purchased {{quantity}} {{goodsName}} from {{recipient}} for {{price}} {{symbol}} {{deadline}} {{details}} {{message}}",
+      "4":                  "{{sender}} purchased {{quantity}} {{goodsName}} from {{recipient}} {{details}} {{message}}",
       "5":                  "{{sender}} delivered purchase {{purchase}} to {{recipient}} with discount {{discount}} {{symbol}} {{details}} {{message}}",
       "6":                  "{{sender}} gave feedback for purchase {{purchase}} {{details}} {{message}}",
       "7":                  "{{sender}} gave refund of {{discount}} {{symbol}} for {{purchase}} {{details}} {{message}}"
