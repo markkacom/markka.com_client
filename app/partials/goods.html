@@ -188,10 +188,9 @@
               <p class="description">{{provider.description}}</p>
               <p ng-if="provider.tagsHTML"><b>{{'translate.goods_tags' | translate}}:</b> <span ng-bind-html="provider.tagsHTML"></span></p>
             </div>
-            <div class="goods-details3" ng-if="!provider.isExpired">
+            <div class="goods-details3" ng-if="!provider.isExpired && provider.quantity > 0">
               <a class="btn btn-primary add-to-cart" ng-click="addToCart(provider.data)"><i class="fa fa-shopping-cart"></i> {{'translate.add_to_cart' | translate}}</a>
-
-              <a href="#/goods/{{paramEngine}}/listing" class="btn btn-danger cancel-button">{{'translate.cancel_order' | translate}}</a>
+              <a href="#/goods/{{paramEngine}}/listing" class="btn btn-warning close-button">{{'translate.close' | translate}}</a>
             </div>
 
             <a class="btn btn-primary goods-details3" href ng-if="currentAccount" ng-click="executeTransaction('assignAssetImage', { goods: provider.goods })">
