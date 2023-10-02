@@ -542,6 +542,7 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
    */
   plugin.addField('asset', {
     create: function (name, opts) {
+      opts.allowFIMK = true
       var scope = opts.$scope||$rootScope;
       var format_asset_label = function (data) {
         return [
@@ -590,8 +591,9 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
         label: opts.label,
         template: [
           '<a class="monospace">',
-            '<span class="font-bold">{{match.model.value + "&nbsp;" + match.model.name}}</span>&nbsp;&nbsp;',
-            '<span class="pull-right" ng-bind="match.model.accountName||match.model.accountRS"></span>',
+            '<span class="font-bold">{{match.model.name}}</span>&nbsp;&nbsp;',
+            '<span>{{match.model.value}}</span>&nbsp;&nbsp;',
+            //'<span class="pull-right" ng-bind="match.model.accountName||match.model.accountRS"></span>',
           '</a>'
         ].join(''),
         validate: function (text) {
@@ -610,25 +612,29 @@ module.run(function (plugins, $q, $rootScope, $templateCache, $translate, nxt) {
           }
           else {
             promise = opts.api.engine.socket().callAPIFunction({
-              requestType: 'searchAssets',
-              query: 'NAME:'+query+'*',
+              requestType: 'searchAssetsExt',
+              query: 'NAME:' + query + '*',
+              accountPrivateAllowed: opts.accountPrivateAllowed || '',
               firstIndex: 0,
               lastIndex: 15
-            });
+            })
           }
           promise.then(
             function (data) {
               var assets = query == "0" && opts.allowFIMK ? [] : data.assets || data.accountAssets || []
-              deferred.resolve(assets.map(
-                function (d) {
-                  return {
-                    value: d.asset,
-                    name: d.name,
-                    accountName: d.accountName,
-                    accountRS: d.accountRS
-                  };
-                }
-              ));
+              var result = assets.map(
+                  function (d) {
+                    return {
+                      value: d.asset,
+                      name: d.name,
+                      accountName: d.accountName,
+                      accountRS: d.accountRS
+                    };
+                  }
+              ).sort(function (a,b) {
+                return a.name > b.name ? 1 : (a.name < b.name ? -1 : 0) ;
+              })
+              deferred.resolve(result);
             }
           );
           return deferred.promise;

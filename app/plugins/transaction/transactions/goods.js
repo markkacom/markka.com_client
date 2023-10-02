@@ -117,6 +117,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           //account: $rootScope.currentAccount.id_rs,
           value: '0',
           api: api,
+          accountPrivateAllowed: $rootScope.currentAccount.id_rs,
           onchange: function (items) {
             var currencyName = items.asset.value == '0'
                 ? 'FIMK'
