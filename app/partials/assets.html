@@ -78,7 +78,8 @@
           <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign-expiry"/>
         </a>
       </li>
-      <li role="presentation" ng-if="currentAccount">
+
+      <li role="presentation" ng-if="currentAccount.id_rs == assetIssuerRS">
         <a href ng-click="executeTransaction('assignAssetImage', { asset:asset })">
           <i class="fa fa-angle-right fa-fw"></i>&nbsp;&nbsp;<span translate="translate.assign_image"/>
         </a>
@@ -114,7 +115,7 @@
             <table class="table table-condensed">
               <tr><td>Id</td><td colspan="3"><a ng-href="#/assets/{{paramEngine}}/{{paramAsset}}/trade">{{paramAsset}}</a></td></tr>
               <tr>
-                <td>Issuer</td colspan="3">
+                <td colspan="3">Issuer</td>
                 <td>
                   <a ng-href="#/accounts/{{assetIssuerRS}}/activity/latest" ng-hide="TRADE_UI_ONLY">{{assetIssuerName||assetIssuerRS}}</a>
                   <span ng-show="TRADE_UI_ONLY">{{assetIssuerName||assetIssuerRS}}</span>
