@@ -81,10 +81,8 @@
             <table class="table table-striped table-condensed table-hover">
               <tbody>
                 <tr ng-repeat="a in provider.entities">
-                  <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;"
-                    ng-bind-html="a.renderedHTML" ng-if="!IS_SMALL_DEVICE"></td>
-                  <td style="word-wrap: break-word; word-break: break-all; white-space: normal; width: 100%;"
-                    ng-if="IS_SMALL_DEVICE">
+                  <td style="white-space: normal; width: 100%;" ng-bind-html="a.renderedHTML" ng-if="!IS_SMALL_DEVICE"></td>
+                  <td style="white-space: normal; width: 100%;" ng-if="IS_SMALL_DEVICE">
                     <div>
                       <span ng-bind-html="a.renderedHTML"></span>
                       <small class="pull-right">{{a.date}}</small>
