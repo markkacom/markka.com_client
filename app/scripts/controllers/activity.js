@@ -73,6 +73,10 @@ module.controller('ActivityController', function($scope, $location, $routeParams
 
   $scope.symbol = api.engine.symbol;
 
+  $scope.isTestnet = function() {
+    return !!api.engine.test
+  }
+
   $scope.blockstate['TYPE_FIM'] = new BlockStateProvider(nxt.fim(), $scope);
   $scope.blockstate['TYPE_FIM'].load();
 
@@ -94,7 +98,9 @@ module.controller('ActivityController', function($scope, $location, $routeParams
     api.engine.forceSocketURL(url);
   };
 
-  $scope.urlList = ["cloud.mofowallet.org", "fimk1.heatwallet.com", "localhost"];
+  $scope.urlList = api.engine.urlPool.hosts.map(function (v) {
+    return v.host
+  })
 
   switch ($scope.paramSection) {
     case 'activity':
