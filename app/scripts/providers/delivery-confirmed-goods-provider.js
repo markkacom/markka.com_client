@@ -51,14 +51,15 @@
       },
 
       dataIterator: function(data) {
-        var goods = data.purchases;
+        var allowedAccount = this.$scope.$root.currentAccount ? this.$scope.$root.currentAccount.id_rs : null
+        var purchases = data.purchases.filter(function(a) {return a.sellerRS == allowedAccount || a.buyerRS == allowedAccount})
         var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
-        for (var i = 0; i < goods.length; i++) {
-          var a = goods[i]
+        for (var i = 0; i < purchases.length; i++) {
+          var a = purchases[i]
           a.priceNXT = nxt.util.convertToAsset(a.priceNQT, a.assetDecimals)
           a.date = nxt.util.formatTimestamp(a.timestamp)
         }
-        return new Iterator(goods);
+        return new Iterator(purchases);
       }
     });
     return DeliveryConfirmedGoodsProvider;

@@ -52,18 +52,18 @@
       },
 
       dataIterator: function(data) {
-        var goods = data.purchases;
-        var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0;
-        for (var i = 0; i < goods.length; i++) {
-          var a = goods[i];
+        var allowedAccount = this.$scope.$root.currentAccount ? this.$scope.$root.currentAccount.id_rs : null
+        var purchases = data.purchases.filter(function(a) {return a.sellerRS == allowedAccount || a.buyerRS == allowedAccount})
+        var index = this.entities.length > 0 ? this.entities[this.entities.length - 1].index : 0
+        for (var i = 0; i < purchases.length; i++) {
+          var a = purchases[i]
           a.priceNXT = nxt.util.convertToAsset(a.priceNQT, a.assetDecimals)
-
-          var moment = new Date();
-          a.isExpired = a.timestamp < nxt.util.convertToEpochTimestamp(moment.setFullYear(moment.getFullYear() - 2));
-          a.isExpired = a.isExpired || (a.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > a.expiry : false);
-          a.expiry = a.expiry === 2147483647 ? null : nxt.util.formatTimestamp(a.expiry);
+          var moment = new Date()
+          a.isExpired = a.timestamp < nxt.util.convertToEpochTimestamp(moment.setFullYear(moment.getFullYear() - 2))
+          a.isExpired = a.isExpired || (a.expiry ? nxt.util.convertToEpochTimestamp(Date.now()) > a.expiry : false)
+          a.expiry = a.expiry === 2147483647 ? null : nxt.util.formatTimestamp(a.expiry)
         }
-        return new Iterator(goods);
+        return new Iterator(purchases)
       }
     });
     return PastGoodsProvider;
