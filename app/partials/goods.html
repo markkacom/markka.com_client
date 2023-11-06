@@ -384,24 +384,24 @@
                           <p ng-if="orders.buyerName">
                             <b>{{'translate.buyer_name' | translate}}: </b><h5>{{orders.buyerName}}</h5>
                           </p>
-                          <p>
-                            <b translate="translate.seller_fimk_account" translate-values="{symbol:symbol}"></b><h5><a href="#/goods/{{paramEngine}}/listing/{{orders.sellerRS}}">{{orders.sellerRS}}</a></h5>
-                          </p>
-                          <p ng-if="orders.sellerName">
-                            <b>{{'translate.seller_name' | translate}}: </b><h5>{{orders.sellerName}}</h5>
-                          </p>
-                          <p ng-if="orders.pending == false">
-                            <b>{{'translate.order_is_delivered' | translate}}</b>
-                          </p>
-                          <p ng-if="orders.pending == true">
-                            <b>{{'translate.order_is_pending' | translate}}</b>
-                          </p>
                         </span>
                       </a>
+                      <p ng-if="orders.pending == false">
+                        <b>{{'translate.order_is_delivered' | translate}}</b>
+                      </p>
+                      <p ng-if="orders.pending == true">
+                        <b>{{'translate.order_is_pending' | translate}}</b>
+                      </p>
                     </td>
                     <td>{{orders.name}}</td>
-                    <td ng-if="!orders.sellerName">({{orders.sellerRS}})  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
-                    <td ng-if="orders.sellerName">{{orders.sellerName}}  <a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></td>
+                    <td ng-if="!orders.sellerName">
+                      <a href="#/goods/{{paramEngine}}/listing/{{orders.sellerRS}}">{{orders.sellerRS}}</a>
+                      <p><a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></p>
+                    </td>
+                    <td ng-if="orders.sellerName">
+                      <a href="#/goods/{{paramEngine}}/listing/{{orders.sellerRS}}">{{orders.sellerName}}</a>
+                      <p><a href="" ng-click="msg(orders.sellerRS)" ng-if="currentAccount">{{'translate.message_to_seller' | translate}}</a></p>
+                    </td>
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceNXT}}&nbsp;&nbsp;{{orders.assetName}}</td>
                   </tr>
@@ -478,16 +478,16 @@
                 <tbody>
                   <tr ng-repeat="orders in deliveryConfirmedGoods.entities">
                     <td>{{orders.date}}</td>
-                    <td>{{orders.purchase}}</td>
+                    <td>{{orders.purchase}} <p><small style="color: darkgrey"><label>buyer:</label> {{orders.buyerRS}}</small></p></td>
                     <td>{{orders.name}}</td>
                     <!-- <td>{{orders.sellerRS}}  <a href="" ng-click="msg(orders.sellerRS)">message</a></td> -->
                     <td>{{orders.quantity}}</td>
                     <td>{{orders.priceNXT}}&nbsp;&nbsp;{{orders.assetName}}</td>
-                    <td ng-if="currentAccount">
+                    <td ng-if="currentAccount && currentAccount.id_rs == orders.sellerRS">
                       <button class="btn btn-primary" ng-click="rebate(orders)">{{'translate.refund' | translate}}</button>
                       <button ng-click="relistAsNew(orders.goods)" style="margin: 4px">Relist</button>
                     </td>
-                    <td ng-if="currentAccount">
+                    <td ng-if="currentAccount && currentAccount.id_rs == orders.sellerRS">
                       <button class="btn btn-primary" ng-if="orders.note" ng-click="decrypt(orders.note, $index)">{{'translate.decrypt_message' | translate}}</button>
                       <label ng-if="!orders.note">{{'translate.no_messages' | translate}}</label>
                     </td>

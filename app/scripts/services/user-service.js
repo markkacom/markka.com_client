@@ -23,7 +23,7 @@
 (function () {
 'use strict';
 var module = angular.module('fim.base');
-module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $rootScope, TransactionService) {
+module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $rootScope, TransactionService, $route) {
 
   // remember sent transactions to prevent extra sendings
   var registerRewardApplicantSession = {
@@ -85,6 +85,7 @@ module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $roo
           }
       )
 
+      $route.reload()
       return this.currentAccount
     },
 

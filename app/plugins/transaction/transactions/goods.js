@@ -53,11 +53,11 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
                     plugin.getField(items, 'name').value = data.name
                     plugin.getField(items, 'tags').value = data.tags
 
+                    plugin.getField(items, 'asset').value = data.asset
                     var s = new BigInteger(data.priceNQT).toString()
-                    var price = items.asset.value == '0'
+                    plugin.getField(items, 'priceNXT').value = data.asset === '0'
                         ? nxt.util.convertToNXT(s)
-                        : nxt.util.convertToAsset(s, items.asset.asset.decimals)
-                    plugin.getField(items, 'priceNXT').value = price
+                        : nxt.util.convertToAsset(s, data.assetDecimals)
 
                     var v = JSON.parse(data.description)
                     plugin.getField(items, 'description').value = v.description
