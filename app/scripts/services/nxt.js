@@ -91,7 +91,7 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
       hosts = [
         {host: 'fimk1.heatwallet.com', tls: true, isRemote: true},
         {host: 'cloud.mofowallet.org', port: this.port, tls: true, isRemote: true},
-        {host: 'localhost', port: this.port, tls: false, isRemote: true}
+        {host: 'localhost', port: this.port, tls: false, isRemote: false}
       ]
     }
     else if (this.type == TYPE_NXT) {
@@ -125,6 +125,8 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
           } else {
             deferred.resolve(up.getNext(isRemote))
           }
+        } else if (isRemote == false) {
+          deferred.resolve(up.getNext(false))
         } else {
           deferred.resolve(fu || up.getNext())
         }
@@ -205,8 +207,11 @@ module.factory('nxt', function ($rootScope, $modal, $http, $q, modals, i18n, db,
         this.position++;
         if (this.position >= this.good.length) this.position = 0;
         var result = this.good[this.position];
+        var isLocalhost = result.indexOf("localhost") != -1
         if (isRemote) {
-          if (result.indexOf("localhost") == -1) return result
+          if (!isLocalhost) return result
+        } else if (isRemote == false) {
+          if (isLocalhost) return result
         } else {
           return result
         }

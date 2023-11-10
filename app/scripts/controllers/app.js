@@ -70,7 +70,7 @@ module.run(function ($rootScope, $location) {
 });
 module.controller('AppController', function($rootScope, $scope, $modal, $q, $log,
   $timeout, modals, $window, plugins, serverService, db, settings, $location,
-  nxt, $route, $translate, accountsService, BlockchainDownloadProvider, UserDataProvider, UserService) {
+  nxt, $route, $translate, accountsService, BlockchainDownloadProvider, UserDataProvider, UserService, toaster) {
 
   $rootScope.userData = new UserDataProvider($scope);
 
@@ -296,6 +296,39 @@ module.controller('AppController', function($rootScope, $scope, $modal, $q, $log
     // see https://stackoverflow.com/questions/68952769/electron-how-to-get-webcontents-to-check-on-backgroundthrottling
     const electron = require ("electron")
     electron.ipcRenderer.send("openDevTools", null)
+  }
+
+  $scope.forceEngineRemoteUrl = function () {
+    var api = $scope.paramEngine == 'fim' ? nxt.fim() : nxt.nxt()
+    var currentUrl = api.engine.socket().url || ""
+    if (currentUrl.indexOf("localhost") > -1) {
+      if ($scope.rememberedRemoteUrl) {
+        if ($scope.rememberedRemoteUrl != currentUrl) {
+          api.engine.forceSocketURL($scope.rememberedRemoteUrl)
+          toaster.pop('info', "", "Server API is switched to " + $scope.rememberedRemoteUrl);
+          setTimeout($route.reload, 400)
+        }
+      } else {
+        api.engine.getSocketNodeURL(true).then(function (url) {
+          api.engine.forceSocketURL(url)
+          toaster.pop('info', "", "Server API is switched to " + url);
+          setTimeout($route.reload, 400)
+        })
+      }
+    }
+  }
+
+  $scope.forceEngineLocalUrl = function () {
+    var api = $scope.paramEngine == 'fim' ? nxt.fim() : nxt.nxt()
+    var currentUrl = api.engine.socket().url || ""
+    if (currentUrl.indexOf("localhost") == -1) {
+      $scope.rememberedRemoteUrl = currentUrl || $scope.rememberedRemoteUrl
+      api.engine.getSocketNodeURL(false).then(function (url) {
+        api.engine.forceSocketURL(url)
+        toaster.pop('info', "", "Server API is switched to " + url);
+        setTimeout($route.reload, 400)
+      })
+    }
   }
 
   /* handler for rendered transaction identifier onclick events */
