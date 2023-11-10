@@ -176,19 +176,19 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
     exclude: true,
     execute: function (args) {
       args = args || {}
+      var cartItem = args.cartItem
       return plugin.create(angular.extend(args, {
         title: 'Purchase Item',
         message: 'Pay to complete Marketplace purchases',
         requestType: 'dgsPurchase',
         canHaveRecipient: false,
-        abc: true,
         createArguments: function (items) {
           return {
-            goods: items.goods,
-            quantity: String(items.quantity),
+            goods: cartItem.goods,
+            quantity: String(cartItem.count),
             deliveryDeadlineTimestamp: items.deliveryDeadlineTimestamp,
-            priceNQT: nxt.util.convertToQNT(args.priceNXT, args.assetDecimals),
-            recipient: nxt.util.convertRSAddress(items.recipient)
+            priceNQT: cartItem.priceNQT,
+            recipient: nxt.util.convertRSAddress(cartItem.sellerRS)
           }
         },
         fields: [{
@@ -196,34 +196,38 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           name: 'name',
           type: 'text',
           readonly: true,
-          value: args.name || ''
+          value: cartItem.name || ''
         },
           {
             label: 'Price',
             name: 'priceNXT',
             type: 'text',
             readonly: true,
-            value: (args.priceNXT || '') + '   ' + args.assetName
-            //precision: '8'
+            value: nxt.util.convertToAsset(cartItem.priceNQT, cartItem.assetDecimals) + '   ' + cartItem.assetName
           },
           {
             label: 'Quantity',
             name: 'quantity',
             type: 'text',
-            value: args.quantity || ''
+            value: cartItem.count || '',
+            onchange: function (fields) {
+              cartItem.count = fields.fields_map.quantity.value
+              args.calculateItemTotal(cartItem)
+              fields.fields_map.total.value = (cartItem.totalNXT || '') + '   ' + cartItem.assetName
+            }
           },
           {
             label: 'Total',
             name: 'total',
             type: 'text',
             readonly: true,
-            value: (args.totalNXT || '') + '   ' + args.assetName
+            value: (cartItem.totalNXT || '') + '   ' + cartItem.assetName
           },
           {
             label: 'Recipient',
             name: 'recipient',
             type: 'text',
-            value: args.recipient || '',
+            value: cartItem.sellerRS || '',
             readonly: true
           }]
       }))

@@ -354,16 +354,9 @@ module.controller('GoodsCtrl', function($location, $rootScope, $scope, $http, $r
 
   $scope.purchaseItem = function(item) {
     var order_args = {
-      goods: item.goods,
-      priceNXT: nxt.util.convertToAsset(item.priceNQT, item.assetDecimals),
-      quantity: item.count,
-      totalNXT: item.totalNXT,
-      name: item.name,
+      cartItem: item,
       deliveryDeadlineTimestamp: String(nxt.util.convertToEpochTimestamp(Date.now()) + 60 * 60 * 168),
-      recipient: item.sellerRS,
-      asset: item.asset,
-      assetDecimals: item.assetDecimals,
-      assetName: item.assetName
+      calculateItemTotal: calculateItemTotal
     }
     plugins.get('transaction').get('dgsPurchase').execute(order_args).then(
         function(data) {
