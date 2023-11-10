@@ -25,7 +25,8 @@
     "nvd3": "1.7.1",
     "angular-nvd3": "1.0.0-beta",
     "ng-clip": "0.2.6",
-    "dexie": "1.5.1"
+    "dexie": "1.5.1",
+    "AngularJS-Toaster": "angularjs-toaster#^3.0.0"
   },
   "devDependencies": {
     "angular-scenario": "1.4.3"

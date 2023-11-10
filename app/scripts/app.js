@@ -41,7 +41,8 @@ var module = angular.module('fim.base', [
   'ui.validate',
   'pascalprecht.translate',
   'infinite-scroll',
-  'noCAPTCHA'
+  'noCAPTCHA',
+    'toaster'
 ]);
 
 module.config(function(noCAPTCHAProvider, $translateProvider) {
