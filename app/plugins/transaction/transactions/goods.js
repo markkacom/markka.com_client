@@ -72,9 +72,11 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           var tags = (items.tags||'').split(',');
           tags.forEach(function (tag, index) { tags[index] = String(tag).trim() });
           tags = tags.filter(function (tag) { return tag.length > 0 });
-          var asset = plugin.getField(items, 'asset').asset
-          if (!asset && items.asset.value != '0') throw Error("Wrong asset")
-          var price = items.asset.value == '0'
+          var assetField = plugin.getField(items, 'asset')
+          var asset = assetField.asset
+          var isFimk = assetField.value === '0'
+          if (!asset && !isFimk) throw Error("Wrong asset")
+          var price = isFimk
               ? nxt.util.convertToNQT(items.priceNXT)
               : nxt.util.convertToQNT(items.priceNXT, asset.decimals)
           return {
@@ -114,6 +116,7 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
         }, plugin.fields('asset').create('asset', {
           label: 'Asset for pricing',
           required: false,
+          readonly: true,
           //account: $rootScope.currentAccount.id_rs,
           value: '0',
           api: api,
@@ -138,9 +141,12 @@ module.run(function (plugins, modals, $q, $rootScope, nxt, publicKeyService) {
           value: '',
           validate: function (text) {
             this.errorMsg = null;
-            if (!text) { this.errorMsg = null; }
-            else if ( ! plugin.isInteger(text, 1)) { this.errorMsg = 'Must be a number greater than 0'; }
-            return ! this.errorMsg;
+            if (!text) {
+              this.errorMsg = null
+            } else if ( ! plugin.isInteger(text, 1)) {
+              this.errorMsg = 'Must be a number greater than 0'
+            }
+            return ! this.errorMsg
           },
         }]
       }));
