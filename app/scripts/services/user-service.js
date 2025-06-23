@@ -34,24 +34,31 @@ module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $roo
   function registerRewardApplicant(api, account, secretPhrase) {
     // prevent sending duplicate login registration transaction within 1h
     var now = Date.now() / 1000
-    if (now - registerRewardApplicantSession.started > 3600) {
-      registerRewardApplicantSession.started = now
-      registerRewardApplicantSession.accounts.clear()
-    } else {
+    if (now - registerRewardApplicantSession.started <= 3600) {
       if (registerRewardApplicantSession.accounts.has(account.account)) return
     }
-    registerRewardApplicantSession.accounts.add(account.account)
 
-    var txnArguments = {
-      feeNQT: "0",
-      amountNQT: "0",
-      deadline: "1440",
-      sender: account.accountRS,
-      recipient: account.account,
-      publicKey: account.publicKey,
-      requestType: "registerRewardApplicant"
-    }
-    TransactionService.sendTransaction(api, txnArguments, secretPhrase, true)
+    plugins.get('alerts').confirm({
+      title: 'Register reward applicant',
+      message: 'Do you want to send transaction to register account for POP Rewarding for login action?'
+    }).then((confirmed) => {
+      if (confirmed) {
+        registerRewardApplicantSession.started = now
+        registerRewardApplicantSession.accounts.clear()
+        registerRewardApplicantSession.accounts.add(account.account)
+
+        var txnArguments = {
+          feeNQT: "0",
+          amountNQT: "0",
+          deadline: "1440",
+          sender: account.accountRS,
+          recipient: account.account,
+          publicKey: account.publicKey,
+          requestType: "registerRewardApplicant"
+        }
+        TransactionService.sendTransaction(api, txnArguments, secretPhrase, true)
+      }
+    })
   }
 
   var SERVICE = {
@@ -74,14 +81,11 @@ module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $roo
       this.currentAccount.symbol_lower = api.engine.symbol_lower;
       $rootScope.$emit('onOpenCurrentAccount', this.currentAccount);
 
-      api.engine.socket().getAccount({account: account.id_rs}).then(
-          function (a) {
+      api.engine.socket().getAccount({account: account.id_rs}).then((a) => {
             $rootScope.$evalAsync(function () {
               SERVICE.currentAccount.name = a.accountName
-
-              //registerRewardApplicant(api, a, account.secretPhrase)
-
             })
+            registerRewardApplicant(api, a, account.secretPhrase)
           }
       )
 
@@ -136,8 +140,7 @@ module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $roo
           return;
         }
         else {
-          socket.callAPIFunction({ requestType: 'getAccount', account: account.id_rs }).then(
-            function (a) {
+          socket.callAPIFunction({ requestType: 'getAccount', account: account.id_rs }).then((a) => {
               $rootScope.$evalAsync(function () {
 
                 account.name = a.accountName;
@@ -157,7 +160,7 @@ module.factory('UserService', function ($q, nxt, KeyService, plugins, i18n, $roo
               });
 
               this.loadAccountData(iterator);
-            }.bind(this)
+            }
           );
         }
       }

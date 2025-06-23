@@ -102,8 +102,10 @@
                             function (data) {
                                 var error = data.errorDescription || data.error
                                 if (error) {
-                                    console.error("Error on sending login registration transaction (no fee). " + error)
-                                    progress.close()
+                                    var message = "Server declined the login transaction. " + error
+                                    console.error(message)
+                                    progress.setErrorMessage(message)
+                                    progress.enableCloseBtn()
                                     return
                                 }
                                 /* Secretphrase was send to the server */
